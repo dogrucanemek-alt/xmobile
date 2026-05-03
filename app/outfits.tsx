@@ -1,29 +1,95 @@
 import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_KEY = '9dfe03744413ccb79c529c0a3f04847f';
+const WEATHER_KEY = '9dfe03744413ccb79c529c0a3f04847f';
+const CLAUDE_KEY = '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';
 const SEHIR = 'Izmir,TR';
 
 export default function Outfits() {
   const router = useRouter();
   const [hava, setHava] = useState(null);
+  const [kombinler, setKombinler] = useState([]);
   const [yukleniyor, setYukleniyor] = useState(true);
 
   useEffect(() => {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${SEHIR}&appid=${API_KEY}&units=metric&lang=tr`)
-      .then(res => res.json())
-      .then(data => {
-        setHava({
-          derece: Math.round(data.main.temp) + '°C',
-          durum: data.weather[0].description,
-          nem: data.main.humidity,
-          hissedilen: Math.round(data.main.feels_like) + '°C',
-        });
-        setYukleniyor(false);
-      })
-      .catch(() => setYukleniyor(false));
+    baslat();
   }, []);
+
+  const baslat = async () => {
+    try {
+      const havaVeri = await havaAl();
+      const kiyafetler = await kiyafetleriAl();
+      await kombinOner(havaVeri, kiyafetler);
+    } catch (e) {
+      setYukleniyor(false);
+    }
+  };
+
+  const havaAl = async () => {
+    const res = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${SEHIR}&appid=${WEATHER_KEY}&units=metric&lang=tr`
+    );
+    const data = await res.json();
+    const havaVeri = {
+      derece: Math.round(data.main.temp),
+      durum: data.weather[0].description,
+      nem: data.main.humidity,
+      hissedilen: Math.round(data.main.feels_like),
+    };
+    setHava(havaVeri);
+    return havaVeri;
+  };
+
+  const kiyafetleriAl = async () => {
+    const kayitli = await AsyncStorage.getItem('xmobile_kiyafetler');
+    return kayitli ? JSON.parse(kayitli) : [];
+  };
+
+  const kombinOner = async (havaVeri, kiyafetler) => {
+    const kiyafetListesi = kiyafetler
+      .map(k => `${k.ad} (${k.tur}, ${k.sezon})`)
+      .join(', ');
+
+    const prompt = `Sen bir kişisel stil danışmanısın.
+Hava durumu: ${havaVeri.derece}°C, ${havaVeri.durum}, hissedilen ${havaVeri.hissedilen}°C, nem %${havaVeri.nem}
+Gardırop: ${kiyafetListesi}
+Bu hava ve gardıropa göre 3 farklı kombin öner. Sadece JSON döndür, başka hiçbir şey yazma:
+{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["kıyafet1","kıyafet2"],"neden":"1 cümle açıklama"}]}`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': CLAUDE_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      });
+
+      const data = await res.json();
+      console.log('Claude yanıt:', JSON.stringify(data));
+      
+      if (data.content && data.content[0]) {
+        const metin = data.content[0].text;
+        const jsonBaslangic = metin.indexOf('{');
+        const jsonBitis = metin.lastIndexOf('}') + 1;
+        const jsonMetin = metin.slice(jsonBaslangic, jsonBitis);
+        const parsed = JSON.parse(jsonMetin);
+        setKombinler(parsed.kombinler);
+      }
+    } catch (e) {
+      console.log('Hata:', e);
+    }
+    setYukleniyor(false);
+  };
 
   const havaIkon = () => {
     if (!hava) return '🌡️';
@@ -35,29 +101,7 @@ export default function Outfits() {
     return '🌤️';
   };
 
-  const kombinler = [
-    {
-      id: 1,
-      baslik: 'İş',
-      parcalar: ['Beyaz Gömlek', 'Lacivert Pantolon', 'Siyah Ceket'],
-      neden: hava ? `${hava.derece} için ideal. Toplantıya uygun şık görünüm.` : '...',
-      renk: '#000000',
-    },
-    {
-      id: 2,
-      baslik: 'Günlük',
-      parcalar: ['Beyaz Gömlek', 'Lacivert Pantolon'],
-      neden: hava ? `Hissedilen ${hava.hissedilen}. Rahat ve sade bir seçim.` : '...',
-      renk: '#555555',
-    },
-    {
-      id: 3,
-      baslik: 'Dışarı',
-      parcalar: ['Beyaz Gömlek', 'Lacivert Pantolon', 'Bej Trençkot'],
-      neden: hava ? `Nem %${hava.nem}. Trençkot tam bu hava için doğru seçim.` : '...',
-      renk: '#888888',
-    },
-  ];
+  const renkler = ['#000000', '#555555', '#888888'];
 
   return (
     <View style={styles.container}>
@@ -73,44 +117,55 @@ export default function Outfits() {
 
       <ScrollView style={styles.liste} showsVerticalScrollIndicator={false}>
         <View style={styles.havaDurumu}>
-          {yukleniyor ? (
+          {!hava ? (
             <ActivityIndicator color="#000000" />
           ) : (
             <>
               <Text style={styles.havaIkon}>{havaIkon()}</Text>
               <View style={{ flex: 1 }}>
-                <Text style={styles.havaDerece}>{hava?.derece ?? '--'}</Text>
-                <Text style={styles.havaDurum}>{hava?.durum ?? 'Veri alınamadı'}</Text>
+                <Text style={styles.havaDerece}>{hava.derece}°C</Text>
+                <Text style={styles.havaDurum}>{hava.durum}</Text>
               </View>
               <Text style={styles.havaSehir}>İzmir</Text>
             </>
           )}
         </View>
 
-        {kombinler.map((k, index) => (
-          <View key={k.id} style={styles.kombinKart}>
-            <View style={styles.kombinHeader}>
-              <View style={styles.kombinNumara}>
-                <Text style={styles.kombinNumaraText}>{index + 1}</Text>
-              </View>
-              <Text style={styles.kombinBaslik}>Kombin {index + 1} — {k.baslik}</Text>
-            </View>
-
-            <View style={styles.parcalar}>
-              {k.parcalar.map((p, i) => (
-                <View key={i} style={styles.parcaChip}>
-                  <Text style={styles.parcaText}>{p}</Text>
-                </View>
-              ))}
-            </View>
-
-            <Text style={styles.neden}>{k.neden}</Text>
-
-            <TouchableOpacity style={styles.secButon}>
-              <Text style={styles.secButonText}>Bu Kombini Seç</Text>
-            </TouchableOpacity>
+        {yukleniyor ? (
+          <View style={styles.yukleniyor}>
+            <ActivityIndicator color="#000000" size="large" />
+            <Text style={styles.yukleniyorText}>AI kombinlerinizi hazırlıyor...</Text>
           </View>
-        ))}
+        ) : kombinler.length === 0 ? (
+          <View style={styles.yukleniyor}>
+            <Text style={styles.yukleniyorText}>Kombin oluşturulamadı, tekrar dene.</Text>
+          </View>
+        ) : (
+          kombinler.map((k, index) => (
+            <View key={index} style={styles.kombinKart}>
+              <View style={styles.kombinHeader}>
+                <View style={[styles.kombinNumara, { backgroundColor: renkler[index] }]}>
+                  <Text style={styles.kombinNumaraText}>{index + 1}</Text>
+                </View>
+                <Text style={styles.kombinBaslik}>{k.baslik}</Text>
+                <View style={styles.turBadge}>
+                  <Text style={styles.turText}>{k.tur}</Text>
+                </View>
+              </View>
+              <View style={styles.parcalar}>
+                {k.parcalar.map((p, i) => (
+                  <View key={i} style={styles.parcaChip}>
+                    <Text style={styles.parcaText}>{p}</Text>
+                  </View>
+                ))}
+              </View>
+              <Text style={styles.neden}>{k.neden}</Text>
+              <TouchableOpacity style={styles.secButon}>
+                <Text style={styles.secButonText}>Bu Kombini Seç</Text>
+              </TouchableOpacity>
+            </View>
+          ))
+        )}
       </ScrollView>
     </View>
   );
@@ -142,11 +197,21 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#EEEEEE',
     gap: 12,
+    minHeight: 72,
   },
   havaIkon: { fontSize: 36 },
   havaDerece: { fontSize: 22, fontWeight: '600', color: '#000000' },
   havaDurum: { fontSize: 13, color: '#999999', marginTop: 2 },
   havaSehir: { fontSize: 13, color: '#999999' },
+  yukleniyor: {
+    alignItems: 'center',
+    paddingVertical: 60,
+    gap: 16,
+  },
+  yukleniyorText: {
+    color: '#999999',
+    fontSize: 14,
+  },
   kombinKart: {
     backgroundColor: '#FFFFFF',
     borderRadius: 14,
@@ -165,12 +230,18 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: '#000000',
     alignItems: 'center',
     justifyContent: 'center',
   },
   kombinNumaraText: { color: '#FFFFFF', fontSize: 12, fontWeight: '600' },
-  kombinBaslik: { fontSize: 15, fontWeight: '600', color: '#000000' },
+  kombinBaslik: { fontSize: 15, fontWeight: '600', color: '#000000', flex: 1 },
+  turBadge: {
+    backgroundColor: '#F5F5F5',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  turText: { fontSize: 11, color: '#666666' },
   parcalar: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 },
   parcaChip: {
     backgroundColor: '#F5F5F5',
