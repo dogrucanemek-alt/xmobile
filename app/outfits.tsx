@@ -1,27 +1,31 @@
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, ActivityIndicator, Image } from 'react-native';
+import {
+  Text, View, StyleSheet, StatusBar, TouchableOpacity,
+  ScrollView, ActivityIndicator, Image, Alert
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useApp } from './context';
 
 const WEATHER_KEY = '9dfe03744413ccb79c529c0a3f04847f';
-const CLAUDE_KEY = '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';
+const CLAUDE_KEY = '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';
 const SEHIR = 'Izmir,TR';
 
 const renkBul = (parcaAdi) => {
-  const ad = (parcaAdi || '').toLowerCase();
-  if (ad.includes('beyaz')) return '#F5F5F5';
-  if (ad.includes('siyah')) return '#1A1A1A';
-  if (ad.includes('lacivert')) return '#1B2A4A';
-  if (ad.includes('mavi')) return '#2E6DA4';
+  const ad = (parcaAdi ?? '').toLowerCase();
+  if (ad.includes('beyaz'))                             return '#F0F0F0';
+  if (ad.includes('siyah'))                             return '#1A1A1A';
+  if (ad.includes('lacivert'))                          return '#1B2A4A';
+  if (ad.includes('mavi'))                              return '#2E6DA4';
   if (ad.includes('kirmizi') || ad.includes('kırmızı')) return '#C0392B';
-  if (ad.includes('yesil') || ad.includes('yeşil')) return '#27AE60';
-  if (ad.includes('sari') || ad.includes('sarı')) return '#F1C40F';
-  if (ad.includes('gri')) return '#7F8C8D';
-  if (ad.includes('bej') || ad.includes('krem')) return '#D4B896';
-  if (ad.includes('kahve') || ad.includes('bordo')) return '#6B3A2A';
-  if (ad.includes('pembe')) return '#E91E8C';
-  if (ad.includes('turuncu')) return '#E67E22';
-  if (ad.includes('mor')) return '#8E44AD';
+  if (ad.includes('yesil')   || ad.includes('yeşil'))   return '#27AE60';
+  if (ad.includes('sari')    || ad.includes('sarı'))    return '#F1C40F';
+  if (ad.includes('gri'))                               return '#7F8C8D';
+  if (ad.includes('bej')     || ad.includes('krem'))    return '#D4B896';
+  if (ad.includes('kahve')   || ad.includes('bordo'))   return '#6B3A2A';
+  if (ad.includes('pembe'))                             return '#E91E8C';
+  if (ad.includes('turuncu'))                           return '#E67E22';
+  if (ad.includes('mor'))                               return '#8E44AD';
   return '#4A90D9';
 };
 
@@ -30,45 +34,33 @@ const AvatarKombin = ({ kombin, profil, kiyafetler = [] }) => {
   const sacRengi = profil?.sacRengi || '#1A1A1A';
   const gozRengi = profil?.gozRengi || '#6B3A2A';
 
-  const ustParca = kombin.parcalar.find(p =>
-    p.toLowerCase().includes('gömlek') || p.toLowerCase().includes('gomlek') ||
-    p.toLowerCase().includes('tişört') || p.toLowerCase().includes('tisort') ||
-    p.toLowerCase().includes('kazak') || p.toLowerCase().includes('bluz') ||
-    p.toLowerCase().includes('ceket')
-  ) || kombin.parcalar[0];
+  const parcaEsle = (anahtar) =>
+    kombin.parcalar.find(p =>
+      anahtar.some(k => p.toLowerCase().includes(k))
+    ) || null;
 
-  const altParca = kombin.parcalar.find(p =>
-    p.toLowerCase().includes('pantolon') || p.toLowerCase().includes('etek') ||
-    p.toLowerCase().includes('şort') || p.toLowerCase().includes('short') ||
-    p.toLowerCase().includes('jean')
-  ) || kombin.parcalar[1];
+  const ustParca = parcaEsle(['gömlek', 'gomlek', 'tişört', 'tisort', 'kazak', 'bluz', 'ceket']);
+  const altParca = parcaEsle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım']);
+  const disParca = parcaEsle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk']);
 
-  const disParca = kombin.parcalar.find(p =>
-    p.toLowerCase().includes('mont') || p.toLowerCase().includes('kaban') ||
-    p.toLowerCase().includes('trençkot') || p.toLowerCase().includes('trenkot') ||
-    p.toLowerCase().includes('yağmurluk') || p.toLowerCase().includes('yagmurluk')
-  );
+  const fotografBul = (parcaAdi) => {
+    if (!parcaAdi) return null;
+    const aranan = parcaAdi.toLowerCase();
+    const tam = kiyafetler.find(k => k.ad?.toLowerCase() === aranan);
+    if (tam?.foto) return tam.foto;
+    const kismi = kiyafetler.find(k => {
+      const ad = k.ad?.toLowerCase() || '';
+      return aranan.includes(ad) || ad.includes(aranan);
+    });
+    return kismi?.foto || null;
+  };
 
+  const ustFoto = fotografBul(ustParca);
+  const altFoto = fotografBul(altParca);
+  const disFoto = fotografBul(disParca);
   const ustRenk = renkBul(ustParca);
   const altRenk = renkBul(altParca);
   const disRenk = disParca ? renkBul(disParca) : null;
-
- const fotografBul = (parcaAdi) => {
-  if (!parcaAdi) return null;
-  const aranan = parcaAdi.toLowerCase();
-  const tam = kiyafetler.find(k => k.ad?.toLowerCase() === aranan);
-  if (tam?.foto) return tam.foto;
-  const kismi = kiyafetler.find(k => {
-    const ad = k.ad?.toLowerCase() || '';
-    return aranan.includes(ad) || ad.includes(aranan) ||
-      aranan.split(' ').every(kelime => ad.includes(kelime));
-  });
-  return kismi?.foto || null;
-};
-
-const ustFoto = fotografBul(ustParca);
-const altFoto = fotografBul(altParca);
-const disFoto = fotografBul(disParca);
 
   return (
     <View style={av.container}>
@@ -84,30 +76,24 @@ const disFoto = fotografBul(disParca);
 
       {disParca && (
         <>
-          {disFoto ? (
-            <Image source={{ uri: disFoto }} style={av.disGovde} resizeMode="cover" />
-          ) : (
-            <View style={[av.disGovde, { backgroundColor: disRenk }]} />
-          )}
+          {disFoto
+            ? <Image source={{ uri: disFoto }} style={av.disGovde} resizeMode="cover" />
+            : <View style={[av.disGovde, { backgroundColor: disRenk }]} />}
           <View style={[av.disKolSol, { backgroundColor: disRenk }]} />
           <View style={[av.disKolSag, { backgroundColor: disRenk }]} />
         </>
       )}
 
-      {ustFoto ? (
-        <Image source={{ uri: ustFoto }} style={av.ust} resizeMode="cover" />
-      ) : (
-        <View style={[av.ust, { backgroundColor: ustRenk, borderWidth: ustRenk === '#F5F5F5' ? 1 : 0, borderColor: '#DDDDDD' }]} />
-      )}
+      {ustFoto
+        ? <Image source={{ uri: ustFoto }} style={av.ust} resizeMode="cover" />
+        : <View style={[av.ust, { backgroundColor: ustRenk, borderWidth: ustRenk === '#F0F0F0' ? 1 : 0, borderColor: '#DDD' }]} />}
 
       <View style={[av.kolSol, { backgroundColor: disRenk || ustRenk }]} />
       <View style={[av.kolSag, { backgroundColor: disRenk || ustRenk }]} />
 
-      {altFoto ? (
-        <Image source={{ uri: altFoto }} style={av.alt} resizeMode="cover" />
-      ) : (
-        <View style={[av.alt, { backgroundColor: altRenk }]} />
-      )}
+      {altFoto
+        ? <Image source={{ uri: altFoto }} style={av.alt} resizeMode="cover" />
+        : <View style={[av.alt, { backgroundColor: altRenk }]} />}
 
       <View style={[av.bacakSol, { backgroundColor: altRenk }]} />
       <View style={[av.bacakSag, { backgroundColor: altRenk }]} />
@@ -118,39 +104,43 @@ const disFoto = fotografBul(disParca);
 };
 
 export default function Outfits() {
+  const { t, renkler, dil } = useApp();
   const router = useRouter();
-  const [hava, setHava] = useState(null);
-  const [kombinler, setKombinler] = useState([]);
-  const [yukleniyor, setYukleniyor] = useState(true);
+  const [hava, setHava]               = useState(null);
+  const [kombinler, setKombinler]     = useState([]);
+  const [yukleniyor, setYukleniyor]   = useState(true);
+  const [hata, setHata]               = useState('');
   const [seciliIndex, setSeciliIndex] = useState(0);
-  const [profil, setProfil] = useState(null);
-  const [kiyafetListesi, setKiyafetListesi] = useState([]);
+  const [profil, setProfil]           = useState(null);
+  const [kiyafetler, setKiyafetler]   = useState([]);
 
-  useEffect(() => {
-    baslat();
-  }, []);
+  useEffect(() => { baslat(); }, []);
 
   const baslat = async () => {
+    setYukleniyor(true);
+    setHata('');
     try {
       const profilVeri = await AsyncStorage.getItem('xmobile_profil');
       if (profilVeri) setProfil(JSON.parse(profilVeri));
-      const havaVeri = await havaAl();
-      const kiyafetler = await kiyafetleriAl();
-      await kombinOner(havaVeri, kiyafetler);
+      const havaVeri  = await havaAl();
+      const kiyafetle = await kiyafetleriAl();
+      await kombinOner(havaVeri, kiyafetle);
     } catch (e) {
+      setHata('Bir hata oluştu. Tekrar dene.');
       setYukleniyor(false);
     }
   };
 
   const havaAl = async () => {
-    const res = await fetch(
+    const res  = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${SEHIR}&appid=${WEATHER_KEY}&units=metric&lang=tr`
     );
     const data = await res.json();
+    if (!data.main) throw new Error('Hava verisi alınamadı');
     const havaVeri = {
-      derece: Math.round(data.main.temp),
-      durum: data.weather[0].description,
-      nem: data.main.humidity,
+      derece:     Math.round(data.main.temp),
+      durum:      data.weather[0].description,
+      nem:        data.main.humidity,
       hissedilen: Math.round(data.main.feels_like),
     };
     setHava(havaVeri);
@@ -159,23 +149,32 @@ export default function Outfits() {
 
   const kiyafetleriAl = async () => {
     const kayitli = await AsyncStorage.getItem('xmobile_kiyafetler');
-    const liste = kayitli ? JSON.parse(kayitli) : [];
-    setKiyafetListesi(liste);
+    const liste   = kayitli ? JSON.parse(kayitli) : [];
+    setKiyafetler(liste);
     return liste;
   };
 
-  const kombinOner = async (havaVeri, kiyafetler) => {
-    const liste = kiyafetler
-      .map(k => `${k.ad} (${k.tur}, ${k.sezon})`)
-      .join(', ');
+  const kombinOner = async (havaVeri, liste) => {
+    if (liste.length === 0) {
+      setHata('Gardırobunda kıyafet yok. Önce kıyafet ekle.');
+      setYukleniyor(false);
+      return;
+    }
 
-    const prompt = `Sen bir kişisel stil danışmanısın.
-Hava durumu: ${havaVeri.derece}°C, ${havaVeri.durum}, hissedilen ${havaVeri.hissedilen}°C, nem %${havaVeri.nem}
-Gardırop: ${liste}
-Bu hava ve gardıroba göre 3 farklı kombin öner.
-ÖNEMLİ: parcalar listesinde SADECE yukarıdaki gardıropta verilen kıyafet isimlerini AYNEN kullan, değiştirme.
-Sadece JSON döndür:
-{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["gardıroptan aynen isim"],"neden":"1 cümle açıklama"}]}`;
+    const listeStr = liste.map(k => `${k.ad} (${k.tur}, ${k.sezon})`).join(', ');
+    const lang = dil === 'en' ? 'English' : 'Turkish';
+const jsonFormat = dil === 'en'
+  ? `{"kombinler":[{"baslik":"title","tur":"Work","parcalar":["item name"],"neden":"1 sentence explanation"}]}`
+  : `{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["kıyafet adı"],"neden":"1 cümle açıklama"}]}`;
+
+const prompt = `You are a personal style consultant. You MUST respond entirely in ${lang}. This is critical.
+Weather: ${havaVeri.derece}°C, ${havaVeri.durum}, feels like ${havaVeri.hissedilen}°C, humidity ${havaVeri.nem}%
+Wardrobe items: ${listeStr}
+Suggest 3 different outfit combinations for today based on the weather and wardrobe.
+IMPORTANT: In the "parcalar" array, use ONLY the exact item names from the wardrobe list above.
+The "tur" field must be one of: ${dil === 'en' ? 'Work, Casual, Social, Sport' : 'İş, Günlük, Sosyal, Spor'}
+Return ONLY valid JSON, nothing else:
+${jsonFormat}`;
 
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -192,16 +191,24 @@ Sadece JSON döndür:
           messages: [{ role: 'user', content: prompt }],
         }),
       });
+
       const data = await res.json();
-      if (data.content && data.content[0]) {
-        const metin = data.content[0].text;
+
+      if (data.error) {
+        setHata(`API Hatası: ${data.error.message}`);
+        setYukleniyor(false);
+        return;
+      }
+
+      if (data.content?.[0]?.text) {
+        const metin     = data.content[0].text;
         const baslangic = metin.indexOf('{');
-        const bitis = metin.lastIndexOf('}') + 1;
-        const parsed = JSON.parse(metin.slice(baslangic, bitis));
+        const bitis     = metin.lastIndexOf('}') + 1;
+        const parsed    = JSON.parse(metin.slice(baslangic, bitis));
         setKombinler(parsed.kombinler);
       }
     } catch (e) {
-      console.log('Hata:', e);
+      setHata(`Kombin oluşturulamadı: ${e.message}`);
     }
     setYukleniyor(false);
   };
@@ -209,96 +216,123 @@ Sadece JSON döndür:
   const havaIkon = () => {
     if (!hava) return '🌡️';
     const d = hava.durum.toLowerCase();
-    if (d.includes('yağmur') || d.includes('rain')) return '🌧️';
-    if (d.includes('kar') || d.includes('snow')) return '❄️';
-    if (d.includes('bulut') || d.includes('cloud')) return '⛅';
-    if (d.includes('açık') || d.includes('clear')) return '☀️';
+    if (d.includes('yağmur') || d.includes('rain'))  return '🌧️';
+    if (d.includes('kar')    || d.includes('snow'))  return '❄️';
+    if (d.includes('bulut')  || d.includes('cloud')) return '⛅';
+    if (d.includes('açık')   || d.includes('clear')) return '☀️';
     return '🌤️';
   };
 
   const seciliKombin = kombinler[seciliIndex];
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F9F9F9" />
+    <View style={[styles.container, { backgroundColor: renkler.bg2 }]}>
+      <StatusBar barStyle={renkler.statusBar} backgroundColor={renkler.bg} />
 
-      <View style={styles.header}>
+      {/* Header */}
+      <View style={[styles.header, { backgroundColor: renkler.bg, borderBottomColor: renkler.sinir }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.geri}>‹ Geri</Text>
+          <Text style={[styles.geri, { color: renkler.metin }]}>{t.geri}</Text>
         </TouchableOpacity>
-        <Text style={styles.baslik}>Bugünkü Kombinler</Text>
-        <View style={{ width: 50 }} />
+        <Text style={[styles.baslik, { color: renkler.metin }]}>{t.bugunkuKombinler}</Text>
+        <TouchableOpacity onPress={baslat}>
+          <Text style={[styles.yenile, { color: renkler.metin }]}>↺</Text>
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.havaDurumu}>
-        {!hava ? <ActivityIndicator color="#000" /> : (
+      {/* Hava Durumu */}
+      <View style={[styles.havaDurumu, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+        {!hava ? <ActivityIndicator color={renkler.metin} /> : (
           <>
             <Text style={styles.havaIkon}>{havaIkon()}</Text>
             <View style={{ flex: 1 }}>
-              <Text style={styles.havaDerece}>{hava.derece}°C</Text>
-              <Text style={styles.havaDurum}>{hava.durum}</Text>
+              <Text style={[styles.havaDerece, { color: renkler.metin }]}>{hava.derece}°C · {hava.durum}</Text>
+              <Text style={[styles.havaNot, { color: renkler.metin2 }]}>
+                {t.hissedilen} {hava.hissedilen}°C, {t.nem} %{hava.nem}
+              </Text>
             </View>
-            <Text style={styles.havaSehir}>İzmir</Text>
+            <Text style={[styles.havaSehir, { color: renkler.metin2 }]}>İzmir</Text>
           </>
         )}
       </View>
 
+      {/* İçerik */}
       {yukleniyor ? (
         <View style={styles.yukleniyor}>
-          <ActivityIndicator color="#000" size="large" />
-          <Text style={styles.yukleniyorText}>AI kombinlerinizi hazırlıyor...</Text>
+          <ActivityIndicator color={renkler.metin} size="large" />
+          <Text style={[styles.yukleniyorText, { color: renkler.metin2 }]}>{t.yukleniyorText}</Text>
+        </View>
+      ) : hata ? (
+        <View style={styles.hataKutu}>
+          <Text style={styles.hataIcon}>⚠️</Text>
+          <Text style={[styles.hataText, { color: renkler.metin2 }]}>{hata}</Text>
+          <TouchableOpacity style={[styles.tekrarBtn, { backgroundColor: renkler.btnPrimary }]} onPress={baslat}>
+            <Text style={[styles.tekrarBtnText, { color: renkler.btnPrimaryMetin }]}>{t.tekrarDene}</Text>
+          </TouchableOpacity>
         </View>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.avatarBolum}>
+
+          {/* Avatar + Bilgi */}
+          <View style={[styles.avatarBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
             {seciliKombin && (
               <AvatarKombin
                 kombin={seciliKombin}
                 profil={profil}
-                kiyafetler={kiyafetListesi}
+                kiyafetler={kiyafetler}
               />
             )}
             {seciliKombin && (
               <View style={styles.avatarBilgi}>
-                <Text style={styles.avatarBaslik}>{seciliKombin.baslik}</Text>
-                <View style={styles.avatarBadge}>
-                  <Text style={styles.avatarBadgeText}>{seciliKombin.tur}</Text>
+                <Text style={[styles.avatarBaslik, { color: renkler.metin }]}>{seciliKombin.baslik}</Text>
+                <View style={[styles.badge, { backgroundColor: renkler.chip }]}>
+                  <Text style={[styles.badgeText, { color: renkler.metin2 }]}>{seciliKombin.tur}</Text>
                 </View>
-                <Text style={styles.avatarNeden}>{seciliKombin.neden}</Text>
+                <Text style={[styles.avatarNeden, { color: renkler.metin2 }]}>{seciliKombin.neden}</Text>
               </View>
             )}
           </View>
 
+          {/* Seçici */}
           <View style={styles.seciciSatir}>
             {kombinler.map((k, i) => (
               <TouchableOpacity
                 key={i}
-                style={[styles.seciciBtn, seciliIndex === i && styles.seciciBtnSecili]}
+                style={[styles.seciciBtn, { backgroundColor: renkler.kart, borderColor: renkler.sinir },
+                  seciliIndex === i && { backgroundColor: renkler.btnPrimary, borderColor: renkler.btnPrimary }
+                ]}
                 onPress={() => setSeciliIndex(i)}
               >
-                <Text style={[styles.seciciBtnText, seciliIndex === i && styles.seciciBtnTextSecili]}>
+                <Text style={[styles.seciciBtnText, { color: renkler.metin2 },
+                  seciliIndex === i && { color: renkler.btnPrimaryMetin }
+                ]}>
                   {i + 1}. {k.tur}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
 
+          {/* Parçalar */}
           {seciliKombin && (
-            <View style={styles.parcalarBolum}>
-              <Text style={styles.parcalarBaslik}>Bu Kombin</Text>
+            <View style={[styles.parcalarBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+              <Text style={[styles.parcalarBaslik, { color: renkler.metin2 }]}>{t.buKombin}</Text>
               <View style={styles.parcalar}>
                 {seciliKombin.parcalar.map((p, i) => (
-                  <View key={i} style={styles.parcaChip}>
-                    <Text style={styles.parcaText}>{p}</Text>
+                  <View key={i} style={[styles.parcaChip, { backgroundColor: renkler.chip }]}>
+                    <Text style={[styles.parcaText, { color: renkler.metin }]}>{p}</Text>
                   </View>
                 ))}
               </View>
-              <TouchableOpacity style={styles.secButon}>
-                <Text style={styles.secButonText}>Bu Kombini Seç ✓</Text>
+              <TouchableOpacity
+                style={[styles.secButon, { backgroundColor: renkler.btnPrimary }]}
+                onPress={() => Alert.alert(`✓ ${t.kombinSecildi}`, `"${seciliKombin.baslik}" ${t.iyiGunler}`)}
+              >
+                <Text style={[styles.secButonText, { color: renkler.btnPrimaryMetin }]}>{t.buKombiniSec}</Text>
               </TouchableOpacity>
             </View>
           )}
-          <View style={{ height: 30 }} />
+
+          <View style={{ height: 40 }} />
         </ScrollView>
       )}
     </View>
@@ -306,75 +340,73 @@ Sadece JSON döndür:
 }
 
 const av = StyleSheet.create({
-  container: { width: 110, height: 200, position: 'relative' },
-  sac: { position: 'absolute', top: 0, left: 27, width: 56, height: 22, borderTopLeftRadius: 28, borderTopRightRadius: 28 },
-  bas: { position: 'absolute', top: 10, left: 27, width: 56, height: 50, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
-  gozSatir: { flexDirection: 'row', gap: 10, marginBottom: 6 },
-  goz: { width: 7, height: 7, borderRadius: 4 },
-  agiz: { width: 14, height: 3, borderRadius: 2, backgroundColor: 'rgba(0,0,0,0.25)' },
-  boyun: { position: 'absolute', top: 57, left: 47, width: 16, height: 10 },
-  disGovde: { position: 'absolute', top: 65, left: 14, width: 82, height: 60, borderRadius: 8 },
-  disKolSol: { position: 'absolute', top: 67, left: 0, width: 16, height: 50, borderRadius: 8 },
-  disKolSag: { position: 'absolute', top: 67, right: 0, width: 16, height: 50, borderRadius: 8 },
-  ust: { position: 'absolute', top: 65, left: 20, width: 70, height: 58, borderRadius: 6 },
-  kolSol: { position: 'absolute', top: 67, left: 4, width: 18, height: 48, borderRadius: 8 },
-  kolSag: { position: 'absolute', top: 67, right: 4, width: 18, height: 48, borderRadius: 8 },
-  alt: { position: 'absolute', top: 121, left: 20, width: 70, height: 45, borderRadius: 4 },
-  bacakSol: { position: 'absolute', top: 164, left: 20, width: 30, height: 22, borderRadius: 4 },
-  bacakSag: { position: 'absolute', top: 164, left: 60, width: 30, height: 22, borderRadius: 4 },
-  ayakSol: { position: 'absolute', top: 183, left: 16, width: 34, height: 12, borderRadius: 4, backgroundColor: '#1A1A1A' },
-  ayakSag: { position: 'absolute', top: 183, left: 56, width: 34, height: 12, borderRadius: 4, backgroundColor: '#1A1A1A' },
+  container:  { width: 110, height: 200, position: 'relative' },
+  sac:        { position: 'absolute', top: 0, left: 27, width: 56, height: 22, borderTopLeftRadius: 28, borderTopRightRadius: 28 },
+  bas:        { position: 'absolute', top: 10, left: 27, width: 56, height: 50, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
+  gozSatir:   { flexDirection: 'row', gap: 10, marginBottom: 6 },
+  goz:        { width: 7, height: 7, borderRadius: 4 },
+  agiz:       { width: 14, height: 3, borderRadius: 2, backgroundColor: 'rgba(0,0,0,0.25)' },
+  boyun:      { position: 'absolute', top: 57, left: 47, width: 16, height: 10 },
+  disGovde:   { position: 'absolute', top: 65, left: 14, width: 82, height: 60, borderRadius: 8 },
+  disKolSol:  { position: 'absolute', top: 67, left: 0,  width: 16, height: 50, borderRadius: 8 },
+  disKolSag:  { position: 'absolute', top: 67, right: 0, width: 16, height: 50, borderRadius: 8 },
+  ust:        { position: 'absolute', top: 65, left: 20, width: 70, height: 58, borderRadius: 6 },
+  kolSol:     { position: 'absolute', top: 67, left: 4,  width: 18, height: 48, borderRadius: 8 },
+  kolSag:     { position: 'absolute', top: 67, right: 4, width: 18, height: 48, borderRadius: 8 },
+  alt:        { position: 'absolute', top: 121, left: 20, width: 70, height: 45, borderRadius: 4 },
+  bacakSol:   { position: 'absolute', top: 164, left: 20, width: 30, height: 22, borderRadius: 4 },
+  bacakSag:   { position: 'absolute', top: 164, left: 60, width: 30, height: 22, borderRadius: 4 },
+  ayakSol:    { position: 'absolute', top: 183, left: 16, width: 34, height: 12, borderRadius: 4, backgroundColor: '#1A1A1A' },
+  ayakSag:    { position: 'absolute', top: 183, left: 56, width: 34, height: 12, borderRadius: 4, backgroundColor: '#1A1A1A' },
 });
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F9F9F9' },
+  container:      { flex: 1 },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     paddingHorizontal: 20, paddingTop: 60, paddingBottom: 16,
-    backgroundColor: '#FFFFFF', borderBottomWidth: 0.5, borderBottomColor: '#E5E5E5',
+    borderBottomWidth: 0.5,
   },
-  geri: { color: '#000000', fontSize: 20, fontWeight: '300' },
-  baslik: { color: '#000000', fontSize: 17, fontWeight: '600' },
+  geri:           { fontSize: 20, fontWeight: '300' },
+  baslik:         { fontSize: 17, fontWeight: '600' },
+  yenile:         { fontSize: 22, fontWeight: '300' },
   havaDurumu: {
-    flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF',
-    margin: 16, borderRadius: 14, padding: 16, borderWidth: 0.5, borderColor: '#EEEEEE',
-    gap: 12, minHeight: 72,
+    flexDirection: 'row', alignItems: 'center',
+    margin: 16, borderRadius: 14, padding: 16,
+    borderWidth: 0.5, gap: 12, minHeight: 72,
   },
-  havaIkon: { fontSize: 32 },
-  havaDerece: { fontSize: 20, fontWeight: '600', color: '#000000' },
-  havaDurum: { fontSize: 13, color: '#999999', marginTop: 2 },
-  havaSehir: { fontSize: 13, color: '#999999' },
-  yukleniyor: { alignItems: 'center', paddingVertical: 60, gap: 16 },
-  yukleniyorText: { color: '#999999', fontSize: 14 },
+  havaIkon:       { fontSize: 32 },
+  havaDerece:     { fontSize: 15, fontWeight: '600' },
+  havaNot:        { fontSize: 12, marginTop: 2 },
+  havaSehir:      { fontSize: 13 },
+  yukleniyor:     { alignItems: 'center', paddingVertical: 80, gap: 16 },
+  yukleniyorText: { fontSize: 14 },
+  hataKutu:       { alignItems: 'center', paddingVertical: 60, paddingHorizontal: 32, gap: 12 },
+  hataIcon:       { fontSize: 40 },
+  hataText:       { fontSize: 14, textAlign: 'center', lineHeight: 22 },
+  tekrarBtn:      { marginTop: 8, paddingHorizontal: 28, paddingVertical: 12, borderRadius: 12 },
+  tekrarBtnText:  { fontSize: 14, fontWeight: '600' },
   avatarBolum: {
-    backgroundColor: '#FFFFFF', marginHorizontal: 16, borderRadius: 14,
-    padding: 20, borderWidth: 0.5, borderColor: '#EEEEEE',
+    marginHorizontal: 16, borderRadius: 14,
+    padding: 20, borderWidth: 0.5,
     flexDirection: 'row', alignItems: 'center', gap: 20,
   },
-  avatarBilgi: { flex: 1 },
-  avatarBaslik: { fontSize: 17, fontWeight: '600', color: '#000000', marginBottom: 6 },
-  avatarBadge: {
-    backgroundColor: '#F5F5F5', borderRadius: 20,
-    paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start', marginBottom: 10,
-  },
-  avatarBadgeText: { fontSize: 11, color: '#666666' },
-  avatarNeden: { fontSize: 13, color: '#999999', lineHeight: 20 },
-  seciciSatir: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 12 },
-  seciciBtn: {
-    flex: 1, padding: 10, borderRadius: 10, backgroundColor: '#FFFFFF',
-    alignItems: 'center', borderWidth: 0.5, borderColor: '#EEEEEE',
-  },
-  seciciBtnSecili: { backgroundColor: '#000000', borderColor: '#000000' },
-  seciciBtnText: { fontSize: 12, color: '#666666', fontWeight: '500' },
-  seciciBtnTextSecili: { color: '#FFFFFF' },
+  avatarBilgi:    { flex: 1 },
+  avatarBaslik:   { fontSize: 17, fontWeight: '600', marginBottom: 6 },
+  badge:          { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start', marginBottom: 10 },
+  badgeText:      { fontSize: 11 },
+  avatarNeden:    { fontSize: 13, lineHeight: 20 },
+  seciciSatir:    { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 12 },
+  seciciBtn:      { flex: 1, padding: 10, borderRadius: 10, alignItems: 'center', borderWidth: 0.5 },
+  seciciBtnText:  { fontSize: 12, fontWeight: '500' },
   parcalarBolum: {
-    backgroundColor: '#FFFFFF', marginHorizontal: 16, marginTop: 12,
-    borderRadius: 14, padding: 18, borderWidth: 0.5, borderColor: '#EEEEEE',
+    marginHorizontal: 16, marginTop: 12,
+    borderRadius: 14, padding: 18, borderWidth: 0.5,
   },
-  parcalarBaslik: { fontSize: 13, color: '#999999', marginBottom: 10 },
-  parcalar: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
-  parcaChip: { backgroundColor: '#F5F5F5', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6 },
-  parcaText: { color: '#333333', fontSize: 13 },
-  secButon: { backgroundColor: '#000000', borderRadius: 10, padding: 14, alignItems: 'center' },
-  secButonText: { color: '#FFFFFF', fontSize: 14, fontWeight: '500' },
+  parcalarBaslik: { fontSize: 13, marginBottom: 10 },
+  parcalar:       { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
+  parcaChip:      { borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6 },
+  parcaText:      { fontSize: 13 },
+  secButon:       { borderRadius: 10, padding: 14, alignItems: 'center' },
+  secButonText:   { fontSize: 14, fontWeight: '500' },
 });
