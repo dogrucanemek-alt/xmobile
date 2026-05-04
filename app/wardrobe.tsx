@@ -139,15 +139,7 @@ export default function Wardrobe() {
               <Text style={styles.kiyafetAd}>{k.ad}</Text>
               <Text style={styles.kiyafetDetay}>{k.tur} · {k.sezon}</Text>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-  <TouchableOpacity
-    onPress={() => sil(k.id)}
-    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-  >
-    <Text style={{ fontSize: 22, color: '#FF3B30', fontWeight: '300' }}>−</Text>
-  </TouchableOpacity>
-  <Text style={styles.arrow}>›</Text>
-</View>
+            <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
