@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -25,9 +25,10 @@ const renkBul = (parcaAdi) => {
   return '#4A90D9';
 };
 
-const AvatarKombin = ({ kombin, profil }) => {
+const AvatarKombin = ({ kombin, profil, kiyafetler = [] }) => {
   const tenRengi = profil?.tenRengi || '#FDDBB4';
   const sacRengi = profil?.sacRengi || '#1A1A1A';
+  const gozRengi = profil?.gozRengi || '#6B3A2A';
 
   const ustParca = kombin.parcalar.find(p =>
     p.toLowerCase().includes('gömlek') || p.toLowerCase().includes('gomlek') ||
@@ -52,28 +53,62 @@ const AvatarKombin = ({ kombin, profil }) => {
   const altRenk = renkBul(altParca);
   const disRenk = disParca ? renkBul(disParca) : null;
 
+ const fotografBul = (parcaAdi) => {
+  if (!parcaAdi) return null;
+  const aranan = parcaAdi.toLowerCase();
+  const tam = kiyafetler.find(k => k.ad?.toLowerCase() === aranan);
+  if (tam?.foto) return tam.foto;
+  const kismi = kiyafetler.find(k => {
+    const ad = k.ad?.toLowerCase() || '';
+    return aranan.includes(ad) || ad.includes(aranan) ||
+      aranan.split(' ').every(kelime => ad.includes(kelime));
+  });
+  return kismi?.foto || null;
+};
+
+const ustFoto = fotografBul(ustParca);
+const altFoto = fotografBul(altParca);
+const disFoto = fotografBul(disParca);
+
   return (
     <View style={av.container}>
       <View style={[av.sac, { backgroundColor: sacRengi }]} />
       <View style={[av.bas, { backgroundColor: tenRengi }]}>
         <View style={av.gozSatir}>
-          <View style={av.goz} />
-          <View style={av.goz} />
+          <View style={[av.goz, { backgroundColor: gozRengi }]} />
+          <View style={[av.goz, { backgroundColor: gozRengi }]} />
         </View>
         <View style={av.agiz} />
       </View>
       <View style={[av.boyun, { backgroundColor: tenRengi }]} />
-      {disRenk && (
+
+      {disParca && (
         <>
-          <View style={[av.disGovde, { backgroundColor: disRenk }]} />
+          {disFoto ? (
+            <Image source={{ uri: disFoto }} style={av.disGovde} resizeMode="cover" />
+          ) : (
+            <View style={[av.disGovde, { backgroundColor: disRenk }]} />
+          )}
           <View style={[av.disKolSol, { backgroundColor: disRenk }]} />
           <View style={[av.disKolSag, { backgroundColor: disRenk }]} />
         </>
       )}
-      <View style={[av.ust, { backgroundColor: ustRenk, borderWidth: ustRenk === '#F5F5F5' ? 1 : 0, borderColor: '#DDDDDD' }]} />
+
+      {ustFoto ? (
+        <Image source={{ uri: ustFoto }} style={av.ust} resizeMode="cover" />
+      ) : (
+        <View style={[av.ust, { backgroundColor: ustRenk, borderWidth: ustRenk === '#F5F5F5' ? 1 : 0, borderColor: '#DDDDDD' }]} />
+      )}
+
       <View style={[av.kolSol, { backgroundColor: disRenk || ustRenk }]} />
       <View style={[av.kolSag, { backgroundColor: disRenk || ustRenk }]} />
-      <View style={[av.alt, { backgroundColor: altRenk }]} />
+
+      {altFoto ? (
+        <Image source={{ uri: altFoto }} style={av.alt} resizeMode="cover" />
+      ) : (
+        <View style={[av.alt, { backgroundColor: altRenk }]} />
+      )}
+
       <View style={[av.bacakSol, { backgroundColor: altRenk }]} />
       <View style={[av.bacakSag, { backgroundColor: altRenk }]} />
       <View style={av.ayakSol} />
@@ -89,6 +124,7 @@ export default function Outfits() {
   const [yukleniyor, setYukleniyor] = useState(true);
   const [seciliIndex, setSeciliIndex] = useState(0);
   const [profil, setProfil] = useState(null);
+  const [kiyafetListesi, setKiyafetListesi] = useState([]);
 
   useEffect(() => {
     baslat();
@@ -123,19 +159,23 @@ export default function Outfits() {
 
   const kiyafetleriAl = async () => {
     const kayitli = await AsyncStorage.getItem('xmobile_kiyafetler');
-    return kayitli ? JSON.parse(kayitli) : [];
+    const liste = kayitli ? JSON.parse(kayitli) : [];
+    setKiyafetListesi(liste);
+    return liste;
   };
 
   const kombinOner = async (havaVeri, kiyafetler) => {
-    const kiyafetListesi = kiyafetler
+    const liste = kiyafetler
       .map(k => `${k.ad} (${k.tur}, ${k.sezon})`)
       .join(', ');
 
     const prompt = `Sen bir kişisel stil danışmanısın.
 Hava durumu: ${havaVeri.derece}°C, ${havaVeri.durum}, hissedilen ${havaVeri.hissedilen}°C, nem %${havaVeri.nem}
-Gardırop: ${kiyafetListesi}
-Bu hava ve gardıropa göre 3 farklı kombin öner. Sadece JSON döndür:
-{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["kıyafet1","kıyafet2"],"neden":"1 cümle açıklama"}]}`;
+Gardırop: ${liste}
+Bu hava ve gardıroba göre 3 farklı kombin öner.
+ÖNEMLİ: parcalar listesinde SADECE yukarıdaki gardıropta verilen kıyafet isimlerini AYNEN kullan, değiştirme.
+Sadece JSON döndür:
+{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["gardıroptan aynen isim"],"neden":"1 cümle açıklama"}]}`;
 
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -155,9 +195,9 @@ Bu hava ve gardıropa göre 3 farklı kombin öner. Sadece JSON döndür:
       const data = await res.json();
       if (data.content && data.content[0]) {
         const metin = data.content[0].text;
-        const jsonBaslangic = metin.indexOf('{');
-        const jsonBitis = metin.lastIndexOf('}') + 1;
-        const parsed = JSON.parse(metin.slice(jsonBaslangic, jsonBitis));
+        const baslangic = metin.indexOf('{');
+        const bitis = metin.lastIndexOf('}') + 1;
+        const parsed = JSON.parse(metin.slice(baslangic, bitis));
         setKombinler(parsed.kombinler);
       }
     } catch (e) {
@@ -211,7 +251,13 @@ Bu hava ve gardıropa göre 3 farklı kombin öner. Sadece JSON döndür:
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.avatarBolum}>
-            {seciliKombin && <AvatarKombin kombin={seciliKombin} profil={profil} />}
+            {seciliKombin && (
+              <AvatarKombin
+                kombin={seciliKombin}
+                profil={profil}
+                kiyafetler={kiyafetListesi}
+              />
+            )}
             {seciliKombin && (
               <View style={styles.avatarBilgi}>
                 <Text style={styles.avatarBaslik}>{seciliKombin.baslik}</Text>
@@ -264,7 +310,7 @@ const av = StyleSheet.create({
   sac: { position: 'absolute', top: 0, left: 27, width: 56, height: 22, borderTopLeftRadius: 28, borderTopRightRadius: 28 },
   bas: { position: 'absolute', top: 10, left: 27, width: 56, height: 50, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
   gozSatir: { flexDirection: 'row', gap: 10, marginBottom: 6 },
-  goz: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#1A1A1A' },
+  goz: { width: 7, height: 7, borderRadius: 4 },
   agiz: { width: 14, height: 3, borderRadius: 2, backgroundColor: 'rgba(0,0,0,0.25)' },
   boyun: { position: 'absolute', top: 57, left: 47, width: 16, height: 10 },
   disGovde: { position: 'absolute', top: 65, left: 14, width: 82, height: 60, borderRadius: 8 },
