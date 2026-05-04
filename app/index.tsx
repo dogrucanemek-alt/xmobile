@@ -27,7 +27,17 @@ export default function Index() {
         >
           <Text style={styles.buttonText}>Başla</Text>
         </TouchableOpacity>
-        <Text style={styles.loginText}>Zaten hesabın var mı? <Text style={styles.loginLink}>Giriş yap</Text></Text>
+
+        <TouchableOpacity
+          style={styles.profilButon}
+          onPress={() => router.push('/profile')}
+        >
+          <Text style={styles.profilButonText}>Profilimi Ayarla →</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.loginText}>
+          Zaten hesabın var mı? <Text style={styles.loginLink}>Giriş yap</Text>
+        </Text>
       </View>
     </View>
   );
@@ -50,9 +60,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: -2,
     color: '#000000',
-    textShadowColor: '',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
   },
   middle: {
     flex: 1,
@@ -80,7 +87,7 @@ const styles = StyleSheet.create({
   bottom: {
     flex: 1,
     justifyContent: 'center',
-    gap: 16,
+    gap: 12,
   },
   button: {
     backgroundColor: '#000000',
@@ -93,6 +100,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     letterSpacing: 0.3,
+  },
+  profilButon: {
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+    borderWidth: 0.5,
+    borderColor: '#E5E5E5',
+  },
+  profilButonText: {
+    color: '#666666',
+    fontSize: 15,
   },
   loginText: {
     textAlign: 'center',

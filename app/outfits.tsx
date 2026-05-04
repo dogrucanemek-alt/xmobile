@@ -4,48 +4,80 @@ import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const WEATHER_KEY = '9dfe03744413ccb79c529c0a3f04847f';
-const CLAUDE_KEY = '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';
+const CLAUDE_KEY = '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';
 const SEHIR = 'Izmir,TR';
 
-const AvatarKombin = ({ kombin, index }) => {
-  const renkler = {
-    'Üst': '#4A90D9',
-    'Alt': '#2C3E50',
-    'Dış Giyim': '#8B7355',
-    'Ayakkabı': '#5D4037',
-    'Aksesuar': '#9B59B6',
-  };
+const renkBul = (parcaAdi) => {
+  const ad = (parcaAdi || '').toLowerCase();
+  if (ad.includes('beyaz')) return '#F5F5F5';
+  if (ad.includes('siyah')) return '#1A1A1A';
+  if (ad.includes('lacivert')) return '#1B2A4A';
+  if (ad.includes('mavi')) return '#2E6DA4';
+  if (ad.includes('kirmizi') || ad.includes('kırmızı')) return '#C0392B';
+  if (ad.includes('yesil') || ad.includes('yeşil')) return '#27AE60';
+  if (ad.includes('sari') || ad.includes('sarı')) return '#F1C40F';
+  if (ad.includes('gri')) return '#7F8C8D';
+  if (ad.includes('bej') || ad.includes('krem')) return '#D4B896';
+  if (ad.includes('kahve') || ad.includes('bordo')) return '#6B3A2A';
+  if (ad.includes('pembe')) return '#E91E8C';
+  if (ad.includes('turuncu')) return '#E67E22';
+  if (ad.includes('mor')) return '#8E44AD';
+  return '#4A90D9';
+};
+
+const AvatarKombin = ({ kombin, profil }) => {
+  const tenRengi = profil?.tenRengi || '#FDDBB4';
+  const sacRengi = profil?.sacRengi || '#1A1A1A';
+
+  const ustParca = kombin.parcalar.find(p =>
+    p.toLowerCase().includes('gömlek') || p.toLowerCase().includes('gomlek') ||
+    p.toLowerCase().includes('tişört') || p.toLowerCase().includes('tisort') ||
+    p.toLowerCase().includes('kazak') || p.toLowerCase().includes('bluz') ||
+    p.toLowerCase().includes('ceket')
+  ) || kombin.parcalar[0];
+
+  const altParca = kombin.parcalar.find(p =>
+    p.toLowerCase().includes('pantolon') || p.toLowerCase().includes('etek') ||
+    p.toLowerCase().includes('şort') || p.toLowerCase().includes('short') ||
+    p.toLowerCase().includes('jean')
+  ) || kombin.parcalar[1];
+
+  const disParca = kombin.parcalar.find(p =>
+    p.toLowerCase().includes('mont') || p.toLowerCase().includes('kaban') ||
+    p.toLowerCase().includes('trençkot') || p.toLowerCase().includes('trenkot') ||
+    p.toLowerCase().includes('yağmurluk') || p.toLowerCase().includes('yagmurluk')
+  );
+
+  const ustRenk = renkBul(ustParca);
+  const altRenk = renkBul(altParca);
+  const disRenk = disParca ? renkBul(disParca) : null;
 
   return (
-    <View style={avatar.container}>
-      {/* Baş */}
-      <View style={avatar.bas} />
-      {/* Boyun */}
-      <View style={avatar.boyun} />
-      {/* Üst giysi */}
-      <View style={[avatar.ust, { backgroundColor: renkler['Üst'] }]}>
-        <Text style={avatar.kiyafetYazi} numberOfLines={1}>
-          {kombin.parcalar.find(p => p.toLowerCase().includes('gömlek') || p.toLowerCase().includes('tişört') || p.toLowerCase().includes('ceket') || p.toLowerCase().includes('bluz') || p.toLowerCase().includes('kazak')) || kombin.parcalar[0] || ''}
-        </Text>
+    <View style={av.container}>
+      <View style={[av.sac, { backgroundColor: sacRengi }]} />
+      <View style={[av.bas, { backgroundColor: tenRengi }]}>
+        <View style={av.gozSatir}>
+          <View style={av.goz} />
+          <View style={av.goz} />
+        </View>
+        <View style={av.agiz} />
       </View>
-      {/* Kol sol */}
-      <View style={[avatar.kolSol, { backgroundColor: renkler['Üst'] }]} />
-      {/* Kol sağ */}
-      <View style={[avatar.kolSag, { backgroundColor: renkler['Üst'] }]} />
-      {/* Alt giysi */}
-      <View style={[avatar.alt, { backgroundColor: renkler['Alt'] }]}>
-        <Text style={avatar.kiyafetYazi} numberOfLines={1}>
-          {kombin.parcalar.find(p => p.toLowerCase().includes('pantolon') || p.toLowerCase().includes('etek') || p.toLowerCase().includes('şort') || p.toLowerCase().includes('jean')) || kombin.parcalar[1] || ''}
-        </Text>
-      </View>
-      {/* Bacak sol */}
-      <View style={[avatar.bacakSol, { backgroundColor: renkler['Alt'] }]} />
-      {/* Bacak sağ */}
-      <View style={[avatar.bacakSag, { backgroundColor: renkler['Alt'] }]} />
-      {/* Ayakkabı sol */}
-      <View style={avatar.ayakkabiSol} />
-      {/* Ayakkabı sağ */}
-      <View style={avatar.ayakkabiSag} />
+      <View style={[av.boyun, { backgroundColor: tenRengi }]} />
+      {disRenk && (
+        <>
+          <View style={[av.disGovde, { backgroundColor: disRenk }]} />
+          <View style={[av.disKolSol, { backgroundColor: disRenk }]} />
+          <View style={[av.disKolSag, { backgroundColor: disRenk }]} />
+        </>
+      )}
+      <View style={[av.ust, { backgroundColor: ustRenk, borderWidth: ustRenk === '#F5F5F5' ? 1 : 0, borderColor: '#DDDDDD' }]} />
+      <View style={[av.kolSol, { backgroundColor: disRenk || ustRenk }]} />
+      <View style={[av.kolSag, { backgroundColor: disRenk || ustRenk }]} />
+      <View style={[av.alt, { backgroundColor: altRenk }]} />
+      <View style={[av.bacakSol, { backgroundColor: altRenk }]} />
+      <View style={[av.bacakSag, { backgroundColor: altRenk }]} />
+      <View style={av.ayakSol} />
+      <View style={av.ayakSag} />
     </View>
   );
 };
@@ -56,6 +88,7 @@ export default function Outfits() {
   const [kombinler, setKombinler] = useState([]);
   const [yukleniyor, setYukleniyor] = useState(true);
   const [seciliIndex, setSeciliIndex] = useState(0);
+  const [profil, setProfil] = useState(null);
 
   useEffect(() => {
     baslat();
@@ -63,6 +96,8 @@ export default function Outfits() {
 
   const baslat = async () => {
     try {
+      const profilVeri = await AsyncStorage.getItem('xmobile_profil');
+      if (profilVeri) setProfil(JSON.parse(profilVeri));
       const havaVeri = await havaAl();
       const kiyafetler = await kiyafetleriAl();
       await kombinOner(havaVeri, kiyafetler);
@@ -117,7 +152,6 @@ Bu hava ve gardıropa göre 3 farklı kombin öner. Sadece JSON döndür:
           messages: [{ role: 'user', content: prompt }],
         }),
       });
-
       const data = await res.json();
       if (data.content && data.content[0]) {
         const metin = data.content[0].text;
@@ -156,7 +190,6 @@ Bu hava ve gardıropa göre 3 farklı kombin öner. Sadece JSON döndür:
         <View style={{ width: 50 }} />
       </View>
 
-      {/* Hava Durumu */}
       <View style={styles.havaDurumu}>
         {!hava ? <ActivityIndicator color="#000" /> : (
           <>
@@ -176,10 +209,9 @@ Bu hava ve gardıropa göre 3 farklı kombin öner. Sadece JSON döndür:
           <Text style={styles.yukleniyorText}>AI kombinlerinizi hazırlıyor...</Text>
         </View>
       ) : (
-        <>
-          {/* Avatar Bölümü */}
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.avatarBolum}>
-            {seciliKombin && <AvatarKombin kombin={seciliKombin} index={seciliIndex} />}
+            {seciliKombin && <AvatarKombin kombin={seciliKombin} profil={profil} />}
             {seciliKombin && (
               <View style={styles.avatarBilgi}>
                 <Text style={styles.avatarBaslik}>{seciliKombin.baslik}</Text>
@@ -191,7 +223,6 @@ Bu hava ve gardıropa göre 3 farklı kombin öner. Sadece JSON döndür:
             )}
           </View>
 
-          {/* Kombin Seçici */}
           <View style={styles.seciciSatir}>
             {kombinler.map((k, i) => (
               <TouchableOpacity
@@ -206,7 +237,6 @@ Bu hava ve gardıropa göre 3 farklı kombin öner. Sadece JSON döndür:
             ))}
           </View>
 
-          {/* Parçalar */}
           {seciliKombin && (
             <View style={styles.parcalarBolum}>
               <Text style={styles.parcalarBaslik}>Bu Kombin</Text>
@@ -222,116 +252,32 @@ Bu hava ve gardıropa göre 3 farklı kombin öner. Sadece JSON döndür:
               </TouchableOpacity>
             </View>
           )}
-        </>
+          <View style={{ height: 30 }} />
+        </ScrollView>
       )}
     </View>
   );
 }
 
-const avatar = StyleSheet.create({
-  container: {
-    width: 120,
-    height: 200,
-    position: 'relative',
-    alignSelf: 'center',
-  },
-  bas: {
-    position: 'absolute',
-    top: 0,
-    left: 42,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#F5D0A9',
-    borderWidth: 1,
-    borderColor: '#E0B899',
-  },
-  boyun: {
-    position: 'absolute',
-    top: 33,
-    left: 52,
-    width: 16,
-    height: 10,
-    backgroundColor: '#F5D0A9',
-  },
-  ust: {
-    position: 'absolute',
-    top: 42,
-    left: 28,
-    width: 64,
-    height: 55,
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 4,
-  },
-  kolSol: {
-    position: 'absolute',
-    top: 44,
-    left: 10,
-    width: 20,
-    height: 48,
-    borderRadius: 8,
-  },
-  kolSag: {
-    position: 'absolute',
-    top: 44,
-    right: 10,
-    width: 20,
-    height: 48,
-    borderRadius: 8,
-  },
-  alt: {
-    position: 'absolute',
-    top: 95,
-    left: 28,
-    width: 64,
-    height: 60,
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 4,
-  },
-  bacakSol: {
-    position: 'absolute',
-    top: 153,
-    left: 28,
-    width: 28,
-    height: 35,
-    borderRadius: 4,
-  },
-  bacakSag: {
-    position: 'absolute',
-    top: 153,
-    left: 64,
-    width: 28,
-    height: 35,
-    borderRadius: 4,
-  },
-  ayakkabiSol: {
-    position: 'absolute',
-    top: 185,
-    left: 24,
-    width: 32,
-    height: 12,
-    borderRadius: 4,
-    backgroundColor: '#2C2C2C',
-  },
-  ayakkabiSag: {
-    position: 'absolute',
-    top: 185,
-    left: 60,
-    width: 32,
-    height: 12,
-    borderRadius: 4,
-    backgroundColor: '#2C2C2C',
-  },
-  kiyafetYazi: {
-    fontSize: 7,
-    color: '#FFFFFF',
-    textAlign: 'center',
-    fontWeight: '500',
-  },
+const av = StyleSheet.create({
+  container: { width: 110, height: 200, position: 'relative' },
+  sac: { position: 'absolute', top: 0, left: 27, width: 56, height: 22, borderTopLeftRadius: 28, borderTopRightRadius: 28 },
+  bas: { position: 'absolute', top: 10, left: 27, width: 56, height: 50, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
+  gozSatir: { flexDirection: 'row', gap: 10, marginBottom: 6 },
+  goz: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#1A1A1A' },
+  agiz: { width: 14, height: 3, borderRadius: 2, backgroundColor: 'rgba(0,0,0,0.25)' },
+  boyun: { position: 'absolute', top: 57, left: 47, width: 16, height: 10 },
+  disGovde: { position: 'absolute', top: 65, left: 14, width: 82, height: 60, borderRadius: 8 },
+  disKolSol: { position: 'absolute', top: 67, left: 0, width: 16, height: 50, borderRadius: 8 },
+  disKolSag: { position: 'absolute', top: 67, right: 0, width: 16, height: 50, borderRadius: 8 },
+  ust: { position: 'absolute', top: 65, left: 20, width: 70, height: 58, borderRadius: 6 },
+  kolSol: { position: 'absolute', top: 67, left: 4, width: 18, height: 48, borderRadius: 8 },
+  kolSag: { position: 'absolute', top: 67, right: 4, width: 18, height: 48, borderRadius: 8 },
+  alt: { position: 'absolute', top: 121, left: 20, width: 70, height: 45, borderRadius: 4 },
+  bacakSol: { position: 'absolute', top: 164, left: 20, width: 30, height: 22, borderRadius: 4 },
+  bacakSag: { position: 'absolute', top: 164, left: 60, width: 30, height: 22, borderRadius: 4 },
+  ayakSol: { position: 'absolute', top: 183, left: 16, width: 34, height: 12, borderRadius: 4, backgroundColor: '#1A1A1A' },
+  ayakSag: { position: 'absolute', top: 183, left: 56, width: 34, height: 12, borderRadius: 4, backgroundColor: '#1A1A1A' },
 });
 
 const styles = StyleSheet.create({
@@ -344,9 +290,9 @@ const styles = StyleSheet.create({
   geri: { color: '#000000', fontSize: 20, fontWeight: '300' },
   baslik: { color: '#000000', fontSize: 17, fontWeight: '600' },
   havaDurumu: {
-    flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#FFFFFF', margin: 16, borderRadius: 14,
-    padding: 16, borderWidth: 0.5, borderColor: '#EEEEEE', gap: 12, minHeight: 72,
+    flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF',
+    margin: 16, borderRadius: 14, padding: 16, borderWidth: 0.5, borderColor: '#EEEEEE',
+    gap: 12, minHeight: 72,
   },
   havaIkon: { fontSize: 32 },
   havaDerece: { fontSize: 20, fontWeight: '600', color: '#000000' },
@@ -367,9 +313,7 @@ const styles = StyleSheet.create({
   },
   avatarBadgeText: { fontSize: 11, color: '#666666' },
   avatarNeden: { fontSize: 13, color: '#999999', lineHeight: 20 },
-  seciciSatir: {
-    flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 12,
-  },
+  seciciSatir: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 12 },
   seciciBtn: {
     flex: 1, padding: 10, borderRadius: 10, backgroundColor: '#FFFFFF',
     alignItems: 'center', borderWidth: 0.5, borderColor: '#EEEEEE',
@@ -383,14 +327,8 @@ const styles = StyleSheet.create({
   },
   parcalarBaslik: { fontSize: 13, color: '#999999', marginBottom: 10 },
   parcalar: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
-  parcaChip: {
-    backgroundColor: '#F5F5F5', borderRadius: 20,
-    paddingHorizontal: 12, paddingVertical: 6,
-  },
+  parcaChip: { backgroundColor: '#F5F5F5', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6 },
   parcaText: { color: '#333333', fontSize: 13 },
-  secButon: {
-    backgroundColor: '#000000', borderRadius: 10,
-    padding: 14, alignItems: 'center',
-  },
+  secButon: { backgroundColor: '#000000', borderRadius: 10, padding: 14, alignItems: 'center' },
   secButonText: { color: '#FFFFFF', fontSize: 14, fontWeight: '500' },
 });
