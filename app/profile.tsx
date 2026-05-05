@@ -40,7 +40,7 @@ export default function Profile() {
   const [kilo,        setKilo]        = useState('70');
   const [cinsiyet,    setCinsiyet]    = useState('Erkek');
   const [profilFoto,  setProfilFoto]  = useState<string | null>(null);
-  const [avatarUrl,   setAvatarUrl]   = useState<string | null>(null);
+  const [sacStili,    setSacStili]    = useState('orta');
 
   useEffect(() => { yukle(); }, []);
 
@@ -56,7 +56,7 @@ export default function Profile() {
         setKilo(p.kilo             || '70');
         setCinsiyet(p.cinsiyet     || 'Erkek');
         setProfilFoto(p.profilFoto || null);
-        setAvatarUrl(p.avatarUrl   || null);
+        setSacStili(p.sacStili     || 'orta');
       }
     } catch (e) {}
   };
@@ -66,7 +66,7 @@ export default function Profile() {
       Alert.alert(dil === 'en' ? 'Missing Info' : 'Eksik Bilgi', dil === 'en' ? 'Please enter height and weight.' : 'Boy ve kilo alanlarını doldurun.');
       return;
     }
-    const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, ...(avatarUrl ? { avatarUrl } : {}) };
+    const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili };
     await AsyncStorage.setItem(PROFIL_KEY, JSON.stringify(profil));
     Alert.alert(
       dil === 'en' ? 'Saved ✓' : 'Kaydedildi ✓',
@@ -160,9 +160,7 @@ export default function Profile() {
             onPress={() => router.push('/avatar')}
           >
             <Text style={[styles.fotoBtnText, { color: renkler.metin }]}>
-              {avatarUrl
-                ? (dil === 'en' ? '🧍 Edit Avatar' : '🧍 Avatarı Düzenle')
-                : (dil === 'en' ? '🧍 Create Avatar' : '🧍 Avatar Oluştur')}
+              {dil === 'en' ? '🧍 Edit Avatar' : '🧍 Avatarı Düzenle'}
             </Text>
           </TouchableOpacity>
         </View>

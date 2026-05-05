@@ -107,6 +107,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
   const sacRengi = profil?.sacRengi ?? '#3D2314';
   const gozRengi = profil?.gozRengi ?? '#5C3D2E';
   const kadin    = profil?.cinsiyet === 'Kadın';
+  const uzunSac  = (profil?.sacStili ?? (kadin ? 'uzun' : 'orta')) === 'uzun';
 
   const parcaEsle = (anahtar: string[]): string | null =>
     kombin.parcalar.find(p => anahtar.some(k => p.toLowerCase().includes(k))) ?? null;
@@ -166,7 +167,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
       <Ellipse cx={100} cy={392} rx={58} ry={7} fill="rgba(0,0,0,0.10)" />
 
       {/* ── SAÇ ARKA ── */}
-      {kadin ? (
+      {uzunSac ? (
         <Path
           d="M 44 110 C 40 48, 160 48, 156 110 L 162 238 C 155 263, 45 263, 38 238 Z"
           fill={sacRengi}
@@ -217,7 +218,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
 
       {/* ── SAÇ ÖN KAPAK ── */}
       <Path d="M 44 80 C 44 44, 156 44, 156 80 C 140 62, 60 62, 44 80 Z" fill={sacRengi} />
-      {kadin && (
+      {uzunSac && (
         <>
           <Path d="M 44 110 C 34 158, 32 200, 34 228"
             stroke={sacRengi} strokeWidth={14} fill="none" strokeLinecap="round" />

@@ -14,6 +14,7 @@ export interface Profil {
   kilo: string;
   cinsiyet: string;
   profilFoto: string | null;
+  sacStili?: string;
   avatarUrl?: string;
 }
 
