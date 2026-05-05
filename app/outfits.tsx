@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {
   Text, View, StyleSheet, StatusBar, TouchableOpacity,
-  ScrollView, ActivityIndicator, Image, Alert
+  ScrollView, ActivityIndicator, Alert
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Svg, {
+  Circle, Rect, Path, Ellipse,
+  ClipPath, Defs, Image as SvgImage,
+} from 'react-native-svg';
 import { useApp } from '../lib/context';
 import type { Kiyafet, Kombin, HavaDurumu, Profil } from '../lib/types';
 
@@ -30,21 +34,25 @@ const renkBul = (parcaAdi: string | null): string => {
   return '#4A90D9';
 };
 
-interface AvatarKombinProps {
+interface AvatarProps {
   kombin: Kombin;
   profil: Profil | null;
   kiyafetler: Kiyafet[];
 }
 
-const AvatarKombin = React.memo(function AvatarKombin({ kombin, profil, kiyafetler }: AvatarKombinProps) {
+// viewBox koordinat sistemi (iç çizim alanı)
+const W = 200, H = 400;
+// Ekranda gösterim boyutu (küçük, row layout için)
+const DISP_W = 120, DISP_H = 240;
+
+const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: AvatarProps) {
   const tenRengi = profil?.tenRengi ?? '#FDDBB4';
-  const sacRengi = profil?.sacRengi ?? '#1A1A1A';
-  const gozRengi = profil?.gozRengi ?? '#6B3A2A';
+  const sacRengi = profil?.sacRengi ?? '#3D2314';
+  const gozRengi = profil?.gozRengi ?? '#5C3D2E';
+  const kadin    = profil?.cinsiyet === 'Kadın';
 
   const parcaEsle = (anahtar: string[]): string | null =>
-    kombin.parcalar.find(p =>
-      anahtar.some(k => p.toLowerCase().includes(k))
-    ) ?? null;
+    kombin.parcalar.find(p => anahtar.some(k => p.toLowerCase().includes(k))) ?? null;
 
   const fotografBul = (parcaAdi: string | null): string | null => {
     if (!parcaAdi) return null;
@@ -58,62 +66,168 @@ const AvatarKombin = React.memo(function AvatarKombin({ kombin, profil, kiyafetl
     return kismi?.foto ?? null;
   };
 
-  const ustParca = parcaEsle(['gömlek', 'gomlek', 'tişört', 'tisort', 'kazak', 'bluz', 'ceket']);
-  const altParca = parcaEsle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım']);
-  const disParca = parcaEsle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk']);
+  const disParca  = parcaEsle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk', 'hırka', 'hirka']);
+  const ustParca  = parcaEsle(['gömlek', 'gomlek', 'tişört', 'tisort', 'kazak', 'bluz', 'ceket', 'sweatshirt', 'hoodie']);
+  const altParca  = parcaEsle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım', 'elbise']);
+  const ayakParca = parcaEsle(['ayakkabı', 'ayakkabi', 'bot', 'sneaker', 'loafer', 'sandalet', 'çizme', 'cizme']);
 
-  const ustFoto = fotografBul(ustParca);
-  const altFoto = fotografBul(altParca);
-  const disFoto = fotografBul(disParca);
-  const ustRenk = renkBul(ustParca);
-  const altRenk = renkBul(altParca);
-  const disRenk = disParca ? renkBul(disParca) : null;
+  const ust      = disParca ?? ustParca;
+  const ustFoto  = fotografBul(ust);
+  const altFoto  = fotografBul(altParca);
+  const ustRenk  = renkBul(ust);
+  const altRenk  = renkBul(altParca);
+  const ayakRenk = renkBul(ayakParca) ?? '#1A1A1A';
+
+  // Koordinat düzeni:
+  // Kafa:   cy=110  (rx=56 ry=62)  →  y=48..172
+  // Boyun:  y=168..188
+  // Gövde:  y=186..274
+  // Kalça:  y=272..294
+  // Bacak:  y=291..365
+  // Ayak:   y=362..382
 
   return (
-    <View style={av.container}>
+    <Svg width={DISP_W} height={DISP_H} viewBox={`0 0 ${W} ${H}`}>
+      <Defs>
+        <ClipPath id="avcHeadClip">
+          <Ellipse cx={100} cy={110} rx={56} ry={62} />
+        </ClipPath>
+        <ClipPath id="avcUstClip">
+          <Rect x={22}  y={184} width={28}  height={82} rx={12} />
+          <Rect x={50}  y={184} width={100} height={90} rx={12} />
+          <Rect x={150} y={184} width={28}  height={82} rx={12} />
+        </ClipPath>
+        <ClipPath id="avcAltClip">
+          {/* Tek renk blok — П görüntüsünü gidermek için hip+bacakları birleştir */}
+          <Rect x={50}  y={270} width={100} height={96} rx={4} />
+          <Rect x={50}  y={358} width={46}  height={10} rx={4} />
+          <Rect x={104} y={358} width={46}  height={10} rx={4} />
+        </ClipPath>
+      </Defs>
+
+      {/* Zemin gölgesi */}
+      <Ellipse cx={100} cy={392} rx={58} ry={7} fill="rgba(0,0,0,0.10)" />
+
+      {/* ── SAÇ ARKA ── */}
+      {kadin ? (
+        <Path
+          d="M 44 110 C 40 48, 160 48, 156 110 L 162 238 C 155 263, 45 263, 38 238 Z"
+          fill={sacRengi}
+        />
+      ) : (
+        <Path d="M 44 110 C 40 48, 160 48, 156 110" fill={sacRengi} />
+      )}
+
+      {/* ── BAŞ ── */}
+      <Ellipse cx={100} cy={110} rx={56} ry={62} fill={tenRengi} />
+
+      {/* Kulaklar */}
+      <Ellipse cx={44}  cy={114} rx={8} ry={10} fill={tenRengi} />
+      <Ellipse cx={156} cy={114} rx={8} ry={10} fill={tenRengi} />
+      <Ellipse cx={44}  cy={114} rx={5} ry={6}  fill="rgba(0,0,0,0.07)" />
+      <Ellipse cx={156} cy={114} rx={5} ry={6}  fill="rgba(0,0,0,0.07)" />
+
+      {/* Profil fotoğrafı VEYA çizgi yüz */}
       {profil?.profilFoto ? (
-        <Image source={{ uri: profil.profilFoto }} style={av.yuzFoto} resizeMode="cover" />
+        <SvgImage
+          x={44} y={48} width={112} height={124}
+          href={profil.profilFoto}
+          clipPath="url(#avcHeadClip)"
+          preserveAspectRatio="xMidYMid slice"
+        />
       ) : (
         <>
-          <View style={[av.sac, { backgroundColor: sacRengi }]} />
-          <View style={[av.bas, { backgroundColor: tenRengi }]}>
-            <View style={av.gozSatir}>
-              <View style={[av.goz, { backgroundColor: gozRengi }]} />
-              <View style={[av.goz, { backgroundColor: gozRengi }]} />
-            </View>
-            <View style={av.agiz} />
-          </View>
+          <Ellipse cx={68}  cy={124} rx={13} ry={9} fill="rgba(255,120,100,0.18)" />
+          <Ellipse cx={132} cy={124} rx={13} ry={9} fill="rgba(255,120,100,0.18)" />
+          <Path d="M 76 88 Q 86 82 96 88"
+            stroke={sacRengi} strokeWidth={3} fill="none" strokeLinecap="round" />
+          <Path d="M 104 88 Q 114 82 124 88"
+            stroke={sacRengi} strokeWidth={3} fill="none" strokeLinecap="round" />
+          <Ellipse cx={86}  cy={100} rx={11} ry={11} fill="white" />
+          <Ellipse cx={114} cy={100} rx={11} ry={11} fill="white" />
+          <Circle  cx={86}  cy={101} r={7}   fill={gozRengi} />
+          <Circle  cx={114} cy={101} r={7}   fill={gozRengi} />
+          <Circle  cx={86}  cy={101} r={3.5} fill="#111" />
+          <Circle  cx={114} cy={101} r={3.5} fill="#111" />
+          <Circle  cx={88}  cy={97}  r={2.5} fill="white" />
+          <Circle  cx={116} cy={97}  r={2.5} fill="white" />
+          <Path d="M 97 112 Q 95 122 97 124 Q 100 127 103 124 Q 105 122 103 112"
+            fill="none" stroke="rgba(0,0,0,0.13)" strokeWidth={1.8} strokeLinecap="round" />
+          <Path d="M 88 132 Q 100 143 112 132"
+            stroke="#D4706C" strokeWidth={3} fill="none" strokeLinecap="round" />
         </>
       )}
 
-      <View style={[av.boyun, { backgroundColor: tenRengi }]} />
-
-      {disParca && (
+      {/* ── SAÇ ÖN KAPAK ── */}
+      <Path d="M 44 80 C 44 44, 156 44, 156 80 C 140 62, 60 62, 44 80 Z" fill={sacRengi} />
+      {kadin && (
         <>
-          {disFoto
-            ? <Image source={{ uri: disFoto }} style={av.disGovde} resizeMode="cover" />
-            : <View style={[av.disGovde, { backgroundColor: disRenk ?? undefined }]} />}
-          <View style={[av.disKolSol, { backgroundColor: disRenk ?? undefined }]} />
-          <View style={[av.disKolSag, { backgroundColor: disRenk ?? undefined }]} />
+          <Path d="M 44 110 C 34 158, 32 200, 34 228"
+            stroke={sacRengi} strokeWidth={14} fill="none" strokeLinecap="round" />
+          <Path d="M 156 110 C 166 158, 168 200, 166 228"
+            stroke={sacRengi} strokeWidth={14} fill="none" strokeLinecap="round" />
         </>
       )}
 
-      {ustFoto
-        ? <Image source={{ uri: ustFoto }} style={av.ust} resizeMode="cover" />
-        : <View style={[av.ust, { backgroundColor: ustRenk, borderWidth: ustRenk === '#F0F0F0' ? 1 : 0, borderColor: '#DDD' }]} />}
+      {/* ── BOYUN ── */}
+      <Rect x={88} y={168} width={24} height={20} fill={tenRengi} />
 
-      <View style={[av.kolSol, { backgroundColor: disRenk ?? ustRenk }]} />
-      <View style={[av.kolSag, { backgroundColor: disRenk ?? ustRenk }]} />
+      {/* ── VÜCUT DERİ ── */}
+      <Rect x={50}  y={186} width={100} height={88} rx={12} fill={tenRengi} />
+      <Rect x={22}  y={188} width={28}  height={80} rx={12} fill={tenRengi} />
+      <Rect x={150} y={188} width={28}  height={80} rx={12} fill={tenRengi} />
+      <Ellipse cx={36}  cy={271} rx={16} ry={13} fill={tenRengi} />
+      <Ellipse cx={164} cy={271} rx={16} ry={13} fill={tenRengi} />
+      {/* Kalça + bacaklar tek blok (П engeli) */}
+      <Rect x={50}  y={272} width={100} height={94} rx={4}  fill={tenRengi} />
+      <Rect x={50}  y={362} width={46}  height={6}  rx={4}  fill={tenRengi} />
+      <Rect x={104} y={362} width={46}  height={6}  rx={4}  fill={tenRengi} />
 
-      {altFoto
-        ? <Image source={{ uri: altFoto }} style={av.alt} resizeMode="cover" />
-        : <View style={[av.alt, { backgroundColor: altRenk }]} />}
+      {/* ── ÜST GİYSİ ── */}
+      {ustFoto ? (
+        <SvgImage
+          x={22} y={184} width={156} height={92}
+          href={ustFoto}
+          clipPath="url(#avcUstClip)"
+          preserveAspectRatio="xMidYMid slice"
+        />
+      ) : (
+        <>
+          <Rect x={50}  y={186} width={100} height={88} rx={12} fill={ustRenk} />
+          <Rect x={22}  y={188} width={28}  height={80} rx={12} fill={ustRenk} />
+          <Rect x={150} y={188} width={28}  height={80} rx={12} fill={ustRenk} />
+          <Path d="M 88 188 Q 100 202 112 188"
+            fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth={2} />
+        </>
+      )}
 
-      <View style={[av.bacakSol, { backgroundColor: altRenk }]} />
-      <View style={[av.bacakSag, { backgroundColor: altRenk }]} />
-      <View style={av.ayakSol} />
-      <View style={av.ayakSag} />
-    </View>
+      {/* Bilekler */}
+      <Rect x={22}  y={256} width={28} height={14} fill={tenRengi} />
+      <Rect x={150} y={256} width={28} height={14} fill={tenRengi} />
+
+      {/* ── ALT GİYSİ (kalça + bacaklar tek blok renk) ── */}
+      {altFoto ? (
+        <SvgImage
+          x={42} y={270} width={116} height={98}
+          href={altFoto}
+          clipPath="url(#avcAltClip)"
+          preserveAspectRatio="xMidYMid slice"
+        />
+      ) : (
+        <>
+          {/* Tek solid renk blok — П yok */}
+          <Rect x={50}  y={272} width={100} height={92} rx={6} fill={altRenk} />
+          {/* Bacak ayrım çizgisi (ince, doğal görünüm) */}
+          <Rect x={98}  y={296} width={4}   height={68} fill="rgba(0,0,0,0.12)" />
+        </>
+      )}
+
+      {/* ── AYAKKABI ── */}
+      <Rect x={38}  y={360} width={62} height={22} rx={9} fill={ayakRenk} />
+      <Rect x={100} y={360} width={62} height={22} rx={9} fill={ayakRenk} />
+      <Rect x={38}  y={375} width={62} height={7}  rx={4} fill="rgba(0,0,0,0.28)" />
+      <Rect x={100} y={375} width={62} height={7}  rx={4} fill="rgba(0,0,0,0.28)" />
+    </Svg>
   );
 });
 
@@ -164,7 +278,7 @@ export default function Outfits() {
       ]);
       if (profilStr) setProfil(JSON.parse(profilStr));
       await kombinOner(havaVeri, kiyafetle);
-    } catch (e) {
+    } catch {
       setHata('Bir hata oluştu. Tekrar dene.');
       setYukleniyor(false);
     }
@@ -177,8 +291,8 @@ export default function Outfits() {
       return;
     }
 
-    const listeStr  = liste.map(k => `${k.ad} (${k.tur}, ${k.sezon})`).join(', ');
-    const lang      = dil === 'en' ? 'English' : 'Turkish';
+    const listeStr   = liste.map(k => `${k.ad} (${k.tur}, ${k.sezon})`).join(', ');
+    const lang       = dil === 'en' ? 'English' : 'Turkish';
     const jsonFormat = dil === 'en'
       ? `{"kombinler":[{"baslik":"title","tur":"Work","parcalar":["item name"],"neden":"1 sentence explanation"}]}`
       : `{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["kıyafet adı"],"neden":"1 cümle açıklama"}]}`;
@@ -288,15 +402,17 @@ ${jsonFormat}`;
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={[styles.avatarBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
             {seciliKombin && (
-              <AvatarKombin kombin={seciliKombin} profil={profil} kiyafetler={kiyafetler} />
-            )}
-            {seciliKombin && (
-              <View style={styles.avatarBilgi}>
-                <Text style={[styles.avatarBaslik, { color: renkler.metin }]}>{seciliKombin.baslik}</Text>
-                <View style={[styles.badge, { backgroundColor: renkler.chip }]}>
-                  <Text style={[styles.badgeText, { color: renkler.metin2 }]}>{seciliKombin.tur}</Text>
+              <View style={styles.avatarSatir}>
+                <View style={{ width: DISP_W, height: DISP_H }}>
+                  <AvatarSVG kombin={seciliKombin} profil={profil} kiyafetler={kiyafetler} />
                 </View>
-                <Text style={[styles.avatarNeden, { color: renkler.metin2 }]}>{seciliKombin.neden}</Text>
+                <View style={styles.avatarBilgi}>
+                  <Text style={[styles.avatarBaslik, { color: renkler.metin }]}>{seciliKombin.baslik}</Text>
+                  <View style={[styles.badge, { backgroundColor: renkler.chip }]}>
+                    <Text style={[styles.badgeText, { color: renkler.metin2 }]}>{seciliKombin.tur}</Text>
+                  </View>
+                  <Text style={[styles.avatarNeden, { color: renkler.metin2 }]}>{seciliKombin.neden}</Text>
+                </View>
               </View>
             )}
           </View>
@@ -345,28 +461,6 @@ ${jsonFormat}`;
   );
 }
 
-const av = StyleSheet.create({
-  container:  { width: 110, height: 200, position: 'relative' },
-  yuzFoto:    { position: 'absolute', top: 0, left: 22, width: 66, height: 66, borderRadius: 33 },
-  sac:        { position: 'absolute', top: 0, left: 27, width: 56, height: 22, borderTopLeftRadius: 28, borderTopRightRadius: 28 },
-  bas:        { position: 'absolute', top: 10, left: 27, width: 56, height: 50, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
-  gozSatir:   { flexDirection: 'row', gap: 10, marginBottom: 6 },
-  goz:        { width: 7, height: 7, borderRadius: 4 },
-  agiz:       { width: 14, height: 3, borderRadius: 2, backgroundColor: 'rgba(0,0,0,0.25)' },
-  boyun:      { position: 'absolute', top: 57, left: 47, width: 16, height: 10 },
-  disGovde:   { position: 'absolute', top: 65, left: 14, width: 82, height: 60, borderRadius: 8 },
-  disKolSol:  { position: 'absolute', top: 67, left: 0,  width: 16, height: 50, borderRadius: 8 },
-  disKolSag:  { position: 'absolute', top: 67, right: 0, width: 16, height: 50, borderRadius: 8 },
-  ust:        { position: 'absolute', top: 65, left: 20, width: 70, height: 58, borderRadius: 6 },
-  kolSol:     { position: 'absolute', top: 67, left: 4,  width: 18, height: 48, borderRadius: 8 },
-  kolSag:     { position: 'absolute', top: 67, right: 4, width: 18, height: 48, borderRadius: 8 },
-  alt:        { position: 'absolute', top: 121, left: 20, width: 70, height: 45, borderRadius: 4 },
-  bacakSol:   { position: 'absolute', top: 164, left: 20, width: 30, height: 22, borderRadius: 4 },
-  bacakSag:   { position: 'absolute', top: 164, left: 60, width: 30, height: 22, borderRadius: 4 },
-  ayakSol:    { position: 'absolute', top: 183, left: 16, width: 34, height: 12, borderRadius: 4, backgroundColor: '#1A1A1A' },
-  ayakSag:    { position: 'absolute', top: 183, left: 56, width: 34, height: 12, borderRadius: 4, backgroundColor: '#1A1A1A' },
-});
-
 const styles = StyleSheet.create({
   container:      { flex: 1 },
   header: {
@@ -393,14 +487,15 @@ const styles = StyleSheet.create({
   tekrarBtn:      { marginTop: 8, paddingHorizontal: 28, paddingVertical: 12, borderRadius: 12 },
   tekrarBtnText:  { fontSize: 14, fontWeight: '600' },
   avatarBolum: {
-    marginHorizontal: 16, borderRadius: 14, padding: 20,
-    borderWidth: 0.5, flexDirection: 'row', alignItems: 'center', gap: 20,
+    marginHorizontal: 16, borderRadius: 16, padding: 14,
+    borderWidth: 0.5,
   },
+  avatarSatir:    { flexDirection: 'row', alignItems: 'center', gap: 14 },
   avatarBilgi:    { flex: 1 },
-  avatarBaslik:   { fontSize: 17, fontWeight: '600', marginBottom: 6 },
-  badge:          { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start', marginBottom: 10 },
-  badgeText:      { fontSize: 11 },
-  avatarNeden:    { fontSize: 13, lineHeight: 20 },
+  avatarBaslik:   { fontSize: 16, fontWeight: '700', marginBottom: 6 },
+  badge:          { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start', marginBottom: 8 },
+  badgeText:      { fontSize: 11, fontWeight: '500' },
+  avatarNeden:    { fontSize: 12, lineHeight: 18 },
   seciciSatir:    { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 12 },
   seciciBtn:      { flex: 1, padding: 10, borderRadius: 10, alignItems: 'center', borderWidth: 0.5 },
   seciciBtnText:  { fontSize: 12, fontWeight: '500' },
