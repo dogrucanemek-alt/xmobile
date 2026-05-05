@@ -396,8 +396,9 @@ export default function Outfits() {
       ]);
       if (profilStr) setProfil(JSON.parse(profilStr));
       await kombinOner(havaVeri, kiyafetle);
-    } catch {
-      setHata('Bir hata oluştu. Tekrar dene.');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setHata(`Başlatma hatası: ${msg}`);
       setYukleniyor(false);
     }
   };
@@ -424,6 +425,12 @@ The "tur" field must be one of: ${dil === 'en' ? 'Work, Casual, Social, Sport' :
 Return ONLY valid JSON, nothing else:
 ${jsonFormat}`;
 
+    if (!CLAUDE_KEY) {
+      setHata('EXPO_PUBLIC_CLAUDE_KEY tanımlı değil. .env dosyasını kontrol et ve Expo\'yu yeniden başlat.');
+      setYukleniyor(false);
+      return;
+    }
+
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -440,10 +447,17 @@ ${jsonFormat}`;
         }),
       });
 
+      if (!res.ok) {
+        const errText = await res.text();
+        setHata(`API Hatası (${res.status}): ${errText.slice(0, 200)}`);
+        setYukleniyor(false);
+        return;
+      }
+
       const data = await res.json();
 
       if (data.error) {
-        setHata(`API Hatası: ${data.error.message}`);
+        setHata(`Claude Hatası: ${data.error.type} — ${data.error.message}`);
         setYukleniyor(false);
         return;
       }
@@ -452,8 +466,15 @@ ${jsonFormat}`;
         const metin     = data.content[0].text as string;
         const baslangic = metin.indexOf('{');
         const bitis     = metin.lastIndexOf('}') + 1;
+        if (baslangic === -1 || bitis === 0) {
+          setHata(`JSON bulunamadı. Claude yanıtı: ${metin.slice(0, 200)}`);
+          setYukleniyor(false);
+          return;
+        }
         const parsed    = JSON.parse(metin.slice(baslangic, bitis)) as { kombinler: Kombin[] };
         setKombinler(parsed.kombinler);
+      } else {
+        setHata(`Beklenmeyen API yanıtı: ${JSON.stringify(data).slice(0, 200)}`);
       }
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';

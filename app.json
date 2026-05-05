@@ -29,6 +29,13 @@
     "plugins": [
       "expo-router",
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "Kıyafet fotoğraflarına erişmek için izin gerekiyor.",
+          "cameraPermission": "Kıyafet fotoğrafı çekmek için kamera izni gerekiyor."
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",

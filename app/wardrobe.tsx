@@ -2,6 +2,7 @@ import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, Image,
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from '../lib/context';
 import type { Kiyafet } from '../lib/types';
@@ -10,6 +11,15 @@ import { kiyafetTani } from '../lib/vision';
 const STORAGE_KEY  = 'xmobile_kiyafetler';
 const VISION_KEY   = process.env.EXPO_PUBLIC_VISION_KEY ?? '';
 const VERI_VERSIYON = 2;
+const FOTO_DIR = `${FileSystem.documentDirectory}kiyafet_fotolari/`;
+
+const fotografKaydet = async (uri: string): Promise<string> => {
+  await FileSystem.makeDirectoryAsync(FOTO_DIR, { intermediates: true });
+  const ext = uri.split('.').pop()?.split('?')[0] ?? 'jpg';
+  const hedef = `${FOTO_DIR}${Date.now()}_${Math.round(Math.random() * 1e6)}.${ext}`;
+  await FileSystem.copyAsync({ from: uri, to: hedef });
+  return hedef;
+};
 
 const BASLANGIC = [
   { id: 1,  ad: 'Gri Jean Pantolon',              tur: 'Alt',       sezon: 'Tüm Sezon',         foto: null },
@@ -65,12 +75,13 @@ export default function Wardrobe() {
   };
 
   const fotodanEkle = async (uri: string) => {
+    const kaliciUri = await fotografKaydet(uri);
     let ad = 'Yeni Kıyafet';
     let tur = 'Üst';
     if (VISION_KEY) {
-      try { ({ ad, tur } = await kiyafetTani(uri, VISION_KEY)); } catch {}
+      try { ({ ad, tur } = await kiyafetTani(kaliciUri, VISION_KEY)); } catch {}
     }
-    const yeni = { id: Date.now(), ad, tur, sezon: 'Tüm Sezon', foto: uri };
+    const yeni = { id: Date.now(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri };
     await kaydet([...kiyafetler, yeni]);
     kiyafetDuzenle(yeni);
   };
@@ -100,12 +111,14 @@ export default function Wardrobe() {
     if (sonuc.canceled || !sonuc.assets.length) return;
     const yeniListe = [...kiyafetler];
     for (const asset of sonuc.assets) {
+      let kaliciUri: string;
+      try { kaliciUri = await fotografKaydet(asset.uri); } catch { kaliciUri = asset.uri; }
       let ad = 'Yeni Kıyafet';
       let tur = 'Üst';
       if (VISION_KEY) {
-        try { ({ ad, tur } = await kiyafetTani(asset.uri, VISION_KEY)); } catch {}
+        try { ({ ad, tur } = await kiyafetTani(kaliciUri, VISION_KEY)); } catch {}
       }
-      yeniListe.push({ id: Date.now() + Math.random(), ad, tur, sezon: 'Tüm Sezon', foto: asset.uri });
+      yeniListe.push({ id: Date.now() + Math.random(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri });
     }
     await kaydet(yeniListe);
     Alert.alert('✓', `${sonuc.assets.length} kıyafet eklendi`);
@@ -136,6 +149,19 @@ export default function Wardrobe() {
     );
     await kaydet(yeniListe);
     setModalAcik(false);
+  };
+
+  const modalFotoGuncelle = async () => {
+    const izin = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!izin.granted) return;
+    const sonuc = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [3, 4], quality: 0.8 });
+    if (sonuc.canceled) return;
+    let kaliciUri: string;
+    try { kaliciUri = await fotografKaydet(sonuc.assets[0].uri); } catch { kaliciUri = sonuc.assets[0].uri; }
+    const guncellenmis = { ...seciliKiyafet!, foto: kaliciUri };
+    setSeciliKiyafet(guncellenmis);
+    const yeniListe = kiyafetler.map(k => k.id === guncellenmis.id ? guncellenmis : k);
+    await kaydet(yeniListe);
   };
 
   const sil = (id: number) => {
@@ -223,9 +249,15 @@ export default function Wardrobe() {
             </TouchableOpacity>
           </View>
 
-          {seciliKiyafet?.foto && (
-            <Image source={{ uri: seciliKiyafet.foto }} style={styles.modalFoto} />
-          )}
+          <TouchableOpacity onPress={modalFotoGuncelle} activeOpacity={0.8}>
+            {seciliKiyafet?.foto ? (
+              <Image source={{ uri: seciliKiyafet.foto }} style={styles.modalFoto} />
+            ) : (
+              <View style={[styles.modalFotoEkle, { backgroundColor: renkler.chip }]}>
+                <Text style={[styles.modalFotoEkleText, { color: renkler.metin2 }]}>📷 Fotoğraf Ekle</Text>
+              </View>
+            )}
+          </TouchableOpacity>
 
           <View style={[styles.inputGrup, { backgroundColor: renkler.kart }]}>
             <Text style={[styles.inputLabel, { color: renkler.metin2 }]}>{t.kiyafetAdi}</Text>
@@ -325,7 +357,9 @@ const styles = StyleSheet.create({
   modalIptal:  { fontSize: 16 },
   modalBaslik: { fontSize: 17, fontWeight: '600' },
   modalKaydet: { fontSize: 16, fontWeight: '600' },
-  modalFoto:   { width: '100%', height: 200, resizeMode: 'cover' },
+  modalFoto:       { width: '100%', height: 200, resizeMode: 'cover' },
+  modalFotoEkle:   { width: '100%', height: 140, alignItems: 'center', justifyContent: 'center' },
+  modalFotoEkleText: { fontSize: 16 },
   inputGrup:   { padding: 20, marginTop: 12 },
   inputLabel:  { fontSize: 13, marginBottom: 8 },
   input:       { fontSize: 16, borderBottomWidth: 0.5, paddingVertical: 8 },
