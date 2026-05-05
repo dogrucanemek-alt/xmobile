@@ -2,31 +2,58 @@ import * as FileSystem from 'expo-file-system';
 
 const ENDPOINT = 'https://vision.googleapis.com/v1/images:annotate';
 
-const TUR_HARITA: Record<string, string> = {
-  shirt: 'Üst', blouse: 'Üst', top: 'Üst', 't-shirt': 'Üst', tshirt: 'Üst',
-  sweater: 'Üst', hoodie: 'Üst', vest: 'Üst', jersey: 'Üst', cardigan: 'Üst',
-  pants: 'Alt', jeans: 'Alt', trousers: 'Alt', skirt: 'Alt',
-  shorts: 'Alt', leggings: 'Alt', denim: 'Alt',
-  jacket: 'Dış Giyim', coat: 'Dış Giyim', blazer: 'Dış Giyim',
-  raincoat: 'Dış Giyim', trench: 'Dış Giyim', parka: 'Dış Giyim', overcoat: 'Dış Giyim',
-  shoe: 'Ayakkabı', boot: 'Ayakkabı', sneaker: 'Ayakkabı',
-  sandal: 'Ayakkabı', heel: 'Ayakkabı', loafer: 'Ayakkabı',
-  bag: 'Aksesuar', handbag: 'Aksesuar', hat: 'Aksesuar',
-  belt: 'Aksesuar', scarf: 'Aksesuar', glasses: 'Aksesuar', watch: 'Aksesuar',
-};
-
-const AD_HARITA: Record<string, string> = {
-  shirt: 'Gömlek', blouse: 'Bluz', 't-shirt': 'Tişört', tshirt: 'Tişört',
-  sweater: 'Kazak', hoodie: 'Kapüşonlu', vest: 'Yelek', top: 'Üst', jersey: 'Forma', cardigan: 'Hırka',
-  pants: 'Pantolon', jeans: 'Jean', trousers: 'Pantolon', skirt: 'Etek',
-  shorts: 'Şort', leggings: 'Tayt', denim: 'Kot',
-  jacket: 'Ceket', coat: 'Kaban', blazer: 'Blazer',
-  raincoat: 'Yağmurluk', trench: 'Trençkot', parka: 'Parka', overcoat: 'Palto',
-  shoe: 'Ayakkabı', boot: 'Bot', sneaker: 'Spor Ayakkabı',
-  sandal: 'Sandalet', heel: 'Topuklu', loafer: 'Loafer',
-  bag: 'Çanta', handbag: 'El Çantası', hat: 'Şapka',
-  belt: 'Kemer', scarf: 'Atkı', glasses: 'Gözlük', watch: 'Saat',
-};
+// Anahtar kelime → tür (substring eşleşme için öncelik sırasına göre)
+const TUR_KURALLAR: Array<{ anahtar: string; tur: string; ad: string }> = [
+  // Alt giyim — önce kontrol et (pants içeren etiketler üst'e düşmesin)
+  { anahtar: 'trouser',  tur: 'Alt',       ad: 'Pantolon'        },
+  { anahtar: 'pant',     tur: 'Alt',       ad: 'Pantolon'        },
+  { anahtar: 'jean',     tur: 'Alt',       ad: 'Jean'            },
+  { anahtar: 'denim',    tur: 'Alt',       ad: 'Kot'             },
+  { anahtar: 'skirt',    tur: 'Alt',       ad: 'Etek'            },
+  { anahtar: 'short',    tur: 'Alt',       ad: 'Şort'            },
+  { anahtar: 'legging',  tur: 'Alt',       ad: 'Tayt'            },
+  { anahtar: 'chino',    tur: 'Alt',       ad: 'Pantolon'        },
+  { anahtar: 'cargo',    tur: 'Alt',       ad: 'Kargo Pantolon'  },
+  { anahtar: 'sweatpant',tur: 'Alt',       ad: 'Eşofman Altı'   },
+  // Dış giyim
+  { anahtar: 'jacket',   tur: 'Dış Giyim', ad: 'Ceket'          },
+  { anahtar: 'coat',     tur: 'Dış Giyim', ad: 'Kaban'          },
+  { anahtar: 'blazer',   tur: 'Dış Giyim', ad: 'Blazer'         },
+  { anahtar: 'raincoat', tur: 'Dış Giyim', ad: 'Yağmurluk'      },
+  { anahtar: 'trench',   tur: 'Dış Giyim', ad: 'Trençkot'       },
+  { anahtar: 'parka',    tur: 'Dış Giyim', ad: 'Parka'          },
+  { anahtar: 'overcoat', tur: 'Dış Giyim', ad: 'Palto'          },
+  { anahtar: 'windbreak',tur: 'Dış Giyim', ad: 'Rüzgarlık'      },
+  // Ayakkabı
+  { anahtar: 'sneaker',  tur: 'Ayakkabı',  ad: 'Spor Ayakkabı'  },
+  { anahtar: 'boot',     tur: 'Ayakkabı',  ad: 'Bot'            },
+  { anahtar: 'sandal',   tur: 'Ayakkabı',  ad: 'Sandalet'       },
+  { anahtar: 'loafer',   tur: 'Ayakkabı',  ad: 'Loafer'         },
+  { anahtar: 'heel',     tur: 'Ayakkabı',  ad: 'Topuklu'        },
+  { anahtar: 'shoe',     tur: 'Ayakkabı',  ad: 'Ayakkabı'       },
+  { anahtar: 'footwear', tur: 'Ayakkabı',  ad: 'Ayakkabı'       },
+  // Aksesuar
+  { anahtar: 'handbag',  tur: 'Aksesuar',  ad: 'El Çantası'     },
+  { anahtar: 'bag',      tur: 'Aksesuar',  ad: 'Çanta'          },
+  { anahtar: 'hat',      tur: 'Aksesuar',  ad: 'Şapka'          },
+  { anahtar: 'cap',      tur: 'Aksesuar',  ad: 'Şapka'          },
+  { anahtar: 'belt',     tur: 'Aksesuar',  ad: 'Kemer'          },
+  { anahtar: 'scarf',    tur: 'Aksesuar',  ad: 'Atkı'           },
+  { anahtar: 'glasses',  tur: 'Aksesuar',  ad: 'Gözlük'         },
+  { anahtar: 'watch',    tur: 'Aksesuar',  ad: 'Saat'           },
+  // Üst giyim
+  { anahtar: 'hoodie',   tur: 'Üst',       ad: 'Kapüşonlu'      },
+  { anahtar: 'sweatshirt',tur: 'Üst',      ad: 'Sweatshirt'     },
+  { anahtar: 'sweater',  tur: 'Üst',       ad: 'Kazak'          },
+  { anahtar: 'cardigan', tur: 'Üst',       ad: 'Hırka'          },
+  { anahtar: 'blouse',   tur: 'Üst',       ad: 'Bluz'           },
+  { anahtar: 'shirt',    tur: 'Üst',       ad: 'Gömlek'         },
+  { anahtar: 't-shirt',  tur: 'Üst',       ad: 'Tişört'         },
+  { anahtar: 'tshirt',   tur: 'Üst',       ad: 'Tişört'         },
+  { anahtar: 'jersey',   tur: 'Üst',       ad: 'Forma'          },
+  { anahtar: 'vest',     tur: 'Üst',       ad: 'Yelek'          },
+  { anahtar: 'top',      tur: 'Üst',       ad: 'Üst'            },
+];
 
 export async function kiyafetTani(
   imageUri: string,
@@ -51,9 +78,13 @@ export async function kiyafetTani(
   const labels: string[] = (data.responses?.[0]?.labelAnnotations ?? [])
     .map((l: { description: string }) => l.description.toLowerCase());
 
+  // Her label için TUR_KURALLAR'daki her anahtarı substring olarak dene
   for (const label of labels) {
-    const tur = TUR_HARITA[label];
-    if (tur) return { ad: AD_HARITA[label] ?? 'Yeni Kıyafet', tur };
+    for (const kural of TUR_KURALLAR) {
+      if (label.includes(kural.anahtar)) {
+        return { ad: kural.ad, tur: kural.tur };
+      }
+    }
   }
 
   return { ad: 'Yeni Kıyafet', tur: 'Üst' };
