@@ -23,7 +23,7 @@ export default function Index() {
             <TouchableOpacity
               key={d}
               style={[styles.dilBtn, dil === d && { backgroundColor: renkler.metin }]}
-              onPress={() => dilDegistir(d)}
+              onPress={() => dilDegistir(d as 'tr' | 'en')}
             >
               <Text style={[styles.dilBtnText, { color: dil === d ? renkler.bg : renkler.metin2 }]}>
                 {d.toUpperCase()}
