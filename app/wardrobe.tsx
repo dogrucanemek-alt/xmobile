@@ -5,8 +5,10 @@ import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from '../lib/context';
 import type { Kiyafet } from '../lib/types';
+import { kiyafetTani } from '../lib/vision';
 
-const STORAGE_KEY = 'xmobile_kiyafetler';
+const STORAGE_KEY  = 'xmobile_kiyafetler';
+const VISION_KEY   = process.env.EXPO_PUBLIC_VISION_KEY ?? '';
 
 const BASLANGIC = [
   { id: 1, ad: 'Beyaz Gömlek',    tur: 'Üst',       sezon: 'Tüm Sezon', foto: null },
@@ -50,28 +52,29 @@ export default function Wardrobe() {
     setKiyafetler(yeniListe);
   };
 
+  const fotodanEkle = async (uri: string) => {
+    let ad = 'Yeni Kıyafet';
+    let tur = 'Üst';
+    if (VISION_KEY) {
+      try { ({ ad, tur } = await kiyafetTani(uri, VISION_KEY)); } catch {}
+    }
+    const yeni = { id: Date.now(), ad, tur, sezon: 'Tüm Sezon', foto: uri };
+    await kaydet([...kiyafetler, yeni]);
+    kiyafetDuzenle(yeni);
+  };
+
   const fotografCek = async () => {
     const izin = await ImagePicker.requestCameraPermissionsAsync();
     if (!izin.granted) return;
     const sonuc = await ImagePicker.launchCameraAsync({ allowsEditing: true, aspect: [3, 4], quality: 0.8 });
-    if (!sonuc.canceled) {
-      const yeni = { id: Date.now(), ad: 'Yeni Kıyafet', tur: 'Üst', sezon: 'Tüm Sezon', foto: sonuc.assets[0].uri };
-      const yeniListe = [...kiyafetler, yeni];
-      await kaydet(yeniListe);
-      kiyafetDuzenle(yeni);
-    }
+    if (!sonuc.canceled) await fotodanEkle(sonuc.assets[0].uri);
   };
 
   const galeridenSec = async () => {
     const izin = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!izin.granted) return;
     const sonuc = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [3, 4], quality: 0.8 });
-    if (!sonuc.canceled) {
-      const yeni = { id: Date.now(), ad: 'Yeni Kıyafet', tur: 'Üst', sezon: 'Tüm Sezon', foto: sonuc.assets[0].uri };
-      const yeniListe = [...kiyafetler, yeni];
-      await kaydet(yeniListe);
-      kiyafetDuzenle(yeni);
-    }
+    if (!sonuc.canceled) await fotodanEkle(sonuc.assets[0].uri);
   };
 
   const ekleSecenekleri = () => {
