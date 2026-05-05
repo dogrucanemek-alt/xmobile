@@ -7,8 +7,8 @@ import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from './context';
 
-const WEATHER_KEY = '9dfe03744413ccb79c529c0a3f04847f';
-const CLAUDE_KEY = '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';
+const WEATHER_KEY = process.env.EXPO_PUBLIC_WEATHER_KEY!;
+const CLAUDE_KEY = process.env.EXPO_PUBLIC_CLAUDE_KEY!;
 const SEHIR = 'Izmir,TR';
 
 const renkBul = (parcaAdi) => {
