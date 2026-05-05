@@ -92,7 +92,7 @@ export default function Wardrobe() {
 
   const duzenKaydet = async () => {
     const yeniListe = kiyafetler.map(k =>
-      k.id === seciliKiyafet.id
+      k.id === seciliKiyafet!.id
         ? { ...k, ad: duzenAd, tur: duzenTur, sezon: duzenSezon }
         : k
     );
@@ -229,7 +229,7 @@ export default function Wardrobe() {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.silButon} onPress={() => sil(seciliKiyafet?.id)}>
+          <TouchableOpacity style={styles.silButon} onPress={() => sil(seciliKiyafet!.id)}>
             <Text style={styles.silButonText}>{t.buKiyafetiSil}</Text>
           </TouchableOpacity>
         </View>

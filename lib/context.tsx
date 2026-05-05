@@ -105,9 +105,11 @@ const karanlıkRenkler = {
   statusBar: 'light-content' as const,
 };
 
+type Renkler = typeof açıkRenkler | typeof karanlıkRenkler;
+
 interface AppContextValue {
-  t: typeof çeviriler['tr'];
-  renkler: typeof açıkRenkler;
+  t: typeof çeviriler['tr'] | typeof çeviriler['en'];
+  renkler: Renkler;
   temaToggle: () => void;
   dil: 'tr' | 'en';
   dilDegistir: (d: 'tr' | 'en') => void;

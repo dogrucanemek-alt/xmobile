@@ -39,7 +39,7 @@ export default function Profile() {
   const [boy,         setBoy]         = useState('175');
   const [kilo,        setKilo]        = useState('70');
   const [cinsiyet,    setCinsiyet]    = useState('Erkek');
-  const [profilFoto,  setProfilFoto]  = useState(null);
+  const [profilFoto,  setProfilFoto]  = useState<string | null>(null);
 
   useEffect(() => { yukle(); }, []);
 
