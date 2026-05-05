@@ -77,11 +77,34 @@ export default function Wardrobe() {
     if (!sonuc.canceled) await fotodanEkle(sonuc.assets[0].uri);
   };
 
+  const cokluSec = async () => {
+    const izin = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!izin.granted) return;
+    const sonuc = await ImagePicker.launchImageLibraryAsync({
+      allowsMultipleSelection: true,
+      quality: 0.8,
+      selectionLimit: 20,
+    });
+    if (sonuc.canceled || !sonuc.assets.length) return;
+    const yeniListe = [...kiyafetler];
+    for (const asset of sonuc.assets) {
+      let ad = 'Yeni Kıyafet';
+      let tur = 'Üst';
+      if (VISION_KEY) {
+        try { ({ ad, tur } = await kiyafetTani(asset.uri, VISION_KEY)); } catch {}
+      }
+      yeniListe.push({ id: Date.now() + Math.random(), ad, tur, sezon: 'Tüm Sezon', foto: asset.uri });
+    }
+    await kaydet(yeniListe);
+    Alert.alert('✓', `${sonuc.assets.length} kıyafet eklendi`);
+  };
+
   const ekleSecenekleri = () => {
     Alert.alert(t.kiyafetEkle, t.nasılEklemek, [
-      { text: t.fotografCek,   onPress: fotografCek },
-      { text: t.galeridenSec,  onPress: galeridenSec },
-      { text: t.iptal,         style: 'cancel' },
+      { text: t.fotografCek,              onPress: fotografCek },
+      { text: t.galeridenSec,             onPress: galeridenSec },
+      { text: '📚 Çoklu Seç (Galeri)',    onPress: cokluSec },
+      { text: t.iptal,                    style: 'cancel' },
     ]);
   };
 
