@@ -1,21 +1,21 @@
 import * as FileSystem from 'expo-file-system';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 const CLAUDE_ENDPOINT = 'https://api.anthropic.com/v1/messages';
-
 const TURLER = ['Üst', 'Alt', 'Dış Giyim', 'Ayakkabı', 'Aksesuar'];
-
-function mediaTip(uri: string): 'image/jpeg' | 'image/png' | 'image/webp' {
-  const ext = uri.split('.').pop()?.toLowerCase().split('?')[0] ?? '';
-  if (ext === 'png')  return 'image/png';
-  if (ext === 'webp') return 'image/webp';
-  return 'image/jpeg';
-}
 
 export async function kiyafetTani(
   imageUri: string,
   claudeKey: string,
 ): Promise<{ ad: string; tur: string }> {
-  const base64 = await FileSystem.readAsStringAsync(imageUri, { encoding: 'base64' });
+  // Büyük görseller Claude limitini (5MB) aşar — 800px'e küçült
+  const kucuk = await ImageManipulator.manipulateAsync(
+    imageUri,
+    [{ resize: { width: 800 } }],
+    { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG },
+  );
+
+  const base64 = await FileSystem.readAsStringAsync(kucuk.uri, { encoding: 'base64' });
 
   const res = await fetch(CLAUDE_ENDPOINT, {
     method: 'POST',
@@ -33,7 +33,7 @@ export async function kiyafetTani(
         content: [
           {
             type: 'image',
-            source: { type: 'base64', media_type: mediaTip(imageUri), data: base64 },
+            source: { type: 'base64', media_type: 'image/jpeg', data: base64 },
           },
           {
             type: 'text',

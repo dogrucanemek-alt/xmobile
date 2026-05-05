@@ -607,11 +607,23 @@ ${jsonFormat}`;
             <View style={[styles.parcalarBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
               <Text style={[styles.parcalarBaslik, { color: renkler.metin2 }]}>{t.buKombin}</Text>
               <View style={styles.parcalar}>
-                {seciliKombin.parcalar.map((p, i) => (
-                  <View key={i} style={[styles.parcaChip, { backgroundColor: renkler.chip }]}>
-                    <Text style={[styles.parcaText, { color: renkler.metin }]}>{p}</Text>
-                  </View>
-                ))}
+                {seciliKombin.parcalar.map((p, i) => {
+                  const aranan = p.toLowerCase();
+                  const eslesme = kiyafetler.find(k => {
+                    const kAd = k.ad?.toLowerCase() ?? '';
+                    return kAd === aranan || aranan.includes(kAd) || kAd.includes(aranan);
+                  });
+                  const foto = eslesme?.foto ?? null;
+                  return (
+                    <View key={i} style={[styles.parcaChip, { backgroundColor: renkler.chip }]}>
+                      {foto
+                        ? <Image source={{ uri: foto }} style={styles.parcaChipFoto} />
+                        : <View style={[styles.parcaChipFotoYok, { backgroundColor: renkler.sinir }]} />
+                      }
+                      <Text style={[styles.parcaText, { color: renkler.metin }]}>{p}</Text>
+                    </View>
+                  );
+                })}
               </View>
               <TouchableOpacity
                 style={[styles.secButon, { backgroundColor: renkler.btnPrimary }]}
@@ -700,9 +712,11 @@ const styles = StyleSheet.create({
     borderRadius: 14, padding: 18, borderWidth: 0.5,
   },
   parcalarBaslik: { fontSize: 13, marginBottom: 10 },
-  parcalar:       { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
-  parcaChip:      { borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6 },
-  parcaText:      { fontSize: 13 },
+  parcalar:        { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
+  parcaChip:       { flexDirection: 'row', alignItems: 'center', borderRadius: 20, paddingRight: 12, paddingVertical: 4, paddingLeft: 4, gap: 8 },
+  parcaChipFoto:   { width: 36, height: 44, borderRadius: 16, resizeMode: 'cover' },
+  parcaChipFotoYok:{ width: 36, height: 44, borderRadius: 16 },
+  parcaText:       { fontSize: 13 },
   secButon:       { borderRadius: 10, padding: 14, alignItems: 'center' },
   secButonText:   { fontSize: 14, fontWeight: '500' },
 });
