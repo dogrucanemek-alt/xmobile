@@ -9,7 +9,7 @@ import type { Kiyafet } from '../lib/types';
 import { kiyafetTani } from '../lib/vision';
 
 const STORAGE_KEY  = 'xmobile_kiyafetler';
-const VISION_KEY   = process.env.EXPO_PUBLIC_VISION_KEY ?? '';
+const CLAUDE_KEY   = process.env.EXPO_PUBLIC_CLAUDE_KEY ?? '';
 const VERI_VERSIYON = 2;
 const FOTO_DIR = `${FileSystem.documentDirectory}kiyafet_fotolari/`;
 
@@ -78,8 +78,8 @@ export default function Wardrobe() {
     const kaliciUri = await fotografKaydet(uri);
     let ad = 'Yeni Kıyafet';
     let tur = 'Üst';
-    if (VISION_KEY) {
-      try { ({ ad, tur } = await kiyafetTani(kaliciUri, VISION_KEY)); } catch {}
+    if (CLAUDE_KEY) {
+      try { ({ ad, tur } = await kiyafetTani(kaliciUri, CLAUDE_KEY)); } catch {}
     }
     const yeni = { id: Date.now(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri };
     await kaydet([...kiyafetler, yeni]);
@@ -115,8 +115,8 @@ export default function Wardrobe() {
       try { kaliciUri = await fotografKaydet(asset.uri); } catch { kaliciUri = asset.uri; }
       let ad = 'Yeni Kıyafet';
       let tur = 'Üst';
-      if (VISION_KEY) {
-        try { ({ ad, tur } = await kiyafetTani(kaliciUri, VISION_KEY)); } catch {}
+      if (CLAUDE_KEY) {
+        try { ({ ad, tur } = await kiyafetTani(kaliciUri, CLAUDE_KEY)); } catch {}
       }
       yeniListe.push({ id: Date.now() + Math.random(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri });
     }
