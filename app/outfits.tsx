@@ -114,16 +114,22 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
   const parcaEsle = (anahtar: string[]): string | null =>
     kombin.parcalar.find(p => anahtar.some(k => p.toLowerCase().includes(k))) ?? null;
 
-  const fotografBul = (parcaAdi: string | null): string | null => {
+  // Kelime bazlı eşleştirme: "Gri pantolon" → "Gri Jean Pantolon" (2 ortak kelime)
+  const wardrobeEslesme = (parcaAdi: string | null): Kiyafet | null => {
     if (!parcaAdi) return null;
     const aranan = parcaAdi.toLowerCase();
+    const kelimeler = aranan.split(/\s+/).filter(w => w.length > 2);
     const tam = kiyafetler.find(k => k.ad?.toLowerCase() === aranan);
-    if (tam?.foto) return tam.foto;
-    const kismi = kiyafetler.find(k => {
+    if (tam) return tam;
+    const icerik = kiyafetler.find(k => {
       const ad = k.ad?.toLowerCase() ?? '';
       return aranan.includes(ad) || ad.includes(aranan);
     });
-    return kismi?.foto ?? null;
+    if (icerik) return icerik;
+    return kiyafetler.find(k => {
+      const adKelimeler = (k.ad?.toLowerCase() ?? '').split(/\s+/);
+      return kelimeler.filter(w => adKelimeler.includes(w)).length >= 2;
+    }) ?? null;
   };
 
   const disParca  = parcaEsle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk', 'hırka', 'hirka']);
@@ -131,12 +137,16 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
   const altParca  = parcaEsle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım', 'elbise']);
   const ayakParca = parcaEsle(['ayakkabı', 'ayakkabi', 'bot', 'sneaker', 'loafer', 'sandalet', 'çizme', 'cizme']);
 
-  const ust      = disParca ?? ustParca;
-  const ustFoto  = fotografBul(ust);
-  const altFoto  = fotografBul(altParca);
-  const ustRenk  = renkBul(ust);
-  const altRenk  = renkBul(altParca);
-  const ayakRenk = renkBul(ayakParca) ?? '#1A1A1A';
+  const ust = disParca ?? ustParca;
+
+  // Gardırop item'ından tam adı al → renkBul daha doğru çalışır
+  const ustTamAd  = wardrobeEslesme(ust)?.ad ?? ust;
+  const altTamAd  = wardrobeEslesme(altParca)?.ad ?? altParca;
+  const ayakTamAd = wardrobeEslesme(ayakParca)?.ad ?? ayakParca;
+
+  const ustRenk  = renkBul(ustTamAd);
+  const altRenk  = renkBul(altTamAd);
+  const ayakRenk = renkBul(ayakTamAd) ?? '#1A1A1A';
 
   // Koordinat düzeni:
   // Kafa:   cy=110  (rx=56 ry=62)  →  y=48..172
@@ -163,17 +173,6 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
         </RadialGradient>
         <ClipPath id="avcHeadClip">
           <Ellipse cx={100} cy={110} rx={56} ry={62} />
-        </ClipPath>
-        <ClipPath id="avcUstClip">
-          <Rect x={22}  y={184} width={28}  height={82} rx={12} />
-          <Rect x={50}  y={184} width={100} height={90} rx={12} />
-          <Rect x={150} y={184} width={28}  height={82} rx={12} />
-        </ClipPath>
-        <ClipPath id="avcAltClip">
-          {/* Tek renk blok — П görüntüsünü gidermek için hip+bacakları birleştir */}
-          <Rect x={50}  y={270} width={100} height={96} rx={4} />
-          <Rect x={50}  y={358} width={46}  height={10} rx={4} />
-          <Rect x={104} y={358} width={46}  height={10} rx={4} />
         </ClipPath>
       </Defs>
 
@@ -277,43 +276,19 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
       <Rect x={104} y={362} width={46}  height={6}  rx={4}  fill={tenRengi} />
 
       {/* ── ÜST GİYSİ ── */}
-      {ustFoto ? (
-        <SvgImage
-          x={22} y={184} width={156} height={92}
-          href={ustFoto}
-          clipPath="url(#avcUstClip)"
-          preserveAspectRatio="xMidYMid slice"
-        />
-      ) : (
-        <>
-          <Rect x={50}  y={186} width={100} height={88} rx={12} fill={ustRenk} />
-          <Rect x={22}  y={188} width={28}  height={80} rx={12} fill={ustRenk} />
-          <Rect x={150} y={188} width={28}  height={80} rx={12} fill={ustRenk} />
-          <Path d="M 88 188 Q 100 202 112 188"
-            fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth={2} />
-        </>
-      )}
+      <Rect x={50}  y={186} width={100} height={88} rx={12} fill={ustRenk} />
+      <Rect x={22}  y={188} width={28}  height={80} rx={12} fill={ustRenk} />
+      <Rect x={150} y={188} width={28}  height={80} rx={12} fill={ustRenk} />
+      <Path d="M 88 188 Q 100 202 112 188"
+        fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth={2} />
 
       {/* Bilekler */}
       <Rect x={22}  y={256} width={28} height={14} fill={tenRengi} />
       <Rect x={150} y={256} width={28} height={14} fill={tenRengi} />
 
-      {/* ── ALT GİYSİ (kalça + bacaklar tek blok renk) ── */}
-      {altFoto ? (
-        <SvgImage
-          x={42} y={270} width={116} height={98}
-          href={altFoto}
-          clipPath="url(#avcAltClip)"
-          preserveAspectRatio="xMidYMid slice"
-        />
-      ) : (
-        <>
-          {/* Tek solid renk blok — П yok */}
-          <Rect x={50}  y={272} width={100} height={92} rx={6} fill={altRenk} />
-          {/* Bacak ayrım çizgisi (ince, doğal görünüm) */}
-          <Rect x={98}  y={296} width={4}   height={68} fill="rgba(0,0,0,0.12)" />
-        </>
-      )}
+      {/* ── ALT GİYSİ ── */}
+      <Rect x={50}  y={272} width={100} height={92} rx={6} fill={altRenk} />
+      <Rect x={98}  y={296} width={4}   height={68} fill="rgba(0,0,0,0.12)" />
 
       {/* ── AYAKKABI ── */}
       <Rect x={38}  y={360} width={62} height={22} rx={9} fill={ayakRenk} />
