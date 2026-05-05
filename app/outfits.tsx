@@ -410,19 +410,24 @@ export default function Outfits() {
       return;
     }
 
-    const listeStr   = liste.map(k => `${k.ad} (${k.tur}, ${k.sezon})`).join(', ');
-    const lang       = dil === 'en' ? 'English' : 'Turkish';
+    const lang = dil === 'en' ? 'English' : 'Turkish';
+    const numaraliListe = liste
+      .map((k, i) => `${i + 1}. "${k.ad}" (${k.tur}, ${k.sezon})`)
+      .join('\n');
     const jsonFormat = dil === 'en'
-      ? `{"kombinler":[{"baslik":"title","tur":"Work","parcalar":["item name"],"neden":"1 sentence explanation"}]}`
-      : `{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["kıyafet adı"],"neden":"1 cümle açıklama"}]}`;
+      ? `{"kombinler":[{"baslik":"title","tur":"Work","parcalar":["EXACT item name from list"],"neden":"1 sentence"}]}`
+      : `{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["LİSTEDEKİ TAM İSİM"],"neden":"1 cümle"}]}`;
 
-    const prompt = `You are a personal style consultant. You MUST respond entirely in ${lang}. This is critical.
+    const prompt = `You are a personal style consultant. Respond entirely in ${lang}.
 Weather: ${havaVeri.derece}°C, ${havaVeri.durum}, feels like ${havaVeri.hissedilen}°C, humidity ${havaVeri.nem}%
-Wardrobe items: ${listeStr}
-Suggest 3 different outfit combinations for today based on the weather and wardrobe.
-IMPORTANT: In the "parcalar" array, use ONLY the exact item names from the wardrobe list above.
-The "tur" field must be one of: ${dil === 'en' ? 'Work, Casual, Social, Sport' : 'İş, Günlük, Sosyal, Spor'}
-Return ONLY valid JSON, nothing else:
+
+WARDROBE (use ONLY these exact names, copy character-for-character):
+${numaraliListe}
+
+Suggest 3 outfit combinations. Rules:
+- "parcalar" must contain the EXACT item names copied from the numbered list above. Do NOT paraphrase, translate or shorten the names.
+- "tur" must be one of: ${dil === 'en' ? 'Work, Casual, Social, Sport' : 'İş, Günlük, Sosyal, Spor'}
+Return ONLY valid JSON:
 ${jsonFormat}`;
 
     if (!CLAUDE_KEY) {
