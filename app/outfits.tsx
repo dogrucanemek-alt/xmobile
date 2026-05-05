@@ -64,14 +64,26 @@ const AvatarKombin = ({ kombin, profil, kiyafetler = [] }) => {
 
   return (
     <View style={av.container}>
-      <View style={[av.sac, { backgroundColor: sacRengi }]} />
-      <View style={[av.bas, { backgroundColor: tenRengi }]}>
-        <View style={av.gozSatir}>
-          <View style={[av.goz, { backgroundColor: gozRengi }]} />
-          <View style={[av.goz, { backgroundColor: gozRengi }]} />
-        </View>
-        <View style={av.agiz} />
-      </View>
+
+      {profil?.profilFoto ? (
+        <Image
+          source={{ uri: profil.profilFoto }}
+          style={av.yuzFoto}
+          resizeMode="cover"
+        />
+      ) : (
+        <>
+          <View style={[av.sac, { backgroundColor: sacRengi }]} />
+          <View style={[av.bas, { backgroundColor: tenRengi }]}>
+            <View style={av.gozSatir}>
+              <View style={[av.goz, { backgroundColor: gozRengi }]} />
+              <View style={[av.goz, { backgroundColor: gozRengi }]} />
+            </View>
+            <View style={av.agiz} />
+          </View>
+        </>
+      )}
+
       <View style={[av.boyun, { backgroundColor: tenRengi }]} />
 
       {disParca && (
@@ -132,7 +144,7 @@ export default function Outfits() {
   };
 
   const havaAl = async () => {
-    const res  = await fetch(
+    const res = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${SEHIR}&appid=${WEATHER_KEY}&units=metric&lang=tr`
     );
     const data = await res.json();
@@ -163,11 +175,11 @@ export default function Outfits() {
 
     const listeStr = liste.map(k => `${k.ad} (${k.tur}, ${k.sezon})`).join(', ');
     const lang = dil === 'en' ? 'English' : 'Turkish';
-const jsonFormat = dil === 'en'
-  ? `{"kombinler":[{"baslik":"title","tur":"Work","parcalar":["item name"],"neden":"1 sentence explanation"}]}`
-  : `{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["kıyafet adı"],"neden":"1 cümle açıklama"}]}`;
+    const jsonFormat = dil === 'en'
+      ? `{"kombinler":[{"baslik":"title","tur":"Work","parcalar":["item name"],"neden":"1 sentence explanation"}]}`
+      : `{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["kıyafet adı"],"neden":"1 cümle açıklama"}]}`;
 
-const prompt = `You are a personal style consultant. You MUST respond entirely in ${lang}. This is critical.
+    const prompt = `You are a personal style consultant. You MUST respond entirely in ${lang}. This is critical.
 Weather: ${havaVeri.derece}°C, ${havaVeri.durum}, feels like ${havaVeri.hissedilen}°C, humidity ${havaVeri.nem}%
 Wardrobe items: ${listeStr}
 Suggest 3 different outfit combinations for today based on the weather and wardrobe.
@@ -229,7 +241,6 @@ ${jsonFormat}`;
     <View style={[styles.container, { backgroundColor: renkler.bg2 }]}>
       <StatusBar barStyle={renkler.statusBar} backgroundColor={renkler.bg} />
 
-      {/* Header */}
       <View style={[styles.header, { backgroundColor: renkler.bg, borderBottomColor: renkler.sinir }]}>
         <TouchableOpacity onPress={() => router.back()}>
           <Text style={[styles.geri, { color: renkler.metin }]}>{t.geri}</Text>
@@ -240,7 +251,6 @@ ${jsonFormat}`;
         </TouchableOpacity>
       </View>
 
-      {/* Hava Durumu */}
       <View style={[styles.havaDurumu, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
         {!hava ? <ActivityIndicator color={renkler.metin} /> : (
           <>
@@ -256,7 +266,6 @@ ${jsonFormat}`;
         )}
       </View>
 
-      {/* İçerik */}
       {yukleniyor ? (
         <View style={styles.yukleniyor}>
           <ActivityIndicator color={renkler.metin} size="large" />
@@ -272,8 +281,6 @@ ${jsonFormat}`;
         </View>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
-
-          {/* Avatar + Bilgi */}
           <View style={[styles.avatarBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
             {seciliKombin && (
               <AvatarKombin
@@ -293,7 +300,6 @@ ${jsonFormat}`;
             )}
           </View>
 
-          {/* Seçici */}
           <View style={styles.seciciSatir}>
             {kombinler.map((k, i) => (
               <TouchableOpacity
@@ -312,7 +318,6 @@ ${jsonFormat}`;
             ))}
           </View>
 
-          {/* Parçalar */}
           {seciliKombin && (
             <View style={[styles.parcalarBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
               <Text style={[styles.parcalarBaslik, { color: renkler.metin2 }]}>{t.buKombin}</Text>
@@ -341,6 +346,7 @@ ${jsonFormat}`;
 
 const av = StyleSheet.create({
   container:  { width: 110, height: 200, position: 'relative' },
+  yuzFoto:    { position: 'absolute', top: 0, left: 22, width: 66, height: 66, borderRadius: 33 },
   sac:        { position: 'absolute', top: 0, left: 27, width: 56, height: 22, borderTopLeftRadius: 28, borderTopRightRadius: 28 },
   bas:        { position: 'absolute', top: 10, left: 27, width: 56, height: 50, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
   gozSatir:   { flexDirection: 'row', gap: 10, marginBottom: 6 },
@@ -364,8 +370,7 @@ const styles = StyleSheet.create({
   container:      { flex: 1 },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingHorizontal: 20, paddingTop: 60, paddingBottom: 16,
-    borderBottomWidth: 0.5,
+    paddingHorizontal: 20, paddingTop: 60, paddingBottom: 16, borderBottomWidth: 0.5,
   },
   geri:           { fontSize: 20, fontWeight: '300' },
   baslik:         { fontSize: 17, fontWeight: '600' },
@@ -387,9 +392,8 @@ const styles = StyleSheet.create({
   tekrarBtn:      { marginTop: 8, paddingHorizontal: 28, paddingVertical: 12, borderRadius: 12 },
   tekrarBtnText:  { fontSize: 14, fontWeight: '600' },
   avatarBolum: {
-    marginHorizontal: 16, borderRadius: 14,
-    padding: 20, borderWidth: 0.5,
-    flexDirection: 'row', alignItems: 'center', gap: 20,
+    marginHorizontal: 16, borderRadius: 14, padding: 20,
+    borderWidth: 0.5, flexDirection: 'row', alignItems: 'center', gap: 20,
   },
   avatarBilgi:    { flex: 1 },
   avatarBaslik:   { fontSize: 17, fontWeight: '600', marginBottom: 6 },
