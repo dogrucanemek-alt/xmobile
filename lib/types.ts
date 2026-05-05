@@ -15,6 +15,7 @@ export interface Profil {
   cinsiyet: string;
   profilFoto: string | null;
   sacStili?: string;
+  sakal?: string;
   avatarUrl?: string;
 }
 

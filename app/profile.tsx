@@ -41,6 +41,7 @@ export default function Profile() {
   const [cinsiyet,    setCinsiyet]    = useState('Erkek');
   const [profilFoto,  setProfilFoto]  = useState<string | null>(null);
   const [sacStili,    setSacStili]    = useState('orta');
+  const [sakal,       setSakal]       = useState('yok');
 
   useEffect(() => { yukle(); }, []);
 
@@ -57,6 +58,7 @@ export default function Profile() {
         setCinsiyet(p.cinsiyet     || 'Erkek');
         setProfilFoto(p.profilFoto || null);
         setSacStili(p.sacStili     || 'orta');
+        setSakal(p.sakal           || 'yok');
       }
     } catch (e) {}
   };
@@ -66,7 +68,7 @@ export default function Profile() {
       Alert.alert(dil === 'en' ? 'Missing Info' : 'Eksik Bilgi', dil === 'en' ? 'Please enter height and weight.' : 'Boy ve kilo alanlarını doldurun.');
       return;
     }
-    const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili };
+    const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili, sakal };
     await AsyncStorage.setItem(PROFIL_KEY, JSON.stringify(profil));
     Alert.alert(
       dil === 'en' ? 'Saved ✓' : 'Kaydedildi ✓',

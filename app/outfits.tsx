@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, {
   Circle, Rect, Path, Ellipse,
   ClipPath, Defs, Image as SvgImage,
+  RadialGradient, LinearGradient, Stop,
 } from 'react-native-svg';
 import { useApp } from '../lib/context';
 import type { Kiyafet, Kombin, HavaDurumu, Profil } from '../lib/types';
@@ -108,6 +109,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
   const gozRengi = profil?.gozRengi ?? '#5C3D2E';
   const kadin    = profil?.cinsiyet === 'Kadın';
   const uzunSac  = (profil?.sacStili ?? (kadin ? 'uzun' : 'orta')) === 'uzun';
+  const sakal    = profil?.sakal ?? 'yok';
 
   const parcaEsle = (anahtar: string[]): string | null =>
     kombin.parcalar.find(p => anahtar.some(k => p.toLowerCase().includes(k))) ?? null;
@@ -147,6 +149,18 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
   return (
     <Svg width={DISP_W} height={DISP_H} viewBox={`0 0 ${W} ${H}`}>
       <Defs>
+        <RadialGradient id="outYuz" cx="40%" cy="35%" rx="60%" ry="55%">
+          <Stop offset="0%"   stopColor="#FFFFFF" stopOpacity={0.28} />
+          <Stop offset="100%" stopColor="#000000" stopOpacity={0.13} />
+        </RadialGradient>
+        <RadialGradient id="outSac" cx="50%" cy="15%" rx="55%" ry="60%">
+          <Stop offset="0%"   stopColor="#FFFFFF" stopOpacity={0.20} />
+          <Stop offset="100%" stopColor="#000000" stopOpacity={0.28} />
+        </RadialGradient>
+        <RadialGradient id="outIris" cx="35%" cy="30%" rx="65%" ry="65%">
+          <Stop offset="0%"   stopColor="#FFFFFF" stopOpacity={0.32} />
+          <Stop offset="100%" stopColor="#000000" stopOpacity={0.22} />
+        </RadialGradient>
         <ClipPath id="avcHeadClip">
           <Ellipse cx={100} cy={110} rx={56} ry={62} />
         </ClipPath>
@@ -178,12 +192,28 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
 
       {/* ── BAŞ ── */}
       <Ellipse cx={100} cy={110} rx={56} ry={62} fill={tenRengi} />
+      <Ellipse cx={100} cy={110} rx={56} ry={62} fill="url(#outYuz)" />
 
       {/* Kulaklar */}
       <Ellipse cx={44}  cy={114} rx={8} ry={10} fill={tenRengi} />
       <Ellipse cx={156} cy={114} rx={8} ry={10} fill={tenRengi} />
       <Ellipse cx={44}  cy={114} rx={5} ry={6}  fill="rgba(0,0,0,0.07)" />
       <Ellipse cx={156} cy={114} rx={5} ry={6}  fill="rgba(0,0,0,0.07)" />
+
+      {/* ── SAKAL ── */}
+      {sakal === 'hafif' && (
+        <>
+          <Ellipse cx={100} cy={155} rx={30} ry={13} fill={sacRengi} opacity={0.35} />
+          <Ellipse cx={76}  cy={148} rx={13} ry={9}  fill={sacRengi} opacity={0.25} />
+          <Ellipse cx={124} cy={148} rx={13} ry={9}  fill={sacRengi} opacity={0.25} />
+        </>
+      )}
+      {sakal === 'tam' && (
+        <Path
+          d="M 58 136 Q 58 170 100 176 Q 142 170 142 136 Q 135 156 100 162 Q 65 156 58 136 Z"
+          fill={sacRengi} opacity={0.72}
+        />
+      )}
 
       {/* Profil fotoğrafı VEYA çizgi yüz */}
       {profil?.profilFoto ? (
@@ -204,11 +234,15 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
           <Ellipse cx={86}  cy={100} rx={11} ry={11} fill="white" />
           <Ellipse cx={114} cy={100} rx={11} ry={11} fill="white" />
           <Circle  cx={86}  cy={101} r={7}   fill={gozRengi} />
+          <Circle  cx={86}  cy={101} r={7}   fill="url(#outIris)" />
           <Circle  cx={114} cy={101} r={7}   fill={gozRengi} />
+          <Circle  cx={114} cy={101} r={7}   fill="url(#outIris)" />
           <Circle  cx={86}  cy={101} r={3.5} fill="#111" />
           <Circle  cx={114} cy={101} r={3.5} fill="#111" />
           <Circle  cx={88}  cy={97}  r={2.5} fill="white" />
           <Circle  cx={116} cy={97}  r={2.5} fill="white" />
+          <Circle  cx={84}  cy={104} r={1.2} fill="white" opacity={0.6} />
+          <Circle  cx={112} cy={104} r={1.2} fill="white" opacity={0.6} />
           <Path d="M 97 112 Q 95 122 97 124 Q 100 127 103 124 Q 105 122 103 112"
             fill="none" stroke="rgba(0,0,0,0.13)" strokeWidth={1.8} strokeLinecap="round" />
           <Path d="M 88 132 Q 100 143 112 132"
@@ -218,6 +252,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
 
       {/* ── SAÇ ÖN KAPAK ── */}
       <Path d="M 44 80 C 44 44, 156 44, 156 80 C 140 62, 60 62, 44 80 Z" fill={sacRengi} />
+      <Path d="M 44 80 C 44 44, 156 44, 156 80 C 140 62, 60 62, 44 80 Z" fill="url(#outSac)" />
       {uzunSac && (
         <>
           <Path d="M 44 110 C 34 158, 32 200, 34 228"
