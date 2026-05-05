@@ -30,20 +30,27 @@
       "expo-router",
       [
         "expo-splash-screen",
-{
-  "image": "./assets/images/splash-icon.png",
-  "imageWidth": 300,
-  "resizeMode": "contain",
-  "backgroundColor": "#0A0A0A",
-  "dark": {
-    "backgroundColor": "#0A0A0A"
-  }
-}
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 300,
+          "resizeMode": "contain",
+          "backgroundColor": "#0A0A0A",
+          "dark": {
+            "backgroundColor": "#0A0A0A"
+          }
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "10ad1d8f-5e54-4560-9747-2175b63a7e1a"
+      }
+    },
+    "owner": "emek35"
   }
 }
