@@ -411,9 +411,13 @@ ${jsonFormat}`;
       return;
     }
 
+    const controller = new AbortController();
+    const zaman = setTimeout(() => controller.abort(), 30000);
+
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
+        signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': CLAUDE_KEY,
@@ -426,6 +430,7 @@ ${jsonFormat}`;
           messages: [{ role: 'user', content: prompt }],
         }),
       });
+      clearTimeout(zaman);
 
       if (!res.ok) {
         const errText = await res.text();
@@ -457,8 +462,12 @@ ${jsonFormat}`;
         setHata(`Beklenmeyen API yanıtı: ${JSON.stringify(data).slice(0, 200)}`);
       }
     } catch (e) {
+      clearTimeout(zaman);
       const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';
-      setHata(`Kombin oluşturulamadı: ${msg}`);
+      const hataMesaj = msg.includes('abort') || msg.includes('Abort')
+        ? 'İstek zaman aşımına uğradı (30s). İnternet bağlantını kontrol et.'
+        : `Kombin oluşturulamadı: ${msg}`;
+      setHata(hataMesaj);
     }
     setYukleniyor(false);
   };
