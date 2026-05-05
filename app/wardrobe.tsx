@@ -3,8 +3,8 @@ import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useApp } from './context';
-import type { Kiyafet } from './types';
+import { useApp } from '../lib/context';
+import type { Kiyafet } from '../lib/types';
 
 const STORAGE_KEY = 'xmobile_kiyafetler';
 

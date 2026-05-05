@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
-import { AppProvider } from './context';
-import { ErrorBoundary } from './error-boundary';
+import { AppProvider } from '../lib/context';
+import { ErrorBoundary } from '../lib/error-boundary';
 
 export default function RootLayout() {
   return (

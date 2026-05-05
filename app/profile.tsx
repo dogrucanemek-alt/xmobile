@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
-import { useApp } from './context';
+import { useApp } from '../lib/context';
 
 const PROFIL_KEY = 'xmobile_profil';
 

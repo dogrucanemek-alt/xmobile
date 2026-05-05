@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, StatusBar, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useApp } from './context';
+import { useApp } from '../lib/context';
 
 export default function Index() {
   const router = useRouter();

@@ -5,8 +5,8 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useApp } from './context';
-import type { Kiyafet, Kombin, HavaDurumu, Profil } from './types';
+import { useApp } from '../lib/context';
+import type { Kiyafet, Kombin, HavaDurumu, Profil } from '../lib/types';
 
 const WEATHER_KEY = process.env.EXPO_PUBLIC_WEATHER_KEY ?? '';
 const CLAUDE_KEY  = process.env.EXPO_PUBLIC_CLAUDE_KEY ?? '';
