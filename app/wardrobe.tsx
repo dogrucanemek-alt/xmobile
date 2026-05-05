@@ -160,7 +160,13 @@ export default function Wardrobe() {
 
       <View style={[styles.bottomBar, { backgroundColor: renkler.bg, borderTopColor: renkler.sinir }]}>
         <TouchableOpacity
-          style={[styles.kombinButon, { backgroundColor: renkler.btnPrimary }]}
+          style={[styles.gecmisButon, { borderColor: renkler.sinir2 }]}
+          onPress={() => router.push('/history')}
+        >
+          <Text style={[styles.gecmisButonText, { color: renkler.metin }]}>📋</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.kombinButon, { backgroundColor: renkler.btnPrimary, flex: 1 }]}
           onPress={() => router.push('/outfits')}
         >
           <Text style={[styles.kombinButonText, { color: renkler.btnPrimaryMetin }]}>
@@ -271,9 +277,11 @@ const styles = StyleSheet.create({
   kiyafetAd:   { fontSize: 15, fontWeight: '500', marginBottom: 3 },
   kiyafetDetay:{ fontSize: 13 },
   arrow:       { fontSize: 22 },
-  bottomBar:   { padding: 20, borderTopWidth: 0.5 },
-  kombinButon: { paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
-  kombinButonText: { fontSize: 16, fontWeight: '600' },
+  bottomBar:      { padding: 20, borderTopWidth: 0.5, flexDirection: 'row', gap: 10 },
+  gecmisButon:    { width: 52, height: 52, borderRadius: 14, borderWidth: 0.5, alignItems: 'center', justifyContent: 'center' },
+  gecmisButonText:{ fontSize: 22 },
+  kombinButon:    { paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
+  kombinButonText:{ fontSize: 16, fontWeight: '600' },
   modal:       { flex: 1 },
   modalHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',

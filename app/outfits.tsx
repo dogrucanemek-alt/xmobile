@@ -11,6 +11,7 @@ import Svg, {
 } from 'react-native-svg';
 import { useApp } from '../lib/context';
 import type { Kiyafet, Kombin, HavaDurumu, Profil } from '../lib/types';
+import { GECMIS_KEY } from './history';
 
 const WEATHER_KEY = process.env.EXPO_PUBLIC_WEATHER_KEY ?? '';
 const CLAUDE_KEY  = process.env.EXPO_PUBLIC_CLAUDE_KEY ?? '';
@@ -447,7 +448,26 @@ ${jsonFormat}`;
               </View>
               <TouchableOpacity
                 style={[styles.secButon, { backgroundColor: renkler.btnPrimary }]}
-                onPress={() => Alert.alert(`✓ ${t.kombinSecildi}`, `"${seciliKombin.baslik}" ${t.iyiGunler}`)}
+                onPress={async () => {
+                  const kayitli = await AsyncStorage.getItem(GECMIS_KEY);
+                  const liste = kayitli ? JSON.parse(kayitli) : [];
+                  liste.unshift({
+                    id: Date.now().toString(),
+                    tarih: new Date().toISOString(),
+                    kombin: seciliKombin,
+                    favori: false,
+                    hava: hava ? { derece: hava.derece, durum: hava.durum } : undefined,
+                  });
+                  await AsyncStorage.setItem(GECMIS_KEY, JSON.stringify(liste));
+                  Alert.alert(
+                    `✓ ${t.kombinSecildi}`,
+                    `"${seciliKombin.baslik}" ${t.iyiGunler}`,
+                    [
+                      { text: dil === 'en' ? 'View History' : 'Geçmişi Gör', onPress: () => router.push('/history') },
+                      { text: 'OK' },
+                    ],
+                  );
+                }}
               >
                 <Text style={[styles.secButonText, { color: renkler.btnPrimaryMetin }]}>{t.buKombiniSec}</Text>
               </TouchableOpacity>

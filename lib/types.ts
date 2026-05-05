@@ -29,3 +29,11 @@ export interface HavaDurumu {
   nem: number;
   hissedilen: number;
 }
+
+export interface KombinKayit {
+  id: string;
+  tarih: string;
+  kombin: Kombin;
+  favori: boolean;
+  hava?: { derece: number; durum: string };
+}
