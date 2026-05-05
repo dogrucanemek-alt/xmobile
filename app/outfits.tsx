@@ -1,59 +1,66 @@
+import React, { useEffect, useState } from 'react';
 import {
   Text, View, StyleSheet, StatusBar, TouchableOpacity,
   ScrollView, ActivityIndicator, Image, Alert
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from './context';
+import type { Kiyafet, Kombin, HavaDurumu, Profil } from './types';
 
-const WEATHER_KEY = process.env.EXPO_PUBLIC_WEATHER_KEY!;
-const CLAUDE_KEY = process.env.EXPO_PUBLIC_CLAUDE_KEY!;
-const SEHIR = 'Izmir,TR';
+const WEATHER_KEY = process.env.EXPO_PUBLIC_WEATHER_KEY ?? '';
+const CLAUDE_KEY  = process.env.EXPO_PUBLIC_CLAUDE_KEY ?? '';
+const SEHIR       = 'Izmir,TR';
 
-const renkBul = (parcaAdi) => {
+const renkBul = (parcaAdi: string | null): string => {
   const ad = (parcaAdi ?? '').toLowerCase();
-  if (ad.includes('beyaz'))                             return '#F0F0F0';
-  if (ad.includes('siyah'))                             return '#1A1A1A';
-  if (ad.includes('lacivert'))                          return '#1B2A4A';
-  if (ad.includes('mavi'))                              return '#2E6DA4';
+  if (ad.includes('beyaz'))                              return '#F0F0F0';
+  if (ad.includes('siyah'))                              return '#1A1A1A';
+  if (ad.includes('lacivert'))                           return '#1B2A4A';
+  if (ad.includes('mavi'))                               return '#2E6DA4';
   if (ad.includes('kirmizi') || ad.includes('kırmızı')) return '#C0392B';
   if (ad.includes('yesil')   || ad.includes('yeşil'))   return '#27AE60';
-  if (ad.includes('sari')    || ad.includes('sarı'))    return '#F1C40F';
-  if (ad.includes('gri'))                               return '#7F8C8D';
-  if (ad.includes('bej')     || ad.includes('krem'))    return '#D4B896';
-  if (ad.includes('kahve')   || ad.includes('bordo'))   return '#6B3A2A';
-  if (ad.includes('pembe'))                             return '#E91E8C';
-  if (ad.includes('turuncu'))                           return '#E67E22';
-  if (ad.includes('mor'))                               return '#8E44AD';
+  if (ad.includes('sari')    || ad.includes('sarı'))     return '#F1C40F';
+  if (ad.includes('gri'))                                return '#7F8C8D';
+  if (ad.includes('bej')     || ad.includes('krem'))     return '#D4B896';
+  if (ad.includes('kahve')   || ad.includes('bordo'))    return '#6B3A2A';
+  if (ad.includes('pembe'))                              return '#E91E8C';
+  if (ad.includes('turuncu'))                            return '#E67E22';
+  if (ad.includes('mor'))                                return '#8E44AD';
   return '#4A90D9';
 };
 
-const AvatarKombin = ({ kombin, profil, kiyafetler = [] }) => {
-  const tenRengi = profil?.tenRengi || '#FDDBB4';
-  const sacRengi = profil?.sacRengi || '#1A1A1A';
-  const gozRengi = profil?.gozRengi || '#6B3A2A';
+interface AvatarKombinProps {
+  kombin: Kombin;
+  profil: Profil | null;
+  kiyafetler: Kiyafet[];
+}
 
-  const parcaEsle = (anahtar) =>
+const AvatarKombin = React.memo(function AvatarKombin({ kombin, profil, kiyafetler }: AvatarKombinProps) {
+  const tenRengi = profil?.tenRengi ?? '#FDDBB4';
+  const sacRengi = profil?.sacRengi ?? '#1A1A1A';
+  const gozRengi = profil?.gozRengi ?? '#6B3A2A';
+
+  const parcaEsle = (anahtar: string[]): string | null =>
     kombin.parcalar.find(p =>
       anahtar.some(k => p.toLowerCase().includes(k))
-    ) || null;
+    ) ?? null;
 
-  const ustParca = parcaEsle(['gömlek', 'gomlek', 'tişört', 'tisort', 'kazak', 'bluz', 'ceket']);
-  const altParca = parcaEsle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım']);
-  const disParca = parcaEsle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk']);
-
-  const fotografBul = (parcaAdi) => {
+  const fotografBul = (parcaAdi: string | null): string | null => {
     if (!parcaAdi) return null;
     const aranan = parcaAdi.toLowerCase();
     const tam = kiyafetler.find(k => k.ad?.toLowerCase() === aranan);
     if (tam?.foto) return tam.foto;
     const kismi = kiyafetler.find(k => {
-      const ad = k.ad?.toLowerCase() || '';
+      const ad = k.ad?.toLowerCase() ?? '';
       return aranan.includes(ad) || ad.includes(aranan);
     });
-    return kismi?.foto || null;
+    return kismi?.foto ?? null;
   };
+
+  const ustParca = parcaEsle(['gömlek', 'gomlek', 'tişört', 'tisort', 'kazak', 'bluz', 'ceket']);
+  const altParca = parcaEsle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım']);
+  const disParca = parcaEsle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk']);
 
   const ustFoto = fotografBul(ustParca);
   const altFoto = fotografBul(altParca);
@@ -64,13 +71,8 @@ const AvatarKombin = ({ kombin, profil, kiyafetler = [] }) => {
 
   return (
     <View style={av.container}>
-
       {profil?.profilFoto ? (
-        <Image
-          source={{ uri: profil.profilFoto }}
-          style={av.yuzFoto}
-          resizeMode="cover"
-        />
+        <Image source={{ uri: profil.profilFoto }} style={av.yuzFoto} resizeMode="cover" />
       ) : (
         <>
           <View style={[av.sac, { backgroundColor: sacRengi }]} />
@@ -90,9 +92,9 @@ const AvatarKombin = ({ kombin, profil, kiyafetler = [] }) => {
         <>
           {disFoto
             ? <Image source={{ uri: disFoto }} style={av.disGovde} resizeMode="cover" />
-            : <View style={[av.disGovde, { backgroundColor: disRenk }]} />}
-          <View style={[av.disKolSol, { backgroundColor: disRenk }]} />
-          <View style={[av.disKolSag, { backgroundColor: disRenk }]} />
+            : <View style={[av.disGovde, { backgroundColor: disRenk ?? undefined }]} />}
+          <View style={[av.disKolSol, { backgroundColor: disRenk ?? undefined }]} />
+          <View style={[av.disKolSag, { backgroundColor: disRenk ?? undefined }]} />
         </>
       )}
 
@@ -100,8 +102,8 @@ const AvatarKombin = ({ kombin, profil, kiyafetler = [] }) => {
         ? <Image source={{ uri: ustFoto }} style={av.ust} resizeMode="cover" />
         : <View style={[av.ust, { backgroundColor: ustRenk, borderWidth: ustRenk === '#F0F0F0' ? 1 : 0, borderColor: '#DDD' }]} />}
 
-      <View style={[av.kolSol, { backgroundColor: disRenk || ustRenk }]} />
-      <View style={[av.kolSag, { backgroundColor: disRenk || ustRenk }]} />
+      <View style={[av.kolSol, { backgroundColor: disRenk ?? ustRenk }]} />
+      <View style={[av.kolSag, { backgroundColor: disRenk ?? ustRenk }]} />
 
       {altFoto
         ? <Image source={{ uri: altFoto }} style={av.alt} resizeMode="cover" />
@@ -113,43 +115,28 @@ const AvatarKombin = ({ kombin, profil, kiyafetler = [] }) => {
       <View style={av.ayakSag} />
     </View>
   );
-};
+});
 
 export default function Outfits() {
   const { t, renkler, dil } = useApp();
   const router = useRouter();
-  const [hava, setHava]               = useState(null);
-  const [kombinler, setKombinler]     = useState([]);
+  const [hava, setHava]               = useState<HavaDurumu | null>(null);
+  const [kombinler, setKombinler]     = useState<Kombin[]>([]);
   const [yukleniyor, setYukleniyor]   = useState(true);
   const [hata, setHata]               = useState('');
   const [seciliIndex, setSeciliIndex] = useState(0);
-  const [profil, setProfil]           = useState(null);
-  const [kiyafetler, setKiyafetler]   = useState([]);
+  const [profil, setProfil]           = useState<Profil | null>(null);
+  const [kiyafetler, setKiyafetler]   = useState<Kiyafet[]>([]);
 
   useEffect(() => { baslat(); }, []);
 
-  const baslat = async () => {
-    setYukleniyor(true);
-    setHata('');
-    try {
-      const profilVeri = await AsyncStorage.getItem('xmobile_profil');
-      if (profilVeri) setProfil(JSON.parse(profilVeri));
-      const havaVeri  = await havaAl();
-      const kiyafetle = await kiyafetleriAl();
-      await kombinOner(havaVeri, kiyafetle);
-    } catch (e) {
-      setHata('Bir hata oluştu. Tekrar dene.');
-      setYukleniyor(false);
-    }
-  };
-
-  const havaAl = async () => {
+  const havaAl = async (): Promise<HavaDurumu> => {
     const res = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${SEHIR}&appid=${WEATHER_KEY}&units=metric&lang=tr`
     );
     const data = await res.json();
     if (!data.main) throw new Error('Hava verisi alınamadı');
-    const havaVeri = {
+    const havaVeri: HavaDurumu = {
       derece:     Math.round(data.main.temp),
       durum:      data.weather[0].description,
       nem:        data.main.humidity,
@@ -159,22 +146,39 @@ export default function Outfits() {
     return havaVeri;
   };
 
-  const kiyafetleriAl = async () => {
+  const kiyafetleriAl = async (): Promise<Kiyafet[]> => {
     const kayitli = await AsyncStorage.getItem('xmobile_kiyafetler');
-    const liste   = kayitli ? JSON.parse(kayitli) : [];
+    const liste: Kiyafet[] = kayitli ? JSON.parse(kayitli) : [];
     setKiyafetler(liste);
     return liste;
   };
 
-  const kombinOner = async (havaVeri, liste) => {
+  const baslat = async () => {
+    setYukleniyor(true);
+    setHata('');
+    try {
+      const [profilStr, havaVeri, kiyafetle] = await Promise.all([
+        AsyncStorage.getItem('xmobile_profil'),
+        havaAl(),
+        kiyafetleriAl(),
+      ]);
+      if (profilStr) setProfil(JSON.parse(profilStr));
+      await kombinOner(havaVeri, kiyafetle);
+    } catch (e) {
+      setHata('Bir hata oluştu. Tekrar dene.');
+      setYukleniyor(false);
+    }
+  };
+
+  const kombinOner = async (havaVeri: HavaDurumu, liste: Kiyafet[]): Promise<void> => {
     if (liste.length === 0) {
       setHata('Gardırobunda kıyafet yok. Önce kıyafet ekle.');
       setYukleniyor(false);
       return;
     }
 
-    const listeStr = liste.map(k => `${k.ad} (${k.tur}, ${k.sezon})`).join(', ');
-    const lang = dil === 'en' ? 'English' : 'Turkish';
+    const listeStr  = liste.map(k => `${k.ad} (${k.tur}, ${k.sezon})`).join(', ');
+    const lang      = dil === 'en' ? 'English' : 'Turkish';
     const jsonFormat = dil === 'en'
       ? `{"kombinler":[{"baslik":"title","tur":"Work","parcalar":["item name"],"neden":"1 sentence explanation"}]}`
       : `{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["kıyafet adı"],"neden":"1 cümle açıklama"}]}`;
@@ -213,14 +217,15 @@ ${jsonFormat}`;
       }
 
       if (data.content?.[0]?.text) {
-        const metin     = data.content[0].text;
+        const metin     = data.content[0].text as string;
         const baslangic = metin.indexOf('{');
         const bitis     = metin.lastIndexOf('}') + 1;
-        const parsed    = JSON.parse(metin.slice(baslangic, bitis));
+        const parsed    = JSON.parse(metin.slice(baslangic, bitis)) as { kombinler: Kombin[] };
         setKombinler(parsed.kombinler);
       }
     } catch (e) {
-      setHata(`Kombin oluşturulamadı: ${e.message}`);
+      const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';
+      setHata(`Kombin oluşturulamadı: ${msg}`);
     }
     setYukleniyor(false);
   };
@@ -283,11 +288,7 @@ ${jsonFormat}`;
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={[styles.avatarBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
             {seciliKombin && (
-              <AvatarKombin
-                kombin={seciliKombin}
-                profil={profil}
-                kiyafetler={kiyafetler}
-              />
+              <AvatarKombin kombin={seciliKombin} profil={profil} kiyafetler={kiyafetler} />
             )}
             {seciliKombin && (
               <View style={styles.avatarBilgi}>

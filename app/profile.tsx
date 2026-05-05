@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, TextInput, Image, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -60,9 +60,17 @@ export default function Profile() {
   };
 
   const kaydet = async () => {
+    if (!boy || !kilo) {
+      Alert.alert(dil === 'en' ? 'Missing Info' : 'Eksik Bilgi', dil === 'en' ? 'Please enter height and weight.' : 'Boy ve kilo alanlarını doldurun.');
+      return;
+    }
     const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto };
     await AsyncStorage.setItem(PROFIL_KEY, JSON.stringify(profil));
-    router.back();
+    Alert.alert(
+      dil === 'en' ? 'Saved ✓' : 'Kaydedildi ✓',
+      dil === 'en' ? 'Your profile has been updated.' : 'Profilin güncellendi.',
+      [{ text: 'OK', onPress: () => router.back() }],
+    );
   };
 
   const fotografSec = async () => {
@@ -271,7 +279,7 @@ export default function Profile() {
               <TextInput
                 style={[styles.input, { color: renkler.metin, borderBottomColor: renkler.sinir }]}
                 value={boy}
-                onChangeText={setBoy}
+                onChangeText={(v) => setBoy(v.replace(/[^0-9]/g, ''))}
                 keyboardType="numeric"
                 maxLength={3}
                 placeholderTextColor={renkler.metin2}
@@ -284,7 +292,7 @@ export default function Profile() {
               <TextInput
                 style={[styles.input, { color: renkler.metin, borderBottomColor: renkler.sinir }]}
                 value={kilo}
-                onChangeText={setKilo}
+                onChangeText={(v) => setKilo(v.replace(/[^0-9]/g, ''))}
                 keyboardType="numeric"
                 maxLength={3}
                 placeholderTextColor={renkler.metin2}

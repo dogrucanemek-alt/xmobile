@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from './context';
+import type { Kiyafet } from './types';
 
 const STORAGE_KEY = 'xmobile_kiyafetler';
 
@@ -21,9 +22,9 @@ export default function Wardrobe() {
   const router = useRouter();
   const { t, renkler } = useApp();
 
-  const [kiyafetler, setKiyafetler]       = useState([]);
+  const [kiyafetler, setKiyafetler]       = useState<Kiyafet[]>([]);
   const [modalAcik, setModalAcik]         = useState(false);
-  const [seciliKiyafet, setSeciliKiyafet] = useState(null);
+  const [seciliKiyafet, setSeciliKiyafet] = useState<Kiyafet | null>(null);
   const [duzenAd, setDuzenAd]             = useState('');
   const [duzenTur, setDuzenTur]           = useState('');
   const [duzenSezon, setDuzenSezon]       = useState('');
@@ -44,7 +45,7 @@ export default function Wardrobe() {
     }
   };
 
-  const kaydet = async (yeniListe) => {
+  const kaydet = async (yeniListe: Kiyafet[]) => {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(yeniListe));
     setKiyafetler(yeniListe);
   };
@@ -81,7 +82,7 @@ export default function Wardrobe() {
     ]);
   };
 
-  const kiyafetDuzenle = (k) => {
+  const kiyafetDuzenle = (k: Kiyafet) => {
     setSeciliKiyafet(k);
     setDuzenAd(k.ad);
     setDuzenTur(k.tur);
@@ -99,7 +100,7 @@ export default function Wardrobe() {
     setModalAcik(false);
   };
 
-  const sil = (id) => {
+  const sil = (id: number) => {
     Alert.alert(t.buKiyafetiSil, t.silOnay, [
       { text: t.sil, style: 'destructive', onPress: async () => {
         const yeniListe = kiyafetler.filter(k => k.id !== id);
@@ -278,6 +279,6 @@ const styles = StyleSheet.create({
   chipGrup:    { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip:        { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 0.5 },
   chipText:    { fontSize: 13 },
- silButon:    { margin: 20, padding: 16, borderRadius: 14, alignItems: 'center', borderWidth: 0.5, borderColor: '#FF3B30' },
+  silButon:    { margin: 20, padding: 16, borderRadius: 14, alignItems: 'center', borderWidth: 0.5, borderColor: '#FF3B30' },
   silButonText:{ color: '#FF3B30', fontSize: 16, fontWeight: '500' },
 });

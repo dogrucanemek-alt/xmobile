@@ -1,4 +1,8 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const TEMA_KEY = 'xmobile_karanlik';
+const DIL_KEY  = 'xmobile_dil';
 
 const çeviriler = {
   tr: {
@@ -101,23 +105,56 @@ const karanlıkRenkler = {
   statusBar: 'light-content' as const,
 };
 
-const AppContext = createContext<any>(null);
+interface AppContextValue {
+  t: typeof çeviriler['tr'];
+  renkler: typeof açıkRenkler;
+  temaToggle: () => void;
+  dil: 'tr' | 'en';
+  dilDegistir: (d: 'tr' | 'en') => void;
+  karanlik: boolean;
+}
+
+const AppContext = createContext<AppContextValue | null>(null);
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [karanlik, setKaranlik] = useState(false);
   const [dil, setDil] = useState<'tr' | 'en'>('tr');
 
-  const temaToggle = () => setKaranlik(prev => !prev);
-  const dilDegistir = (yeniDil: 'tr' | 'en') => setDil(yeniDil);
+  useEffect(() => {
+    AsyncStorage.multiGet([TEMA_KEY, DIL_KEY]).then((pairs) => {
+      const tema = pairs[0][1];
+      const d    = pairs[1][1];
+      if (tema !== null) setKaranlik(tema === 'true');
+      if (d === 'tr' || d === 'en') setDil(d);
+    });
+  }, []);
+
+  const temaToggle = useCallback(() => {
+    setKaranlik(prev => {
+      const next = !prev;
+      AsyncStorage.setItem(TEMA_KEY, String(next));
+      return next;
+    });
+  }, []);
+
+  const dilDegistir = useCallback((yeniDil: 'tr' | 'en') => {
+    AsyncStorage.setItem(DIL_KEY, yeniDil);
+    setDil(yeniDil);
+  }, []);
 
   const renkler = karanlik ? karanlıkRenkler : açıkRenkler;
   const t = çeviriler[dil];
 
-  return (
-    <AppContext.Provider value={{ t, renkler, temaToggle, dil, dilDegistir, karanlik }}>
-      {children}
-    </AppContext.Provider>
+  const value = useMemo(
+    () => ({ t, renkler, temaToggle, dil, dilDegistir, karanlik }),
+    [t, renkler, temaToggle, dil, dilDegistir, karanlik],
   );
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
-export const useApp = () => useContext(AppContext);
+export const useApp = () => {
+  const ctx = useContext(AppContext);
+  if (!ctx) throw new Error('useApp must be used within AppProvider');
+  return ctx;
+};
