@@ -9,6 +9,7 @@ import { kiyafetTani } from '../lib/vision';
 
 const STORAGE_KEY  = 'xmobile_kiyafetler';
 const VISION_KEY   = process.env.EXPO_PUBLIC_VISION_KEY ?? '';
+const VERI_VERSIYON = 2;
 
 const BASLANGIC = [
   { id: 1,  ad: 'Gri Jean Pantolon',              tur: 'Alt',       sezon: 'Tüm Sezon',         foto: null },
@@ -44,12 +45,14 @@ export default function Wardrobe() {
 
   const yukle = async () => {
     try {
-      const kayitli = await AsyncStorage.getItem(STORAGE_KEY);
-      if (kayitli) {
+      const versiyon = await AsyncStorage.getItem('xmobile_veri_v');
+      const kayitli  = await AsyncStorage.getItem(STORAGE_KEY);
+      if (kayitli && Number(versiyon) >= VERI_VERSIYON) {
         setKiyafetler(JSON.parse(kayitli));
       } else {
         setKiyafetler(BASLANGIC);
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(BASLANGIC));
+        await AsyncStorage.setItem('xmobile_veri_v', String(VERI_VERSIYON));
       }
     } catch (e) {
       setKiyafetler(BASLANGIC);
