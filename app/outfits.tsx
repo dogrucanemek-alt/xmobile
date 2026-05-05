@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Text, View, StyleSheet, StatusBar, TouchableOpacity,
-  ScrollView, ActivityIndicator, Alert
+  ScrollView, ActivityIndicator, Alert, Image,
+  PanResponder, Animated,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -35,6 +36,50 @@ const renkBul = (parcaAdi: string | null): string => {
   return '#4A90D9';
 };
 
+const hexToHsl = (hex: string): [number, number, number] => {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  if (max === min) return [0, 0, l];
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h = 0;
+  if      (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+  else if (max === g) h = ((b - r) / d + 2) / 6;
+  else                h = ((r - g) / d + 4) / 6;
+  return [h * 360, s, l];
+};
+
+const hueDist = (a: number, b: number): number => {
+  const d = Math.abs(a - b) % 360;
+  return d > 180 ? 360 - d : d;
+};
+
+const pairScore = (d: number): number => {
+  if (d <=  30)              return 95; // monochromatic
+  if (d <=  60)              return 82; // analogous
+  if (d >= 150 && d <= 210)  return 88; // complementary
+  if (d >= 100 && d <= 140)  return 78; // split-complementary / triadic
+  if (d >= 220 && d <= 260)  return 78; // triadic
+  if (d >=  61 && d <=  99)  return 52; // tension
+  return 45;                            // discord
+};
+
+const renkUyumSkoru = (parcalar: string[]): number => {
+  const hslList = parcalar.map(p => hexToHsl(renkBul(p)));
+  const aktif   = hslList.filter(([, s]) => s > 0.12); // nötr renkleri atla
+  if (aktif.length < 2) return 88;                      // çoğunlukla nötr → güvenli
+  let total = 0, count = 0;
+  for (let i = 0; i < aktif.length; i++)
+    for (let j = i + 1; j < aktif.length; j++) {
+      total += pairScore(hueDist(aktif[i][0], aktif[j][0]));
+      count++;
+    }
+  return Math.round(total / count);
+};
+
 interface AvatarProps {
   kombin: Kombin;
   profil: Profil | null;
@@ -47,6 +92,17 @@ const W = 200, H = 400;
 const DISP_W = 120, DISP_H = 240;
 
 const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: AvatarProps) {
+  if (profil?.avatarUrl && !profil?.profilFoto) {
+    const pngUrl = profil.avatarUrl.replace(/\.glb(\?.*)?$/, '.png') + '?scene=fullbody-portrait-v1';
+    return (
+      <Image
+        source={{ uri: pngUrl }}
+        style={{ width: DISP_W, height: DISP_H, borderRadius: 12 }}
+        resizeMode="contain"
+      />
+    );
+  }
+
   const tenRengi = profil?.tenRengi ?? '#FDDBB4';
   const sacRengi = profil?.sacRengi ?? '#3D2314';
   const gozRengi = profil?.gozRengi ?? '#5C3D2E';
@@ -243,6 +299,31 @@ export default function Outfits() {
   const [profil, setProfil]           = useState<Profil | null>(null);
   const [kiyafetler, setKiyafetler]   = useState<Kiyafet[]>([]);
 
+  const kombinlerRef = useRef<Kombin[]>([]);
+  const indexRef     = useRef(0);
+  const slideAnim    = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => { kombinlerRef.current = kombinler; }, [kombinler]);
+  useEffect(() => { indexRef.current = seciliIndex; },  [seciliIndex]);
+
+  const swipeRef = useRef((dir: 1 | -1) => {
+    const next = Math.min(Math.max(indexRef.current + dir, 0), kombinlerRef.current.length - 1);
+    if (next === indexRef.current) return;
+    slideAnim.setValue(-dir * 320);
+    setSeciliIndex(next);
+    Animated.spring(slideAnim, { toValue: 0, useNativeDriver: true, tension: 80, friction: 10 }).start();
+  });
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > Math.abs(g.dy) && Math.abs(g.dx) > 12,
+      onPanResponderRelease: (_, g) => {
+        if      (g.dx < -50) swipeRef.current(1);
+        else if (g.dx >  50) swipeRef.current(-1);
+      },
+    })
+  ).current;
+
   useEffect(() => { baslat(); }, []);
 
   const havaAl = async (): Promise<HavaDurumu> => {
@@ -356,6 +437,11 @@ ${jsonFormat}`;
   };
 
   const seciliKombin = kombinler[seciliIndex];
+  const skor      = seciliKombin ? renkUyumSkoru(seciliKombin.parcalar) : 0;
+  const skorRenk  = skor >= 80 ? '#27AE60' : skor >= 60 ? '#F39C12' : '#E74C3C';
+  const skorEtiket = dil === 'en'
+    ? (skor >= 90 ? 'Perfect' : skor >= 75 ? 'Great'  : skor >= 60 ? 'Good' : 'Mismatch')
+    : (skor >= 90 ? 'Mükemmel' : skor >= 75 ? 'Harika' : skor >= 60 ? 'İyi'  : 'Uyumsuz');
 
   return (
     <View style={[styles.container, { backgroundColor: renkler.bg2 }]}>
@@ -401,9 +487,12 @@ ${jsonFormat}`;
         </View>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={[styles.avatarBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+          <View
+            style={[styles.avatarBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir, overflow: 'hidden' }]}
+            {...panResponder.panHandlers}
+          >
             {seciliKombin && (
-              <View style={styles.avatarSatir}>
+              <Animated.View style={[styles.avatarSatir, { transform: [{ translateX: slideAnim }] }]}>
                 <View style={{ width: DISP_W, height: DISP_H }}>
                   <AvatarSVG kombin={seciliKombin} profil={profil} kiyafetler={kiyafetler} />
                 </View>
@@ -413,8 +502,29 @@ ${jsonFormat}`;
                     <Text style={[styles.badgeText, { color: renkler.metin2 }]}>{seciliKombin.tur}</Text>
                   </View>
                   <Text style={[styles.avatarNeden, { color: renkler.metin2 }]}>{seciliKombin.neden}</Text>
+                  <View style={styles.skorKutu}>
+                    <View style={styles.skorUstSatir}>
+                      <Text style={[styles.skorLabel, { color: renkler.metin2 }]}>
+                        {dil === 'en' ? 'Color Match' : 'Renk Uyumu'}
+                      </Text>
+                      <Text style={[styles.skorSayi, { color: skorRenk }]}>
+                        {skor} <Text style={styles.skorEtiketText}>{skorEtiket}</Text>
+                      </Text>
+                    </View>
+                    <View style={[styles.skorBarBg, { backgroundColor: renkler.chip }]}>
+                      <View style={[styles.skorBarDolu, { width: `${skor}%` as any, backgroundColor: skorRenk }]} />
+                    </View>
+                  </View>
+                  <View style={styles.noktaSatir}>
+                    {kombinler.map((_, i) => (
+                      <View
+                        key={i}
+                        style={[styles.nokta, { backgroundColor: i === seciliIndex ? renkler.metin : renkler.sinir }]}
+                      />
+                    ))}
+                  </View>
                 </View>
-              </View>
+              </Animated.View>
             )}
           </View>
 
@@ -516,6 +626,15 @@ const styles = StyleSheet.create({
   badge:          { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start', marginBottom: 8 },
   badgeText:      { fontSize: 11, fontWeight: '500' },
   avatarNeden:    { fontSize: 12, lineHeight: 18 },
+  noktaSatir:     { flexDirection: 'row', gap: 6, marginTop: 12 },
+  nokta:          { width: 7, height: 7, borderRadius: 4 },
+  skorKutu:       { marginTop: 10, gap: 5 },
+  skorUstSatir:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
+  skorLabel:      { fontSize: 10 },
+  skorSayi:       { fontSize: 13, fontWeight: '700' },
+  skorEtiketText: { fontSize: 10, fontWeight: '400' },
+  skorBarBg:      { height: 4, borderRadius: 2 },
+  skorBarDolu:    { height: 4, borderRadius: 2 },
   seciciSatir:    { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 12 },
   seciciBtn:      { flex: 1, padding: 10, borderRadius: 10, alignItems: 'center', borderWidth: 0.5 },
   seciciBtnText:  { fontSize: 12, fontWeight: '500' },

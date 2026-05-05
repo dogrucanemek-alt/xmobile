@@ -12,6 +12,7 @@ export default function RootLayout() {
           <Stack.Screen name="outfits" options={{ headerShown: false }} />
           <Stack.Screen name="profile" options={{ headerShown: false }} />
           <Stack.Screen name="history" options={{ headerShown: false }} />
+          <Stack.Screen name="avatar" options={{ headerShown: false }} />
         </Stack>
       </AppProvider>
     </ErrorBoundary>
