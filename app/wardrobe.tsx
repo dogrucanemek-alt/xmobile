@@ -134,24 +134,27 @@ export default function Wardrobe() {
 
       <ScrollView style={styles.liste} showsVerticalScrollIndicator={false}>
         {kiyafetler.map((k) => (
-          <TouchableOpacity
+          <View
             key={k.id}
             style={[styles.kiyafetKart, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}
-            onPress={() => kiyafetDuzenle(k)}
           >
-            {k.foto ? (
-              <Image source={{ uri: k.foto }} style={styles.kiyafetFoto} />
-            ) : (
-              <View style={[styles.renkCircle, { backgroundColor: renkler.chip }]}>
-                <Text style={[styles.renkHarf, { color: renkler.metin2 }]}>{k.ad.charAt(0)}</Text>
+            <TouchableOpacity style={styles.kartIcerik} onPress={() => kiyafetDuzenle(k)}>
+              {k.foto ? (
+                <Image source={{ uri: k.foto }} style={styles.kiyafetFoto} />
+              ) : (
+                <View style={[styles.renkCircle, { backgroundColor: renkler.chip }]}>
+                  <Text style={[styles.renkHarf, { color: renkler.metin2 }]}>{k.ad.charAt(0)}</Text>
+                </View>
+              )}
+              <View style={styles.bilgi}>
+                <Text style={[styles.kiyafetAd, { color: renkler.metin }]}>{k.ad}</Text>
+                <Text style={[styles.kiyafetDetay, { color: renkler.metin2 }]}>{k.tur} · {k.sezon}</Text>
               </View>
-            )}
-            <View style={styles.bilgi}>
-              <Text style={[styles.kiyafetAd, { color: renkler.metin }]}>{k.ad}</Text>
-              <Text style={[styles.kiyafetDetay, { color: renkler.metin2 }]}>{k.tur} · {k.sezon}</Text>
-            </View>
-            <Text style={[styles.arrow, { color: renkler.metin2 }]}>›</Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => sil(k.id)} style={styles.silBtn}>
+              <Text style={styles.silBtnText}>🗑</Text>
+            </TouchableOpacity>
+          </View>
         ))}
       </ScrollView>
 
@@ -254,9 +257,13 @@ const styles = StyleSheet.create({
   sayi:         { fontSize: 13, paddingHorizontal: 20, paddingVertical: 12 },
   liste:        { flex: 1, paddingHorizontal: 16 },
   kiyafetKart: {
-    borderRadius: 14, padding: 14, marginBottom: 10,
+    borderRadius: 14, marginBottom: 10,
     flexDirection: 'row', alignItems: 'center', borderWidth: 0.5,
+    overflow: 'hidden',
   },
+  kartIcerik: { flex: 1, flexDirection: 'row', alignItems: 'center', padding: 14 },
+  silBtn:     { paddingHorizontal: 16, paddingVertical: 14, justifyContent: 'center' },
+  silBtnText: { fontSize: 18 },
   renkCircle:  { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', marginRight: 14 },
   renkHarf:    { fontSize: 20, fontWeight: '500' },
   kiyafetFoto: { width: 48, height: 58, borderRadius: 8, marginRight: 14 },
