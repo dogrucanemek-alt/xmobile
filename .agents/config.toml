@@ -1,0 +1,6 @@
+[skills]
+enabled = true
+
+[project]
+name = "xmobile"
+description = "Expo/React Native gardırop ve kombin uygulaması"
