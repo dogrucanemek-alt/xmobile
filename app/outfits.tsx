@@ -114,36 +114,15 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
   const parcaEsle = (anahtar: string[]): string | null =>
     kombin.parcalar.find(p => anahtar.some(k => p.toLowerCase().includes(k))) ?? null;
 
-  // Kelime bazlı eşleştirme: "Gri pantolon" → "Gri Jean Pantolon" (≥2 ortak kelime)
-  const wardrobeEslesme = (parcaAdi: string | null): Kiyafet | null => {
-    if (!parcaAdi) return null;
-    const aranan = parcaAdi.toLowerCase();
-    const kelimeler = aranan.split(/\s+/).filter(w => w.length > 2);
-    // 1. Tam eşleşme
-    const tam = kiyafetler.find(k => k.ad?.toLowerCase() === aranan);
-    if (tam) return tam;
-    // 2. Kelime bazlı: en az 2 ortak kelime (substring tuzağından kaçın)
-    return kiyafetler.find(k => {
-      const adKelimeler = (k.ad?.toLowerCase() ?? '').split(/\s+/);
-      return kelimeler.filter(w => adKelimeler.includes(w)).length >= 2;
-    }) ?? null;
-  };
-
   const disParca  = parcaEsle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk', 'hırka', 'hirka']);
   const ustParca  = parcaEsle(['gömlek', 'gomlek', 'tişört', 'tisort', 'kazak', 'bluz', 'ceket', 'sweatshirt', 'hoodie']);
   const altParca  = parcaEsle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım', 'elbise']);
   const ayakParca = parcaEsle(['ayakkabı', 'ayakkabi', 'bot', 'sneaker', 'loafer', 'sandalet', 'çizme', 'cizme']);
 
-  const ust = disParca ?? ustParca;
-
-  // Gardırop item'ından tam adı al → renkBul daha doğru çalışır
-  const ustTamAd  = wardrobeEslesme(ust)?.ad ?? ust;
-  const altTamAd  = wardrobeEslesme(altParca)?.ad ?? altParca;
-  const ayakTamAd = wardrobeEslesme(ayakParca)?.ad ?? ayakParca;
-
-  const ustRenk  = renkBul(ustTamAd);
-  const altRenk  = renkBul(altTamAd);
-  const ayakRenk = renkBul(ayakTamAd) ?? '#1A1A1A';
+  const ust      = disParca ?? ustParca;
+  const ustRenk  = renkBul(ust);
+  const altRenk  = renkBul(altParca);
+  const ayakRenk = renkBul(ayakParca) ?? '#1A1A1A';
 
   // Koordinat düzeni:
   // Kafa:   cy=110  (rx=56 ry=62)  →  y=48..172
