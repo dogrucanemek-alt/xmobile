@@ -114,18 +114,15 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
   const parcaEsle = (anahtar: string[]): string | null =>
     kombin.parcalar.find(p => anahtar.some(k => p.toLowerCase().includes(k))) ?? null;
 
-  // Kelime bazlı eşleştirme: "Gri pantolon" → "Gri Jean Pantolon" (2 ortak kelime)
+  // Kelime bazlı eşleştirme: "Gri pantolon" → "Gri Jean Pantolon" (≥2 ortak kelime)
   const wardrobeEslesme = (parcaAdi: string | null): Kiyafet | null => {
     if (!parcaAdi) return null;
     const aranan = parcaAdi.toLowerCase();
     const kelimeler = aranan.split(/\s+/).filter(w => w.length > 2);
+    // 1. Tam eşleşme
     const tam = kiyafetler.find(k => k.ad?.toLowerCase() === aranan);
     if (tam) return tam;
-    const icerik = kiyafetler.find(k => {
-      const ad = k.ad?.toLowerCase() ?? '';
-      return aranan.includes(ad) || ad.includes(aranan);
-    });
-    if (icerik) return icerik;
+    // 2. Kelime bazlı: en az 2 ortak kelime (substring tuzağından kaçın)
     return kiyafetler.find(k => {
       const adKelimeler = (k.ad?.toLowerCase() ?? '').split(/\s+/);
       return kelimeler.filter(w => adKelimeler.includes(w)).length >= 2;
@@ -475,11 +472,21 @@ ${jsonFormat}`;
   const havaIkon = () => {
     if (!hava) return '🌡️';
     const d = hava.durum.toLowerCase();
+    const saat = new Date().getHours();
+    const gece = saat >= 21 || saat < 5;
+    const alacakaranlik = (saat >= 5 && saat < 7) || (saat >= 18 && saat < 21);
+
     if (d.includes('yağmur') || d.includes('rain'))  return '🌧️';
     if (d.includes('kar')    || d.includes('snow'))  return '❄️';
-    if (d.includes('bulut')  || d.includes('cloud')) return '⛅';
-    if (d.includes('açık')   || d.includes('clear')) return '☀️';
-    return '🌤️';
+    if (d.includes('fırtına')|| d.includes('storm')) return '⛈️';
+    if (d.includes('sis')    || d.includes('fog')  || d.includes('mist')) return '🌫️';
+    if (d.includes('bulut')  || d.includes('cloud')) return gece ? '☁️' : '⛅';
+    if (d.includes('açık')   || d.includes('clear')) {
+      if (gece) return '🌙';
+      if (alacakaranlik) return saat < 7 ? '🌅' : '🌆';
+      return '☀️';
+    }
+    return gece ? '🌙' : '🌤️';
   };
 
   const seciliKombin = kombinler[seciliIndex];
