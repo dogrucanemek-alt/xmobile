@@ -117,15 +117,27 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
   const parcaEsle = (anahtar: string[]): string | null =>
     kombin.parcalar.find(p => anahtar.some(k => p.toLowerCase().includes(k))) ?? null;
 
+  // Kombinasyon parça adını kıyafet listesiyle eşleştirip renk döndürür.
+  // Claude tam adı kopyalamamışsa bile gardırop adındaki renk kelimesini bulur.
+  const kiyafetRenk = (parcaAdi: string | null): string => {
+    if (!parcaAdi) return renkBul(null);
+    const aranan = parcaAdi.toLowerCase();
+    const eslesen = kiyafetler.find(k => {
+      const kAd = (k.ad ?? '').toLowerCase();
+      return kAd === aranan || aranan.includes(kAd) || kAd.includes(aranan);
+    });
+    return renkBul(eslesen?.ad ?? parcaAdi);
+  };
+
   const disParca  = parcaEsle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk', 'hırka', 'hirka']);
   const ustParca  = parcaEsle(['gömlek', 'gomlek', 'tişört', 'tisort', 'kazak', 'bluz', 'ceket', 'sweatshirt', 'hoodie']);
   const altParca  = parcaEsle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım', 'elbise']);
   const ayakParca = parcaEsle(['ayakkabı', 'ayakkabi', 'bot', 'sneaker', 'loafer', 'sandalet', 'çizme', 'cizme']);
 
   const ust      = disParca ?? ustParca;
-  const ustRenk  = renkBul(ust);
-  const altRenk  = renkBul(altParca);
-  const ayakRenk = renkBul(ayakParca) ?? '#1A1A1A';
+  const ustRenk  = kiyafetRenk(ust);
+  const altRenk  = kiyafetRenk(altParca);
+  const ayakRenk = kiyafetRenk(ayakParca);
 
   // Koordinat düzeni:
   // Kafa:   cy=110  (rx=56 ry=62)  →  y=48..172
@@ -158,14 +170,12 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
       {/* Zemin gölgesi */}
       <Ellipse cx={100} cy={392} rx={58} ry={7} fill="rgba(0,0,0,0.10)" />
 
-      {/* ── SAÇ ARKA ── */}
-      {uzunSac ? (
+      {/* ── SAÇ ARKA (sadece uzun saçta) ── */}
+      {uzunSac && (
         <Path
           d="M 44 110 C 40 48, 160 48, 156 110 L 162 238 C 155 263, 45 263, 38 238 Z"
           fill={sacRengi}
         />
-      ) : (
-        <Path d="M 44 110 C 40 48, 160 48, 156 110" fill={sacRengi} />
       )}
 
       {/* ── BAŞ ── */}
@@ -228,15 +238,19 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
         </>
       )}
 
-      {/* ── SAÇ ÖN KAPAK ── */}
-      <Path d="M 44 80 C 44 44, 156 44, 156 80 C 140 62, 60 62, 44 80 Z" fill={sacRengi} />
-      <Path d="M 44 80 C 44 44, 156 44, 156 80 C 140 62, 60 62, 44 80 Z" fill="url(#outSac)" />
-      {uzunSac && (
+      {/* ── SAÇ ÖN KAPAK (profil fotoğrafı varsa saç çizilmez) ── */}
+      {!profil?.profilFoto && (
         <>
-          <Path d="M 44 110 C 34 158, 32 200, 34 228"
-            stroke={sacRengi} strokeWidth={14} fill="none" strokeLinecap="round" />
-          <Path d="M 156 110 C 166 158, 168 200, 166 228"
-            stroke={sacRengi} strokeWidth={14} fill="none" strokeLinecap="round" />
+          <Path d="M 44 80 C 44 44, 156 44, 156 80 C 140 62, 60 62, 44 80 Z" fill={sacRengi} />
+          <Path d="M 44 80 C 44 44, 156 44, 156 80 C 140 62, 60 62, 44 80 Z" fill="url(#outSac)" />
+          {uzunSac && (
+            <>
+              <Path d="M 44 110 C 34 158, 32 200, 34 228"
+                stroke={sacRengi} strokeWidth={14} fill="none" strokeLinecap="round" />
+              <Path d="M 156 110 C 166 158, 168 200, 166 228"
+                stroke={sacRengi} strokeWidth={14} fill="none" strokeLinecap="round" />
+            </>
+          )}
         </>
       )}
 
@@ -255,11 +269,33 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
       <Rect x={104} y={362} width={46}  height={6}  rx={4}  fill={tenRengi} />
 
       {/* ── ÜST GİYSİ ── */}
-      <Rect x={50}  y={186} width={100} height={88} rx={12} fill={ustRenk} />
-      <Rect x={22}  y={188} width={28}  height={80} rx={12} fill={ustRenk} />
-      <Rect x={150} y={188} width={28}  height={80} rx={12} fill={ustRenk} />
-      <Path d="M 88 188 Q 100 202 112 188"
-        fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth={2} />
+      {disParca && ustParca ? (
+        <>
+          {/* İç gömlek/tişört (tam gövde) */}
+          <Rect x={50} y={186} width={100} height={88} rx={12} fill={kiyafetRenk(ustParca)} />
+          {/* Dış giyim sol kanat */}
+          <Rect x={50} y={186} width={45}  height={88} rx={12} fill={ustRenk} />
+          {/* Dış giyim sağ kanat */}
+          <Rect x={105} y={186} width={45} height={88} rx={12} fill={ustRenk} />
+          {/* Kollar */}
+          <Rect x={22}  y={188} width={28} height={80} rx={12} fill={ustRenk} />
+          <Rect x={150} y={188} width={28} height={80} rx={12} fill={ustRenk} />
+          {/* Yaka V — iç gömlek rengi görünsün */}
+          <Path d="M 96 186 L 92 212 L 100 226 L 108 212 L 104 186"
+            fill={kiyafetRenk(ustParca)} />
+          {/* Kol gölgesi */}
+          <Path d="M 88 188 Q 100 202 112 188"
+            fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth={2} />
+        </>
+      ) : (
+        <>
+          <Rect x={50}  y={186} width={100} height={88} rx={12} fill={ustRenk} />
+          <Rect x={22}  y={188} width={28}  height={80} rx={12} fill={ustRenk} />
+          <Rect x={150} y={188} width={28}  height={80} rx={12} fill={ustRenk} />
+          <Path d="M 88 188 Q 100 202 112 188"
+            fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth={2} />
+        </>
+      )}
 
       {/* Bilekler */}
       <Rect x={22}  y={256} width={28} height={14} fill={tenRengi} />
