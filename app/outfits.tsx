@@ -163,7 +163,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
           <Stop offset="100%" stopColor="#000000" stopOpacity={0.22} />
         </RadialGradient>
         <ClipPath id="avcHeadClip">
-          <Ellipse cx={100} cy={110} rx={56} ry={62} />
+          <Ellipse cx={100} cy={110} rx={50} ry={55} />
         </ClipPath>
       </Defs>
 
@@ -173,32 +173,36 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
       {/* ── SAÇ ARKA (sadece uzun saçta) ── */}
       {uzunSac && (
         <Path
-          d="M 44 110 C 40 48, 160 48, 156 110 L 162 238 C 155 263, 45 263, 38 238 Z"
+          d="M 50 110 C 46 55, 154 55, 150 110 L 156 234 C 149 259, 51 259, 44 234 Z"
           fill={sacRengi}
         />
       )}
 
-      {/* ── BAŞ ── */}
-      <Ellipse cx={100} cy={110} rx={56} ry={62} fill={tenRengi} />
-      <Ellipse cx={100} cy={110} rx={56} ry={62} fill="url(#outYuz)" />
+      {/* ── BAŞ ── (rx=50 ry=55 — vücutla orantılı) */}
+      <Ellipse cx={100} cy={110} rx={50} ry={55} fill={tenRengi} />
+      <Ellipse cx={100} cy={110} rx={50} ry={55} fill="url(#outYuz)" />
 
-      {/* Kulaklar */}
-      <Ellipse cx={44}  cy={114} rx={8} ry={10} fill={tenRengi} />
-      <Ellipse cx={156} cy={114} rx={8} ry={10} fill={tenRengi} />
-      <Ellipse cx={44}  cy={114} rx={5} ry={6}  fill="rgba(0,0,0,0.07)" />
-      <Ellipse cx={156} cy={114} rx={5} ry={6}  fill="rgba(0,0,0,0.07)" />
+      {/* Kulaklar (profil fotoğrafı varsa gizle) */}
+      {!profil?.profilFoto && (
+        <>
+          <Ellipse cx={50}  cy={113} rx={7} ry={9} fill={tenRengi} />
+          <Ellipse cx={150} cy={113} rx={7} ry={9} fill={tenRengi} />
+          <Ellipse cx={50}  cy={113} rx={4} ry={5} fill="rgba(0,0,0,0.07)" />
+          <Ellipse cx={150} cy={113} rx={4} ry={5} fill="rgba(0,0,0,0.07)" />
+        </>
+      )}
 
       {/* ── SAKAL ── */}
       {sakal === 'hafif' && (
         <>
-          <Ellipse cx={100} cy={155} rx={30} ry={13} fill={sacRengi} opacity={0.35} />
-          <Ellipse cx={76}  cy={148} rx={13} ry={9}  fill={sacRengi} opacity={0.25} />
-          <Ellipse cx={124} cy={148} rx={13} ry={9}  fill={sacRengi} opacity={0.25} />
+          <Ellipse cx={100} cy={152} rx={26} ry={11} fill={sacRengi} opacity={0.35} />
+          <Ellipse cx={78}  cy={146} rx={11} ry={8}  fill={sacRengi} opacity={0.25} />
+          <Ellipse cx={122} cy={146} rx={11} ry={8}  fill={sacRengi} opacity={0.25} />
         </>
       )}
       {sakal === 'tam' && (
         <Path
-          d="M 58 136 Q 58 170 100 176 Q 142 170 142 136 Q 135 156 100 162 Q 65 156 58 136 Z"
+          d="M 62 134 Q 62 167 100 173 Q 138 167 138 134 Q 131 153 100 159 Q 69 153 62 134 Z"
           fill={sacRengi} opacity={0.72}
         />
       )}
@@ -206,7 +210,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
       {/* Profil fotoğrafı VEYA çizgi yüz */}
       {profil?.profilFoto ? (
         <SvgImage
-          x={44} y={48} width={112} height={124}
+          x={50} y={55} width={100} height={110}
           href={profil.profilFoto}
           clipPath="url(#avcHeadClip)"
           preserveAspectRatio="xMidYMid slice"
@@ -241,14 +245,14 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
       {/* ── SAÇ ÖN KAPAK (profil fotoğrafı varsa saç çizilmez) ── */}
       {!profil?.profilFoto && (
         <>
-          <Path d="M 44 80 C 44 44, 156 44, 156 80 C 140 62, 60 62, 44 80 Z" fill={sacRengi} />
-          <Path d="M 44 80 C 44 44, 156 44, 156 80 C 140 62, 60 62, 44 80 Z" fill="url(#outSac)" />
+          <Path d="M 50 78 C 50 48, 150 48, 150 78 C 136 62, 64 62, 50 78 Z" fill={sacRengi} />
+          <Path d="M 50 78 C 50 48, 150 48, 150 78 C 136 62, 64 62, 50 78 Z" fill="url(#outSac)" />
           {uzunSac && (
             <>
-              <Path d="M 44 110 C 34 158, 32 200, 34 228"
-                stroke={sacRengi} strokeWidth={14} fill="none" strokeLinecap="round" />
-              <Path d="M 156 110 C 166 158, 168 200, 166 228"
-                stroke={sacRengi} strokeWidth={14} fill="none" strokeLinecap="round" />
+              <Path d="M 50 110 C 40 158, 38 200, 40 228"
+                stroke={sacRengi} strokeWidth={12} fill="none" strokeLinecap="round" />
+              <Path d="M 150 110 C 160 158, 162 200, 160 228"
+                stroke={sacRengi} strokeWidth={12} fill="none" strokeLinecap="round" />
             </>
           )}
         </>
@@ -271,21 +275,21 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
       {/* ── ÜST GİYSİ ── */}
       {disParca && ustParca ? (
         <>
-          {/* İç gömlek/tişört (tam gövde) */}
-          <Rect x={50} y={186} width={100} height={88} rx={12} fill={kiyafetRenk(ustParca)} />
-          {/* Dış giyim sol kanat */}
-          <Rect x={50} y={186} width={45}  height={88} rx={12} fill={ustRenk} />
-          {/* Dış giyim sağ kanat */}
-          <Rect x={105} y={186} width={45} height={88} rx={12} fill={ustRenk} />
-          {/* Kollar */}
-          <Rect x={22}  y={188} width={28} height={80} rx={12} fill={ustRenk} />
-          <Rect x={150} y={188} width={28} height={80} rx={12} fill={ustRenk} />
-          {/* Yaka V — iç gömlek rengi görünsün */}
-          <Path d="M 96 186 L 92 212 L 100 226 L 108 212 L 104 186"
-            fill={kiyafetRenk(ustParca)} />
-          {/* Kol gölgesi */}
-          <Path d="M 88 188 Q 100 202 112 188"
-            fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth={2} />
+          {/* İç gömlek — tam gövde + kollar */}
+          <Rect x={50}  y={186} width={100} height={88} rx={12} fill={kiyafetRenk(ustParca)} />
+          <Rect x={22}  y={188} width={28}  height={80} rx={12} fill={kiyafetRenk(ustParca)} />
+          <Rect x={150} y={188} width={28}  height={80} rx={12} fill={kiyafetRenk(ustParca)} />
+          {/* Açık ceket sol panel: üstte x=22..92, altta x=22..76 → V açılım */}
+          <Path d="M 22 186 L 92 186 L 92 220 L 76 274 L 22 274 Z" fill={ustRenk} />
+          {/* Açık ceket sağ panel (simetrik) */}
+          <Path d="M 178 186 L 108 186 L 108 220 L 124 274 L 178 274 Z" fill={ustRenk} />
+          {/* Sol yaka kıvrımı (revers) */}
+          <Path d="M 92 186 L 84 210 L 76 186 Z" fill={ustRenk} opacity={0.85} />
+          {/* Sağ yaka kıvrımı (revers) */}
+          <Path d="M 108 186 L 116 210 L 124 186 Z" fill={ustRenk} opacity={0.85} />
+          {/* Yaka gölge çizgisi */}
+          <Path d="M 84 210 L 100 232 L 116 210"
+            fill="none" stroke="rgba(0,0,0,0.10)" strokeWidth={1.5} />
         </>
       ) : (
         <>
