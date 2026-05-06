@@ -21,20 +21,23 @@ const SEHIR       = 'Izmir,TR';
 
 const renkBul = (parcaAdi: string | null): string => {
   const ad = (parcaAdi ?? '').toLowerCase();
-  if (ad.includes('beyaz'))                              return '#F0F0F0';
-  if (ad.includes('siyah'))                              return '#1A1A1A';
-  if (ad.includes('lacivert'))                           return '#1B2A4A';
-  if (ad.includes('mavi'))                               return '#2E6DA4';
-  if (ad.includes('kirmizi') || ad.includes('kırmızı')) return '#C0392B';
-  if (ad.includes('yesil')   || ad.includes('yeşil'))   return '#27AE60';
-  if (ad.includes('sari')    || ad.includes('sarı'))     return '#F1C40F';
-  if (ad.includes('gri'))                                return '#7F8C8D';
-  if (ad.includes('bej')     || ad.includes('krem'))     return '#D4B896';
-  if (ad.includes('kahve')   || ad.includes('bordo'))    return '#6B3A2A';
-  if (ad.includes('pembe'))                              return '#E91E8C';
-  if (ad.includes('turuncu'))                            return '#E67E22';
-  if (ad.includes('mor'))                                return '#8E44AD';
-  return '#4A90D9';
+  if (ad.includes('beyaz') || ad.includes('ekru') || ad.includes('kırık'))  return '#F0F0F0';
+  if (ad.includes('siyah'))                                                  return '#1A1A1A';
+  if (ad.includes('antrasit') || ad.includes('füme'))                        return '#3B3B3B';
+  if (ad.includes('lacivert') || ad.includes('indigo') || ad.includes('navy')) return '#1B2A4A';
+  if (ad.includes('saks'))                                                   return '#4A7FA5';
+  if (ad.includes('mavi'))                                                   return '#2E6DA4';
+  if (ad.includes('kirmizi') || ad.includes('kırmızı'))                      return '#C0392B';
+  if (ad.includes('yesil')   || ad.includes('yeşil') || ad.includes('haki')) return '#27AE60';
+  if (ad.includes('sari')    || ad.includes('sarı') || ad.includes('hardal')) return '#F1C40F';
+  if (ad.includes('gri')     || ad.includes('grimelanj'))                    return '#7F8C8D';
+  if (ad.includes('bej')     || ad.includes('krem') || ad.includes('kum'))   return '#D4B896';
+  if (ad.includes('kahve')   || ad.includes('taba') || ad.includes('vizon')) return '#8B6347';
+  if (ad.includes('bordo')   || ad.includes('mürdüm'))                       return '#6B1A1A';
+  if (ad.includes('pembe')   || ad.includes('pudra'))                        return '#E91E8C';
+  if (ad.includes('turuncu') || ad.includes('kiremit'))                      return '#E67E22';
+  if (ad.includes('mor')     || ad.includes('lila') || ad.includes('leylak')) return '#8E44AD';
+  return '#6B6B6B';
 };
 
 const hexToHsl = (hex: string): [number, number, number] => {
@@ -370,20 +373,20 @@ export default function Outfits() {
       : `{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["LİSTEDEKİ TAM İSİM"],"neden":"1 cümle"}]}`;
 
     const iltifat = dil === 'en'
-      ? 'End "neden" with a short personal compliment (e.g. "You\'ll look absolutely stunning! ✨" or "This will make you irresistible! 🔥")'
-      : 'Her kombinasyonun "neden" alanını kısa bir kişisel iltifatla bitir (örn. "Çok yakışıklı olacaksın! ✨" veya "Bu kombinle baş döndüreceksin! 🔥" gibi samimi ve enerjik bir ifade)';
+      ? 'End with a short compliment like "You\'ll look great! ✨" or "Very stylish! 🔥"'
+      : '"neden" alanını kısa bir iltifatla bitir: "Çok yakışıklı olacaksın! ✨" veya "Harika görüneceksin! 🔥" gibi';
 
-    const prompt = `You are one of the world's most celebrated fashion designers and style icons — think the creative vision of Virgil Abloh, the boldness of Alexander McQueen, and the elegance of Giorgio Armani combined. You speak with authority, passion, and a touch of theatrical flair. Respond entirely in ${lang}.
+    const prompt = `Style assistant. Respond in ${lang}.
 
-Weather today: ${havaVeri.derece}°C, ${havaVeri.durum}, feels like ${havaVeri.hissedilen}°C, humidity ${havaVeri.nem}%
+Weather: ${havaVeri.derece}°C, ${havaVeri.durum}, feels like ${havaVeri.hissedilen}°C
 
-WARDROBE (use ONLY these exact names, copy character-for-character):
+WARDROBE (copy names exactly, character-for-character):
 ${numaraliListe}
 
-Curate 3 masterful outfit combinations worthy of a fashion week. Rules:
-- "parcalar" must contain the EXACT item names copied from the numbered list above. Do NOT paraphrase, translate or shorten the names.
-- "tur" must be one of: ${dil === 'en' ? 'Work, Casual, Social, Sport' : 'İş, Günlük, Sosyal, Spor'}
-- "neden": explain the styling vision in 1-2 sentences with fashion authority. ${iltifat}
+Create 3 outfit combinations. Rules:
+- "parcalar": EXACT names from the list above, no changes
+- "tur": ${dil === 'en' ? 'Work, Casual, Social, or Sport' : 'İş, Günlük, Sosyal veya Spor'}
+- "neden": 1 short sentence explaining why this works for today's weather. ${iltifat}
 Return ONLY valid JSON:
 ${jsonFormat}`;
 
