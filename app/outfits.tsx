@@ -369,15 +369,21 @@ export default function Outfits() {
       ? `{"kombinler":[{"baslik":"title","tur":"Work","parcalar":["EXACT item name from list"],"neden":"1 sentence"}]}`
       : `{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["LİSTEDEKİ TAM İSİM"],"neden":"1 cümle"}]}`;
 
-    const prompt = `You are a personal style consultant. Respond entirely in ${lang}.
-Weather: ${havaVeri.derece}°C, ${havaVeri.durum}, feels like ${havaVeri.hissedilen}°C, humidity ${havaVeri.nem}%
+    const iltifat = dil === 'en'
+      ? 'End "neden" with a short personal compliment (e.g. "You\'ll look absolutely stunning! ✨" or "This will make you irresistible! 🔥")'
+      : 'Her kombinasyonun "neden" alanını kısa bir kişisel iltifatla bitir (örn. "Çok yakışıklı olacaksın! ✨" veya "Bu kombinle baş döndüreceksin! 🔥" gibi samimi ve enerjik bir ifade)';
+
+    const prompt = `You are one of the world's most celebrated fashion designers and style icons — think the creative vision of Virgil Abloh, the boldness of Alexander McQueen, and the elegance of Giorgio Armani combined. You speak with authority, passion, and a touch of theatrical flair. Respond entirely in ${lang}.
+
+Weather today: ${havaVeri.derece}°C, ${havaVeri.durum}, feels like ${havaVeri.hissedilen}°C, humidity ${havaVeri.nem}%
 
 WARDROBE (use ONLY these exact names, copy character-for-character):
 ${numaraliListe}
 
-Suggest 3 outfit combinations. Rules:
+Curate 3 masterful outfit combinations worthy of a fashion week. Rules:
 - "parcalar" must contain the EXACT item names copied from the numbered list above. Do NOT paraphrase, translate or shorten the names.
 - "tur" must be one of: ${dil === 'en' ? 'Work, Casual, Social, Sport' : 'İş, Günlük, Sosyal, Spor'}
+- "neden": explain the styling vision in 1-2 sentences with fashion authority. ${iltifat}
 Return ONLY valid JSON:
 ${jsonFormat}`;
 
