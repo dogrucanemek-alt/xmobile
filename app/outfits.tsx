@@ -394,7 +394,7 @@ ${jsonFormat}`;
     }
 
     const controller = new AbortController();
-    const zaman = setTimeout(() => controller.abort(), 30000);
+    const zaman = setTimeout(() => controller.abort(), 60000);
 
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
