@@ -408,7 +408,8 @@ ${jsonFormat}`;
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 1000,
+          max_tokens: 1500,
+          system: 'You are a fashion style assistant. You MUST respond with valid JSON only. Never include any explanatory text, markdown, or code blocks outside the JSON structure.',
           messages: [{ role: 'user', content: prompt }],
         }),
       });
@@ -438,7 +439,12 @@ ${jsonFormat}`;
           setYukleniyor(false);
           return;
         }
-        const parsed    = JSON.parse(metin.slice(baslangic, bitis)) as { kombinler: Kombin[] };
+        const parsed = JSON.parse(metin.slice(baslangic, bitis)) as { kombinler: Kombin[] };
+        if (!Array.isArray(parsed.kombinler) || parsed.kombinler.length === 0) {
+          setHata(`Kombinler oluşturulamadı. Claude yanıtı: ${metin.slice(0, 300)}`);
+          setYukleniyor(false);
+          return;
+        }
         setKombinler(parsed.kombinler);
       } else {
         setHata(`Beklenmeyen API yanıtı: ${JSON.stringify(data).slice(0, 200)}`);
