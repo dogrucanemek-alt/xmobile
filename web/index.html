@@ -1,813 +1,550 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="AI Furniture — Yapay zeka destekli akıllı gardırop. Her sabah mükemmel kombin önerisi."/>
+  <meta property="og:title" content="AI Furniture — Wardrobe Intelligence"/>
+  <meta property="og:description" content="Yapay zeka destekli gardırobunuzla her gün doğru kombinasyonu giyin."/>
   <title>AI Furniture — Wardrobe Intelligence</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --black: #000;
-      --white: #fff;
-      --gray: #6e6e73;
-      --light-gray: #f5f5f7;
-      --blue: #0071e3;
+      --black: #000; --white: #fff; --gray: #6e6e73;
+      --light-gray: #f5f5f7; --blue: #2997ff;
       --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
     }
-
     html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: #000; color: #fff; overflow-x: hidden; }
 
-    body {
-      font-family: var(--font);
-      background: var(--black);
-      color: var(--white);
-      overflow-x: hidden;
-    }
-
-    /* ── NAV ── */
+    /* NAV */
     nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 1000;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 40px;
-      background: rgba(0,0,0,0.72);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      height: 52px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; background: rgba(0,0,0,0.72);
       backdrop-filter: saturate(180%) blur(20px);
       -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: background 0.3s;
     }
-
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: var(--white);
-    }
-
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; }
     .nav-logo-icon {
-      width: 28px; height: 28px;
-      background: var(--white);
-      border-radius: 7px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 14px;
-      color: var(--black);
-      letter-spacing: -1px;
+      width: 28px; height: 28px; background: #fff; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 14px; color: #000;
     }
-
-    .nav-logo-text {
-      font-size: 17px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 28px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: rgba(255,255,255,0.8);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 400;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--white); }
-
-    .nav-cta {
-      font-size: 13px;
-      color: #2997ff;
-      text-decoration: none;
-      font-weight: 400;
-      transition: color 0.2s;
-    }
-
+    .nav-logo-text { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+    .nav-lang { display: flex; background: rgba(255,255,255,0.08); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+    .nav-lang button { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 12px; font-weight: 600; padding: 5px 12px; cursor: pointer; transition: all 0.2s; font-family: var(--font); }
+    .nav-lang button.active { background: rgba(255,255,255,0.15); color: #fff; }
+    .nav-cta { font-size: 13px; color: var(--blue); text-decoration: none; font-weight: 500; transition: color 0.2s; }
     .nav-cta:hover { color: #fff; }
 
-    /* ── HERO ── */
+    /* HERO */
     .hero {
-      position: relative;
-      height: 100vh;
-      min-height: 700px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      overflow: hidden;
-      text-align: center;
+      position: relative; height: 100vh; min-height: 700px;
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+      overflow: hidden; text-align: center;
     }
-
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background-image: url('https://aifurniture.com.tr/wp-content/uploads/2026/05/wardrobe-1.jpeg');
-      background-size: cover;
-      background-position: center top;
-      transform: scale(1.05);
-      transition: transform 8s ease-out;
-    }
-
-    .hero-bg.loaded { transform: scale(1); }
-
+    #hero3d { position: absolute; inset: 0; z-index: 0; }
+    #hero3d canvas { display: block; }
     .hero-gradient {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(0,0,0,0.2) 0%,
-        rgba(0,0,0,0) 40%,
-        rgba(0,0,0,0.7) 75%,
-        rgba(0,0,0,0.95) 100%
-      );
+      position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.6) 68%, rgba(0,0,0,0.97) 100%);
     }
+    .hero-content { position: relative; z-index: 2; padding-bottom: 80px; max-width: 780px; padding-left: 24px; padding-right: 24px; }
+    .hero-eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.55); margin-bottom: 16px; animation: fadeUp 0.9s ease 0.2s both; }
+    .hero-title { font-size: clamp(44px, 7vw, 92px); font-weight: 700; letter-spacing: -3px; line-height: 1; margin-bottom: 22px; animation: fadeUp 0.9s ease 0.4s both; }
+    .hero-title span { background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.72) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub { font-size: clamp(16px, 2vw, 22px); font-weight: 300; color: rgba(255,255,255,0.72); margin-bottom: 36px; letter-spacing: -0.3px; line-height: 1.5; animation: fadeUp 0.9s ease 0.6s both; }
+    .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; animation: fadeUp 0.9s ease 0.8s both; }
+    .btn { padding: 14px 32px; border-radius: 980px; font-size: 15px; font-weight: 500; text-decoration: none; cursor: pointer; border: none; transition: all 0.25s; letter-spacing: -0.2px; display: inline-block; font-family: var(--font); }
+    .btn-white { background: #fff; color: #000; }
+    .btn-white:hover { background: rgba(255,255,255,0.88); transform: scale(1.02); }
+    .btn-outline { background: rgba(255,255,255,0.08); color: #fff; border: 1.5px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px); }
+    .btn-outline:hover { background: rgba(255,255,255,0.15); transform: scale(1.02); }
+    .btn-blue { background: var(--blue); color: #fff; }
+    .btn-blue:hover { background: #2283e0; transform: scale(1.02); }
+    .scroll-hint { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: 0.45; animation: fadeUp 1s ease 1.5s both; }
+    .scroll-hint span { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+    .scroll-arrow { width: 18px; height: 18px; border-right: 1.5px solid rgba(255,255,255,0.5); border-bottom: 1.5px solid rgba(255,255,255,0.5); transform: rotate(45deg); animation: bounce 1.8s ease-in-out infinite; }
 
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      padding-bottom: 80px;
-    }
-
-    .hero-eyebrow {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 16px;
-    }
-
-    .hero-title {
-      font-size: clamp(48px, 7vw, 96px);
-      font-weight: 700;
-      letter-spacing: -3px;
-      line-height: 1;
-      margin-bottom: 20px;
-    }
-
-    .hero-title span {
-      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-sub {
-      font-size: clamp(17px, 2vw, 23px);
-      font-weight: 300;
-      color: rgba(255,255,255,0.75);
-      margin-bottom: 36px;
-      letter-spacing: -0.3px;
-    }
-
-    .hero-btns {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 14px 32px;
-      border-radius: 980px;
-      font-size: 15px;
-      font-weight: 500;
-      text-decoration: none;
-      cursor: pointer;
-      border: none;
-      transition: all 0.25s;
-      letter-spacing: -0.2px;
-    }
-
-    .btn-white {
-      background: var(--white);
-      color: var(--black);
-    }
-
-    .btn-white:hover { background: rgba(255,255,255,0.88); }
-
-    .btn-outline-white {
-      background: rgba(255,255,255,0.1);
-      color: var(--white);
-      border: 1.5px solid rgba(255,255,255,0.35);
-      backdrop-filter: blur(10px);
-    }
-
-    .btn-outline-white:hover {
-      background: rgba(255,255,255,0.18);
-      border-color: rgba(255,255,255,0.6);
-    }
-
-    /* ── SCROLL INDICATOR ── */
-    .scroll-hint {
-      position: absolute;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      opacity: 0.5;
-      animation: fadeInUp 1s ease 1.5s both;
-    }
-
-    .scroll-hint span {
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.6);
-    }
-
-    .scroll-arrow {
-      width: 18px; height: 18px;
-      border-right: 1.5px solid rgba(255,255,255,0.5);
-      border-bottom: 1.5px solid rgba(255,255,255,0.5);
-      transform: rotate(45deg);
-      animation: bounce 1.5s ease-in-out infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: rotate(45deg) translateY(0); }
-      50% { transform: rotate(45deg) translateY(5px); }
-    }
-
-    /* ── SECTIONS ── */
-    .section {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 100px 40px;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-
-    .section.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .section-eyebrow {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #2997ff;
-      margin-bottom: 16px;
-    }
-
-    .section-title {
-      font-size: clamp(36px, 5vw, 64px);
-      font-weight: 700;
-      letter-spacing: -2px;
-      line-height: 1.05;
-      max-width: 800px;
-      margin-bottom: 20px;
-    }
-
-    .section-sub {
-      font-size: clamp(16px, 1.8vw, 21px);
-      font-weight: 300;
-      color: var(--gray);
-      max-width: 600px;
-      line-height: 1.6;
-      margin-bottom: 48px;
-      letter-spacing: -0.2px;
-    }
-
-    /* ── DARK / LIGHT SECTIONS ── */
+    /* SECTIONS */
+    .section { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 40px; text-align: center; opacity: 0; transform: translateY(40px); transition: opacity 0.9s ease, transform 0.9s ease; }
+    .section.visible { opacity: 1; transform: translateY(0); }
     .section-dark { background: #000; color: #fff; }
     .section-light { background: var(--light-gray); color: #1d1d1f; }
-    .section-light .section-title { color: #1d1d1f; }
-    .section-light .section-sub { color: #6e6e73; }
+    .section-eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--blue); margin-bottom: 16px; }
+    .section-title { font-size: clamp(34px, 5vw, 62px); font-weight: 700; letter-spacing: -2px; line-height: 1.05; max-width: 800px; margin-bottom: 20px; }
+    .section-sub { font-size: clamp(15px, 1.8vw, 20px); font-weight: 300; color: var(--gray); max-width: 600px; line-height: 1.65; margin-bottom: 48px; letter-spacing: -0.2px; }
 
-    /* ── PRODUCT SECTION ── */
-    .product-section {
-      background: #000;
-      min-height: 100vh;
-      padding: 0;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .product-sticky {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .product-img {
-      width: 100%;
-      height: 100vh;
-      object-fit: cover;
-      filter: brightness(0.5);
-    }
-
-    .product-text {
-      position: absolute;
-      text-align: center;
-      padding: 40px;
-    }
-
-    /* ── PHONE SHOWCASE ── */
-    .phones-section {
-      background: #000;
-      padding: 120px 40px;
-    }
-
-    .phones-container {
-      display: flex;
-      gap: 24px;
-      justify-content: center;
-      align-items: flex-end;
-      flex-wrap: wrap;
-      margin-top: 64px;
-      max-width: 1100px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .phone-mockup {
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .phone-mockup.center { transform: scale(1.08); }
-
-    .phone-frame {
-      width: 220px;
-      background: #1a1a1a;
-      border-radius: 38px;
-      padding: 12px;
-      border: 1.5px solid rgba(255,255,255,0.1);
-      box-shadow:
-        0 50px 100px rgba(0,0,0,0.7),
-        0 0 0 1px rgba(255,255,255,0.05),
-        inset 0 1px 0 rgba(255,255,255,0.1);
-    }
-
-    .phone-notch {
-      width: 60px; height: 18px;
-      background: #000;
-      border-radius: 0 0 12px 12px;
-      margin: 0 auto 10px;
-    }
-
-    .phone-screen-img {
-      width: 100%;
-      border-radius: 26px;
-      display: block;
-      object-fit: cover;
-    }
-
-    .phone-label {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 13px;
-      color: var(--gray);
-      font-weight: 400;
-    }
-
-    /* ── FEATURES GRID ── */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2px;
-      max-width: 1100px;
-      width: 100%;
-      margin-top: 64px;
-      border-radius: 18px;
-      overflow: hidden;
-    }
-
-    .feature-tile {
-      background: #161617;
-      padding: 48px 40px;
-      text-align: left;
-      transition: background 0.2s;
-      cursor: default;
-    }
-
-    .feature-tile:hover { background: #1d1d1f; }
-
-    .feature-tile-icon {
-      font-size: 36px;
-      margin-bottom: 20px;
-      display: block;
-    }
-
-    .feature-tile h3 {
-      font-size: 19px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      letter-spacing: -0.3px;
-    }
-
-    .feature-tile p {
-      font-size: 14px;
-      color: var(--gray);
-      line-height: 1.7;
-    }
-
-    /* ── STATS ── */
-    .stats-row {
-      display: flex;
-      gap: 0;
-      justify-content: center;
-      flex-wrap: wrap;
-      max-width: 900px;
-      width: 100%;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 18px;
-      overflow: hidden;
-      margin-top: 64px;
-    }
-
-    .stat-item {
-      flex: 1;
-      min-width: 160px;
-      padding: 40px 32px;
-      text-align: center;
-      border-right: 1px solid rgba(255,255,255,0.1);
-    }
-
+    /* STATS */
+    .stats-row { display: flex; flex-wrap: wrap; max-width: 900px; width: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; overflow: hidden; margin-top: 64px; }
+    .stat-item { flex: 1; min-width: 160px; padding: 40px 32px; text-align: center; border-right: 1px solid rgba(255,255,255,0.1); transition: background 0.3s; }
+    .stat-item:hover { background: rgba(41,151,255,0.06); }
     .stat-item:last-child { border-right: none; }
+    .stat-number { font-size: 48px; font-weight: 700; letter-spacing: -2px; background: linear-gradient(135deg, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block; margin-bottom: 8px; }
+    .stat-label { font-size: 13px; color: var(--gray); }
 
-    .stat-number {
-      font-size: 48px;
-      font-weight: 700;
-      letter-spacing: -2px;
-      background: linear-gradient(135deg, #fff, #888);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: block;
-      margin-bottom: 8px;
-    }
+    /* PHONES */
+    .phones-section { background: #000; padding: 120px 40px; display: flex; flex-direction: column; align-items: center; }
+    .phones-container { display: flex; gap: 24px; justify-content: center; align-items: flex-end; flex-wrap: wrap; margin-top: 64px; max-width: 1100px; }
+    .phone-mockup { position: relative; flex-shrink: 0; transition: transform 0.35s ease; }
+    .phone-mockup:hover { transform: translateY(-10px) scale(1.03) !important; }
+    .phone-mockup.center { transform: scale(1.08); }
+    .phone-frame { width: 220px; background: #141414; border-radius: 38px; padding: 12px; border: 1.5px solid rgba(255,255,255,0.1); box-shadow: 0 50px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.08); }
+    .phone-notch { width: 60px; height: 18px; background: #000; border-radius: 0 0 12px 12px; margin: 0 auto 10px; }
+    .phone-screen-img { width: 100%; border-radius: 26px; display: block; object-fit: cover; }
+    .phone-label { text-align: center; margin-top: 20px; font-size: 13px; color: var(--gray); }
 
-    .stat-label {
-      font-size: 13px;
-      color: var(--gray);
-      letter-spacing: -0.1px;
-    }
+    /* FEATURES */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2px; max-width: 1100px; width: 100%; margin-top: 64px; border-radius: 18px; overflow: hidden; }
+    .feature-tile { background: #111113; padding: 48px 40px; text-align: left; transition: background 0.25s; position: relative; overflow: hidden; }
+    .feature-tile::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(41,151,255,0.1) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s; }
+    .feature-tile:hover { background: #161618; }
+    .feature-tile:hover::before { opacity: 1; }
+    .feature-tile-icon { font-size: 36px; margin-bottom: 20px; display: block; }
+    .feature-tile h3 { font-size: 19px; font-weight: 600; margin-bottom: 10px; letter-spacing: -0.3px; color: #fff; }
+    .feature-tile p { font-size: 14px; color: var(--gray); line-height: 1.7; }
 
-    /* ── CTA SECTION ── */
-    .cta-section {
-      background: #000;
-      padding: 160px 40px;
-      text-align: center;
-      border-top: 1px solid rgba(255,255,255,0.08);
-    }
+    /* WAITLIST */
+    .waitlist-section { background: #000; padding: 140px 40px; text-align: center; position: relative; border-top: 1px solid rgba(41,151,255,0.12); border-bottom: 1px solid rgba(41,151,255,0.12); }
+    .waitlist-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 700px; height: 700px; max-width: 100vw; background: radial-gradient(circle, rgba(41,151,255,0.1) 0%, transparent 65%); pointer-events: none; }
+    .waitlist-inner { position: relative; z-index: 1; }
+    .waitlist-form { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 32px; }
+    .waitlist-input { padding: 14px 24px; border-radius: 980px; border: 1.5px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: #fff; font-size: 15px; font-family: var(--font); width: 300px; max-width: calc(100vw - 48px); outline: none; transition: border-color 0.2s, background 0.2s; backdrop-filter: blur(10px); }
+    .waitlist-input:focus { border-color: var(--blue); background: rgba(41,151,255,0.08); }
+    .waitlist-input::placeholder { color: rgba(255,255,255,0.35); }
+    .waitlist-note { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 14px; }
+    .waitlist-success { display: none; font-size: 16px; color: #4cd964; margin-top: 20px; animation: fadeUp 0.5s ease; }
 
-    .store-row {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 40px;
-    }
-
-    .store-btn {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: #1d1d1f;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px;
-      padding: 16px 28px;
-      text-decoration: none;
-      color: var(--white);
-      transition: all 0.2s;
-      min-width: 180px;
-    }
-
-    .store-btn:hover {
-      background: #2a2a2d;
-      border-color: rgba(255,255,255,0.2);
-      transform: translateY(-2px);
-    }
-
+    /* CTA */
+    .cta-section { background: #000; padding: 160px 40px; text-align: center; border-top: 1px solid rgba(255,255,255,0.08); }
+    .cta-title { font-size: clamp(34px, 5vw, 62px); font-weight: 700; letter-spacing: -2px; line-height: 1.05; margin-bottom: 20px; }
+    .cta-sub { font-size: 18px; color: var(--gray); max-width: 500px; margin: 0 auto; }
+    .store-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
+    .store-btn { display: flex; align-items: center; gap: 14px; background: #1d1d1f; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 16px 28px; text-decoration: none; color: #fff; transition: all 0.2s; min-width: 180px; }
+    .store-btn:hover { background: #2a2a2d; border-color: rgba(255,255,255,0.2); transform: translateY(-3px); }
     .store-icon { font-size: 32px; }
     .store-text-sub { font-size: 10px; color: var(--gray); display: block; margin-bottom: 2px; }
     .store-text-name { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; display: block; }
 
-    /* ── FOOTER ── */
-    footer {
-      background: #161617;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding: 40px;
-    }
+    /* FOOTER */
+    footer { background: #111; border-top: 1px solid rgba(255,255,255,0.08); padding: 40px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+    .footer-logo { font-size: 15px; font-weight: 700; color: #fff; }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { color: var(--gray); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+    .footer-links a:hover { color: #fff; }
+    .footer-copy { font-size: 12px; color: var(--gray); }
 
-    .footer-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes bounce { 0%, 100% { transform: rotate(45deg) translateY(0); } 50% { transform: rotate(45deg) translateY(6px); } }
 
-    .footer-logo {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: -0.3px;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
-
-    .footer-links a {
-      color: var(--gray);
-      text-decoration: none;
-      font-size: 13px;
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover { color: var(--white); }
-
-    .footer-copy {
-      font-size: 12px;
-      color: var(--gray);
-    }
-
-    /* ── ANIMATIONS ── */
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .hero-eyebrow { animation: fadeInUp 0.8s ease 0.2s both; }
-    .hero-title { animation: fadeInUp 0.8s ease 0.4s both; }
-    .hero-sub { animation: fadeInUp 0.8s ease 0.6s both; }
-    .hero-btns { animation: fadeInUp 0.8s ease 0.8s both; }
-
-    /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       nav { padding: 0 20px; }
       .nav-links { display: none; }
-      .phone-frame { width: 160px; }
+      .phone-frame { width: 155px; }
       .phone-mockup.center { transform: scale(1.05); }
       .feature-tile { padding: 32px 24px; }
-      .stat-item { min-width: 130px; padding: 28px 20px; }
+      .stat-item { min-width: 130px; padding: 28px 16px; }
       .stat-number { font-size: 36px; }
+      .section { padding: 80px 24px; }
       footer .footer-inner { flex-direction: column; text-align: center; }
     }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav>
-    <a href="#" class="nav-logo">
-      <div class="nav-logo-icon">X</div>
-      <span class="nav-logo-text">AI Furniture</span>
+<nav id="mainNav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">X</div>
+    <span class="nav-logo-text">AI Furniture</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#product" data-tr="Ürün" data-en="Product">Ürün</a></li>
+    <li><a href="#app" data-tr="Uygulama" data-en="App">Uygulama</a></li>
+    <li><a href="#features" data-tr="Özellikler" data-en="Features">Özellikler</a></li>
+    <li><a href="#waitlist" data-tr="Bekleme Listesi" data-en="Waitlist">Bekleme Listesi</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-lang">
+      <button class="active" data-lang="tr">TR</button>
+      <button data-lang="en">EN</button>
+    </div>
+    <a href="#waitlist" class="nav-cta" data-tr="Ön Sipariş →" data-en="Pre-order →">Ön Sipariş →</a>
+  </div>
+</nav>
+
+<section class="hero" id="home">
+  <div id="hero3d"></div>
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">AI Furniture · Wardrobe Intelligence</p>
+    <h1 class="hero-title"><span data-tr="Şimdiye Kadar<br>Yapılan En Akıllı<br>Gardırop." data-en="The Smartest<br>Wardrobe<br>Ever Made.">Şimdiye Kadar<br>Yapılan En Akıllı<br>Gardırop.</span></h1>
+    <p class="hero-sub" data-tr="Yapay zeka destekli kombin önerileri.<br>Hava durumuna, stiline, yaşam tarzına göre." data-en="AI-powered outfit recommendations.<br>Based on weather, your style, your life.">Yapay zeka destekli kombin önerileri.<br>Hava durumuna, stiline, yaşam tarzına göre.</p>
+    <div class="hero-btns">
+      <a href="#waitlist" class="btn btn-white" data-tr="Ön Sipariş Ver" data-en="Pre-order Now">Ön Sipariş Ver</a>
+      <a href="#product" class="btn btn-outline" data-tr="Daha Fazla" data-en="Learn More">Daha Fazla</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span data-tr="Kaydır" data-en="Scroll">Kaydır</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<section class="section section-dark" id="product">
+  <p class="section-eyebrow" data-tr="AI Furniture'ı Tanıyın" data-en="Introducing AI Furniture">AI Furniture'ı Tanıyın</p>
+  <h2 class="section-title" data-tr="Gardırobunuz.<br>Artık Düşünüyor." data-en="Your wardrobe.<br>Now it thinks.">Gardırobunuz.<br>Artık Düşünüyor.</h2>
+  <p class="section-sub" data-tr="Yapay zeka destekli, tavan yüksekliğinde dokunmatik ekranlı gardırop. Her sabah mükemmel kombin — hava durumuna, takviminize ve zevkinize göre seçilmiş." data-en="A floor-to-ceiling touchscreen wardrobe powered by artificial intelligence. Every morning, the perfect outfit — chosen for the weather, your calendar, your taste.">Yapay zeka destekli, tavan yüksekliğinde dokunmatik ekranlı gardırop. Her sabah mükemmel kombin — hava durumuna, takviminize ve zevkinize göre seçilmiş.</p>
+  <div class="stats-row">
+    <div class="stat-item">
+      <span class="stat-number" data-target="3" data-suffix="s">3s</span>
+      <span class="stat-label" data-tr="Kombin önerisi" data-en="Outfit suggestion">Kombin önerisi</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">∞</span>
+      <span class="stat-label" data-tr="Stil kombinasyonu" data-en="Style combinations">Stil kombinasyonu</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">AI</span>
+      <span class="stat-label" data-tr="Claude destekli motor" data-en="Claude-powered">Claude destekli motor</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number" data-target="24" data-suffix="/7">24/7</span>
+      <span class="stat-label" data-tr="Hava durumu takibi" data-en="Weather-aware">Hava durumu takibi</span>
+    </div>
+  </div>
+</section>
+
+<section class="section section-dark phones-section" id="app">
+  <p class="section-eyebrow" data-tr="Uygulama" data-en="The App">Uygulama</p>
+  <h2 class="section-title" data-tr="Gardırobunuz,<br>cebinizde." data-en="Your wardrobe,<br>in your pocket.">Gardırobunuz,<br>cebinizde.</h2>
+  <p class="section-sub" data-tr="iOS ve Android'de kullanılabilir. Kıyafet ekle, yapay zeka kombin önerileri al, stil geçmişini takip et." data-en="Available on iOS and Android. Add clothes, get AI outfit suggestions, track your style history.">iOS ve Android'de kullanılabilir. Kıyafet ekle, yapay zeka kombin önerileri al, stil geçmişini takip et.</p>
+  <div class="phones-container">
+    <div class="phone-mockup">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <img src="https://aifurniture.com.tr/wp-content/uploads/2026/05/app-wardrobe.jpeg" class="phone-screen-img" alt="Wardrobe"/>
+      </div>
+      <p class="phone-label" data-tr="Akıllı Gardırop" data-en="Smart Wardrobe">Akıllı Gardırop</p>
+    </div>
+    <div class="phone-mockup center">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <img src="https://aifurniture.com.tr/wp-content/uploads/2026/05/app-home.jpeg" class="phone-screen-img" alt="Home"/>
+      </div>
+      <p class="phone-label" data-tr="Ana Sayfa" data-en="Home">Ana Sayfa</p>
+    </div>
+    <div class="phone-mockup">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <img src="https://aifurniture.com.tr/wp-content/uploads/2026/05/app-outfit.jpeg" class="phone-screen-img" alt="Outfit"/>
+      </div>
+      <p class="phone-label" data-tr="Günün Kombini" data-en="Today's Outfit">Günün Kombini</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-dark" id="features" style="padding-top:120px;padding-bottom:120px;">
+  <p class="section-eyebrow" data-tr="Özellikler" data-en="Features">Özellikler</p>
+  <h2 class="section-title" data-tr="Giyinme şekliniz için<br>tasarlandı." data-en="Built for the<br>way you dress.">Giyinme şekliniz için<br>tasarlandı.</h2>
+  <p class="section-sub" data-tr="Her gün harika görünmek için ihtiyacınız olan her şey." data-en="Everything you need to look great, every single day.">Her gün harika görünmek için ihtiyacınız olan her şey.</p>
+  <div class="features-grid">
+    <div class="feature-tile">
+      <span class="feature-tile-icon">🤖</span>
+      <h3 data-tr="Yapay Zeka Motoru" data-en="AI Outfit Engine">Yapay Zeka Motoru</h3>
+      <p data-tr="Claude AI gardırobunuzu analiz eder ve hava durumuna, duruma ve renk uyumuna göre kişiselleştirilmiş kombinler oluşturur." data-en="Claude AI analyzes your wardrobe and generates personalized outfit combinations based on weather, occasion, and color harmony.">Claude AI gardırobunuzu analiz eder ve hava durumuna, duruma ve renk uyumuna göre kişiselleştirilmiş kombinler oluşturur.</p>
+    </div>
+    <div class="feature-tile">
+      <span class="feature-tile-icon">⛅</span>
+      <h3 data-tr="Hava Durumu Farkındalığı" data-en="Weather-Aware">Hava Durumu Farkındalığı</h3>
+      <p data-tr="Gerçek zamanlı hava durumu verileri kombin önerinizin her zaman güne uygun olmasını sağlar — yağmur, güneş, rüzgar veya kar." data-en="Real-time weather data ensures your outfit is always suited for the day ahead — rain, sun, wind or snow.">Gerçek zamanlı hava durumu verileri kombin önerinizin her zaman güne uygun olmasını sağlar — yağmur, güneş, rüzgar veya kar.</p>
+    </div>
+    <div class="feature-tile">
+      <span class="feature-tile-icon">📸</span>
+      <h3 data-tr="Otomatik Tanıma" data-en="Auto Recognition">Otomatik Tanıma</h3>
+      <p data-tr="Herhangi bir kıyafeti fotoğraflayın. Yapay zeka anında adını, türünü ve mevsimini tanımlar — gardırobunuz kendini kataloglayar." data-en="Photograph any garment. AI instantly identifies its name, type and season — your wardrobe catalogues itself.">Herhangi bir kıyafeti fotoğraflayın. Yapay zeka anında adını, türünü ve mevsimini tanımlar — gardırobunuz kendini kataloglayar.</p>
+    </div>
+    <div class="feature-tile">
+      <span class="feature-tile-icon">🎨</span>
+      <h3 data-tr="Renk Uyumu Skoru" data-en="Color Harmony Score">Renk Uyumu Skoru</h3>
+      <p data-tr="Gelişmiş renk teorisi motoru her kombinasyonu puanlar. Uyumsuz bir kıyafetle asla evden çıkmayın." data-en="Advanced color theory engine scores every combination. Never leave home in a clashing outfit again.">Gelişmiş renk teorisi motoru her kombinasyonu puanlar. Uyumsuz bir kıyafetle asla evden çıkmayın.</p>
+    </div>
+    <div class="feature-tile">
+      <span class="feature-tile-icon">👤</span>
+      <h3 data-tr="Kişisel Avatar" data-en="Personal Avatar">Kişisel Avatar</h3>
+      <p data-tr="Her kombini, ten renginize ve vücudunuza uyan kişiselleştirilmiş avatarınızda görün — giymeden önce." data-en="See every outfit on a personalized avatar that matches your skin tone and body — before you wear it.">Her kombini, ten renginize ve vücudunuza uyan kişiselleştirilmiş avatarınızda görün — giymeden önce.</p>
+    </div>
+    <div class="feature-tile">
+      <span class="feature-tile-icon">🖥️</span>
+      <h3 data-tr="Dev Dokunmatik Ekran" data-en="Giant Touchscreen">Dev Dokunmatik Ekran</h3>
+      <p data-tr="Gardırop kapısına entegre edilmiş tam boyutlu interaktif ekran. Göz atın, seçin ve karar verin — doğrudan dolabın başında." data-en="A full-size interactive display built into the wardrobe door. Browse, select, and decide — right at the closet.">Gardırop kapısına entegre edilmiş tam boyutlu interaktif ekran. Göz atın, seçin ve karar verin — doğrudan dolabın başında.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-dark waitlist-section" id="waitlist">
+  <div class="waitlist-glow"></div>
+  <div class="waitlist-inner">
+    <p class="section-eyebrow" data-tr="Yakında" data-en="Coming Soon">Yakında</p>
+    <h2 class="section-title" data-tr="İlk deneyimleyenler<br>arasına katıl." data-en="Be the first to<br>experience it.">İlk deneyimleyenler<br>arasına katıl.</h2>
+    <p class="section-sub" data-tr="Bekleme listesine kaydol, lansman indirimi ve özel erken erişim fırsatını yakala." data-en="Join the waitlist for launch discounts and exclusive early access.">Bekleme listesine kaydol, lansman indirimi ve özel erken erişim fırsatını yakala.</p>
+    <form class="waitlist-form" id="waitlistForm" onsubmit="handleWaitlist(event)">
+      <input type="email" class="waitlist-input" id="waitlistEmail" placeholder="E-posta adresin" required/>
+      <button type="submit" class="btn btn-blue" data-tr="Listeye Katıl" data-en="Join Waitlist">Listeye Katıl</button>
+    </form>
+    <p class="waitlist-note" data-tr="Spam yok. İstediğin zaman çıkabilirsin." data-en="No spam. Unsubscribe anytime.">Spam yok. İstediğin zaman çıkabilirsin.</p>
+    <p class="waitlist-success" id="waitlistSuccess">✓ Harika! Seni bekleme listesine ekledik.</p>
+  </div>
+</section>
+
+<section class="cta-section" id="download">
+  <p class="section-eyebrow" data-tr="Yakında Mevcut" data-en="Available Soon">Yakında Mevcut</p>
+  <h2 class="cta-title" data-tr="Wardrobe Intelligence'ı<br>ilk deneyimleyenlerden ol." data-en="Be the first to experience<br>Wardrobe Intelligence.">Wardrobe Intelligence'ı<br>ilk deneyimleyenlerden ol.</h2>
+  <p class="cta-sub" data-tr="AI Furniture akıllı gardırobunu ön sipariş ver veya uygulamayı bugün indir." data-en="Pre-order the AI Furniture smart wardrobe or download the app today.">AI Furniture akıllı gardırobunu ön sipariş ver veya uygulamayı bugün indir.</p>
+  <div class="store-row">
+    <a href="#" class="store-btn">
+      <span class="store-icon">🍎</span>
+      <div>
+        <span class="store-text-sub" data-tr="App Store'dan İndir" data-en="Download on the">App Store'dan İndir</span>
+        <span class="store-text-name">App Store</span>
+      </div>
     </a>
-    <ul class="nav-links">
-      <li><a href="#product">Product</a></li>
-      <li><a href="#app">App</a></li>
-      <li><a href="#features">Features</a></li>
-      <li><a href="#download">Download</a></li>
-    </ul>
-    <a href="#download" class="nav-cta">Pre-order →</a>
-  </nav>
-
-  <!-- HERO -->
-  <section class="hero" id="home">
-    <div class="hero-bg" id="heroBg"></div>
-    <div class="hero-gradient"></div>
-    <div class="hero-content">
-      <p class="hero-eyebrow">AI Furniture · Wardrobe Intelligence</p>
-      <h1 class="hero-title"><span>The Smartest<br>Wardrobe Ever Made.</span></h1>
-      <p class="hero-sub">AI-powered outfit recommendations.<br>Based on weather, your style, your life.</p>
-      <div class="hero-btns">
-        <a href="#download" class="btn btn-white">Pre-order Now</a>
-        <a href="#product" class="btn btn-outline-white">Learn More</a>
+    <a href="#" class="store-btn">
+      <span class="store-icon">▶</span>
+      <div>
+        <span class="store-text-sub" data-tr="Google Play'den Al" data-en="Get it on">Google Play'den Al</span>
+        <span class="store-text-name">Google Play</span>
       </div>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">AI Furniture</div>
+    <div class="footer-links">
+      <a href="#product" data-tr="Ürün" data-en="Product">Ürün</a>
+      <a href="#app" data-tr="Uygulama" data-en="App">Uygulama</a>
+      <a href="#features" data-tr="Özellikler" data-en="Features">Özellikler</a>
+      <a href="mailto:dogrucanemek@gmail.com" data-tr="İletişim" data-en="Contact">İletişim</a>
     </div>
-    <div class="scroll-hint">
-      <span>Scroll</span>
-      <div class="scroll-arrow"></div>
-    </div>
-  </section>
+    <p class="footer-copy">© 2025 AI Furniture. <span data-tr="Tüm hakları saklıdır." data-en="All rights reserved.">Tüm hakları saklıdır.</span></p>
+  </div>
+</footer>
 
-  <!-- TAGLINE -->
-  <section class="section section-dark" id="product">
-    <p class="section-eyebrow">Introducing AI Furniture</p>
-    <h2 class="section-title">Your wardrobe.<br>Now it thinks.</h2>
-    <p class="section-sub">
-      A floor-to-ceiling touchscreen wardrobe powered by artificial intelligence.
-      Every morning, the perfect outfit — chosen for the weather, your calendar, your taste.
-    </p>
-    <div class="stats-row">
-      <div class="stat-item">
-        <span class="stat-number">3s</span>
-        <span class="stat-label">Outfit recommendation</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">∞</span>
-        <span class="stat-label">Style combinations</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">AI</span>
-        <span class="stat-label">Claude-powered engine</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">24/7</span>
-        <span class="stat-label">Weather-aware</span>
-      </div>
-    </div>
-  </section>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+// ── 3D WARDROBE ──────────────────────────────────────────────────────
+(function() {
+  var container = document.getElementById('hero3d');
+  var W = window.innerWidth, H = window.innerHeight;
 
-  <!-- APP SECTION -->
-  <section class="section section-dark phones-section" id="app">
-    <p class="section-eyebrow">The App</p>
-    <h2 class="section-title">Your wardrobe,<br>in your pocket.</h2>
-    <p class="section-sub">
-      Available on iOS and Android. Add clothes, get AI outfit suggestions, track your style history — anywhere.
-    </p>
-    <div class="phones-container">
-      <div class="phone-mockup">
-        <div class="phone-frame">
-          <div class="phone-notch"></div>
-          <img src="https://aifurniture.com.tr/wp-content/uploads/2026/05/app-wardrobe.jpeg" class="phone-screen-img" alt="Wardrobe screen"/>
-        </div>
-        <p class="phone-label">Smart Wardrobe</p>
-      </div>
-      <div class="phone-mockup center">
-        <div class="phone-frame">
-          <div class="phone-notch"></div>
-          <img src="https://aifurniture.com.tr/wp-content/uploads/2026/05/app-home.jpeg" class="phone-screen-img" alt="Home screen"/>
-        </div>
-        <p class="phone-label">Home</p>
-      </div>
-      <div class="phone-mockup">
-        <div class="phone-frame">
-          <div class="phone-notch"></div>
-          <img src="https://aifurniture.com.tr/wp-content/uploads/2026/05/app-outfit.jpeg" class="phone-screen-img" alt="Outfit screen"/>
-        </div>
-        <p class="phone-label">Today's Outfit</p>
-      </div>
-    </div>
-  </section>
+  var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
 
-  <!-- FEATURES -->
-  <section class="section section-dark" id="features" style="padding-top:120px; padding-bottom:120px;">
-    <p class="section-eyebrow">Features</p>
-    <h2 class="section-title">Built for the<br>way you dress.</h2>
-    <p class="section-sub">Everything you need to look great, every single day.</p>
-    <div class="features-grid">
-      <div class="feature-tile">
-        <span class="feature-tile-icon">🤖</span>
-        <h3>AI Outfit Engine</h3>
-        <p>Claude AI analyzes your wardrobe and generates personalized outfit combinations based on weather, occasion, and color harmony.</p>
-      </div>
-      <div class="feature-tile">
-        <span class="feature-tile-icon">⛅</span>
-        <h3>Weather-Aware</h3>
-        <p>Real-time weather data ensures your outfit is always suited for the day ahead — rain, sun, wind or snow.</p>
-      </div>
-      <div class="feature-tile">
-        <span class="feature-tile-icon">📸</span>
-        <h3>Auto Recognition</h3>
-        <p>Photograph any garment. AI instantly identifies its name, type and season — your wardrobe catalogues itself.</p>
-      </div>
-      <div class="feature-tile">
-        <span class="feature-tile-icon">🎨</span>
-        <h3>Color Harmony Score</h3>
-        <p>Advanced color theory engine scores every combination. Never leave home in a clashing outfit again.</p>
-      </div>
-      <div class="feature-tile">
-        <span class="feature-tile-icon">👤</span>
-        <h3>Personal Avatar</h3>
-        <p>See every outfit on a personalized 3D avatar that matches your skin tone, hair and body — before you wear it.</p>
-      </div>
-      <div class="feature-tile">
-        <span class="feature-tile-icon">🖥️</span>
-        <h3>Giant Touchscreen</h3>
-        <p>A full-size interactive display built into the wardrobe door. Browse, select, and decide — right at the closet.</p>
-      </div>
-    </div>
-  </section>
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
+  camera.position.set(0, 0.5, 10);
 
-  <!-- CTA -->
-  <section class="cta-section" id="download">
-    <p class="section-eyebrow">Available Soon</p>
-    <h2 class="section-title" style="font-size:clamp(36px,5vw,64px); font-weight:700; letter-spacing:-2px; line-height:1.05; margin-bottom:20px;">
-      Be the first to experience<br>Wardrobe Intelligence.
-    </h2>
-    <p class="section-sub" style="margin:0 auto 0;">
-      Pre-order the AI Furniture smart wardrobe or download the app today.
-    </p>
-    <div class="store-row">
-      <a href="#" class="store-btn">
-        <span class="store-icon">🍎</span>
-        <div>
-          <span class="store-text-sub">Download on the</span>
-          <span class="store-text-name">App Store</span>
-        </div>
-      </a>
-      <a href="#" class="store-btn">
-        <span class="store-icon">▶</span>
-        <div>
-          <span class="store-text-sub">Get it on</span>
-          <span class="store-text-name">Google Play</span>
-        </div>
-      </a>
-    </div>
-  </section>
+  // Lighting
+  scene.add(new THREE.AmbientLight(0xffffff, 0.08));
+  var glow = new THREE.PointLight(0x2997ff, 5, 8);
+  glow.position.set(0, 0.5, 0.3);
+  scene.add(glow);
+  var fill = new THREE.DirectionalLight(0x88aaff, 0.3);
+  fill.position.set(-3, 5, 4);
+  scene.add(fill);
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-logo">AI Furniture</div>
-      <div class="footer-links">
-        <a href="#product">Product</a>
-        <a href="#app">App</a>
-        <a href="#features">Features</a>
-        <a href="mailto:dogrucanemek@gmail.com">Contact</a>
-      </div>
-      <p class="footer-copy">© 2025 AI Furniture. All rights reserved.</p>
-    </div>
-  </footer>
+  // Material helpers
+  function bmat() { return new THREE.LineBasicMaterial({ color: 0x2997ff, transparent: true, opacity: 0.8 }); }
+  function dmat() { return new THREE.LineBasicMaterial({ color: 0x4ab3ff, transparent: true, opacity: 0.42 }); }
+  function mkWire(w, h, d, mat) {
+    return new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(w, h, d)), mat || bmat());
+  }
 
-  <script>
-    // Remove Kubio theme elements immediately
-    (function removeKubio() {
-      function clean() {
-        document.querySelectorAll('.wp-block-kubio-header, .wp-block-kubio-navigation-section, .wp-block-kubio-footer').forEach(el => el.remove());
-        // Remove any element before our page wrapper that isn't ours
-        const body = document.body;
-        Array.from(body.children).forEach(el => {
-          if (!el.matches('nav, .hero, .section, .phones-section, .cta-section, footer, script, style')) {
-            const tag = el.tagName.toLowerCase();
-            if (tag !== 'script' && tag !== 'style') {
-              const cls = el.className || '';
-              if (cls.includes('kubio') || cls.includes('wp-block') || cls.includes('wp-site')) {
-                el.style.display = 'none';
-              }
-            }
-          }
-        });
-      }
-      clean();
-      document.addEventListener('DOMContentLoaded', clean);
-      setTimeout(clean, 100);
-      setTimeout(clean, 500);
-    })();
+  // Main group
+  var grp = new THREE.Group();
+  grp.position.y = 0.2;
+  scene.add(grp);
 
-    // Hero image load animation
-    const heroBg = document.getElementById('heroBg');
-    const img = new Image();
-    img.onload = () => heroBg.classList.add('loaded');
-    img.src = 'images/wardrobe.jpeg';
-    heroBg.classList.add('loaded');
+  // Outer cabinet
+  grp.add(mkWire(3.6, 5.8, 1.6));
 
-    // Scroll reveal
-    const sections = document.querySelectorAll('.section');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.12 });
+  // Top / bottom
+  var top = mkWire(3.6, 0.07, 1.6, dmat()); top.position.y = 2.555; grp.add(top);
+  var bot = mkWire(3.6, 0.07, 1.6, dmat()); bot.position.y = -2.555; grp.add(bot);
 
-    sections.forEach(s => observer.observe(s));
+  // Center divider
+  var div = mkWire(0.06, 5.8, 1.6, dmat()); grp.add(div);
 
-    // Nav background on scroll
-    const nav = document.querySelector('nav');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 60) {
-        nav.style.background = 'rgba(0,0,0,0.9)';
-      } else {
-        nav.style.background = 'rgba(0,0,0,0.72)';
-      }
+  // Right-side shelves
+  [-0.55, -1.35].forEach(function(y) {
+    var sh = mkWire(1.74, 0.05, 1.6, dmat()); sh.position.set(0.87, y, 0); grp.add(sh);
+  });
+
+  // Interior back glow
+  var back = new THREE.Mesh(
+    new THREE.PlaneGeometry(3.38, 5.65),
+    new THREE.MeshBasicMaterial({ color: 0x2997ff, transparent: true, opacity: 0.018, side: THREE.DoubleSide })
+  );
+  back.position.z = -0.79; grp.add(back);
+
+  // Clothes rail (left half, center at x=-0.9)
+  var rail = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.028, 0.028, 1.55, 10),
+    new THREE.MeshBasicMaterial({ color: 0x2997ff, transparent: true, opacity: 0.65 })
+  );
+  rail.rotation.z = Math.PI / 2;
+  rail.position.set(-0.9, 1.9, 0);
+  grp.add(rail);
+
+  // Hanging clothes
+  var clothData = [
+    { x: -1.35, col: 0x1a2744 },
+    { x: -0.9,  col: 0x2c2c2c },
+    { x: -0.45, col: 0x3d1520 }
+  ];
+  var clothes = [];
+  clothData.forEach(function(d) {
+    var cloth = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.36, 0.88),
+      new THREE.MeshBasicMaterial({ color: d.col, transparent: true, opacity: 0.88, side: THREE.DoubleSide })
+    );
+    cloth.position.set(d.x, 1.4, (Math.random() - 0.5) * 0.1);
+    grp.add(cloth);
+    clothes.push(cloth);
+
+    // Hanger
+    var pts = [
+      new THREE.Vector3(-0.11, 0.56, 0), new THREE.Vector3(0, 0.47, 0),
+      new THREE.Vector3(0.11, 0.56, 0),  new THREE.Vector3(0, 0.47, 0),
+      new THREE.Vector3(0, 0.67, 0)
+    ];
+    var hanger = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(pts),
+      new THREE.LineBasicMaterial({ color: 0x888888, transparent: true, opacity: 0.5 })
+    );
+    hanger.position.copy(cloth.position);
+    grp.add(hanger);
+  });
+
+  // Open doors — pivot at center of wardrobe front face (0, 0, 0.8)
+  function makeDoor(side) {
+    var dg = new THREE.Group();
+    dg.position.set(0, 0, 0.8);
+    var dw = mkWire(1.74, 5.74, 0.055);
+    dw.position.x = side * 0.87;
+    dg.add(dw);
+    dg.rotation.y = -side * 0.72; // swing outward toward camera
+    grp.add(dg);
+  }
+  makeDoor(-1); makeDoor(1);
+
+  // Particles
+  var pBuf = new Float32Array(200 * 3);
+  for (var i = 0; i < 200; i++) {
+    pBuf[i*3]   = (Math.random() - 0.5) * 16;
+    pBuf[i*3+1] = (Math.random() - 0.5) * 13;
+    pBuf[i*3+2] = (Math.random() - 0.5) * 10 - 3;
+  }
+  var pGeom = new THREE.BufferGeometry();
+  pGeom.setAttribute('position', new THREE.BufferAttribute(pBuf, 3));
+  var pts2 = new THREE.Points(pGeom, new THREE.PointsMaterial({ color: 0x4ab3ff, size: 0.045, transparent: true, opacity: 0.5 }));
+  scene.add(pts2);
+
+  // Mouse interaction
+  var tRX = 0, tRY = 0, cRX = 0, cRY = 0;
+  window.addEventListener('mousemove', function(e) {
+    tRY = (e.clientX / window.innerWidth  - 0.5) *  0.42;
+    tRX = (e.clientY / window.innerHeight - 0.5) * -0.20;
+  });
+
+  // Animate
+  var t = 0;
+  (function loop() {
+    requestAnimationFrame(loop);
+    t += 0.01;
+    cRX += (tRX - cRX) * 0.04;
+    cRY += (tRY - cRY) * 0.04;
+    grp.rotation.y = cRY + Math.sin(t * 0.18) * 0.07;
+    grp.rotation.x = cRX + Math.sin(t * 0.13) * 0.03;
+    clothes.forEach(function(c, i) { c.rotation.z = Math.sin(t * 0.55 + i * 1.3) * 0.022; });
+    glow.intensity = 4.5 + Math.sin(t * 1.1) * 1.3;
+    pts2.rotation.y += 0.003;
+    renderer.render(scene, camera);
+  })();
+
+  window.addEventListener('resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+
+// ── LANGUAGE TOGGLE ──────────────────────────────────────────────────
+var lang = 'tr';
+document.querySelectorAll('.nav-lang button').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    lang = btn.dataset.lang;
+    document.querySelectorAll('.nav-lang button').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-tr]').forEach(function(el) {
+      var txt = el.dataset[lang];
+      if (txt) el.innerHTML = txt;
     });
+    document.getElementById('waitlistEmail').placeholder = lang === 'tr' ? 'E-posta adresin' : 'Your email address';
+  });
+});
 
-    // Parallax hero
-    window.addEventListener('scroll', () => {
-      const y = window.scrollY;
-      heroBg.style.transform = `scale(1) translateY(${y * 0.3}px)`;
-    });
-  </script>
+// ── SCROLL REVEAL ─────────────────────────────────────────────────────
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.section').forEach(function(s) { obs.observe(s); });
+
+// ── NAV SCROLL ────────────────────────────────────────────────────────
+var nav = document.getElementById('mainNav');
+window.addEventListener('scroll', function() {
+  nav.style.background = window.scrollY > 60 ? 'rgba(0,0,0,0.92)' : 'rgba(0,0,0,0.72)';
+});
+
+// ── STATS COUNTER ─────────────────────────────────────────────────────
+var cObs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (!e.isIntersecting) return;
+    var el = e.target;
+    var target = parseInt(el.dataset.target);
+    var suffix = el.dataset.suffix || '';
+    if (isNaN(target)) return;
+    var cur = 0, step = target / 40;
+    var iv = setInterval(function() {
+      cur = Math.min(cur + step, target);
+      el.textContent = Math.round(cur) + suffix;
+      if (cur >= target) clearInterval(iv);
+    }, 40);
+    cObs.unobserve(el);
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cObs.observe(el); });
+
+// ── WAITLIST FORM ─────────────────────────────────────────────────────
+function handleWaitlist(e) {
+  e.preventDefault();
+  document.getElementById('waitlistForm').style.display = 'none';
+  var s = document.getElementById('waitlistSuccess');
+  s.textContent = lang === 'tr' ? '✓ Harika! Seni bekleme listesine ekledik.' : "✓ Great! You're on the list.";
+  s.style.display = 'block';
+}
+</script>
 </body>
 </html>
