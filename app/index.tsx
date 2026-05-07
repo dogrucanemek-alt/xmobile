@@ -4,7 +4,7 @@ import { useApp } from '../lib/context';
 
 export default function Index() {
   const router = useRouter();
-  const { t, renkler, temaToggle, dil, dilDegistir, karanlik } = useApp();
+  const { t, renkler, aksanRenk, temaToggle, dil, dilDegistir, karanlik } = useApp();
 
   return (
     <View style={[styles.container, { backgroundColor: renkler.bg }]}>
@@ -66,7 +66,7 @@ export default function Index() {
         </TouchableOpacity>
 
         <Text style={[styles.loginText, { color: renkler.metin2 }]}>
-          {t.hesabınVarMı} <Text style={[styles.loginLink, { color: renkler.metin }]}>{t.girisYap}</Text>
+          {t.hesabınVarMı} <Text style={[styles.loginLink, { color: aksanRenk }]}>{t.girisYap}</Text>
         </Text>
       </View>
     </View>
@@ -100,12 +100,12 @@ const styles = StyleSheet.create({
   tagline: { fontSize: 15, lineHeight: 24, textAlign: 'center' },
   bottom: { flex: 1, justifyContent: 'center', gap: 12, paddingBottom: 20 },
   btnPrimary: {
-    paddingVertical: 18, paddingHorizontal: 28, borderRadius: 16,
+    paddingVertical: 18, paddingHorizontal: 28, borderRadius: 50,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
   },
   btnPrimaryText: { fontSize: 16, fontWeight: '700', letterSpacing: 0.3 },
   btnArrow: { fontSize: 20, fontWeight: '300' },
-  btnSecondary: { paddingVertical: 16, borderRadius: 16, alignItems: 'center', borderWidth: 0.5 },
+  btnSecondary: { paddingVertical: 16, borderRadius: 50, alignItems: 'center', borderWidth: 0.5 },
   btnSecondaryText: { fontSize: 15, fontWeight: '500' },
   loginText: { textAlign: 'center', fontSize: 13 },
   loginLink: { fontWeight: '600' },

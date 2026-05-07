@@ -31,7 +31,7 @@ const GOZ_RENKLERI = [
 
 export default function Profile() {
   const router = useRouter();
-  const { t, renkler, dil } = useApp();
+  const { t, renkler, aksanRenk, dil } = useApp();
 
   const [tenRengi,    setTenRengi]    = useState('#FDDBB4');
   const [sacRengi,    setSacRengi]    = useState('#1A1A1A');
@@ -117,7 +117,7 @@ export default function Profile() {
           {dil === 'en' ? 'My Profile' : 'Profilim'}
         </Text>
         <TouchableOpacity onPress={kaydet}>
-          <Text style={[styles.kaydetBtn, { color: renkler.metin }]}>{t.kaydet}</Text>
+          <Text style={[styles.kaydetBtn, { color: aksanRenk }]}>{t.kaydet}</Text>
         </TouchableOpacity>
       </View>
 

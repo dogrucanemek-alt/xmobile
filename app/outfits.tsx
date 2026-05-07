@@ -326,7 +326,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
 });
 
 export default function Outfits() {
-  const { t, renkler, dil } = useApp();
+  const { t, renkler, aksanRenk, dil } = useApp();
   const router = useRouter();
   const [hava, setHava]               = useState<HavaDurumu | null>(null);
   const [kombinler, setKombinler]     = useState<Kombin[]>([]);
@@ -565,7 +565,7 @@ ${jsonFormat}`;
         </TouchableOpacity>
         <Text style={[styles.baslik, { color: renkler.metin }]}>{t.bugunkuKombinler}</Text>
         <TouchableOpacity onPress={baslat}>
-          <Text style={[styles.yenile, { color: renkler.metin }]}>↺</Text>
+          <Text style={[styles.yenile, { color: aksanRenk }]}>↺</Text>
         </TouchableOpacity>
       </View>
 
@@ -746,7 +746,7 @@ const styles = StyleSheet.create({
   avatarSatir:    { flexDirection: 'row', alignItems: 'center', gap: 14 },
   avatarOrtala:   { width: DISP_W, height: DISP_H, alignItems: 'center' },
   avatarBilgi:    { flex: 1 },
-  avatarBaslik:   { fontSize: 17, fontWeight: '700', marginBottom: 8, letterSpacing: 0.2, color: '#FFFFFF' },
+  avatarBaslik:   { fontSize: 17, fontWeight: '700', marginBottom: 8, letterSpacing: 0.2 },
   badge:          { borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5, alignSelf: 'flex-start', marginBottom: 10 },
   badgeText:      { fontSize: 11, fontWeight: '600' },
   avatarNeden:    { fontSize: 12, lineHeight: 19 },

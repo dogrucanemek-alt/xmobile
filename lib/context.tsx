@@ -79,15 +79,16 @@ const çeviriler = {
 
 const açıkRenkler = {
   bg: '#FFFFFF',
-  bg2: '#F9F9F9',
+  bg2: '#F5F5F7',
   metin: '#0A0A0A',
-  metin2: '#888888',
+  metin2: '#6e6e73',
   sinir: '#E5E5E5',
-  sinir2: '#DDDDDD',
+  sinir2: 'rgba(0,0,0,0.12)',
   kart: '#FFFFFF',
-  chip: '#F5F5F5',
+  chip: '#F5F5F7',
   btnPrimary: '#0A0A0A',
   btnPrimaryMetin: '#FFFFFF',
+  aksanRenk: '#2997ff',
   statusBar: 'dark-content' as const,
 };
 
@@ -95,13 +96,14 @@ const karanlıkRenkler = {
   bg: '#000000',
   bg2: '#000000',
   metin: '#FFFFFF',
-  metin2: '#A0A0A0',
+  metin2: 'rgba(255,255,255,0.65)',
   sinir: 'rgba(255,255,255,0.1)',
   sinir2: 'rgba(255,255,255,0.06)',
   kart: '#0D0D0D',
   chip: 'rgba(255,255,255,0.1)',
   btnPrimary: '#FFFFFF',
   btnPrimaryMetin: '#000000',
+  aksanRenk: '#2997ff',
   statusBar: 'light-content' as const,
 };
 
@@ -110,6 +112,7 @@ type Renkler = typeof açıkRenkler | typeof karanlıkRenkler;
 interface AppContextValue {
   t: typeof çeviriler['tr'] | typeof çeviriler['en'];
   renkler: Renkler;
+  aksanRenk: string;
   temaToggle: () => void;
   dil: 'tr' | 'en';
   dilDegistir: (d: 'tr' | 'en') => void;
@@ -146,9 +149,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   const renkler = karanlik ? karanlıkRenkler : açıkRenkler;
   const t = çeviriler[dil];
+  const aksanRenk = '#2997ff';
 
   const value = useMemo(
-    () => ({ t, renkler, temaToggle, dil, dilDegistir, karanlik }),
+    () => ({ t, renkler, aksanRenk, temaToggle, dil, dilDegistir, karanlik }),
     [t, renkler, temaToggle, dil, dilDegistir, karanlik],
   );
 

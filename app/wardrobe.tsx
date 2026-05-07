@@ -42,7 +42,7 @@ const SEZONLAR = ['Tüm Sezon', 'İlkbahar', 'Yaz', 'Sonbahar', 'Kış'];
 
 export default function Wardrobe() {
   const router = useRouter();
-  const { t, renkler } = useApp();
+  const { t, renkler, aksanRenk } = useApp();
 
   const [kiyafetler, setKiyafetler]       = useState<Kiyafet[]>([]);
   const [modalAcik, setModalAcik]         = useState(false);
@@ -191,7 +191,7 @@ export default function Wardrobe() {
         </TouchableOpacity>
         <Text style={[styles.baslik, { color: renkler.metin }]}>{t.gardırobum}</Text>
         <TouchableOpacity onPress={ekleSecenekleri}>
-          <Text style={[styles.ekle, { color: renkler.metin }]}>{t.ekle}</Text>
+          <Text style={[styles.ekle, { color: aksanRenk }]}>{t.ekle}</Text>
         </TouchableOpacity>
       </View>
 
