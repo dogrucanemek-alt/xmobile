@@ -42,7 +42,7 @@ const SAKAL_SECENEKLERI = [
   { adTR: 'Tam',    adEN: 'Full',    deger: 'tam'  },
 ];
 
-function AvatarOnizleme({ tenRengi, sacRengi, gozRengi, sacStili, sakal }) {
+function AvatarOnizleme({ tenRengi, sacRengi, gozRengi, sacStili, sakal }: { tenRengi: string; sacRengi: string; gozRengi: string; sacStili: string; sakal: string }) {
   const uzunSac = sacStili === 'uzun';
 
   return (
@@ -253,7 +253,7 @@ export default function AvatarScreen() {
         <View style={[styles.onizlemeBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
           <AvatarOnizleme
             tenRengi={tenRengi} sacRengi={sacRengi}
-            gozRengi={gozRengi} cinsiyet={cinsiyet}
+            gozRengi={gozRengi}
             sacStili={sacStili} sakal={sakal}
           />
         </View>
