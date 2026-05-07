@@ -29,6 +29,12 @@
     "plugins": [
       "expo-router",
       [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Bulunduğun şehrin hava durumunu göstermek için konum izni gerekiyor."
+        }
+      ],
+      [
         "expo-image-picker",
         {
           "photosPermission": "Kıyafet fotoğraflarına erişmek için izin gerekiyor.",

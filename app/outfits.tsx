@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
 import Svg, {
   Circle, Rect, Path, Ellipse,
   ClipPath, Defs, Image as SvgImage,
@@ -17,7 +18,6 @@ import { GECMIS_KEY } from './history';
 
 const WEATHER_KEY = process.env.EXPO_PUBLIC_WEATHER_KEY ?? '';
 const CLAUDE_KEY  = process.env.EXPO_PUBLIC_CLAUDE_KEY ?? '';
-const SEHIR       = 'Izmir,TR';
 
 const NEON    = '#00D4FF';
 const DARK_BG = '#00040F';
@@ -335,6 +335,7 @@ export default function Outfits() {
   const [seciliIndex, setSeciliIndex] = useState(0);
   const [profil, setProfil]           = useState<Profil | null>(null);
   const [kiyafetler, setKiyafetler]   = useState<Kiyafet[]>([]);
+  const [sehirAdi, setSehirAdi]       = useState('...');
 
   const kombinlerRef = useRef<Kombin[]>([]);
   const indexRef     = useRef(0);
@@ -364,11 +365,22 @@ export default function Outfits() {
   useEffect(() => { baslat(); }, []);
 
   const havaAl = async (): Promise<HavaDurumu> => {
-    const res = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${SEHIR}&appid=${WEATHER_KEY}&units=metric&lang=tr`
-    );
+    let url: string;
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === 'granted') {
+        const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+        url = `https://api.openweathermap.org/data/2.5/weather?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}&appid=${WEATHER_KEY}&units=metric&lang=tr`;
+      } else {
+        url = `https://api.openweathermap.org/data/2.5/weather?q=Izmir,TR&appid=${WEATHER_KEY}&units=metric&lang=tr`;
+      }
+    } catch {
+      url = `https://api.openweathermap.org/data/2.5/weather?q=Izmir,TR&appid=${WEATHER_KEY}&units=metric&lang=tr`;
+    }
+    const res = await fetch(url);
     const data = await res.json();
     if (!data.main) throw new Error('Hava verisi alınamadı');
+    setSehirAdi(data.name ?? 'İzmir');
     const havaVeri: HavaDurumu = {
       derece:     Math.round(data.main.temp),
       durum:      data.weather[0].description,
@@ -503,7 +515,7 @@ ${jsonFormat}`;
       clearTimeout(zaman);
       const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';
       const hataMesaj = msg.includes('abort') || msg.includes('Abort')
-        ? 'İstek zaman aşımına uğradı (30s). İnternet bağlantını kontrol et.'
+        ? 'İstek zaman aşımına uğradı (60s). İnternet bağlantını kontrol et.'
         : `Kombin oluşturulamadı: ${msg}`;
       setHata(hataMesaj);
     }
@@ -561,7 +573,7 @@ ${jsonFormat}`;
                 {t.hissedilen} {hava.hissedilen}°C · {t.nem} %{hava.nem}
               </Text>
             </View>
-            <Text style={[styles.havaSehir, { color: renkler.metin2 }]}>İzmir</Text>
+            <Text style={[styles.havaSehir, { color: renkler.metin2 }]}>{sehirAdi}</Text>
           </>
         )}
       </View>
