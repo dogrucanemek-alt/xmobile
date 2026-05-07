@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Furniture — Wardrobe Intelligence</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #000;
+      --white: #fff;
+      --gray: #6e6e73;
+      --light-gray: #f5f5f7;
+      --blue: #0071e3;
+      --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--white);
+    }
+
+    .nav-logo-icon {
+      width: 28px; height: 28px;
+      background: var(--white);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      color: var(--black);
+      letter-spacing: -1px;
+    }
+
+    .nav-logo-text {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 400;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      font-size: 13px;
+      color: #2997ff;
+      text-decoration: none;
+      font-weight: 400;
+      transition: color 0.2s;
+    }
+
+    .nav-cta:hover { color: #fff; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://aifurniture.com.tr/wp-content/uploads/2026/05/wardrobe-1.jpeg');
+      background-size: cover;
+      background-position: center top;
+      transform: scale(1.05);
+      transition: transform 8s ease-out;
+    }
+
+    .hero-bg.loaded { transform: scale(1); }
+
+    .hero-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.2) 0%,
+        rgba(0,0,0,0) 40%,
+        rgba(0,0,0,0.7) 75%,
+        rgba(0,0,0,0.95) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding-bottom: 80px;
+    }
+
+    .hero-eyebrow {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-size: clamp(48px, 7vw, 96px);
+      font-weight: 700;
+      letter-spacing: -3px;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-sub {
+      font-size: clamp(17px, 2vw, 23px);
+      font-weight: 300;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 36px;
+      letter-spacing: -0.3px;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 14px 32px;
+      border-radius: 980px;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s;
+      letter-spacing: -0.2px;
+    }
+
+    .btn-white {
+      background: var(--white);
+      color: var(--black);
+    }
+
+    .btn-white:hover { background: rgba(255,255,255,0.88); }
+
+    .btn-outline-white {
+      background: rgba(255,255,255,0.1);
+      color: var(--white);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-outline-white:hover {
+      background: rgba(255,255,255,0.18);
+      border-color: rgba(255,255,255,0.6);
+    }
+
+    /* ── SCROLL INDICATOR ── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.5;
+      animation: fadeInUp 1s ease 1.5s both;
+    }
+
+    .scroll-hint span {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .scroll-arrow {
+      width: 18px; height: 18px;
+      border-right: 1.5px solid rgba(255,255,255,0.5);
+      border-bottom: 1.5px solid rgba(255,255,255,0.5);
+      transform: rotate(45deg);
+      animation: bounce 1.5s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50% { transform: rotate(45deg) translateY(5px); }
+    }
+
+    /* ── SECTIONS ── */
+    .section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 40px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-eyebrow {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #2997ff;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 700;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      max-width: 800px;
+      margin-bottom: 20px;
+    }
+
+    .section-sub {
+      font-size: clamp(16px, 1.8vw, 21px);
+      font-weight: 300;
+      color: var(--gray);
+      max-width: 600px;
+      line-height: 1.6;
+      margin-bottom: 48px;
+      letter-spacing: -0.2px;
+    }
+
+    /* ── DARK / LIGHT SECTIONS ── */
+    .section-dark { background: #000; color: #fff; }
+    .section-light { background: var(--light-gray); color: #1d1d1f; }
+    .section-light .section-title { color: #1d1d1f; }
+    .section-light .section-sub { color: #6e6e73; }
+
+    /* ── PRODUCT SECTION ── */
+    .product-section {
+      background: #000;
+      min-height: 100vh;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-img {
+      width: 100%;
+      height: 100vh;
+      object-fit: cover;
+      filter: brightness(0.5);
+    }
+
+    .product-text {
+      position: absolute;
+      text-align: center;
+      padding: 40px;
+    }
+
+    /* ── PHONE SHOWCASE ── */
+    .phones-section {
+      background: #000;
+      padding: 120px 40px;
+    }
+
+    .phones-container {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-top: 64px;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .phone-mockup {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .phone-mockup.center { transform: scale(1.08); }
+
+    .phone-frame {
+      width: 220px;
+      background: #1a1a1a;
+      border-radius: 38px;
+      padding: 12px;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      box-shadow:
+        0 50px 100px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(255,255,255,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    .phone-notch {
+      width: 60px; height: 18px;
+      background: #000;
+      border-radius: 0 0 12px 12px;
+      margin: 0 auto 10px;
+    }
+
+    .phone-screen-img {
+      width: 100%;
+      border-radius: 26px;
+      display: block;
+      object-fit: cover;
+    }
+
+    .phone-label {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--gray);
+      font-weight: 400;
+    }
+
+    /* ── FEATURES GRID ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2px;
+      max-width: 1100px;
+      width: 100%;
+      margin-top: 64px;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .feature-tile {
+      background: #161617;
+      padding: 48px 40px;
+      text-align: left;
+      transition: background 0.2s;
+      cursor: default;
+    }
+
+    .feature-tile:hover { background: #1d1d1f; }
+
+    .feature-tile-icon {
+      font-size: 36px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .feature-tile h3 {
+      font-size: 19px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+
+    .feature-tile p {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    /* ── STATS ── */
+    .stats-row {
+      display: flex;
+      gap: 0;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 900px;
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      overflow: hidden;
+      margin-top: 64px;
+    }
+
+    .stat-item {
+      flex: 1;
+      min-width: 160px;
+      padding: 40px 32px;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-number {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, #fff, #888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--gray);
+      letter-spacing: -0.1px;
+    }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      background: #000;
+      padding: 160px 40px;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .store-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+
+    .store-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #1d1d1f;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 16px 28px;
+      text-decoration: none;
+      color: var(--white);
+      transition: all 0.2s;
+      min-width: 180px;
+    }
+
+    .store-btn:hover {
+      background: #2a2a2d;
+      border-color: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    .store-icon { font-size: 32px; }
+    .store-text-sub { font-size: 10px; color: var(--gray); display: block; margin-bottom: 2px; }
+    .store-text-name { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; display: block; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #161617;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 40px;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-logo {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.3px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--white); }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-eyebrow { animation: fadeInUp 0.8s ease 0.2s both; }
+    .hero-title { animation: fadeInUp 0.8s ease 0.4s both; }
+    .hero-sub { animation: fadeInUp 0.8s ease 0.6s both; }
+    .hero-btns { animation: fadeInUp 0.8s ease 0.8s both; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .phone-frame { width: 160px; }
+      .phone-mockup.center { transform: scale(1.05); }
+      .feature-tile { padding: 32px 24px; }
+      .stat-item { min-width: 130px; padding: 28px 20px; }
+      .stat-number { font-size: 36px; }
+      footer .footer-inner { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">X</div>
+      <span class="nav-logo-text">AI Furniture</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#product">Product</a></li>
+      <li><a href="#app">App</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#download">Download</a></li>
+    </ul>
+    <a href="#download" class="nav-cta">Pre-order →</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">AI Furniture · Wardrobe Intelligence</p>
+      <h1 class="hero-title"><span>The Smartest<br>Wardrobe Ever Made.</span></h1>
+      <p class="hero-sub">AI-powered outfit recommendations.<br>Based on weather, your style, your life.</p>
+      <div class="hero-btns">
+        <a href="#download" class="btn btn-white">Pre-order Now</a>
+        <a href="#product" class="btn btn-outline-white">Learn More</a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- TAGLINE -->
+  <section class="section section-dark" id="product">
+    <p class="section-eyebrow">Introducing AI Furniture</p>
+    <h2 class="section-title">Your wardrobe.<br>Now it thinks.</h2>
+    <p class="section-sub">
+      A floor-to-ceiling touchscreen wardrobe powered by artificial intelligence.
+      Every morning, the perfect outfit — chosen for the weather, your calendar, your taste.
+    </p>
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="stat-number">3s</span>
+        <span class="stat-label">Outfit recommendation</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">∞</span>
+        <span class="stat-label">Style combinations</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">AI</span>
+        <span class="stat-label">Claude-powered engine</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">24/7</span>
+        <span class="stat-label">Weather-aware</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- APP SECTION -->
+  <section class="section section-dark phones-section" id="app">
+    <p class="section-eyebrow">The App</p>
+    <h2 class="section-title">Your wardrobe,<br>in your pocket.</h2>
+    <p class="section-sub">
+      Available on iOS and Android. Add clothes, get AI outfit suggestions, track your style history — anywhere.
+    </p>
+    <div class="phones-container">
+      <div class="phone-mockup">
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <img src="https://aifurniture.com.tr/wp-content/uploads/2026/05/app-wardrobe.jpeg" class="phone-screen-img" alt="Wardrobe screen"/>
+        </div>
+        <p class="phone-label">Smart Wardrobe</p>
+      </div>
+      <div class="phone-mockup center">
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <img src="https://aifurniture.com.tr/wp-content/uploads/2026/05/app-home.jpeg" class="phone-screen-img" alt="Home screen"/>
+        </div>
+        <p class="phone-label">Home</p>
+      </div>
+      <div class="phone-mockup">
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <img src="https://aifurniture.com.tr/wp-content/uploads/2026/05/app-outfit.jpeg" class="phone-screen-img" alt="Outfit screen"/>
+        </div>
+        <p class="phone-label">Today's Outfit</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section section-dark" id="features" style="padding-top:120px; padding-bottom:120px;">
+    <p class="section-eyebrow">Features</p>
+    <h2 class="section-title">Built for the<br>way you dress.</h2>
+    <p class="section-sub">Everything you need to look great, every single day.</p>
+    <div class="features-grid">
+      <div class="feature-tile">
+        <span class="feature-tile-icon">🤖</span>
+        <h3>AI Outfit Engine</h3>
+        <p>Claude AI analyzes your wardrobe and generates personalized outfit combinations based on weather, occasion, and color harmony.</p>
+      </div>
+      <div class="feature-tile">
+        <span class="feature-tile-icon">⛅</span>
+        <h3>Weather-Aware</h3>
+        <p>Real-time weather data ensures your outfit is always suited for the day ahead — rain, sun, wind or snow.</p>
+      </div>
+      <div class="feature-tile">
+        <span class="feature-tile-icon">📸</span>
+        <h3>Auto Recognition</h3>
+        <p>Photograph any garment. AI instantly identifies its name, type and season — your wardrobe catalogues itself.</p>
+      </div>
+      <div class="feature-tile">
+        <span class="feature-tile-icon">🎨</span>
+        <h3>Color Harmony Score</h3>
+        <p>Advanced color theory engine scores every combination. Never leave home in a clashing outfit again.</p>
+      </div>
+      <div class="feature-tile">
+        <span class="feature-tile-icon">👤</span>
+        <h3>Personal Avatar</h3>
+        <p>See every outfit on a personalized 3D avatar that matches your skin tone, hair and body — before you wear it.</p>
+      </div>
+      <div class="feature-tile">
+        <span class="feature-tile-icon">🖥️</span>
+        <h3>Giant Touchscreen</h3>
+        <p>A full-size interactive display built into the wardrobe door. Browse, select, and decide — right at the closet.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="download">
+    <p class="section-eyebrow">Available Soon</p>
+    <h2 class="section-title" style="font-size:clamp(36px,5vw,64px); font-weight:700; letter-spacing:-2px; line-height:1.05; margin-bottom:20px;">
+      Be the first to experience<br>Wardrobe Intelligence.
+    </h2>
+    <p class="section-sub" style="margin:0 auto 0;">
+      Pre-order the AI Furniture smart wardrobe or download the app today.
+    </p>
+    <div class="store-row">
+      <a href="#" class="store-btn">
+        <span class="store-icon">🍎</span>
+        <div>
+          <span class="store-text-sub">Download on the</span>
+          <span class="store-text-name">App Store</span>
+        </div>
+      </a>
+      <a href="#" class="store-btn">
+        <span class="store-icon">▶</span>
+        <div>
+          <span class="store-text-sub">Get it on</span>
+          <span class="store-text-name">Google Play</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">AI Furniture</div>
+      <div class="footer-links">
+        <a href="#product">Product</a>
+        <a href="#app">App</a>
+        <a href="#features">Features</a>
+        <a href="mailto:dogrucanemek@gmail.com">Contact</a>
+      </div>
+      <p class="footer-copy">© 2025 AI Furniture. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Remove Kubio theme elements immediately
+    (function removeKubio() {
+      function clean() {
+        document.querySelectorAll('.wp-block-kubio-header, .wp-block-kubio-navigation-section, .wp-block-kubio-footer').forEach(el => el.remove());
+        // Remove any element before our page wrapper that isn't ours
+        const body = document.body;
+        Array.from(body.children).forEach(el => {
+          if (!el.matches('nav, .hero, .section, .phones-section, .cta-section, footer, script, style')) {
+            const tag = el.tagName.toLowerCase();
+            if (tag !== 'script' && tag !== 'style') {
+              const cls = el.className || '';
+              if (cls.includes('kubio') || cls.includes('wp-block') || cls.includes('wp-site')) {
+                el.style.display = 'none';
+              }
+            }
+          }
+        });
+      }
+      clean();
+      document.addEventListener('DOMContentLoaded', clean);
+      setTimeout(clean, 100);
+      setTimeout(clean, 500);
+    })();
+
+    // Hero image load animation
+    const heroBg = document.getElementById('heroBg');
+    const img = new Image();
+    img.onload = () => heroBg.classList.add('loaded');
+    img.src = 'images/wardrobe.jpeg';
+    heroBg.classList.add('loaded');
+
+    // Scroll reveal
+    const sections = document.querySelectorAll('.section');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    sections.forEach(s => observer.observe(s));
+
+    // Nav background on scroll
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        nav.style.background = 'rgba(0,0,0,0.9)';
+      } else {
+        nav.style.background = 'rgba(0,0,0,0.72)';
+      }
+    });
+
+    // Parallax hero
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      heroBg.style.transform = `scale(1) translateY(${y * 0.3}px)`;
+    });
+  </script>
+</body>
+</html>
