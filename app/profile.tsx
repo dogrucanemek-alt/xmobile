@@ -60,7 +60,9 @@ export default function Profile() {
         setSacStili(p.sacStili     || 'orta');
         setSakal(p.sakal           || 'yok');
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Profil yüklenemedi:', e);
+    }
   };
 
   const kaydet = async () => {

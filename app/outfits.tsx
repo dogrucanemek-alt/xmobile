@@ -402,12 +402,18 @@ export default function Outfits() {
     setYukleniyor(true);
     setHata('');
     try {
-      const [profilStr, havaVeri, kiyafetle] = await Promise.all([
+      const [profilStr, kiyafetle] = await Promise.all([
         AsyncStorage.getItem('xmobile_profil'),
-        havaAl(),
         kiyafetleriAl(),
       ]);
       if (profilStr) setProfil(JSON.parse(profilStr));
+      let havaVeri: HavaDurumu;
+      try {
+        havaVeri = await havaAl();
+      } catch {
+        havaVeri = { derece: 20, durum: 'bilinmiyor', nem: 50, hissedilen: 20 };
+        setSehirAdi('—');
+      }
       await kombinOner(havaVeri, kiyafetle);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);

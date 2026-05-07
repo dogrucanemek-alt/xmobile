@@ -50,6 +50,7 @@ export default function Wardrobe() {
   const [duzenAd, setDuzenAd]             = useState('');
   const [duzenTur, setDuzenTur]           = useState('');
   const [duzenSezon, setDuzenSezon]       = useState('');
+  const [cokluProgress, setCokluProgress] = useState<{simdiki: number; toplam: number} | null>(null);
 
   useEffect(() => { yukle(); }, []);
 
@@ -79,7 +80,7 @@ export default function Wardrobe() {
     let ad = 'Yeni Kıyafet';
     let tur = 'Üst';
     if (CLAUDE_KEY) {
-      try { ({ ad, tur } = await kiyafetTani(kaliciUri, CLAUDE_KEY)); } catch {}
+      try { ({ ad, tur } = await kiyafetTani(kaliciUri, CLAUDE_KEY)); } catch (e) { console.warn('Kıyafet tanıma hatası:', e); }
     }
     const yeni = { id: Date.now(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri };
     await kaydet([...kiyafetler, yeni]);
@@ -109,19 +110,24 @@ export default function Wardrobe() {
       selectionLimit: 20,
     });
     if (sonuc.canceled || !sonuc.assets.length) return;
+    const toplam = sonuc.assets.length;
+    setCokluProgress({ simdiki: 0, toplam });
     const yeniListe = [...kiyafetler];
-    for (const asset of sonuc.assets) {
+    for (let i = 0; i < sonuc.assets.length; i++) {
+      const asset = sonuc.assets[i];
+      setCokluProgress({ simdiki: i + 1, toplam });
       let kaliciUri: string;
       try { kaliciUri = await fotografKaydet(asset.uri); } catch { kaliciUri = asset.uri; }
       let ad = 'Yeni Kıyafet';
       let tur = 'Üst';
       if (CLAUDE_KEY) {
-        try { ({ ad, tur } = await kiyafetTani(kaliciUri, CLAUDE_KEY)); } catch {}
+        try { ({ ad, tur } = await kiyafetTani(kaliciUri, CLAUDE_KEY)); } catch (e) { console.warn('Tanıma hatası:', e); }
       }
       yeniListe.push({ id: Date.now() + Math.random(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri });
     }
     await kaydet(yeniListe);
-    Alert.alert('✓', `${sonuc.assets.length} kıyafet eklendi`);
+    setCokluProgress(null);
+    Alert.alert('✓', `${toplam} kıyafet eklendi`);
   };
 
   const ekleSecenekleri = () => {
@@ -218,6 +224,17 @@ export default function Wardrobe() {
           </View>
         ))}
       </ScrollView>
+
+      {cokluProgress && (
+        <View style={[styles.progressBar, { backgroundColor: renkler.kart }]}>
+          <Text style={[styles.progressText, { color: renkler.metin2 }]}>
+            Yükleniyor {cokluProgress.simdiki}/{cokluProgress.toplam}
+          </Text>
+          <View style={[styles.progressTrack, { backgroundColor: renkler.sinir }]}>
+            <View style={[styles.progressFill, { backgroundColor: renkler.btnPrimary, width: `${(cokluProgress.simdiki / cokluProgress.toplam) * 100}%` as any }]} />
+          </View>
+        </View>
+      )}
 
       <View style={[styles.bottomBar, { backgroundColor: renkler.bg }]}>
         <TouchableOpacity
@@ -343,6 +360,10 @@ const styles = StyleSheet.create({
   kiyafetAd:   { fontSize: 15, fontWeight: '500', marginBottom: 3 },
   kiyafetDetay:{ fontSize: 13 },
   arrow:       { fontSize: 22 },
+  progressBar:    { marginHorizontal: 16, marginBottom: 8, padding: 12, borderRadius: 14, gap: 8 },
+  progressText:   { fontSize: 12, fontWeight: '500' },
+  progressTrack:  { height: 4, borderRadius: 2 },
+  progressFill:   { height: 4, borderRadius: 2 },
   bottomBar:      { paddingHorizontal: 16, paddingVertical: 16, flexDirection: 'row', gap: 10 },
   gecmisButon:    { width: 52, height: 52, borderRadius: 26, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   gecmisButonText:{ fontSize: 22 },
