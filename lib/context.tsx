@@ -92,16 +92,16 @@ const açıkRenkler = {
 };
 
 const karanlıkRenkler = {
-  bg: '#0A0A0A',
-  bg2: '#111111',
+  bg: '#000000',
+  bg2: '#000000',
   metin: '#FFFFFF',
-  metin2: '#888888',
-  sinir: '#222222',
-  sinir2: '#333333',
-  kart: '#1A1A1A',
-  chip: '#222222',
+  metin2: '#A0A0A0',
+  sinir: 'rgba(255,255,255,0.1)',
+  sinir2: 'rgba(255,255,255,0.06)',
+  kart: '#0D0D0D',
+  chip: 'rgba(255,255,255,0.1)',
   btnPrimary: '#FFFFFF',
-  btnPrimaryMetin: '#0A0A0A',
+  btnPrimaryMetin: '#000000',
   statusBar: 'light-content' as const,
 };
 

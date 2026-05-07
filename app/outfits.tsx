@@ -19,6 +19,11 @@ const WEATHER_KEY = process.env.EXPO_PUBLIC_WEATHER_KEY ?? '';
 const CLAUDE_KEY  = process.env.EXPO_PUBLIC_CLAUDE_KEY ?? '';
 const SEHIR       = 'Izmir,TR';
 
+const NEON    = '#00D4FF';
+const DARK_BG = '#00040F';
+const GLASS   = 'rgba(0,212,255,0.07)';
+const GLASS_B = 'rgba(0,212,255,0.22)';
+
 const renkBul = (parcaAdi: string | null): string => {
   const ad = (parcaAdi ?? '').toLowerCase();
   if (ad.includes('beyaz') || ad.includes('ekru') || ad.includes('kırık'))  return '#F0F0F0';
@@ -92,8 +97,8 @@ interface AvatarProps {
 
 // viewBox koordinat sistemi (iç çizim alanı)
 const W = 200, H = 400;
-// Ekranda gösterim boyutu (küçük, row layout için)
-const DISP_W = 120, DISP_H = 240;
+// Ekranda gösterim boyutu
+const DISP_W = 120, DISP_H = 220;
 
 const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: AvatarProps) {
   if (profil?.avatarUrl && !profil?.profilFoto) {
@@ -167,8 +172,10 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
         </ClipPath>
       </Defs>
 
-      {/* Zemin gölgesi */}
-      <Ellipse cx={100} cy={392} rx={58} ry={7} fill="rgba(0,0,0,0.10)" />
+      {/* Hologram platform */}
+      <Ellipse cx={100} cy={396} rx={72} ry={13} fill="rgba(0,212,255,0.10)" />
+      <Ellipse cx={100} cy={396} rx={52} ry={8}  fill="rgba(0,212,255,0.22)" />
+      <Ellipse cx={100} cy={396} rx={30} ry={5}  fill="rgba(0,212,255,0.45)" />
 
       {/* ── SAÇ ARKA (sadece uzun saçta) ── */}
       {uzunSac && (
@@ -544,14 +551,14 @@ ${jsonFormat}`;
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.havaDurumu, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+      <View style={[styles.havaDurumu, { backgroundColor: renkler.kart }]}>
         {!hava ? <ActivityIndicator color={renkler.metin} /> : (
           <>
             <Text style={styles.havaIkon}>{havaIkon()}</Text>
             <View style={{ flex: 1 }}>
               <Text style={[styles.havaDerece, { color: renkler.metin }]}>{hava.derece}°C · {hava.durum}</Text>
               <Text style={[styles.havaNot, { color: renkler.metin2 }]}>
-                {t.hissedilen} {hava.hissedilen}°C, {t.nem} %{hava.nem}
+                {t.hissedilen} {hava.hissedilen}°C · {t.nem} %{hava.nem}
               </Text>
             </View>
             <Text style={[styles.havaSehir, { color: renkler.metin2 }]}>İzmir</Text>
@@ -575,12 +582,12 @@ ${jsonFormat}`;
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
           <View
-            style={[styles.avatarBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir, overflow: 'hidden' }]}
+            style={[styles.avatarBolum, { backgroundColor: renkler.kart }]}
             {...panResponder.panHandlers}
           >
             {seciliKombin && (
               <Animated.View style={[styles.avatarSatir, { transform: [{ translateX: slideAnim }] }]}>
-                <View style={{ width: DISP_W, height: DISP_H }}>
+                <View style={styles.avatarOrtala}>
                   <AvatarSVG kombin={seciliKombin} profil={profil} kiyafetler={kiyafetler} />
                 </View>
                 <View style={styles.avatarBilgi}>
@@ -598,7 +605,7 @@ ${jsonFormat}`;
                         {skor} <Text style={styles.skorEtiketText}>{skorEtiket}</Text>
                       </Text>
                     </View>
-                    <View style={[styles.skorBarBg, { backgroundColor: renkler.chip }]}>
+                    <View style={[styles.skorBarBg, { backgroundColor: renkler.sinir }]}>
                       <View style={[styles.skorBarDolu, { width: `${skor}%` as any, backgroundColor: skorRenk }]} />
                     </View>
                   </View>
@@ -620,12 +627,12 @@ ${jsonFormat}`;
               <TouchableOpacity
                 key={i}
                 style={[styles.seciciBtn, { backgroundColor: renkler.kart, borderColor: renkler.sinir },
-                  seciliIndex === i && { backgroundColor: renkler.btnPrimary, borderColor: renkler.btnPrimary }
+                  seciliIndex === i && { backgroundColor: renkler.btnPrimary, borderColor: renkler.btnPrimary },
                 ]}
                 onPress={() => setSeciliIndex(i)}
               >
                 <Text style={[styles.seciciBtnText, { color: renkler.metin2 },
-                  seciliIndex === i && { color: renkler.btnPrimaryMetin }
+                  seciliIndex === i && { color: renkler.btnPrimaryMetin },
                 ]}>
                   {i + 1}. {k.tur}
                 </Text>
@@ -634,7 +641,7 @@ ${jsonFormat}`;
           </View>
 
           {seciliKombin && (
-            <View style={[styles.parcalarBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+            <View style={[styles.parcalarBolum, { backgroundColor: renkler.kart }]}>
               <Text style={[styles.parcalarBaslik, { color: renkler.metin2 }]}>{t.buKombin}</Text>
               <View style={styles.parcalar}>
                 {seciliKombin.parcalar.map((p, i) => {
@@ -694,17 +701,17 @@ const styles = StyleSheet.create({
   container:      { flex: 1 },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingHorizontal: 20, paddingTop: 60, paddingBottom: 16, borderBottomWidth: 0.5,
+    paddingHorizontal: 24, paddingTop: 60, paddingBottom: 16,
   },
   geri:           { fontSize: 20, fontWeight: '300' },
-  baslik:         { fontSize: 17, fontWeight: '600' },
-  yenile:         { fontSize: 22, fontWeight: '300' },
+  baslik:         { fontSize: 17, fontWeight: '600', letterSpacing: -0.3 },
+  yenile:         { fontSize: 24, fontWeight: '300' },
   havaDurumu: {
     flexDirection: 'row', alignItems: 'center',
-    margin: 16, borderRadius: 14, padding: 16,
-    borderWidth: 0.5, gap: 12, minHeight: 72,
+    marginHorizontal: 16, marginBottom: 12, borderRadius: 18, padding: 16,
+    gap: 12, minHeight: 68,
   },
-  havaIkon:       { fontSize: 32 },
+  havaIkon:       { fontSize: 30 },
   havaDerece:     { fontSize: 15, fontWeight: '600' },
   havaNot:        { fontSize: 12, marginTop: 2 },
   havaSehir:      { fontSize: 13 },
@@ -713,40 +720,40 @@ const styles = StyleSheet.create({
   hataKutu:       { alignItems: 'center', paddingVertical: 60, paddingHorizontal: 32, gap: 12 },
   hataIcon:       { fontSize: 40 },
   hataText:       { fontSize: 14, textAlign: 'center', lineHeight: 22 },
-  tekrarBtn:      { marginTop: 8, paddingHorizontal: 28, paddingVertical: 12, borderRadius: 12 },
-  tekrarBtnText:  { fontSize: 14, fontWeight: '600' },
+  tekrarBtn:      { marginTop: 8, paddingHorizontal: 32, paddingVertical: 14, borderRadius: 50 },
+  tekrarBtnText:  { fontSize: 15, fontWeight: '600' },
   avatarBolum: {
-    marginHorizontal: 16, borderRadius: 16, padding: 14,
-    borderWidth: 0.5,
+    marginHorizontal: 16, borderRadius: 24, padding: 16,
   },
   avatarSatir:    { flexDirection: 'row', alignItems: 'center', gap: 14 },
+  avatarOrtala:   { width: DISP_W, height: DISP_H, alignItems: 'center' },
   avatarBilgi:    { flex: 1 },
-  avatarBaslik:   { fontSize: 16, fontWeight: '700', marginBottom: 6 },
-  badge:          { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start', marginBottom: 8 },
-  badgeText:      { fontSize: 11, fontWeight: '500' },
-  avatarNeden:    { fontSize: 12, lineHeight: 18 },
-  noktaSatir:     { flexDirection: 'row', gap: 6, marginTop: 12 },
-  nokta:          { width: 7, height: 7, borderRadius: 4 },
-  skorKutu:       { marginTop: 10, gap: 5 },
+  avatarBaslik:   { fontSize: 17, fontWeight: '700', marginBottom: 8, letterSpacing: 0.2, color: '#FFFFFF' },
+  badge:          { borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5, alignSelf: 'flex-start', marginBottom: 10 },
+  badgeText:      { fontSize: 11, fontWeight: '600' },
+  avatarNeden:    { fontSize: 12, lineHeight: 19 },
+  noktaSatir:     { flexDirection: 'row', gap: 6, marginTop: 14, justifyContent: 'flex-start' },
+  nokta:          { width: 6, height: 6, borderRadius: 3 },
+  skorKutu:       { marginTop: 16, gap: 8 },
   skorUstSatir:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
-  skorLabel:      { fontSize: 10 },
-  skorSayi:       { fontSize: 13, fontWeight: '700' },
-  skorEtiketText: { fontSize: 10, fontWeight: '400' },
-  skorBarBg:      { height: 4, borderRadius: 2 },
-  skorBarDolu:    { height: 4, borderRadius: 2 },
+  skorLabel:      { fontSize: 11 },
+  skorSayi:       { fontSize: 14, fontWeight: '700' },
+  skorEtiketText: { fontSize: 11, fontWeight: '400' },
+  skorBarBg:      { height: 3, borderRadius: 2 },
+  skorBarDolu:    { height: 3, borderRadius: 2 },
   seciciSatir:    { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 12 },
-  seciciBtn:      { flex: 1, padding: 10, borderRadius: 10, alignItems: 'center', borderWidth: 0.5 },
+  seciciBtn:      { flex: 1, paddingVertical: 10, paddingHorizontal: 6, borderRadius: 50, alignItems: 'center', borderWidth: 1 },
   seciciBtnText:  { fontSize: 12, fontWeight: '500' },
   parcalarBolum: {
     marginHorizontal: 16, marginTop: 12,
-    borderRadius: 14, padding: 18, borderWidth: 0.5,
+    borderRadius: 24, padding: 20,
   },
-  parcalarBaslik: { fontSize: 13, marginBottom: 10 },
-  parcalar:        { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
-  parcaChip:       { flexDirection: 'row', alignItems: 'center', borderRadius: 20, paddingRight: 12, paddingVertical: 4, paddingLeft: 4, gap: 8 },
-  parcaChipFoto:   { width: 36, height: 44, borderRadius: 16, resizeMode: 'cover' },
-  parcaChipFotoYok:{ width: 36, height: 44, borderRadius: 16 },
+  parcalarBaslik: { fontSize: 12, marginBottom: 12, letterSpacing: 0.5, textTransform: 'uppercase' } as any,
+  parcalar:        { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 18 },
+  parcaChip:       { flexDirection: 'row', alignItems: 'center', borderRadius: 24, paddingRight: 14, paddingVertical: 5, paddingLeft: 5, gap: 8 },
+  parcaChipFoto:   { width: 38, height: 48, borderRadius: 18, resizeMode: 'cover' },
+  parcaChipFotoYok:{ width: 38, height: 48, borderRadius: 18 },
   parcaText:       { fontSize: 13 },
-  secButon:       { borderRadius: 10, padding: 14, alignItems: 'center' },
-  secButonText:   { fontSize: 14, fontWeight: '500' },
+  secButon:       { borderRadius: 50, padding: 16, alignItems: 'center' },
+  secButonText:   { fontSize: 15, fontWeight: '600', letterSpacing: 0.2 },
 });

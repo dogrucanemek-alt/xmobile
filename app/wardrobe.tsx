@@ -179,7 +179,7 @@ export default function Wardrobe() {
     <View style={[styles.container, { backgroundColor: renkler.bg2 }]}>
       <StatusBar barStyle={renkler.statusBar} backgroundColor={renkler.bg} />
 
-      <View style={[styles.header, { backgroundColor: renkler.bg, borderBottomColor: renkler.sinir }]}>
+      <View style={[styles.header, { backgroundColor: renkler.bg }]}>
         <TouchableOpacity onPress={() => router.back()}>
           <Text style={[styles.geri, { color: renkler.metin }]}>{t.geri}</Text>
         </TouchableOpacity>
@@ -197,7 +197,7 @@ export default function Wardrobe() {
         {kiyafetler.map((k) => (
           <View
             key={k.id}
-            style={[styles.kiyafetKart, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}
+            style={[styles.kiyafetKart, { backgroundColor: renkler.kart }]}
           >
             <TouchableOpacity style={styles.kartIcerik} onPress={() => kiyafetDuzenle(k)}>
               {k.foto ? (
@@ -219,7 +219,7 @@ export default function Wardrobe() {
         ))}
       </ScrollView>
 
-      <View style={[styles.bottomBar, { backgroundColor: renkler.bg, borderTopColor: renkler.sinir }]}>
+      <View style={[styles.bottomBar, { backgroundColor: renkler.bg }]}>
         <TouchableOpacity
           style={[styles.gecmisButon, { borderColor: renkler.sinir2 }]}
           onPress={() => router.push('/history')}
@@ -239,13 +239,13 @@ export default function Wardrobe() {
       {/* Düzenleme Modalı */}
       <Modal visible={modalAcik} animationType="slide" presentationStyle="pageSheet">
         <View style={[styles.modal, { backgroundColor: renkler.bg2 }]}>
-          <View style={[styles.modalHeader, { backgroundColor: renkler.bg, borderBottomColor: renkler.sinir }]}>
+          <View style={[styles.modalHeader, { backgroundColor: renkler.bg }]}>
             <TouchableOpacity onPress={() => setModalAcik(false)}>
               <Text style={[styles.modalIptal, { color: renkler.metin }]}>{t.iptal}</Text>
             </TouchableOpacity>
             <Text style={[styles.modalBaslik, { color: renkler.metin }]}>{t.kiyafetDuzenle}</Text>
             <TouchableOpacity onPress={duzenKaydet}>
-              <Text style={[styles.modalKaydet, { color: renkler.metin }]}>{t.kaydet}</Text>
+              <Text style={styles.modalKaydet}>{t.kaydet}</Text>
             </TouchableOpacity>
           </View>
 
@@ -321,51 +321,50 @@ const styles = StyleSheet.create({
   container:    { flex: 1 },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingHorizontal: 20, paddingTop: 60, paddingBottom: 16,
-    borderBottomWidth: 0.5,
+    paddingHorizontal: 24, paddingTop: 60, paddingBottom: 16,
   },
   geri:         { fontSize: 20, fontWeight: '300' },
-  baslik:       { fontSize: 17, fontWeight: '600' },
-  ekle:         { fontSize: 16 },
-  sayi:         { fontSize: 13, paddingHorizontal: 20, paddingVertical: 12 },
+  baslik:       { fontSize: 17, fontWeight: '600', letterSpacing: -0.3 },
+  ekle:         { fontSize: 16, fontWeight: '500' },
+  sayi:         { fontSize: 13, paddingHorizontal: 24, paddingVertical: 10 },
   liste:        { flex: 1, paddingHorizontal: 16 },
   kiyafetKart: {
-    borderRadius: 14, marginBottom: 10,
-    flexDirection: 'row', alignItems: 'center', borderWidth: 0.5,
+    borderRadius: 18, marginBottom: 8,
+    flexDirection: 'row', alignItems: 'center',
     overflow: 'hidden',
   },
-  kartIcerik: { flex: 1, flexDirection: 'row', alignItems: 'center', padding: 14 },
-  silBtn:     { paddingHorizontal: 16, paddingVertical: 14, justifyContent: 'center' },
+  kartIcerik: { flex: 1, flexDirection: 'row', alignItems: 'center', padding: 16 },
+  silBtn:     { paddingHorizontal: 18, paddingVertical: 16, justifyContent: 'center' },
   silBtnText: { fontSize: 18 },
   renkCircle:  { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', marginRight: 14 },
   renkHarf:    { fontSize: 20, fontWeight: '500' },
-  kiyafetFoto: { width: 48, height: 58, borderRadius: 8, marginRight: 14 },
+  kiyafetFoto: { width: 48, height: 60, borderRadius: 12, marginRight: 14 },
   bilgi:       { flex: 1 },
   kiyafetAd:   { fontSize: 15, fontWeight: '500', marginBottom: 3 },
   kiyafetDetay:{ fontSize: 13 },
   arrow:       { fontSize: 22 },
-  bottomBar:      { padding: 20, borderTopWidth: 0.5, flexDirection: 'row', gap: 10 },
-  gecmisButon:    { width: 52, height: 52, borderRadius: 14, borderWidth: 0.5, alignItems: 'center', justifyContent: 'center' },
+  bottomBar:      { paddingHorizontal: 16, paddingVertical: 16, flexDirection: 'row', gap: 10 },
+  gecmisButon:    { width: 52, height: 52, borderRadius: 26, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   gecmisButonText:{ fontSize: 22 },
-  kombinButon:    { paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
-  kombinButonText:{ fontSize: 16, fontWeight: '600' },
+  kombinButon:    { paddingVertical: 17, borderRadius: 50, alignItems: 'center' },
+  kombinButonText:{ fontSize: 16, fontWeight: '600', letterSpacing: 0.2 },
   modal:       { flex: 1 },
   modalHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    padding: 20, paddingTop: 60, borderBottomWidth: 0.5,
+    padding: 20, paddingTop: 60,
   },
   modalIptal:  { fontSize: 16 },
-  modalBaslik: { fontSize: 17, fontWeight: '600' },
-  modalKaydet: { fontSize: 16, fontWeight: '600' },
-  modalFoto:       { width: '100%', height: 200, resizeMode: 'cover' },
-  modalFotoEkle:   { width: '100%', height: 140, alignItems: 'center', justifyContent: 'center' },
+  modalBaslik: { fontSize: 17, fontWeight: '600', letterSpacing: -0.3 },
+  modalKaydet: { fontSize: 16, fontWeight: '600', color: '#2997ff' },
+  modalFoto:       { width: '100%', height: 220, resizeMode: 'cover' },
+  modalFotoEkle:   { width: '100%', height: 160, alignItems: 'center', justifyContent: 'center' },
   modalFotoEkleText: { fontSize: 16 },
-  inputGrup:   { padding: 20, marginTop: 12 },
-  inputLabel:  { fontSize: 13, marginBottom: 8 },
-  input:       { fontSize: 16, borderBottomWidth: 0.5, paddingVertical: 8 },
+  inputGrup:   { padding: 20, marginTop: 8 },
+  inputLabel:  { fontSize: 12, marginBottom: 10, letterSpacing: 0.5 } as any,
+  input:       { fontSize: 17, paddingVertical: 8 },
   chipGrup:    { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip:        { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 0.5 },
+  chip:        { paddingHorizontal: 16, paddingVertical: 9, borderRadius: 50, borderWidth: 1 },
   chipText:    { fontSize: 13 },
-  silButon:    { margin: 20, padding: 16, borderRadius: 14, alignItems: 'center', borderWidth: 0.5, borderColor: '#FF3B30' },
+  silButon:    { margin: 20, padding: 17, borderRadius: 50, alignItems: 'center', borderWidth: 1, borderColor: '#FF3B30' },
   silButonText:{ color: '#FF3B30', fontSize: 16, fontWeight: '500' },
 });
