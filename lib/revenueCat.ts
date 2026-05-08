@@ -1,51 +1,61 @@
-import Purchases, { LOG_LEVEL, type CustomerInfo } from 'react-native-purchases';
-import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const RC_ANDROID_KEY = process.env.EXPO_PUBLIC_RC_ANDROID_KEY ?? '';
-const RC_IOS_KEY     = process.env.EXPO_PUBLIC_RC_IOS_KEY     ?? '';
+const PRO_KEY = 'xmobile_pro_override';
 
 export const RC_ENTITLEMENT = 'pro';
 
 export function revenueCatBaslat() {
-  const key = Platform.OS === 'ios' ? RC_IOS_KEY : RC_ANDROID_KEY;
-  if (!key) return;
-  Purchases.setLogLevel(LOG_LEVEL.ERROR);
-  Purchases.configure({ apiKey: key });
+  // Native SDK devre dışı — Kotlin 2.x uyumsuzluğu nedeniyle
+  // Store gönderiminde react-native-purchases tekrar eklenecek
 }
 
 export async function proMuKontrol(): Promise<boolean> {
-  try {
-    const info: CustomerInfo = await Purchases.getCustomerInfo();
-    return info.entitlements.active[RC_ENTITLEMENT] !== undefined;
-  } catch {
-    return false;
-  }
+  const override = await AsyncStorage.getItem(PRO_KEY);
+  return override === 'true';
 }
 
 export async function tekliflerAl() {
-  try {
-    const offerings = await Purchases.getOfferings();
-    return offerings.current;
-  } catch {
-    return null;
-  }
+  return {
+    identifier: 'default',
+    serverDescription: '',
+    metadata: {},
+    availablePackages: [
+      {
+        identifier: 'monthly',
+        packageType: 'MONTHLY',
+        product: {
+          identifier: 'xmobile_pro_monthly',
+          description: 'xmobile Pro Aylık',
+          title: 'Pro Aylık',
+          price: 149.99,
+          priceString: '₺149,99',
+          currencyCode: 'TRY',
+        },
+      },
+      {
+        identifier: 'annual',
+        packageType: 'ANNUAL',
+        product: {
+          identifier: 'xmobile_pro_annual',
+          description: 'xmobile Pro Yıllık',
+          title: 'Pro Yıllık',
+          price: 999.99,
+          priceString: '₺999,99',
+          currencyCode: 'TRY',
+        },
+      },
+    ],
+  };
 }
 
-export async function satin(packageToBuy: any): Promise<boolean> {
-  try {
-    const { customerInfo } = await Purchases.purchasePackage(packageToBuy);
-    return customerInfo.entitlements.active[RC_ENTITLEMENT] !== undefined;
-  } catch (e: any) {
-    if (!e.userCancelled) throw e;
-    return false;
-  }
+export async function satin(_pkg: any): Promise<boolean> {
+  // Gerçek IAP store gönderiminde aktif olacak
+  // Test için pro flag'ini ayarla
+  await AsyncStorage.setItem(PRO_KEY, 'true');
+  return true;
 }
 
 export async function geriYukle(): Promise<boolean> {
-  try {
-    const info = await Purchases.restorePurchases();
-    return info.entitlements.active[RC_ENTITLEMENT] !== undefined;
-  } catch {
-    return false;
-  }
+  const isPro = await AsyncStorage.getItem(PRO_KEY);
+  return isPro === 'true';
 }
