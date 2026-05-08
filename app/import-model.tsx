@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 import { useRouter } from 'expo-router';
 import ThreeDViewer from '../components/ThreeDViewer';
 import { useApp } from '../lib/context';
@@ -12,6 +13,7 @@ export default function ImportModel() {
   const [dosyaAdi, setDosyaAdi] = useState('');
   const [viewer3D, setViewer3D] = useState(false);
   const [hata, setHata] = useState('');
+  const [donusturuluyor, setDonusturuluyor] = useState(false);
 
   const dosyaSec = async () => {
     setHata('');
@@ -29,10 +31,19 @@ export default function ImportModel() {
         return;
       }
 
+      setDonusturuluyor(true);
+      // Android content:// URI'yi Three.js okuyamaz — base64 data URI'ye çeviriyoruz
+      const base64 = await FileSystem.readAsStringAsync(dosya.uri, {
+        encoding: 'base64' as any,
+      });
+      const dataUri = `data:model/gltf-binary;base64,${base64}`;
+
       setDosyaAdi(dosya.name);
-      setGlbUrl(dosya.uri);
+      setGlbUrl(dataUri);
     } catch {
-      setHata('Dosya seçilemedi');
+      setHata('Dosya seçilemedi veya okunamadı');
+    } finally {
+      setDonusturuluyor(false);
     }
   };
 
@@ -57,9 +68,18 @@ export default function ImportModel() {
           .glb dosyasını seçerek app'te görüntüle.
         </Text>
 
-        <TouchableOpacity style={styles.secBtn} onPress={dosyaSec}>
-          <Text style={styles.secBtnText}>📁 Dosya Seç (.glb)</Text>
+        <TouchableOpacity style={[styles.secBtn, donusturuluyor && { opacity: 0.6 }]} onPress={dosyaSec} disabled={donusturuluyor}>
+          {donusturuluyor
+            ? <ActivityIndicator color="#000" />
+            : <Text style={styles.secBtnText}>📁 Dosya Seç (.glb)</Text>
+          }
         </TouchableOpacity>
+
+        {donusturuluyor && (
+          <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, marginTop: 10 }}>
+            Dosya hazırlanıyor...
+          </Text>
+        )}
 
         {hata ? <Text style={styles.hataText}>{hata}</Text> : null}
 
