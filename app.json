@@ -13,6 +13,7 @@
     },
     "android": {
       "package": "com.xmobile.app",
+      "minSdkVersion": 24,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -60,7 +61,9 @@
             "backgroundColor": "#0A0A0A"
           }
         }
-      ]
+      ],
+      "@sentry/react-native",
+      "react-native-purchases"
     ],
     "experiments": {
       "typedRoutes": true,
