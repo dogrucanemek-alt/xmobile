@@ -101,6 +101,13 @@ interface AvatarProps {
   kiyafetler: Kiyafet[];
 }
 
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 function buildOverlayHtml(kombin: Kombin, kiyafetler: Kiyafet[]): string {
   const parcaEsle = (anahtar: string[]): string | null =>
     kombin.parcalar.find(p => anahtar.some(k => p.toLowerCase().includes(k))) ?? null;
@@ -125,43 +132,41 @@ function buildOverlayHtml(kombin: Kombin, kiyafetler: Kiyafet[]): string {
   const altRenk  = kiyafetRenk(altParca);
   const ayakRenk = kiyafetRenk(ayakParca);
 
-  let shapes = '';
+  // Yüzde tabanlı gradient wash bant — kenarlar şeffaf, orta dolu
+  const band = (color: string, top: number, height: number, opacity: number): string => {
+    const c    = hexToRgba(color, opacity);
+    const fade = hexToRgba(color, 0);
+    return `<div style="
+      position:absolute;top:${top}%;left:0;width:100%;height:${height}%;
+      background:linear-gradient(to bottom,${fade} 0%,${c} 22%,${c} 78%,${fade} 100%);
+      filter:blur(9px);pointer-events:none;
+    "></div>`;
+  };
+
+  let divs = '';
 
   if (ust) {
     if (disParca && ustParca) {
-      shapes += `
-        <rect x="50" y="186" width="100" height="88" rx="12" fill="${kiyafetRenk(ustParca)}" opacity="0.70"/>
-        <rect x="22" y="188" width="28" height="80" rx="12" fill="${kiyafetRenk(ustParca)}" opacity="0.70"/>
-        <rect x="150" y="188" width="28" height="80" rx="12" fill="${kiyafetRenk(ustParca)}" opacity="0.70"/>
-        <path d="M 22 186 L 92 186 L 92 220 L 76 274 L 22 274 Z" fill="${ustRenk}" opacity="0.76"/>
-        <path d="M 178 186 L 108 186 L 108 220 L 124 274 L 178 274 Z" fill="${ustRenk}" opacity="0.76"/>`;
+      // İç gömlek (dar bant, ortada)
+      divs += band(kiyafetRenk(ustParca), 20, 34, 0.38);
+      // Dış mont/trençkot (geniş bant, üste bindirilmiş)
+      divs += band(ustRenk, 17, 40, 0.36);
     } else {
-      shapes += `
-        <rect x="50" y="186" width="100" height="88" rx="12" fill="${ustRenk}" opacity="0.70"/>
-        <rect x="22" y="188" width="28" height="80" rx="12" fill="${ustRenk}" opacity="0.70"/>
-        <rect x="150" y="188" width="28" height="80" rx="12" fill="${ustRenk}" opacity="0.70"/>`;
+      divs += band(ustRenk, 18, 38, 0.44);
     }
   }
 
   if (altParca) {
-    shapes += `
-      <rect x="50" y="272" width="100" height="92" rx="6" fill="${altRenk}" opacity="0.72"/>
-      <rect x="98" y="296" width="4" height="68" fill="rgba(0,0,0,0.10)"/>`;
+    divs += band(altRenk, 54, 34, 0.44);
   }
 
   if (ayakParca) {
-    shapes += `
-      <rect x="38" y="360" width="62" height="22" rx="9" fill="${ayakRenk}" opacity="0.82"/>
-      <rect x="100" y="360" width="62" height="22" rx="9" fill="${ayakRenk}" opacity="0.82"/>`;
+    divs += band(ayakRenk, 86, 13, 0.52);
   }
 
-  if (!shapes) return '';
+  if (!divs) return '';
 
-  return `<div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;">
-    <svg width="100%" height="100%" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
-      ${shapes}
-    </svg>
-  </div>`;
+  return `<div style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;pointer-events:none;z-index:5;">${divs}</div>`;
 }
 
 // viewBox koordinat sistemi (iç çizim alanı)
