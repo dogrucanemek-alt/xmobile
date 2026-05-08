@@ -1,5 +1,6 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system/legacy';
 
 const TEMA_KEY = 'xmobile_karanlik';
 const DIL_KEY  = 'xmobile_dil';
@@ -121,6 +122,9 @@ interface AppContextValue {
   dil: 'tr' | 'en';
   dilDegistir: (d: 'tr' | 'en') => void;
   karanlik: boolean;
+  avatarGlbUri: string | null;
+  loadAvatarGlb: (path: string) => Promise<void>;
+  clearAvatarGlb: () => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -128,6 +132,9 @@ const AppContext = createContext<AppContextValue | null>(null);
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [karanlik, setKaranlik] = useState(true);
   const [dil, setDil] = useState<'tr' | 'en'>('tr');
+  const [avatarGlbUri, setAvatarGlbUri] = useState<string | null>(null);
+  // Hangi path'in yüklendiğini tutar — aynı path için tekrar diskten okumayı önler
+  const loadedPathRef = useRef<string | null>(null);
 
   useEffect(() => {
     AsyncStorage.multiGet([TEMA_KEY, DIL_KEY]).then((pairs) => {
@@ -151,13 +158,33 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setDil(yeniDil);
   }, []);
 
+  const loadAvatarGlb = useCallback(async (path: string) => {
+    if (loadedPathRef.current === path && avatarGlbUri) return; // zaten yüklü
+    try {
+      const b64 = await FileSystem.readAsStringAsync(path, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const uri = `data:model/gltf-binary;base64,${b64}`;
+      loadedPathRef.current = path;
+      setAvatarGlbUri(uri);
+    } catch {
+      setAvatarGlbUri(null);
+      loadedPathRef.current = null;
+    }
+  }, [avatarGlbUri]);
+
+  const clearAvatarGlb = useCallback(() => {
+    setAvatarGlbUri(null);
+    loadedPathRef.current = null;
+  }, []);
+
   const renkler = karanlik ? karanlıkRenkler : açıkRenkler;
   const t = çeviriler[dil];
   const aksanRenk = karanlik ? '#2997ff' : '#2997ff';
 
   const value = useMemo(
-    () => ({ t, renkler, aksanRenk, temaToggle, dil, dilDegistir, karanlik }),
-    [t, renkler, temaToggle, dil, dilDegistir, karanlik],
+    () => ({ t, renkler, aksanRenk, temaToggle, dil, dilDegistir, karanlik, avatarGlbUri, loadAvatarGlb, clearAvatarGlb }),
+    [t, renkler, temaToggle, dil, dilDegistir, karanlik, avatarGlbUri, loadAvatarGlb, clearAvatarGlb],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

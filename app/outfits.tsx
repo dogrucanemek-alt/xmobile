@@ -20,7 +20,6 @@ import ThreeDInline from '../components/ThreeDInline';
 import UpsellModal from '../components/UpsellModal';
 import { useSubscription } from '../lib/subscriptionContext';
 import { meshyModelUret } from '../lib/meshyService';
-import * as FileSystem from 'expo-file-system/legacy';
 
 const WEATHER_KEY = process.env.EXPO_PUBLIC_WEATHER_KEY ?? '';
 const CLAUDE_KEY  = process.env.EXPO_PUBLIC_CLAUDE_KEY ?? '';
@@ -400,7 +399,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
 });
 
 export default function Outfits() {
-  const { t, renkler, aksanRenk, dil } = useApp();
+  const { t, renkler, aksanRenk, dil, avatarGlbUri, loadAvatarGlb } = useApp();
   const { can3D, kullanim3DArtir, tier, aylikKullanim } = useSubscription();
   const router = useRouter();
   const [hava, setHava]               = useState<HavaDurumu | null>(null);
@@ -419,8 +418,6 @@ export default function Outfits() {
   const [yuklenen3D, setYuklenen3D]     = useState<string | null>(null);
   const [yukleniyor3D, setYukleniyor3D] = useState(false);
   const [hata3D, setHata3D]             = useState<string | null>(null);
-  const [avatarGlbUri, setAvatarGlbUri] = useState<string | null>(null);
-
   const kombinlerRef = useRef<Kombin[]>([]);
   const indexRef     = useRef(0);
   const slideAnim    = useRef(new Animated.Value(0)).current;
@@ -515,16 +512,7 @@ export default function Outfits() {
         const parsedProfil = JSON.parse(profilStr) as import('../lib/types').Profil;
         setProfil(parsedProfil);
         if (parsedProfil.avatarGlbPath) {
-          try {
-            const b64 = await FileSystem.readAsStringAsync(parsedProfil.avatarGlbPath, {
-              encoding: FileSystem.EncodingType.Base64,
-            });
-            setAvatarGlbUri(`data:model/gltf-binary;base64,${b64}`);
-          } catch {
-            setAvatarGlbUri(null);
-          }
-        } else {
-          setAvatarGlbUri(null);
+          loadAvatarGlb(parsedProfil.avatarGlbPath);
         }
       }
       let havaVeri: HavaDurumu;

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { readAsStringAsync, copyAsync, documentDirectory, EncodingType } from 'expo-file-system/legacy';
+import { copyAsync, documentDirectory } from 'expo-file-system/legacy';
 import { useApp } from '../lib/context';
 import ThreeDViewer from '../components/ThreeDViewer';
 
@@ -34,7 +34,7 @@ const GOZ_RENKLERI = [
 
 export default function Profile() {
   const router = useRouter();
-  const { t, renkler, aksanRenk, dil } = useApp();
+  const { t, renkler, aksanRenk, dil, clearAvatarGlb, loadAvatarGlb } = useApp();
 
   const [tenRengi,    setTenRengi]    = useState('#FDDBB4');
   const [sacRengi,    setSacRengi]    = useState('#1A1A1A');
@@ -46,7 +46,6 @@ export default function Profile() {
   const [sacStili,    setSacStili]    = useState('orta');
   const [sakal,       setSakal]       = useState('yok');
   const [avatarGlbPath, setAvatarGlbPath] = useState<string | null>(null);
-  const [avatarGlbUri,  setAvatarGlbUri]  = useState<string | null>(null);
   const [viewer3D,      setViewer3D]      = useState(false);
   const [glbYukleniyor, setGlbYukleniyor] = useState(false);
 
@@ -183,7 +182,8 @@ export default function Profile() {
                 await copyAsync({ from: dosya.uri, to: hedef });
                 // Sadece yolu kaydet — base64 AsyncStorage'a sığmaz
                 setAvatarGlbPath(hedef);
-                setAvatarGlbUri(null); // görüntülerken okunacak
+                setAvatarGlbUri(null);
+                clearAvatarGlb(); // context cache'ini temizle — outfits sayfası yeni dosyayı okuyacak
                 const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili, sakal, avatarGlbPath: hedef };
                 await AsyncStorage.setItem('xmobile_profil', JSON.stringify(profil));
               } catch (e) {
@@ -197,7 +197,7 @@ export default function Profile() {
             {glbYukleniyor
               ? <ActivityIndicator color={renkler.metin} />
               : <Text style={[styles.fotoBtnText, { color: renkler.metin }]}>
-                  {avatarGlbUri
+                  {avatarGlbPath
                     ? (dil === 'en' ? '📦 Change 3D Avatar' : '📦 3D Avatarı Değiştir')
                     : (dil === 'en' ? '📦 Set 3D Avatar (.glb)' : '📦 3D Avatar Yükle (.glb)')}
                 </Text>
@@ -209,8 +209,7 @@ export default function Profile() {
               onPress={async () => {
                 try {
                   setGlbYukleniyor(true);
-                  const base64 = await readAsStringAsync(avatarGlbPath, { encoding: EncodingType.Base64 });
-                  setAvatarGlbUri(`data:model/gltf-binary;base64,${base64}`);
+                  await loadAvatarGlb(avatarGlbPath);
                   setViewer3D(true);
                 } catch {
                   Alert.alert('Hata', 'Model okunamadı');
@@ -381,7 +380,7 @@ export default function Profile() {
           visible={viewer3D}
           glbUrl={avatarGlbUri}
           baslik={dil === 'en' ? '3D Avatar' : '3D Avatarım'}
-          onKapat={() => { setViewer3D(false); setAvatarGlbUri(null); }}
+          onKapat={() => setViewer3D(false)}
         />
       )}
     </View>
