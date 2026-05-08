@@ -23,6 +23,8 @@ import { meshyModelUret } from '../lib/meshyService';
 import { renkBul, parcaEsle, kiyafetRenkBul, hexToRgba, renkUyumSkoru } from '../lib/outfitColor';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
+import { kombinHakkiVar, kombinKullan, kalanHakAl } from '../lib/freemium';
+import { proMuKontrol } from '../lib/revenueCat';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
 
@@ -327,6 +329,7 @@ export default function Outfits() {
   const [yukleniyor3D, setYukleniyor3D] = useState(false);
   const [hata3D, setHata3D]             = useState<string | null>(null);
   const [paylasiyor, setPaylasiyor]     = useState(false);
+  const [kalanHak, setKalanHak]         = useState<number | null>(null);
   const viewShotRef = useRef<ViewShot>(null);
   const kombinlerRef = useRef<Kombin[]>([]);
   const indexRef     = useRef(0);
@@ -432,6 +435,16 @@ export default function Outfits() {
     setYukleniyor(true);
     setHata('');
     try {
+      const isPro = await proMuKontrol();
+      const hakVar = await kombinHakkiVar(isPro);
+      const hak = await kalanHakAl(isPro);
+      setKalanHak(hak.isPro ? null : hak.kalan);
+      if (!hakVar) {
+        setYukleniyor(false);
+        router.push('/subscription' as any);
+        return;
+      }
+
       const [profilStr, kiyafetle] = await Promise.all([
         AsyncStorage.getItem('xmobile_profil'),
         kiyafetleriAl(),
@@ -545,6 +558,10 @@ ${jsonFormat}`;
           return;
         }
         setKombinler(parsed.kombinler);
+        await kombinKullan();
+        const isPro2 = await proMuKontrol();
+        const hak2 = await kalanHakAl(isPro2);
+        setKalanHak(hak2.isPro ? null : hak2.kalan);
       } else {
         setHata(`Beklenmeyen API yanıtı: ${JSON.stringify(data).slice(0, 200)}`);
       }
@@ -599,6 +616,28 @@ ${jsonFormat}`;
           <Text style={[styles.yenile, { color: aksanRenk }]}>↺</Text>
         </TouchableOpacity>
       </View>
+
+      {kalanHak !== null && (
+        <TouchableOpacity
+          style={styles.freemiumBant}
+          onPress={() => router.push('/subscription' as any)}
+        >
+          <Text style={styles.freemiumBantText}>
+            {kalanHak > 0
+              ? (dil === 'en'
+                  ? `✨ ${kalanHak} free outfit${kalanHak === 1 ? '' : 's'} left this month`
+                  : `✨ Bu ay ${kalanHak} ücretsiz kombinlerin kaldı`)
+              : (dil === 'en'
+                  ? '🔒 Free limit reached — upgrade to PRO'
+                  : '🔒 Ücretsiz limit doldu — PRO\'ya geç')}
+          </Text>
+          {kalanHak === 0 && (
+            <Text style={styles.freemiumBantCta}>
+              {dil === 'en' ? 'Upgrade →' : 'Yükselt →'}
+            </Text>
+          )}
+        </TouchableOpacity>
+      )}
 
       <View style={[styles.havaDurumu, { backgroundColor: renkler.kart }]}>
         {!hava ? <ActivityIndicator color={renkler.metin} /> : (
@@ -863,4 +902,13 @@ const styles = StyleSheet.create({
   ucBoyutBtnYukleniyor: { opacity: 0.5 },
   ucBoyutBtnText: { color: '#00D4FF', fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
   hata3DText:     { fontSize: 11, marginTop: 8, textAlign: 'center', marginBottom: 8 },
+  freemiumBant: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    marginHorizontal: 16, marginTop: 8, marginBottom: 4,
+    paddingHorizontal: 14, paddingVertical: 8,
+    borderRadius: 12, backgroundColor: 'rgba(0,212,255,0.10)',
+    borderWidth: 1, borderColor: 'rgba(0,212,255,0.25)',
+  },
+  freemiumBantText: { fontSize: 12, color: '#00D4FF', flex: 1 },
+  freemiumBantCta:  { fontSize: 12, color: '#00D4FF', fontWeight: '700', marginLeft: 8 },
 });
