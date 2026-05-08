@@ -398,7 +398,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
-// ── 3D WARDROBE ──────────────────────────────────────────────────────
+// ── 3D HERO SCENE ────────────────────────────────────────────────────
 (function() {
   var container = document.getElementById('hero3d');
   var W = window.innerWidth, H = window.innerHeight;
@@ -410,12 +410,12 @@
 
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 100);
-  camera.position.set(0, 0.2, 8.2);
+  camera.position.set(0.6, 0.2, 8.8);
 
   // ── Lighting ──
   scene.add(new THREE.AmbientLight(0x111133, 1.0));
   var glowLight = new THREE.PointLight(0x2563eb, 10, 9);
-  glowLight.position.set(0, 0.3, 0.8);
+  glowLight.position.set(-1.5, 0.3, 1);
   scene.add(glowLight);
   var warmRight = new THREE.PointLight(0xb45309, 2.5, 14);
   warmRight.position.set(6, 1.5, 2);
@@ -428,254 +428,217 @@
   function lmat(col, op) { return new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: op }); }
   function wire(w, h, d, mat) { return new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(w, h, d)), mat); }
 
-  // ── Main group ──
+  var warmRight = new THREE.PointLight(0xb45309, 2.2, 16);
+  warmRight.position.set(7, 1, 1); scene.add(warmRight);
+  var coolLeft = new THREE.PointLight(0x0ea5e9, 1.5, 12);
+  coolLeft.position.set(-6, 3, 3); scene.add(coolLeft);
+
+  // ── Helpers ──
+  function lmat(col, op) { return new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: op }); }
+  function mmat(col, op) { return new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: op }); }
+  function wire(w, h, d, mat) { return new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(w, h, d)), mat); }
+  function pln(w, h, mat) { var m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat); return m; }
+  function addAt(parent, obj, x, y, z) { obj.position.set(x, y, z); parent.add(obj); return obj; }
+
+  // ══════════════════════════════════════════════════
+  // 1. WARDROBE (left, inspired by 4.jpeg)
+  // ══════════════════════════════════════════════════
   var grp = new THREE.Group();
-  grp.position.set(-0.3, 0.0, 0);
+  grp.position.set(-2.0, 0.0, 0);
   scene.add(grp);
 
-  // Outer frame
-  grp.add(wire(3.9, 5.8, 1.5, lmat(0x7dd3fc, 0.55)));
-  // Inner glow frame
-  grp.add(wire(3.74, 5.64, 1.38, lmat(0x3b82f6, 0.22)));
+  grp.add(wire(3.8, 5.7, 1.45, lmat(0x7dd3fc, 0.6)));
+  grp.add(wire(3.64, 5.54, 1.32, lmat(0x3b82f6, 0.2)));
 
-  // Top & bottom accent bars
-  [2.9, -2.9].forEach(function(y) {
-    var bar = new THREE.Mesh(
-      new THREE.BoxGeometry(3.9, 0.055, 1.5),
-      new THREE.MeshBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.75 })
-    );
-    bar.position.y = y;
-    grp.add(bar);
+  // Accent bars top/bottom
+  [-2.85, 2.85].forEach(function(y) {
+    var b = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.06, 1.45), mmat(0x60a5fa, 0.8));
+    b.position.y = y; grp.add(b);
   });
-
-  // Corner pillars (suggest rounded organic frame)
-  [[-1.9, 0], [1.9, 0]].forEach(function(xz) {
-    var pillar = wire(0.12, 5.8, 0.12, lmat(0x93c5fd, 0.6));
-    pillar.position.x = xz[0];
-    grp.add(pillar);
+  // Corner pillars
+  [-1.9, 1.9].forEach(function(x) {
+    var p = wire(0.11, 5.7, 0.11, lmat(0x93c5fd, 0.65)); p.position.x = x; grp.add(p);
   });
+  // Interior fill
+  var iF = pln(3.62, 5.52, mmat(0x172554, 0.13)); iF.position.z = -0.71; grp.add(iF);
+  grp.add(wire(0.04, 5.7, 1.45, lmat(0x60a5fa, 0.28)));
 
-  // Interior fill glow
-  var intFill = new THREE.Mesh(
-    new THREE.PlaneGeometry(3.72, 5.62),
-    new THREE.MeshBasicMaterial({ color: 0x172554, transparent: true, opacity: 0.14, side: THREE.DoubleSide })
-  );
-  intFill.position.z = -0.73;
-  grp.add(intFill);
-
-  // Center divider
-  var div = wire(0.04, 5.8, 1.5, lmat(0x60a5fa, 0.3));
-  grp.add(div);
-
-  // ── Holographic Screen (center-right) ──
-  var screenGrp = new THREE.Group();
-  screenGrp.position.set(0.5, 0.15, 0.76);
-  grp.add(screenGrp);
-
-  screenGrp.add(new THREE.Mesh(
-    new THREE.PlaneGeometry(1.55, 2.85),
-    new THREE.MeshBasicMaterial({ color: 0x0c1445, transparent: true, opacity: 0.78 })
-  ));
-  screenGrp.add(wire(1.58, 2.88, 0.01, lmat(0x3b82f6, 0.95)));
-
-  // Scan lines
-  for (var i = 0; i < 9; i++) {
-    var sl = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.44, 0.012),
-      new THREE.MeshBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.12 + (i % 3 === 0 ? 0.12 : 0) })
-    );
-    sl.position.y = -1.25 + i * 0.31;
-    screenGrp.add(sl);
+  // ── Screen ──
+  var scGrp = new THREE.Group(); scGrp.position.set(0.5, 0.18, 0.73); grp.add(scGrp);
+  scGrp.add(pln(1.5, 2.78, mmat(0x0c1445, 0.82)));
+  scGrp.add(wire(1.53, 2.81, 0.01, lmat(0x3b82f6, 0.95)));
+  for (var si = 0; si < 9; si++) {
+    var sl = pln(1.4, 0.011, mmat(0x60a5fa, 0.1 + (si % 3 === 0 ? 0.13 : 0)));
+    sl.position.y = -1.22 + si * 0.3; scGrp.add(sl);
   }
 
-  // ── Holographic Avatar ──
-  var avGrp = new THREE.Group();
-  avGrp.position.set(0.5, -0.1, 0.77);
-  grp.add(avGrp);
+  // ── Holographic avatar (from 3.jpeg silhouette) ──
+  var avG = new THREE.Group(); avG.position.set(0.5, -0.08, 0.74); grp.add(avG);
+  var hW = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.SphereGeometry(0.17, 8, 6)), lmat(0x38bdf8, 0.85));
+  hW.position.y = 1.1; avG.add(hW);
+  var hF = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 6), mmat(0x1d4ed8, 0.22)); hF.position.y = 1.1; avG.add(hF);
+  avG.add(wire(0.33, 0.56, 0.1, lmat(0x38bdf8, 0.7)));
+  avG.add(new THREE.Mesh(new THREE.BoxGeometry(0.31, 0.54, 0.08), mmat(0x1d4ed8, 0.2)));
+  [-0.09, 0.09].forEach(function(x) { var l = wire(0.11, 0.54, 0.08, lmat(0x38bdf8, 0.62)); l.position.set(x, -0.54, 0); avG.add(l); });
+  [-0.25, 0.25].forEach(function(x) { var a = wire(0.09, 0.44, 0.07, lmat(0x38bdf8, 0.58)); a.position.set(x, 0.04, 0); avG.add(a); });
+  var baseRing = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.01, 8, 40), mmat(0x38bdf8, 0.9));
+  baseRing.rotation.x = Math.PI / 2; baseRing.position.y = -0.86; avG.add(baseRing);
+  var outerRing = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.007, 6, 40), mmat(0x2563eb, 0.5));
+  outerRing.rotation.x = Math.PI / 2; outerRing.position.y = -0.86; avG.add(outerRing);
 
-  // Head
-  var headWire = new THREE.LineSegments(
-    new THREE.EdgesGeometry(new THREE.SphereGeometry(0.175, 8, 6)),
-    lmat(0x38bdf8, 0.85)
-  );
-  headWire.position.y = 1.12;
-  avGrp.add(headWire);
-
-  // Head fill
-  var headFill = new THREE.Mesh(
-    new THREE.SphereGeometry(0.16, 8, 6),
-    new THREE.MeshBasicMaterial({ color: 0x2563eb, transparent: true, opacity: 0.25 })
-  );
-  headFill.position.set(0, 1.12, 0);
-  avGrp.add(headFill);
-
-  // Torso
-  avGrp.add(wire(0.34, 0.58, 0.1, lmat(0x38bdf8, 0.7)));
-  avGrp.add(new THREE.Mesh(
-    new THREE.BoxGeometry(0.32, 0.56, 0.08),
-    new THREE.MeshBasicMaterial({ color: 0x1d4ed8, transparent: true, opacity: 0.22 })
-  ));
-
-  // Legs
-  [-0.1, 0.1].forEach(function(x) {
-    var leg = wire(0.12, 0.58, 0.09, lmat(0x38bdf8, 0.62));
-    leg.position.set(x, -0.58, 0);
-    avGrp.add(leg);
+  // Annotation lines (from 4.jpeg)
+  [[0.86,0.52],[0.86,0.18],[0.86,-0.16],[0.86,-0.5]].forEach(function(xy, ai) {
+    var aL = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(0.5+(ai%2)*0.1,0,0)]), lmat(0x7dd3fc, 0.42));
+    aL.position.set(xy[0], xy[1], 0.74); grp.add(aL);
+    var aD = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 8), mmat(0x60a5fa, 0.95)); aD.position.set(xy[0], xy[1], 0.74); grp.add(aD);
   });
 
-  // Arms
-  [-0.27, 0.27].forEach(function(x) {
-    var arm = wire(0.09, 0.48, 0.07, lmat(0x38bdf8, 0.58));
-    arm.position.set(x, 0.05, 0);
-    avGrp.add(arm);
-  });
-
-  // Base ring
-  var baseRing = new THREE.Mesh(
-    new THREE.TorusGeometry(0.26, 0.011, 8, 40),
-    new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.9 })
-  );
-  baseRing.rotation.x = Math.PI / 2;
-  baseRing.position.y = -0.9;
-  avGrp.add(baseRing);
-
-  // Outer scan ring
-  var outerRing = new THREE.Mesh(
-    new THREE.TorusGeometry(0.42, 0.008, 6, 40),
-    new THREE.MeshBasicMaterial({ color: 0x2563eb, transparent: true, opacity: 0.55 })
-  );
-  outerRing.rotation.x = Math.PI / 2;
-  outerRing.position.y = -0.9;
-  avGrp.add(outerRing);
-
-  // ── Annotation lines (floating data labels) ──
-  [[0.88, 0.55], [0.88, 0.2], [0.88, -0.18], [0.88, -0.52]].forEach(function(xy, i) {
-    var pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.55 + (i % 2) * 0.08, 0, 0)];
-    var al = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lmat(0x7dd3fc, 0.45));
-    al.position.set(xy[0], xy[1], 0.78);
-    grp.add(al);
-    var dot = new THREE.Mesh(
-      new THREE.SphereGeometry(0.022, 8, 8),
-      new THREE.MeshBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.95 })
-    );
-    dot.position.set(xy[0], xy[1], 0.78);
-    grp.add(dot);
-  });
-
-  // ── Left: Clothes rail ──
-  var railGrp = new THREE.Group();
-  railGrp.position.set(-0.95, 0.75, 0);
-  grp.add(railGrp);
-
-  var railMesh = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.018, 0.018, 1.45, 10),
-    new THREE.MeshBasicMaterial({ color: 0x93c5fd, transparent: true, opacity: 0.75 })
-  );
-  railMesh.rotation.z = Math.PI / 2;
-  railMesh.position.y = 0.88;
-  railGrp.add(railMesh);
-
+  // ── Clothes rail — real colors from 2.jpeg ──
+  var rG = new THREE.Group(); rG.position.set(-0.92, 0.78, 0); grp.add(rG);
+  var rM = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 1.4, 10), mmat(0x93c5fd, 0.75));
+  rM.rotation.z = Math.PI / 2; rM.position.y = 0.85; rG.add(rM);
   var clothes = [];
-  var clothCols = [0x1e3a8a, 0x1f2937, 0x312e81, 0x164e63, 0x18181b];
-  for (var ci = 0; ci < 5; ci++) {
-    var cg = new THREE.Group();
-    cg.position.set(-0.56 + ci * 0.28, 0.62, (Math.random() - 0.5) * 0.08);
-    var cloth = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.2, 0.68),
-      new THREE.MeshBasicMaterial({ color: clothCols[ci], transparent: true, opacity: 0.88, side: THREE.DoubleSide })
-    );
-    cg.add(cloth);
-    var hPts = [
-      new THREE.Vector3(-0.07, 0.42, 0), new THREE.Vector3(0, 0.34, 0),
-      new THREE.Vector3(0.07, 0.42, 0),  new THREE.Vector3(0, 0.34, 0),
-      new THREE.Vector3(0, 0.49, 0)
-    ];
+  [0xfbbf24, 0xc084fc, 0x1f2937, 0xfda4af, 0xf8fafc].forEach(function(col, ci) {
+    var cg = new THREE.Group(); cg.position.set(-0.5 + ci * 0.25, 0.58, (Math.random()-0.5)*0.06);
+    cg.add(new THREE.Mesh(new THREE.PlaneGeometry(0.17, 0.65), mmat(col, 0.92)));
+    var hPts = [new THREE.Vector3(-0.06,0.4,0),new THREE.Vector3(0,0.32,0),new THREE.Vector3(0.06,0.4,0),new THREE.Vector3(0,0.32,0),new THREE.Vector3(0,0.46,0)];
     cg.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(hPts), lmat(0x94a3b8, 0.55)));
-    railGrp.add(cg);
-    clothes.push(cg);
-  }
-
-  // ── Right side mini-panels ──
-  var panelGrp = new THREE.Group();
-  panelGrp.position.set(2.1, 0, 0);
-  grp.add(panelGrp);
-  [0.8, 0.1, -0.7].forEach(function(y, i) {
-    var pm = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.55, 0.3),
-      new THREE.MeshBasicMaterial({ color: 0x0d1b4b, transparent: true, opacity: 0.82 })
-    );
-    pm.position.set(0.3, y, 0); pm.rotation.y = -0.28; panelGrp.add(pm);
-    var pb = wire(0.57, 0.32, 0.01, lmat(0x3b82f6, 0.45 + i * 0.12));
-    pb.position.set(0.3, y, 0); pb.rotation.y = -0.28; panelGrp.add(pb);
+    rG.add(cg); clothes.push(cg);
   });
 
-  // ── Floor scan rings ──
+  // ══════════════════════════════════════════════════
+  // 2. FLOATING APP UI (right, from 3.jpeg)
+  // ══════════════════════════════════════════════════
+  var uiG = new THREE.Group(); uiG.position.set(2.9, 0.25, 0.4); uiG.rotation.y = -0.38; scene.add(uiG);
+
+  // Card bg + border
+  uiG.add(pln(2.15, 3.35, mmat(0x080e26, 0.9)));
+  uiG.add(wire(2.17, 3.37, 0.02, lmat(0x3b82f6, 0.88)));
+
+  // Weather widget (from 3.jpeg: 11°C açık, İzmir)
+  var wG = new THREE.Group(); wG.position.set(0, 1.27, 0.01); uiG.add(wG);
+  wG.add(pln(1.9, 0.5, mmat(0x1e3a8a, 0.7)));
+  wG.add(wire(1.92, 0.52, 0.01, lmat(0x60a5fa, 0.5)));
+  var sunM = new THREE.Mesh(new THREE.CircleGeometry(0.11, 12), mmat(0xfbbf24, 0.95)); sunM.position.set(-0.72, 0, 0.01); wG.add(sunM);
+  // Sun rays
+  for (var wi = 0; wi < 8; wi++) {
+    var ray = new THREE.Mesh(new THREE.PlaneGeometry(0.06, 0.01), mmat(0xfbbf24, 0.5));
+    ray.position.set(-0.72 + Math.cos(wi*Math.PI/4)*0.17, Math.sin(wi*Math.PI/4)*0.17, 0.01);
+    ray.rotation.z = wi * Math.PI / 4; wG.add(ray);
+  }
+  // Temp line + city line
+  var tL = pln(0.55, 0.045, mmat(0xf1f5f9, 0.9)); tL.position.set(-0.12, 0.1, 0.01); wG.add(tL);
+  var cL = pln(0.38, 0.032, mmat(0x94a3b8, 0.6)); cL.position.set(-0.21, -0.1, 0.01); wG.add(cL);
+
+  // Outfit card area (from 3.jpeg: Klasik İş Kombinesi)
+  var oCard = pln(1.9, 1.45, mmat(0x0f172a, 0.75)); oCard.position.set(0, 0.18, 0.01); uiG.add(oCard);
+  var oCBorder = wire(1.92, 1.47, 0.01, lmat(0x1e40af, 0.5)); oCBorder.position.set(0, 0.18, 0.01); uiG.add(oCBorder);
+  // Title "Klasik İş Kombinesi"
+  var titL = pln(1.05, 0.052, mmat(0xf1f5f9, 0.9)); titL.position.set(-0.35, 0.77, 0.02); uiG.add(titL);
+  // "İş" tag pill
+  var tagB = pln(0.28, 0.1, mmat(0x334155, 0.85)); tagB.position.set(-0.76, 0.59, 0.02); uiG.add(tagB);
+  var tagBR = wire(0.3, 0.12, 0.005, lmat(0x64748b, 0.55)); tagBR.position.set(-0.76, 0.59, 0.02); uiG.add(tagBR);
+  var tagT = pln(0.18, 0.032, mmat(0xe2e8f0, 0.75)); tagT.position.set(-0.76, 0.59, 0.025); uiG.add(tagT);
+  // Description lines
+  [[0.55, 0.42],[0.55, 0.34],[0.38, 0.26]].forEach(function(d) {
+    var dl = pln(d[0], 0.032, mmat(0x94a3b8, 0.5)); dl.position.set(-0.5 + d[0]/2, d[1], 0.02); uiG.add(dl);
+  });
+
+  // ── Color harmony score bar (from 3.jpeg: 88 Harika) ──
+  var sG = new THREE.Group(); sG.position.set(0, -0.28, 0.02); uiG.add(sG);
+  var sBg = pln(1.55, 0.052, mmat(0x1e293b, 0.95)); sG.add(sBg);
+  var sFill = pln(1.36, 0.044, mmat(0x22c55e, 0.95)); sFill.position.x = -0.095; sG.add(sFill);
+  var sLab = pln(0.42, 0.038, mmat(0x94a3b8, 0.6)); sLab.position.set(-0.52, 0.09, 0); sG.add(sLab);
+  var sVal = pln(0.19, 0.052, mmat(0x22c55e, 0.9)); sVal.position.set(0.62, 0.09, 0); sG.add(sVal);
+
+  // ── Outfit chips (from 3.jpeg: Gri pantalon, Beyaz Gömlek, Siyah ceket, Siyah Spor) ──
+  var chipDefs = [
+    { x: -0.74, y: -0.56, col: 0x4b5563 }, { x: 0.26, y: -0.56, col: 0xf8fafc },
+    { x: -0.74, y: -0.78, col: 0x111827 }, { x: 0.26, y: -0.78, col: 0x111827 }
+  ];
+  chipDefs.forEach(function(cd) {
+    var chB = pln(0.83, 0.17, mmat(0x1e293b, 0.88)); chB.position.set(cd.x, cd.y, 0.02); uiG.add(chB);
+    var chBR = wire(0.85, 0.19, 0.005, lmat(0x334155, 0.5)); chBR.position.set(cd.x, cd.y, 0.02); uiG.add(chBR);
+    var sw = pln(0.11, 0.11, mmat(cd.col, 0.92)); sw.position.set(cd.x - 0.3, cd.y, 0.025); uiG.add(sw);
+    var tl = pln(0.4, 0.032, mmat(0xcbd5e1, 0.7)); tl.position.set(cd.x + 0.1, cd.y, 0.025); uiG.add(tl);
+  });
+
+  // ══════════════════════════════════════════════════
+  // 3. FLOATING CLOTHING CARDS (from 2.jpeg)
+  // ══════════════════════════════════════════════════
+  var floatCards = [];
+  var cardDefs = [
+    { px: 1.3, py: 1.9, pz: -1.4, col: 0xfbbf24, ry: -0.28, ph: 0.0 },
+    { px: -0.4, py: 2.3, pz: -2.0, col: 0xc084fc, ry:  0.18, ph: 1.1 },
+    { px: 3.6, py: -0.4, pz: -0.9, col: 0xfda4af, ry: -0.42, ph: 2.2 },
+    { px: -3.0, py: 0.9, pz: -1.7, col: 0xf8fafc, ry:  0.22, ph: 3.3 },
+    { px: 2.3, py: 2.6, pz: -2.4, col: 0x1f2937, ry: -0.2,  ph: 0.7 }
+  ];
+  cardDefs.forEach(function(d) {
+    var fg = new THREE.Group(); fg.position.set(d.px, d.py, d.pz); fg.rotation.y = d.ry; scene.add(fg);
+    fg.add(pln(0.7, 0.86, mmat(0x080e26, 0.85)));
+    fg.add(wire(0.72, 0.88, 0.01, lmat(0x3b82f6, 0.55)));
+    var sw = pln(0.5, 0.48, mmat(d.col, 0.9)); sw.position.set(0, 0.12, 0.01); fg.add(sw);
+    var nl = pln(0.48, 0.038, mmat(0xe2e8f0, 0.75)); nl.position.set(0, -0.27, 0.01); fg.add(nl);
+    var tl = pln(0.3, 0.028, mmat(0x64748b, 0.55)); tl.position.set(-0.09, -0.35, 0.01); fg.add(tl);
+    floatCards.push({ grp: fg, baseY: d.py, phase: d.ph });
+  });
+
+  // ══════════════════════════════════════════════════
+  // 4. SCAN RINGS, GRID, PARTICLES
+  // ══════════════════════════════════════════════════
   var scanRings = [];
   for (var ri = 0; ri < 3; ri++) {
-    var sr = new THREE.Mesh(
-      new THREE.TorusGeometry(0.55 + ri * 0.55, 0.009, 6, 52),
-      new THREE.MeshBasicMaterial({ color: 0x2563eb, transparent: true, opacity: 0.55 - ri * 0.13 })
-    );
-    sr.rotation.x = Math.PI / 2;
-    sr.position.set(0.5, -3.15, 0.4);
-    scene.add(sr);
+    var sr = new THREE.Mesh(new THREE.TorusGeometry(0.48 + ri * 0.5, 0.008, 6, 52), mmat(0x2563eb, 0.48 - ri * 0.12));
+    sr.rotation.x = Math.PI / 2; sr.position.set(-1.4, -3.05, 0.3); scene.add(sr);
     scanRings.push({ mesh: sr, phase: ri * 2.1 });
   }
+  var grid = new THREE.GridHelper(28, 28, 0x1e3a8a, 0x1e3a8a);
+  grid.material.transparent = true; grid.material.opacity = 0.11; grid.position.y = -3.5; scene.add(grid);
 
-  // ── Floor grid ──
-  var grid = new THREE.GridHelper(24, 24, 0x1e3a8a, 0x1e3a8a);
-  grid.material.transparent = true; grid.material.opacity = 0.14;
-  grid.position.y = -3.5;
-  scene.add(grid);
-
-  // ── Ambient particles ──
-  var pBuf = new Float32Array(280 * 3);
-  for (var pi = 0; pi < 280; pi++) {
-    pBuf[pi*3]   = (Math.random() - 0.5) * 18;
-    pBuf[pi*3+1] = (Math.random() - 0.5) * 14;
-    pBuf[pi*3+2] = (Math.random() - 0.5) * 11 - 3;
-  }
-  var pGeom = new THREE.BufferGeometry();
-  pGeom.setAttribute('position', new THREE.BufferAttribute(pBuf, 3));
-  var particles = new THREE.Points(pGeom, new THREE.PointsMaterial({ color: 0x93c5fd, size: 0.042, transparent: true, opacity: 0.48 }));
+  var pBuf = new Float32Array(300 * 3);
+  for (var pi = 0; pi < 300; pi++) { pBuf[pi*3]=(Math.random()-0.5)*20; pBuf[pi*3+1]=(Math.random()-0.5)*15; pBuf[pi*3+2]=(Math.random()-0.5)*13-4; }
+  var pG = new THREE.BufferGeometry(); pG.setAttribute('position', new THREE.BufferAttribute(pBuf, 3));
+  var particles = new THREE.Points(pG, new THREE.PointsMaterial({ color: 0x93c5fd, size: 0.04, transparent: true, opacity: 0.44 }));
   scene.add(particles);
 
-  // ── City background (warm orange dots) ──
-  var cBuf = new Float32Array(100 * 3);
-  for (var cbi = 0; cbi < 100; cbi++) {
-    cBuf[cbi*3]   = (Math.random() - 0.5) * 26;
-    cBuf[cbi*3+1] = Math.random() * 7 - 1;
-    cBuf[cbi*3+2] = -9 - Math.random() * 6;
-  }
-  var cGeom = new THREE.BufferGeometry();
-  cGeom.setAttribute('position', new THREE.BufferAttribute(cBuf, 3));
-  scene.add(new THREE.Points(cGeom, new THREE.PointsMaterial({ color: 0xf97316, size: 0.09, transparent: true, opacity: 0.32 })));
+  var cBuf = new Float32Array(120 * 3);
+  for (var cbi = 0; cbi < 120; cbi++) { cBuf[cbi*3]=(Math.random()-0.5)*30; cBuf[cbi*3+1]=Math.random()*8-1; cBuf[cbi*3+2]=-11-Math.random()*6; }
+  var cG = new THREE.BufferGeometry(); cG.setAttribute('position', new THREE.BufferAttribute(cBuf, 3));
+  scene.add(new THREE.Points(cG, new THREE.PointsMaterial({ color: 0xf97316, size: 0.1, transparent: true, opacity: 0.28 })));
 
-  // ── Animation ──
+  // ══════════════════════════════════════════════════
+  // 5. ANIMATION
+  // ══════════════════════════════════════════════════
   var tRX = 0, tRY = 0, cRX = 0, cRY = 0;
   window.addEventListener('mousemove', function(e) {
-    tRY = (e.clientX / window.innerWidth  - 0.5) *  0.38;
-    tRX = (e.clientY / window.innerHeight - 0.5) * -0.18;
+    tRY = (e.clientX / window.innerWidth  - 0.5) * 0.3;
+    tRX = (e.clientY / window.innerHeight - 0.5) * -0.14;
   });
 
   var t = 0, scanT = 0;
   (function loop() {
     requestAnimationFrame(loop);
     t += 0.01; scanT += 0.008;
-    cRX += (tRX - cRX) * 0.04;
-    cRY += (tRY - cRY) * 0.04;
-    grp.rotation.y = cRY + Math.sin(t * 0.16) * 0.065;
-    grp.rotation.x = cRX + Math.sin(t * 0.11) * 0.025;
-    clothes.forEach(function(c, i) { c.rotation.z = Math.sin(t * 0.42 + i * 1.25) * 0.028; });
-    glowLight.intensity = 8 + Math.sin(t * 1.15) * 2.2;
+    cRX += (tRX - cRX) * 0.04; cRY += (tRY - cRY) * 0.04;
+    grp.rotation.y = cRY * 0.65 + Math.sin(t * 0.14) * 0.055;
+    grp.rotation.x = cRX * 0.65 + Math.sin(t * 0.1)  * 0.022;
+    uiG.position.y = 0.25 + Math.sin(t * 0.52) * 0.1;
+    uiG.rotation.y = -0.38 + cRY * 0.28;
+    clothes.forEach(function(c, i) { c.rotation.z = Math.sin(t * 0.4 + i * 1.2) * 0.025; });
+    floatCards.forEach(function(fc) {
+      fc.grp.position.y = fc.baseY + Math.sin(t * 0.36 + fc.phase) * 0.14;
+      fc.grp.rotation.z = Math.sin(t * 0.2 + fc.phase) * 0.035;
+    });
+    glowLight.intensity = 9 + Math.sin(t * 1.1) * 2.4;
     scanRings.forEach(function(r) {
       var s = 1 + Math.sin(scanT + r.phase) * 0.09;
       r.mesh.scale.set(s, 1, s);
-      r.mesh.material.opacity = 0.28 + Math.sin(scanT + r.phase) * 0.22;
+      r.mesh.material.opacity = 0.24 + Math.sin(scanT + r.phase) * 0.22;
     });
-    baseRing.material.opacity = 0.65 + Math.sin(t * 1.3) * 0.25;
-    outerRing.material.opacity = 0.3 + Math.sin(t * 0.9 + 1) * 0.2;
-    particles.rotation.y += 0.0018;
+    baseRing.material.opacity  = 0.6 + Math.sin(t * 1.3) * 0.28;
+    outerRing.material.opacity = 0.28 + Math.sin(t * 0.9 + 1) * 0.2;
+    particles.rotation.y += 0.0015;
     renderer.render(scene, camera);
   })();
 
