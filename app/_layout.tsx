@@ -1,9 +1,13 @@
 import { Stack } from 'expo-router';
+import { useEffect } from 'react';
 import { AppProvider } from '../lib/context';
 import { ErrorBoundary } from '../lib/error-boundary';
 import { SubscriptionProvider } from '../lib/subscriptionContext';
+import { gunlukBildirimKur } from '../lib/notifications';
 
 export default function RootLayout() {
+  useEffect(() => { gunlukBildirimKur(); }, []);
+
   return (
     <ErrorBoundary>
       <AppProvider>

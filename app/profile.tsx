@@ -153,7 +153,10 @@ export default function Profile() {
 
       <ScrollView style={styles.liste}>
 
-        {/* Profil Fotoğrafı */}
+        {/* ── Profil Fotoğrafı ── */}
+        <Text style={[styles.bolumEtiket, { color: renkler.metin2 }]}>
+          {dil === 'en' ? 'PROFILE PHOTO' : 'PROFİL FOTOĞRAFI'}
+        </Text>
         <View style={[styles.fotoBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
           <TouchableOpacity onPress={fotografSec}>
             {profilFoto ? (
@@ -189,46 +192,15 @@ export default function Profile() {
               </Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity
-            style={[styles.fotoBtn, { backgroundColor: renkler.chip, borderWidth: 0.5, borderColor: renkler.sinir }]}
-            onPress={glbSec}
-            disabled={glbYukleniyor}
-          >
-            {glbYukleniyor
-              ? <ActivityIndicator color={renkler.metin} />
-              : <Text style={[styles.fotoBtnText, { color: renkler.metin }]}>
-                  {avatarGlbPath
-                    ? (dil === 'en' ? '📦 Change 3D Avatar' : '📦 3D Avatarı Değiştir')
-                    : (dil === 'en' ? '📦 Set 3D Avatar (.glb)' : '📦 3D Avatar Yükle (.glb)')}
-                </Text>
-            }
-          </TouchableOpacity>
-          {avatarGlbPath && (
-            <TouchableOpacity
-              style={[styles.fotoBtn, { backgroundColor: 'rgba(0,212,255,0.1)', borderWidth: 1, borderColor: 'rgba(0,212,255,0.3)', marginTop: 8 }]}
-              onPress={async () => {
-                try {
-                  setGlbYukleniyor(true);
-                  await loadAvatarGlb(avatarGlbPath);
-                  setViewer3D(true);
-                } catch {
-                  Alert.alert('Hata', 'Model okunamadı');
-                } finally {
-                  setGlbYukleniyor(false);
-                }
-              }}
-              disabled={glbYukleniyor}
-            >
-              <Text style={[styles.fotoBtnText, { color: '#00D4FF' }]}>
-                {glbYukleniyor ? '...' : (dil === 'en' ? '▶ View 3D Avatar' : '▶ 3D Avatarı Görüntüle')}
-              </Text>
-            </TouchableOpacity>
-          )}
         </View>
 
-        {/* Avatar Önizleme — sadece fotoğraf yoksa göster */}
-        {!profilFoto && (
-          <View style={[styles.onizleme, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+        {/* ── 3D Avatar ── */}
+        <Text style={[styles.bolumEtiket, { color: renkler.metin2 }]}>
+          {dil === 'en' ? '3D AVATAR' : '3D AVATAR'}
+        </Text>
+        <View style={[styles.avatarBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+          {/* 2D önizleme — sadece GLB yoksa göster */}
+          {!avatarGlbPath && (
             <View style={styles.avatarWrap}>
               <View style={[styles.sac,   { backgroundColor: sacRengi }]} />
               <View style={[styles.bas,   { backgroundColor: tenRengi }]}>
@@ -247,11 +219,57 @@ export default function Profile() {
               <View style={styles.ayakSol} />
               <View style={styles.ayakSag} />
             </View>
-            <Text style={[styles.onizlemeText, { color: renkler.metin2 }]}>
-              {dil === 'en' ? 'Your Avatar' : 'Avatarın'}
+          )}
+
+          {avatarGlbPath ? (
+            <View style={styles.glbBilgi}>
+              <Text style={styles.glbIkon}>📦</Text>
+              <Text style={[styles.glbAd, { color: renkler.metin }]}>avatar.glb</Text>
+              <Text style={[styles.glbAlt, { color: renkler.metin2 }]}>
+                {dil === 'en' ? '3D model loaded' : '3D model yüklendi'}
+              </Text>
+            </View>
+          ) : (
+            <Text style={[styles.avatarAciklama, { color: renkler.metin2 }]}>
+              {dil === 'en'
+                ? 'Upload a .glb file to use a 3D avatar in outfit suggestions.'
+                : 'Kombin önerilerinde 3D avatar kullanmak için .glb dosyası yükle.'}
             </Text>
+          )}
+
+          <View style={styles.avatarBtnGrup}>
+            <TouchableOpacity
+              style={[styles.avatarBtn, { backgroundColor: renkler.btnPrimary }]}
+              onPress={glbSec}
+              disabled={glbYukleniyor}
+            >
+              {glbYukleniyor
+                ? <ActivityIndicator color={renkler.btnPrimaryMetin} size="small" />
+                : <Text style={[styles.avatarBtnText, { color: renkler.btnPrimaryMetin }]}>
+                    {avatarGlbPath
+                      ? (dil === 'en' ? 'Change .glb' : '.glb Değiştir')
+                      : (dil === 'en' ? 'Upload .glb' : '.glb Yükle')}
+                  </Text>
+              }
+            </TouchableOpacity>
+            {avatarGlbPath && (
+              <TouchableOpacity
+                style={[styles.avatarBtn, { backgroundColor: 'rgba(0,212,255,0.12)', borderWidth: 1, borderColor: 'rgba(0,212,255,0.35)' }]}
+                onPress={async () => {
+                  setGlbYukleniyor(true);
+                  await loadAvatarGlb(avatarGlbPath);
+                  setGlbYukleniyor(false);
+                  setViewer3D(true);
+                }}
+                disabled={glbYukleniyor}
+              >
+                <Text style={[styles.avatarBtnText, { color: '#00D4FF' }]}>
+                  {dil === 'en' ? '▶ Preview' : '▶ Önizle'}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
-        )}
+        </View>
 
         {/* Cinsiyet */}
         <View style={[styles.bolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
@@ -397,22 +415,26 @@ const styles = StyleSheet.create({
   baslik:                { fontSize: 17, fontWeight: '600' },
   kaydetBtn:             { fontSize: 16, fontWeight: '600' },
   liste:                 { flex: 1 },
-  fotoBolum: {
-    margin: 16, borderRadius: 14, padding: 24,
-    borderWidth: 0.5, alignItems: 'center', gap: 16,
+  bolumEtiket: {
+    fontSize: 11, fontWeight: '700', letterSpacing: 1.2,
+    marginHorizontal: 20, marginTop: 20, marginBottom: 6,
   },
-  profilFoto:            { width: 120, height: 120, borderRadius: 60 },
-  profilFotoPlaceholder: { width: 120, height: 120, borderRadius: 60, alignItems: 'center', justifyContent: 'center' },
-  profilFotoIcon:        { fontSize: 50 },
+  fotoBolum: {
+    marginHorizontal: 16, marginBottom: 4, borderRadius: 14, padding: 24,
+    borderWidth: 0.5, alignItems: 'center', gap: 14,
+  },
+  profilFoto:            { width: 100, height: 100, borderRadius: 50 },
+  profilFotoPlaceholder: { width: 100, height: 100, borderRadius: 50, alignItems: 'center', justifyContent: 'center' },
+  profilFotoIcon:        { fontSize: 42 },
   fotoBtnGrup:           { flexDirection: 'row', gap: 10 },
   fotoBtn:               { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20 },
   fotoBtnText:           { fontSize: 14, fontWeight: '500' },
   fotoCikar:             { color: '#FF3B30', fontSize: 13 },
-  onizleme: {
-    marginHorizontal: 16, marginBottom: 12, borderRadius: 14,
-    padding: 24, borderWidth: 0.5, alignItems: 'center',
+  avatarBolum: {
+    marginHorizontal: 16, marginBottom: 4, borderRadius: 14, padding: 20,
+    borderWidth: 0.5, alignItems: 'center', gap: 14,
   },
-  avatarWrap:            { width: 100, height: 180, position: 'relative', marginBottom: 12 },
+  avatarWrap:            { width: 90, height: 160, position: 'relative' },
   sac:                   { position: 'absolute', top: 0, left: 22, width: 56, height: 20, borderTopLeftRadius: 28, borderTopRightRadius: 28 },
   bas:                   { position: 'absolute', top: 8, left: 22, width: 56, height: 52, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
   gozlerSatir:           { flexDirection: 'row', gap: 10, marginBottom: 6 },
@@ -426,7 +448,14 @@ const styles = StyleSheet.create({
   bacakSag:              { position: 'absolute', top: 118, left: 54, width: 26, height: 45, borderRadius: 6, backgroundColor: '#2C3E50' },
   ayakSol:               { position: 'absolute', top: 160, left: 16, width: 30, height: 10, borderRadius: 4, backgroundColor: '#1A1A1A' },
   ayakSag:               { position: 'absolute', top: 160, left: 50, width: 30, height: 10, borderRadius: 4, backgroundColor: '#1A1A1A' },
-  onizlemeText:          { fontSize: 13 },
+  glbBilgi:     { alignItems: 'center', gap: 4 },
+  glbIkon:      { fontSize: 36 },
+  glbAd:        { fontSize: 15, fontWeight: '600' },
+  glbAlt:       { fontSize: 12 },
+  avatarAciklama: { fontSize: 13, textAlign: 'center', lineHeight: 20 },
+  avatarBtnGrup:  { flexDirection: 'row', gap: 10 },
+  avatarBtn:      { paddingHorizontal: 22, paddingVertical: 11, borderRadius: 22, minWidth: 110, alignItems: 'center' },
+  avatarBtnText:  { fontSize: 14, fontWeight: '600' },
   bolum: {
     marginHorizontal: 16, marginBottom: 12,
     borderRadius: 14, padding: 18, borderWidth: 0.5,

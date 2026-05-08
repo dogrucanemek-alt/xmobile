@@ -21,6 +21,8 @@ import UpsellModal from '../components/UpsellModal';
 import { useSubscription } from '../lib/subscriptionContext';
 import { meshyModelUret } from '../lib/meshyService';
 import { renkBul, parcaEsle, kiyafetRenkBul, hexToRgba, renkUyumSkoru } from '../lib/outfitColor';
+import ViewShot, { captureRef } from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
 
 const WEATHER_KEY = process.env.EXPO_PUBLIC_WEATHER_KEY ?? '';
 const CLAUDE_KEY  = process.env.EXPO_PUBLIC_CLAUDE_KEY ?? '';
@@ -331,6 +333,8 @@ export default function Outfits() {
   const [yuklenen3D, setYuklenen3D]     = useState<string | null>(null);
   const [yukleniyor3D, setYukleniyor3D] = useState(false);
   const [hata3D, setHata3D]             = useState<string | null>(null);
+  const [paylasiyor, setPaylasiyor]     = useState(false);
+  const viewShotRef = useRef<ViewShot>(null);
   const kombinlerRef = useRef<Kombin[]>([]);
   const indexRef     = useRef(0);
   const slideAnim    = useRef(new Animated.Value(0)).current;
@@ -355,6 +359,24 @@ export default function Outfits() {
       },
     })
   ).current;
+
+  const paylas = async () => {
+    if (!viewShotRef.current || !seciliKombin) return;
+    try {
+      setPaylasiyor(true);
+      const uri = await captureRef(viewShotRef, { format: 'png', quality: 0.95 });
+      const available = await Sharing.isAvailableAsync();
+      if (available) {
+        await Sharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: seciliKombin.baslik });
+      } else {
+        Alert.alert(dil === 'en' ? 'Sharing not available' : 'Paylaşım desteklenmiyor');
+      }
+    } catch {
+      Alert.alert(dil === 'en' ? 'Could not share' : 'Paylaşılamadı');
+    } finally {
+      setPaylasiyor(false);
+    }
+  };
 
   useEffect(() => { baslat(); }, []);
 
@@ -620,6 +642,7 @@ ${jsonFormat}`;
         </View>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
+          <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 0.95 }}>
           <View
             style={[styles.avatarBolum, { backgroundColor: renkler.kart }]}
             {...panResponder.panHandlers}
@@ -670,6 +693,7 @@ ${jsonFormat}`;
               </Animated.View>
             )}
           </View>
+          </ViewShot>
 
           <View style={styles.seciciSatir}>
             {kombinler.map((k, i) => (
@@ -722,8 +746,18 @@ ${jsonFormat}`;
               {hata3D && (
                 <Text style={[styles.hata3DText, { color: '#E74C3C' }]}>3D: {hata3D}</Text>
               )}
+              <View style={styles.altButonSatir}>
               <TouchableOpacity
-                style={[styles.secButon, { backgroundColor: renkler.btnPrimary }]}
+                style={[styles.paylasButon, { borderColor: renkler.sinir }]}
+                onPress={paylas}
+                disabled={paylasiyor}
+              >
+                <Text style={[styles.paylasButonText, { color: renkler.metin }]}>
+                  {paylasiyor ? '...' : (dil === 'en' ? '↑ Share' : '↑ Paylaş')}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.secButon, { backgroundColor: renkler.btnPrimary, flex: 1 }]}
                 onPress={async () => {
                   const kayitli = await AsyncStorage.getItem(GECMIS_KEY);
                   const liste = kayitli ? JSON.parse(kayitli) : [];
@@ -747,6 +781,7 @@ ${jsonFormat}`;
               >
                 <Text style={[styles.secButonText, { color: renkler.btnPrimaryMetin }]}>{t.buKombiniSec}</Text>
               </TouchableOpacity>
+              </View>
             </View>
           )}
 
@@ -827,6 +862,9 @@ const styles = StyleSheet.create({
   parcaChipFoto:   { width: 38, height: 48, borderRadius: 18, resizeMode: 'cover' },
   parcaChipFotoYok:{ width: 38, height: 48, borderRadius: 18 },
   parcaText:       { fontSize: 13 },
+  altButonSatir:  { flexDirection: 'row', gap: 10, marginTop: 12 },
+  paylasButon:    { borderRadius: 50, padding: 16, alignItems: 'center', borderWidth: 1, paddingHorizontal: 22 },
+  paylasButonText:{ fontSize: 15, fontWeight: '600' },
   secButon:       { borderRadius: 50, padding: 16, alignItems: 'center' },
   secButonText:   { fontSize: 15, fontWeight: '600', letterSpacing: 0.2 },
   ucBoyutBtn: {
