@@ -51,6 +51,29 @@ export default function Profile() {
 
   useEffect(() => { yukle(); }, []);
 
+  const glbSec = async () => {
+    try {
+      const sonuc = await DocumentPicker.getDocumentAsync({ type: '*/*', copyToCacheDirectory: false });
+      if (sonuc.canceled) return;
+      const dosya = sonuc.assets[0];
+      if (!dosya.name.toLowerCase().endsWith('.glb')) {
+        Alert.alert('Hata', 'Sadece .glb dosyaları destekleniyor');
+        return;
+      }
+      setGlbYukleniyor(true);
+      const hedef = (documentDirectory ?? '') + 'avatar.glb';
+      await copyAsync({ from: dosya.uri, to: hedef });
+      setAvatarGlbPath(hedef);
+      clearAvatarGlb();
+      const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili, sakal, avatarGlbPath: hedef };
+      await AsyncStorage.setItem('xmobile_profil', JSON.stringify(profil));
+    } catch {
+      Alert.alert('Hata', 'Dosya yüklenemedi');
+    } finally {
+      setGlbYukleniyor(false);
+    }
+  };
+
   const yukle = async () => {
     try {
       const kayitli = await AsyncStorage.getItem(PROFIL_KEY);
@@ -168,30 +191,7 @@ export default function Profile() {
           )}
           <TouchableOpacity
             style={[styles.fotoBtn, { backgroundColor: renkler.chip, borderWidth: 0.5, borderColor: renkler.sinir }]}
-            onPress={async () => {
-              try {
-                const sonuc = await DocumentPicker.getDocumentAsync({ type: '*/*', copyToCacheDirectory: false });
-                if (sonuc.canceled) return;
-                const dosya = sonuc.assets[0];
-                if (!dosya.name.toLowerCase().endsWith('.glb')) {
-                  Alert.alert('Hata', 'Sadece .glb dosyaları destekleniyor');
-                  return;
-                }
-                setGlbYukleniyor(true);
-                const hedef = (documentDirectory ?? '') + 'avatar.glb';
-                await copyAsync({ from: dosya.uri, to: hedef });
-                // Sadece yolu kaydet — base64 AsyncStorage'a sığmaz
-                setAvatarGlbPath(hedef);
-                setAvatarGlbUri(null);
-                clearAvatarGlb(); // context cache'ini temizle — outfits sayfası yeni dosyayı okuyacak
-                const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili, sakal, avatarGlbPath: hedef };
-                await AsyncStorage.setItem('xmobile_profil', JSON.stringify(profil));
-              } catch (e) {
-                Alert.alert('Hata', 'Dosya yüklenemedi');
-              } finally {
-                setGlbYukleniyor(false);
-              }
-            }}
+            onPress={glbSec}
             disabled={glbYukleniyor}
           >
             {glbYukleniyor

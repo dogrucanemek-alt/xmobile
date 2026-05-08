@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, Image, Alert, TextInput, Modal } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, Image, Alert, TextInput, Modal, TextStyle } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
@@ -148,8 +148,9 @@ export default function Wardrobe() {
   };
 
   const duzenKaydet = async () => {
+    if (!seciliKiyafet) return;
     const yeniListe = kiyafetler.map(k =>
-      k.id === seciliKiyafet!.id
+      k.id === seciliKiyafet.id
         ? { ...k, ad: duzenAd, tur: duzenTur, sezon: duzenSezon }
         : k
     );
@@ -164,7 +165,8 @@ export default function Wardrobe() {
     if (sonuc.canceled) return;
     let kaliciUri: string;
     try { kaliciUri = await fotografKaydet(sonuc.assets[0].uri); } catch { kaliciUri = sonuc.assets[0].uri; }
-    const guncellenmis = { ...seciliKiyafet!, foto: kaliciUri };
+    if (!seciliKiyafet) return;
+    const guncellenmis = { ...seciliKiyafet, foto: kaliciUri };
     setSeciliKiyafet(guncellenmis);
     const yeniListe = kiyafetler.map(k => k.id === guncellenmis.id ? guncellenmis : k);
     await kaydet(yeniListe);
@@ -251,7 +253,7 @@ export default function Wardrobe() {
             Yükleniyor {cokluProgress.simdiki}/{cokluProgress.toplam}
           </Text>
           <View style={[styles.progressTrack, { backgroundColor: renkler.sinir }]}>
-            <View style={[styles.progressFill, { backgroundColor: renkler.btnPrimary, width: `${(cokluProgress.simdiki / cokluProgress.toplam) * 100}%` as any }]} />
+            <View style={[styles.progressFill, { backgroundColor: renkler.btnPrimary, width: `${(cokluProgress.simdiki / cokluProgress.toplam) * 100}%` as `${number}%` }]} />
           </View>
         </View>
       )}
@@ -345,7 +347,7 @@ export default function Wardrobe() {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.silButon} onPress={() => sil(seciliKiyafet!.id)}>
+          <TouchableOpacity style={styles.silButon} onPress={() => seciliKiyafet && sil(seciliKiyafet.id)}>
             <Text style={styles.silButonText}>{t.buKiyafetiSil}</Text>
           </TouchableOpacity>
         </View>
@@ -407,7 +409,7 @@ const styles = StyleSheet.create({
   modalFotoEkle:   { width: '100%', height: 160, alignItems: 'center', justifyContent: 'center' },
   modalFotoEkleText: { fontSize: 16 },
   inputGrup:   { padding: 20, marginTop: 8 },
-  inputLabel:  { fontSize: 12, marginBottom: 10, letterSpacing: 0.5 } as any,
+  inputLabel:  { fontSize: 12, marginBottom: 10, letterSpacing: 0.5 } as TextStyle,
   input:       { fontSize: 17, paddingVertical: 8 },
   chipGrup:    { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip:        { paddingHorizontal: 16, paddingVertical: 9, borderRadius: 50, borderWidth: 1 },
