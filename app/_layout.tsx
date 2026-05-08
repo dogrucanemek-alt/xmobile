@@ -21,6 +21,7 @@ export default function RootLayout() {
             <Stack.Screen name="avatar" options={{ headerShown: false }} />
             <Stack.Screen name="import-model" options={{ headerShown: false }} />
             <Stack.Screen name="privacy" options={{ headerShown: false }} />
+            <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
           </Stack>
         </SubscriptionProvider>
       </AppProvider>

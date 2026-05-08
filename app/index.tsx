@@ -1,12 +1,21 @@
 import { Text, View, StyleSheet, StatusBar, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from '../lib/context';
+import { ONBOARDING_KEY } from './onboarding';
 
 const CYAN = '#00D4FF';
 
 export default function Index() {
   const router = useRouter();
   const { t, renkler, temaToggle, dil, dilDegistir, karanlik } = useApp();
+
+  useEffect(() => {
+    AsyncStorage.getItem(ONBOARDING_KEY).then(v => {
+      if (!v) router.replace('/onboarding');
+    });
+  }, []);
 
   return (
     <View style={[styles.container, { backgroundColor: renkler.bg }]}>

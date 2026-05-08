@@ -1,14 +1,12 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
 
-const CLAUDE_ENDPOINT = 'https://api.anthropic.com/v1/messages';
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
 const TURLER = ['Üst', 'Alt', 'Dış Giyim', 'Ayakkabı', 'Aksesuar'];
 
 export async function kiyafetTani(
   imageUri: string,
-  claudeKey: string,
 ): Promise<{ ad: string; tur: string }> {
-  // Büyük görseller Claude limitini (5MB) aşar — 800px'e küçült
   const kucuk = await ImageManipulator.manipulateAsync(
     imageUri,
     [{ resize: { width: 800 } }],
@@ -17,14 +15,9 @@ export async function kiyafetTani(
 
   const base64 = await FileSystem.readAsStringAsync(kucuk.uri, { encoding: 'base64' });
 
-  const res = await fetch(CLAUDE_ENDPOINT, {
+  const res = await fetch(`${API_URL}/api/claude`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': claudeKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 120,

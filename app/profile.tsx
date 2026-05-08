@@ -34,7 +34,7 @@ const GOZ_RENKLERI = [
 
 export default function Profile() {
   const router = useRouter();
-  const { t, renkler, aksanRenk, dil, clearAvatarGlb, loadAvatarGlb } = useApp();
+  const { t, renkler, aksanRenk, dil, clearAvatarGlb, loadAvatarGlb, avatarGlbUri } = useApp();
 
   const [tenRengi,    setTenRengi]    = useState('#FDDBB4');
   const [sacRengi,    setSacRengi]    = useState('#1A1A1A');

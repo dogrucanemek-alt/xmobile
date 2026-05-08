@@ -24,8 +24,7 @@ import { renkBul, parcaEsle, kiyafetRenkBul, hexToRgba, renkUyumSkoru } from '..
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 
-const WEATHER_KEY = process.env.EXPO_PUBLIC_WEATHER_KEY ?? '';
-const CLAUDE_KEY  = process.env.EXPO_PUBLIC_CLAUDE_KEY ?? '';
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
 
 const NEON    = '#00D4FF';
 const DARK_BG = '#00040F';
@@ -40,12 +39,6 @@ interface AvatarProps {
   kiyafetler: Kiyafet[];
 }
 
-function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
-}
 
 function buildOverlayHtml(kombin: Kombin, kiyafetler: Kiyafet[]): string {
   const esle = (anahtarlar: string[]) => parcaEsle(kombin, anahtarlar);
@@ -271,9 +264,9 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
       {disParca && ustParca ? (
         <>
           {/* İç gömlek — tam gövde + kollar */}
-          <Rect x={50}  y={186} width={100} height={88} rx={12} fill={kiyafetRenk(ustParca)} />
-          <Rect x={22}  y={188} width={28}  height={80} rx={12} fill={kiyafetRenk(ustParca)} />
-          <Rect x={150} y={188} width={28}  height={80} rx={12} fill={kiyafetRenk(ustParca)} />
+          <Rect x={50}  y={186} width={100} height={88} rx={12} fill={renk(ustParca)} />
+          <Rect x={22}  y={188} width={28}  height={80} rx={12} fill={renk(ustParca)} />
+          <Rect x={150} y={188} width={28}  height={80} rx={12} fill={renk(ustParca)} />
           {/* Açık ceket sol panel: üstte x=22..92, altta x=22..76 → V açılım */}
           <Path d="M 22 186 L 92 186 L 92 220 L 76 274 L 22 274 Z" fill={ustRenk} />
           {/* Açık ceket sağ panel (simetrik) */}
@@ -407,12 +400,12 @@ export default function Outfits() {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === 'granted') {
         const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-        url = `https://api.openweathermap.org/data/2.5/weather?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}&appid=${WEATHER_KEY}&units=metric&lang=tr`;
+        url = `${API_URL}/api/weather?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}&lang=tr`;
       } else {
-        url = `https://api.openweathermap.org/data/2.5/weather?q=Izmir,TR&appid=${WEATHER_KEY}&units=metric&lang=tr`;
+        url = `${API_URL}/api/weather?city=Izmir,TR&lang=tr`;
       }
     } catch {
-      url = `https://api.openweathermap.org/data/2.5/weather?q=Izmir,TR&appid=${WEATHER_KEY}&units=metric&lang=tr`;
+      url = `${API_URL}/api/weather?city=Izmir,TR&lang=tr`;
     }
     const res = await fetch(url);
     const data = await res.json();
@@ -498,8 +491,8 @@ Create 3 outfit combinations. Rules:
 Return ONLY valid JSON:
 ${jsonFormat}`;
 
-    if (!CLAUDE_KEY) {
-      setHata('EXPO_PUBLIC_CLAUDE_KEY tanımlı değil. .env dosyasını kontrol et ve Expo\'yu yeniden başlat.');
+    if (!API_URL) {
+      setHata('EXPO_PUBLIC_API_URL tanımlı değil. .env dosyasını kontrol et ve Expo\'yu yeniden başlat.');
       setYukleniyor(false);
       return;
     }
@@ -508,15 +501,10 @@ ${jsonFormat}`;
     const zaman = setTimeout(() => controller.abort(), 60000);
 
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch(`${API_URL}/api/claude`, {
         method: 'POST',
         signal: controller.signal,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': CLAUDE_KEY,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 1500,

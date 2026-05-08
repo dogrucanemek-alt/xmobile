@@ -9,7 +9,6 @@ import type { Kiyafet } from '../lib/types';
 import { kiyafetTani } from '../lib/vision';
 
 const STORAGE_KEY  = 'xmobile_kiyafetler';
-const CLAUDE_KEY   = process.env.EXPO_PUBLIC_CLAUDE_KEY ?? '';
 const VERI_VERSIYON = 2;
 const FOTO_DIR = `${FileSystem.documentDirectory}kiyafet_fotolari/`;
 
@@ -65,9 +64,7 @@ export default function Wardrobe() {
     const kaliciUri = await fotografKaydet(uri);
     let ad = 'Yeni Kıyafet';
     let tur = 'Üst';
-    if (CLAUDE_KEY) {
-      try { ({ ad, tur } = await kiyafetTani(kaliciUri, CLAUDE_KEY)); } catch (e) { console.warn('Kıyafet tanıma hatası:', e); }
-    }
+    try { ({ ad, tur } = await kiyafetTani(kaliciUri)); } catch (e) { console.warn('Kıyafet tanıma hatası:', e); }
     const yeni = { id: Date.now(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri };
     await kaydet([...kiyafetler, yeni]);
     kiyafetDuzenle(yeni);
@@ -106,9 +103,7 @@ export default function Wardrobe() {
       try { kaliciUri = await fotografKaydet(asset.uri); } catch { kaliciUri = asset.uri; }
       let ad = 'Yeni Kıyafet';
       let tur = 'Üst';
-      if (CLAUDE_KEY) {
-        try { ({ ad, tur } = await kiyafetTani(kaliciUri, CLAUDE_KEY)); } catch (e) { console.warn('Tanıma hatası:', e); }
-      }
+      try { ({ ad, tur } = await kiyafetTani(kaliciUri)); } catch (e) { console.warn('Tanıma hatası:', e); }
       yeniListe.push({ id: Date.now() + Math.random(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri });
     }
     await kaydet(yeniListe);

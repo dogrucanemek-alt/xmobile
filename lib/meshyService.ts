@@ -1,8 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { MeshyGorev, MeshyCacheGirdisi } from './types';
 
-const MESHY_KEY = process.env.EXPO_PUBLIC_MESHY_KEY ?? '';
-const BASE_URL = 'https://api.meshy.ai';
+const BASE_URL = `${process.env.EXPO_PUBLIC_API_URL ?? ''}/api/meshy`;
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 function cacheAnahtari(prompt: string): string {
@@ -36,12 +35,9 @@ async function cacheyeYaz(prompt: string, glbUrl: string): Promise<void> {
 
 export async function meshyGorevBaslat(prompt: string): Promise<string> {
   const giysiPrompt = `${prompt}, 3D clothing item, fashion apparel, isolated object, no background`;
-  const res = await fetch(`${BASE_URL}/v2/openapi/3d-model/text-to-3d`, {
+  const res = await fetch(`${BASE_URL}/create`, {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${MESHY_KEY}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       mode: 'preview',
       prompt: giysiPrompt,
@@ -62,9 +58,7 @@ export async function meshyGorevBaslat(prompt: string): Promise<string> {
 }
 
 export async function meshyDurumuKontrol(taskId: string): Promise<MeshyGorev> {
-  const res = await fetch(`${BASE_URL}/v2/openapi/3d-model/text-to-3d/${taskId}`, {
-    headers: { 'Authorization': `Bearer ${MESHY_KEY}` },
-  });
+  const res = await fetch(`${BASE_URL}/status?taskId=${taskId}`);
 
   if (!res.ok) throw new Error(`Durum kontrolü başarısız (${res.status})`);
 
