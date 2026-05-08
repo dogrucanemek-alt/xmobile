@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useApp } from '../lib/context';
 
@@ -87,10 +87,16 @@ export default function Index() {
           </Text>
         </TouchableOpacity>
 
-        <Text style={[styles.loginText, { color: renkler.metin2 }]}>
-          {t.hesabınVarMı}{' '}
-          <Text style={{ color: CYAN, fontWeight: '600' }}>{t.girisYap}</Text>
-        </Text>
+        <TouchableOpacity onPress={() => Alert.alert(
+          dil === 'en' ? 'Coming Soon' : 'Yakında',
+          dil === 'en' ? 'Account sync and login will be available in the next update.' : 'Hesap senkronizasyonu ve giriş özelliği yakında geliyor.',
+          [{ text: 'OK' }]
+        )}>
+          <Text style={[styles.loginText, { color: renkler.metin2 }]}>
+            {t.hesabınVarMı}{' '}
+            <Text style={{ color: CYAN, fontWeight: '600' }}>{t.girisYap}</Text>
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

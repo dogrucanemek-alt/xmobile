@@ -200,29 +200,49 @@ export default function Wardrobe() {
       </Text>
 
       <ScrollView style={styles.liste} showsVerticalScrollIndicator={false}>
-        {kiyafetler.map((k) => (
-          <View
-            key={k.id}
-            style={[styles.kiyafetKart, { backgroundColor: renkler.kart }]}
-          >
-            <TouchableOpacity style={styles.kartIcerik} onPress={() => kiyafetDuzenle(k)}>
-              {k.foto ? (
-                <Image source={{ uri: k.foto }} style={styles.kiyafetFoto} />
-              ) : (
-                <View style={[styles.renkCircle, { backgroundColor: renkler.chip }]}>
-                  <Text style={[styles.renkHarf, { color: renkler.metin2 }]}>{k.ad.charAt(0)}</Text>
-                </View>
-              )}
-              <View style={styles.bilgi}>
-                <Text style={[styles.kiyafetAd, { color: renkler.metin }]}>{k.ad}</Text>
-                <Text style={[styles.kiyafetDetay, { color: renkler.metin2 }]}>{k.tur} · {k.sezon}</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => sil(k.id)} style={styles.silBtn}>
-              <Text style={styles.silBtnText}>🗑</Text>
+        {kiyafetler.length === 0 ? (
+          <View style={styles.bosHal}>
+            <Text style={styles.bosHalIkon}>👔</Text>
+            <Text style={[styles.bosHalBaslik, { color: renkler.metin }]}>
+              {t.gardırobunuzBos ?? 'Gardırobunuz boş'}
+            </Text>
+            <Text style={[styles.bosHalAciklama, { color: renkler.metin2 }]}>
+              {t.kiyafetEkleyinAciklama ?? 'Kıyafetlerinizi ekleyerek AI kombin önerileri almaya başlayın.'}
+            </Text>
+            <TouchableOpacity
+              style={[styles.bosHalButon, { backgroundColor: renkler.btnPrimary }]}
+              onPress={ekleSecenekleri}
+            >
+              <Text style={[styles.bosHalButonText, { color: renkler.btnPrimaryMetin }]}>
+                + {t.kiyafetEkle}
+              </Text>
             </TouchableOpacity>
           </View>
-        ))}
+        ) : (
+          kiyafetler.map((k) => (
+            <View
+              key={k.id}
+              style={[styles.kiyafetKart, { backgroundColor: renkler.kart }]}
+            >
+              <TouchableOpacity style={styles.kartIcerik} onPress={() => kiyafetDuzenle(k)}>
+                {k.foto ? (
+                  <Image source={{ uri: k.foto }} style={styles.kiyafetFoto} />
+                ) : (
+                  <View style={[styles.renkCircle, { backgroundColor: renkler.chip }]}>
+                    <Text style={[styles.renkHarf, { color: renkler.metin2 }]}>{k.ad.charAt(0)}</Text>
+                  </View>
+                )}
+                <View style={styles.bilgi}>
+                  <Text style={[styles.kiyafetAd, { color: renkler.metin }]}>{k.ad}</Text>
+                  <Text style={[styles.kiyafetDetay, { color: renkler.metin2 }]}>{k.tur} · {k.sezon}</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => sil(k.id)} style={styles.silBtn}>
+                <Text style={styles.silBtnText}>🗑</Text>
+              </TouchableOpacity>
+            </View>
+          ))
+        )}
       </ScrollView>
 
       {cokluProgress && (
@@ -360,6 +380,12 @@ const styles = StyleSheet.create({
   kiyafetAd:   { fontSize: 15, fontWeight: '500', marginBottom: 3 },
   kiyafetDetay:{ fontSize: 13 },
   arrow:       { fontSize: 22 },
+  bosHal:         { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 80, paddingHorizontal: 32, gap: 12 },
+  bosHalIkon:     { fontSize: 52, marginBottom: 8 },
+  bosHalBaslik:   { fontSize: 18, fontWeight: '600', textAlign: 'center' },
+  bosHalAciklama: { fontSize: 14, textAlign: 'center', lineHeight: 22 },
+  bosHalButon:    { marginTop: 8, paddingHorizontal: 28, paddingVertical: 14, borderRadius: 50 },
+  bosHalButonText:{ fontSize: 15, fontWeight: '600' },
   progressBar:    { marginHorizontal: 16, marginBottom: 8, padding: 12, borderRadius: 14, gap: 8 },
   progressText:   { fontSize: 12, fontWeight: '500' },
   progressTrack:  { height: 4, borderRadius: 2 },

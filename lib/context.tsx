@@ -39,6 +39,8 @@ const çeviriler = {
     iyiGunler: 'İyi günler! 🎉',
     hissedilen: 'Hissedilen',
     nem: 'Nem',
+    gardırobunuzBos: 'Gardırobunuz boş',
+    kiyafetEkleyinAciklama: 'Kıyafetlerinizi ekleyerek AI kombin önerileri almaya başlayın.',
   },
   en: {
     tagline: 'Wear the right outfit every day with your AI-powered wardrobe.',
@@ -74,6 +76,8 @@ const çeviriler = {
     iyiGunler: 'Have a great day! 🎉',
     hissedilen: 'Feels like',
     nem: 'Humidity',
+    gardırobunuzBos: 'Your wardrobe is empty',
+    kiyafetEkleyinAciklama: 'Add your clothes to start getting AI outfit suggestions.',
   },
 };
 
