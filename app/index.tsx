@@ -97,6 +97,12 @@ export default function Index() {
             <Text style={{ color: CYAN, fontWeight: '600' }}>{t.girisYap}</Text>
           </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => router.push('/privacy' as any)}>
+          <Text style={[styles.gizlilikText, { color: renkler.metin2 }]}>
+            {dil === 'en' ? 'Privacy Policy' : 'Gizlilik Politikası'}
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -143,4 +149,5 @@ const styles = StyleSheet.create({
   },
   btnSecondaryText: { fontSize: 14, fontWeight: '500' },
   loginText:        { textAlign: 'center', fontSize: 13, marginTop: 4 },
+  gizlilikText:     { textAlign: 'center', fontSize: 11, marginTop: 2, textDecorationLine: 'underline' },
 });

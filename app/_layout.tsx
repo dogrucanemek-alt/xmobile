@@ -20,6 +20,7 @@ export default function RootLayout() {
             <Stack.Screen name="history" options={{ headerShown: false }} />
             <Stack.Screen name="avatar" options={{ headerShown: false }} />
             <Stack.Screen name="import-model" options={{ headerShown: false }} />
+            <Stack.Screen name="privacy" options={{ headerShown: false }} />
           </Stack>
         </SubscriptionProvider>
       </AppProvider>
