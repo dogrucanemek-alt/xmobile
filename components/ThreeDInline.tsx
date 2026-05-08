@@ -7,9 +7,10 @@ interface ThreeDInlineProps {
   width: number;
   height: number;
   onTap?: () => void;
+  overlayHtml?: string;
 }
 
-function threejsHtml(glbUrl: string): string {
+function threejsHtml(glbUrl: string, overlayHtml: string): string {
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -25,6 +26,7 @@ function threejsHtml(glbUrl: string): string {
 </head>
 <body>
 <div id="y">3D<br>yükleniyor</div>
+${overlayHtml}
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
@@ -76,8 +78,8 @@ animate();
 </html>`;
 }
 
-export default function ThreeDInline({ glbUrl, width, height, onTap }: ThreeDInlineProps) {
-  const html = useMemo(() => threejsHtml(glbUrl), [glbUrl]);
+export default function ThreeDInline({ glbUrl, width, height, onTap, overlayHtml = '' }: ThreeDInlineProps) {
+  const html = useMemo(() => threejsHtml(glbUrl, overlayHtml), [glbUrl, overlayHtml]);
 
   return (
     <TouchableOpacity activeOpacity={0.9} onPress={onTap} style={{ width, height }}>
