@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
+import { readAsStringAsync, copyAsync, cacheDirectory, EncodingType } from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
 import ThreeDViewer from '../components/ThreeDViewer';
 import { useApp } from '../lib/context';
@@ -20,7 +20,7 @@ export default function ImportModel() {
     try {
       const sonuc = await DocumentPicker.getDocumentAsync({
         type: '*/*',
-        copyToCacheDirectory: true,
+        copyToCacheDirectory: false,
       });
 
       if (sonuc.canceled) return;
@@ -32,16 +32,23 @@ export default function ImportModel() {
       }
 
       setDonusturuluyor(true);
-      // Android content:// URI'yi Three.js okuyamaz — base64 data URI'ye çeviriyoruz
-      const base64 = await FileSystem.readAsStringAsync(dosya.uri, {
-        encoding: 'base64' as any,
+
+      // 1. content:// → file:// (cache'e kopyala)
+      const temizAd = dosya.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const hedef = (cacheDirectory ?? '') + temizAd;
+      await copyAsync({ from: dosya.uri, to: hedef });
+
+      // 2. file:// → base64 data URI (Three.js için)
+      const base64 = await readAsStringAsync(hedef, {
+        encoding: EncodingType.Base64,
       });
       const dataUri = `data:model/gltf-binary;base64,${base64}`;
 
       setDosyaAdi(dosya.name);
       setGlbUrl(dataUri);
-    } catch {
-      setHata('Dosya seçilemedi veya okunamadı');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setHata(`Hata: ${msg.slice(0, 100)}`);
     } finally {
       setDonusturuluyor(false);
     }
