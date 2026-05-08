@@ -1,21 +1,19 @@
-import * as FileSystem from 'expo-file-system/legacy';
-
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
 
 async function uriToBase64(uri: string): Promise<string> {
-  if (uri.startsWith('data:')) {
-    return uri.split(',')[1];
-  }
-  const base64 = await FileSystem.readAsStringAsync(uri, {
-    encoding: FileSystem.EncodingType.Base64,
+  if (uri.startsWith('data:')) return uri.split(',')[1];
+  const res = await fetch(uri);
+  const blob = await res.blob();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve((reader.result as string).split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
   });
-  return base64;
 }
 
 function mimeType(uri: string): string {
-  const lower = uri.toLowerCase();
-  if (lower.includes('.png')) return 'image/png';
-  return 'image/jpeg';
+  return uri.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg';
 }
 
 export type TryOnCategory = 'auto' | 'tops' | 'bottoms' | 'one-pieces';
@@ -30,15 +28,12 @@ export async function tryOnBaslat(
     uriToBase64(garmentImageUri),
   ]);
 
-  const modelMime  = mimeType(modelImageUri);
-  const garmentMime = mimeType(garmentImageUri);
-
   const res = await fetch(`${API_URL}/api/fashn/run`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model_image:   `data:${modelMime};base64,${modelB64}`,
-      garment_image: `data:${garmentMime};base64,${garmentB64}`,
+      model_image:   `data:${mimeType(modelImageUri)};base64,${modelB64}`,
+      garment_image: `data:${mimeType(garmentImageUri)};base64,${garmentB64}`,
       category,
     }),
   });
@@ -55,29 +50,19 @@ export async function tryOnDurumuKontrol(id: string): Promise<{
   error?: string;
 }> {
   const res = await fetch(`${API_URL}/api/fashn/status?id=${encodeURIComponent(id)}`);
-  const data = await res.json();
-  return data;
+  return res.json();
 }
 
 export async function tryOnBekle(id: string, onProgress?: () => void): Promise<string> {
-  const MAKS_DENEME = 30;
-  const ARALIK_MS = 2000;
-
-  for (let i = 0; i < MAKS_DENEME; i++) {
-    await new Promise(r => setTimeout(r, ARALIK_MS));
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 2000));
     const durum = await tryOnDurumuKontrol(id);
-
     if (durum.status === 'completed') {
       if (!durum.output?.[0]) throw new Error('Sonuç görseli gelmedi');
       return durum.output[0];
     }
-
-    if (durum.status === 'failed') {
-      throw new Error(durum.error ?? 'Try-on başarısız');
-    }
-
+    if (durum.status === 'failed') throw new Error(durum.error ?? 'Try-on başarısız');
     onProgress?.();
   }
-
   throw new Error('Zaman aşımı: 60 saniyede sonuç gelmedi');
 }

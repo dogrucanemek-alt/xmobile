@@ -47,10 +47,10 @@ function buildOverlayHtml(kombin: Kombin, kiyafetler: Kiyafet[]): string {
   const esle = (anahtarlar: string[]) => parcaEsle(kombin, anahtarlar);
   const renk = (ad: string | null) => kiyafetRenkBul(ad, kiyafetler);
 
-  const disParca  = esle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk', 'hırka', 'hirka']);
-  const ustParca  = esle(['gömlek', 'gomlek', 'tişört', 'tisort', 'kazak', 'bluz', 'ceket', 'sweatshirt', 'hoodie']);
-  const altParca  = esle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım', 'elbise']);
-  const ayakParca = esle(['ayakkabı', 'ayakkabi', 'bot', 'sneaker', 'loafer', 'sandalet', 'çizme', 'cizme']);
+  const disParca  = esle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk', 'hırka', 'hirka', 'coat', 'jacket', 'raincoat', 'cardigan', 'blazer', 'trench', 'parka', 'overcoat']);
+  const ustParca  = esle(['gömlek', 'gomlek', 'tişört', 'tisort', 'kazak', 'bluz', 'ceket', 'sweatshirt', 'hoodie', 'shirt', 't-shirt', 'tshirt', 'sweater', 'blouse', 'top', 'polo', 'turtleneck', 'knit']);
+  const altParca  = esle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım', 'elbise', 'pants', 'trousers', 'skirt', 'shorts', 'jeans', 'dress', 'suit', 'chinos', 'leggings', 'culottes']);
+  const ayakParca = esle(['ayakkabı', 'ayakkabi', 'bot', 'sneaker', 'loafer', 'sandalet', 'çizme', 'cizme', 'shoes', 'boots', 'sneakers', 'loafers', 'sandals', 'heels', 'flats', 'mules', 'oxfords']);
 
   const ust      = disParca ?? ustParca;
   const ustRenk  = renk(ust);
@@ -118,17 +118,17 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
   const esle = (anahtarlar: string[]) => parcaEsle(kombin, anahtarlar);
   const renk = (ad: string | null) => kiyafetRenkBul(ad, kiyafetler);
 
-  const disParca  = esle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk', 'hırka', 'hirka']);
-  const ustParca  = esle(['gömlek', 'gomlek', 'tişört', 'tisort', 'kazak', 'bluz', 'ceket', 'sweatshirt', 'hoodie']);
-  const altParca  = esle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım', 'elbise']);
-  const ayakParca = esle(['ayakkabı', 'ayakkabi', 'bot', 'sneaker', 'loafer', 'sandalet', 'çizme', 'cizme']);
+  const disParca  = esle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk', 'hırka', 'hirka', 'coat', 'jacket', 'raincoat', 'cardigan', 'blazer', 'trench', 'parka', 'overcoat']);
+  const ustParca  = esle(['gömlek', 'gomlek', 'tişört', 'tisort', 'kazak', 'bluz', 'ceket', 'sweatshirt', 'hoodie', 'shirt', 't-shirt', 'tshirt', 'sweater', 'blouse', 'top', 'polo', 'turtleneck', 'knit']);
+  const altParca  = esle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım', 'elbise', 'pants', 'trousers', 'skirt', 'shorts', 'jeans', 'dress', 'suit', 'chinos', 'leggings', 'culottes']);
+  const ayakParca = esle(['ayakkabı', 'ayakkabi', 'bot', 'sneaker', 'loafer', 'sandalet', 'çizme', 'cizme', 'shoes', 'boots', 'sneakers', 'loafers', 'sandals', 'heels', 'flats', 'mules', 'oxfords']);
 
   const ust      = disParca ?? ustParca;
   const ustRenk  = renk(ust);
   const altRenk  = renk(altParca);
   const ayakRenk = renk(ayakParca);
 
-  // Koordinat düzeni:
+  // Koordinat düzeni (AvatarSVG):
   // Kafa:   cy=110  (rx=56 ry=62)  →  y=48..172
   // Boyun:  y=168..188
   // Gövde:  y=186..274
@@ -529,7 +529,7 @@ export default function Outfits() {
 
   const kombinOner = async (havaVeri: HavaDurumu, liste: Kiyafet[]): Promise<void> => {
     if (liste.length === 0) {
-      setHata('Gardırobunda kıyafet yok. Önce kıyafet ekle.');
+      setHata('__BOS_GARDIROB__');
       setYukleniyor(false);
       return;
     }
@@ -714,6 +714,18 @@ ${jsonFormat}`;
         <View style={styles.yukleniyor}>
           <ActivityIndicator color={renkler.metin} size="large" />
           <Text style={[styles.yukleniyorText, { color: renkler.metin2 }]}>{t.yukleniyorText}</Text>
+        </View>
+      ) : hata === '__BOS_GARDIROB__' ? (
+        <View style={styles.hataKutu}>
+          <Text style={styles.hataIcon}>👔</Text>
+          <Text style={[styles.hataText, { color: renkler.metin2 }]}>
+            {dil === 'en' ? 'Your wardrobe is empty.' : 'Gardırobunda henüz kıyafet yok.'}
+          </Text>
+          <TouchableOpacity style={[styles.tekrarBtn, { backgroundColor: renkler.btnPrimary }]} onPress={() => router.push('/wardrobe' as any)}>
+            <Text style={[styles.tekrarBtnText, { color: renkler.btnPrimaryMetin }]}>
+              {dil === 'en' ? '+ Add Clothes' : '+ Kıyafet Ekle'}
+            </Text>
+          </TouchableOpacity>
         </View>
       ) : hata ? (
         <View style={styles.hataKutu}>
