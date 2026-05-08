@@ -93,17 +93,17 @@ const açıkRenkler = {
 };
 
 const karanlıkRenkler = {
-  bg: '#000000',
-  bg2: '#000000',
+  bg: '#00040F',
+  bg2: '#020812',
   metin: '#FFFFFF',
-  metin2: 'rgba(255,255,255,0.65)',
-  sinir: 'rgba(255,255,255,0.1)',
-  sinir2: 'rgba(255,255,255,0.06)',
-  kart: '#0D0D0D',
-  chip: 'rgba(255,255,255,0.1)',
-  btnPrimary: '#FFFFFF',
+  metin2: 'rgba(255,255,255,0.5)',
+  sinir: 'rgba(0,212,255,0.15)',
+  sinir2: 'rgba(0,212,255,0.07)',
+  kart: 'rgba(0,212,255,0.04)',
+  chip: 'rgba(0,212,255,0.09)',
+  btnPrimary: '#00D4FF',
   btnPrimaryMetin: '#000000',
-  aksanRenk: '#2997ff',
+  aksanRenk: '#00D4FF',
   statusBar: 'light-content' as const,
 };
 
@@ -122,7 +122,7 @@ interface AppContextValue {
 const AppContext = createContext<AppContextValue | null>(null);
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
-  const [karanlik, setKaranlik] = useState(false);
+  const [karanlik, setKaranlik] = useState(true);
   const [dil, setDil] = useState<'tr' | 'en'>('tr');
 
   useEffect(() => {
@@ -149,7 +149,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   const renkler = karanlik ? karanlıkRenkler : açıkRenkler;
   const t = çeviriler[dil];
-  const aksanRenk = '#2997ff';
+  const aksanRenk = '#00D4FF';
 
   const value = useMemo(
     () => ({ t, renkler, aksanRenk, temaToggle, dil, dilDegistir, karanlik }),
