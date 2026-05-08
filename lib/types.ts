@@ -17,6 +17,7 @@ export interface Profil {
   sacStili?: string;
   sakal?: string;
   avatarUrl?: string;
+  avatarGlbPath?: string;
 }
 
 export interface Kombin {

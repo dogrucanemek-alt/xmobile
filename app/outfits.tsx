@@ -16,9 +16,11 @@ import { useApp } from '../lib/context';
 import type { Kiyafet, Kombin, HavaDurumu, Profil } from '../lib/types';
 import { GECMIS_KEY } from './history';
 import ThreeDViewer from '../components/ThreeDViewer';
+import ThreeDInline from '../components/ThreeDInline';
 import UpsellModal from '../components/UpsellModal';
 import { useSubscription } from '../lib/subscriptionContext';
 import { meshyModelUret } from '../lib/meshyService';
+import * as FileSystem from 'expo-file-system/legacy';
 
 const WEATHER_KEY = process.env.EXPO_PUBLIC_WEATHER_KEY ?? '';
 const CLAUDE_KEY  = process.env.EXPO_PUBLIC_CLAUDE_KEY ?? '';
@@ -349,6 +351,7 @@ export default function Outfits() {
   const [yuklenen3D, setYuklenen3D]     = useState<string | null>(null);
   const [yukleniyor3D, setYukleniyor3D] = useState(false);
   const [hata3D, setHata3D]             = useState<string | null>(null);
+  const [avatarGlbUri, setAvatarGlbUri] = useState<string | null>(null);
 
   const kombinlerRef = useRef<Kombin[]>([]);
   const indexRef     = useRef(0);
@@ -440,7 +443,22 @@ export default function Outfits() {
         AsyncStorage.getItem('xmobile_profil'),
         kiyafetleriAl(),
       ]);
-      if (profilStr) setProfil(JSON.parse(profilStr));
+      if (profilStr) {
+        const parsedProfil = JSON.parse(profilStr) as import('../lib/types').Profil;
+        setProfil(parsedProfil);
+        if (parsedProfil.avatarGlbPath) {
+          try {
+            const b64 = await FileSystem.readAsStringAsync(parsedProfil.avatarGlbPath, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+            setAvatarGlbUri(`data:model/gltf-binary;base64,${b64}`);
+          } catch {
+            setAvatarGlbUri(null);
+          }
+        } else {
+          setAvatarGlbUri(null);
+        }
+      }
       let havaVeri: HavaDurumu;
       try {
         havaVeri = await havaAl();
@@ -640,7 +658,16 @@ ${jsonFormat}`;
             {seciliKombin && (
               <Animated.View style={[styles.avatarSatir, { transform: [{ translateX: slideAnim }] }]}>
                 <View style={styles.avatarOrtala}>
-                  <AvatarSVG kombin={seciliKombin} profil={profil} kiyafetler={kiyafetler} />
+                  {avatarGlbUri ? (
+                    <ThreeDInline
+                      glbUrl={avatarGlbUri}
+                      width={DISP_W}
+                      height={DISP_H}
+                      onTap={() => setViewer3D({ visible: true, glbUrl: avatarGlbUri!, baslik: 'Avatar' })}
+                    />
+                  ) : (
+                    <AvatarSVG kombin={seciliKombin} profil={profil} kiyafetler={kiyafetler} />
+                  )}
                 </View>
                 <View style={styles.avatarBilgi}>
                   <Text style={[styles.avatarBaslik, { color: renkler.metin }]}>{seciliKombin.baslik}</Text>
