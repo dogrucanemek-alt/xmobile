@@ -62,8 +62,7 @@
           }
         }
       ],
-      "@sentry/react-native",
-      "react-native-purchases"
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true,
