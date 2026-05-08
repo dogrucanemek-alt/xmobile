@@ -24,9 +24,15 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 48px; height: 64px;
-      background: rgba(0,0,0,0); transition: background 0.4s;
+      background: rgba(0,0,0,0);
+      transition: background 0.45s, height 0.35s, padding 0.35s, box-shadow 0.45s;
     }
-    nav.scrolled { background: rgba(0,0,0,0.88); backdrop-filter: blur(12px); }
+    nav.scrolled {
+      background: rgba(0,0,0,0.88); backdrop-filter: blur(14px);
+      height: 52px;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .nav-links a.nav-active { color: #fff; }
     .nav-logo {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 700; font-size: 17px; letter-spacing: 3.5px;
@@ -309,14 +315,39 @@
     .footer-copy { font-size: 10px; color: rgba(255,255,255,0.18); letter-spacing: 0.5px; }
 
     /* ── REVEAL ── */
-    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.85s ease, transform 0.85s ease; }
+    .reveal        { opacity: 0; transform: translateY(24px);  transition: opacity 0.9s cubic-bezier(.22,1,.36,1), transform 0.9s cubic-bezier(.22,1,.36,1); }
     .reveal.visible { opacity: 1; transform: translateY(0); }
-    .reveal-d1 { transition-delay: 0.1s; }
-    .reveal-d2 { transition-delay: 0.22s; }
-    .reveal-d3 { transition-delay: 0.34s; }
-    .reveal-d4 { transition-delay: 0.46s; }
-    .reveal-d5 { transition-delay: 0.58s; }
-    .reveal-d6 { transition-delay: 0.7s; }
+
+    .reveal-left  { opacity: 0; transform: translateX(-36px); transition: opacity 0.9s cubic-bezier(.22,1,.36,1), transform 0.9s cubic-bezier(.22,1,.36,1); }
+    .reveal-left.visible  { opacity: 1; transform: translateX(0); }
+
+    .reveal-right { opacity: 0; transform: translateX(36px);  transition: opacity 0.9s cubic-bezier(.22,1,.36,1), transform 0.9s cubic-bezier(.22,1,.36,1); }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    .reveal-scale { opacity: 0; transform: scale(0.91);       transition: opacity 0.95s cubic-bezier(.22,1,.36,1), transform 0.95s cubic-bezier(.22,1,.36,1); }
+    .reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+    .reveal-d1  { transition-delay: 0.08s; }
+    .reveal-d2  { transition-delay: 0.18s; }
+    .reveal-d3  { transition-delay: 0.28s; }
+    .reveal-d4  { transition-delay: 0.38s; }
+    .reveal-d5  { transition-delay: 0.48s; }
+    .reveal-d6  { transition-delay: 0.58s; }
+
+    /* Scroll progress bar */
+    .scroll-bar {
+      position: fixed; top: 0; left: 0; height: 1.5px; width: 0%;
+      background: linear-gradient(to right, rgba(255,255,255,0.3), rgba(255,255,255,0.85));
+      z-index: 1002; pointer-events: none;
+      transition: width 60ms linear;
+    }
+
+    /* Feature card hover lift */
+    .feature-card { transform: translateY(0); transition: background 0.22s, transform 0.28s cubic-bezier(.22,1,.36,1); }
+    .feature-card:hover { transform: translateY(-6px); }
+
+    /* Phone hover already handled — reinforce */
+    .phone-wrap { will-change: transform; }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 1024px) {
@@ -388,12 +419,12 @@
 <section id="product">
   <div class="product-section">
     <div class="product-left">
-      <p class="eyebrow reveal" data-tr="AI Furniture'ı Tanıyın" data-en="Introducing AI Furniture">AI Furniture'ı Tanıyın</p>
-      <h2 class="section-title reveal reveal-d1" data-tr="Gardırobunuz.<br>Artık Düşünüyor." data-en="Your wardrobe.<br>Now it thinks.">Gardırobunuz.<br>Artık Düşünüyor.</h2>
-      <p class="section-body reveal reveal-d2" data-tr="Yapay zeka destekli, tavan yüksekliğinde dokunmatik ekranlı gardırop. Her sabah mükemmel kombin — hava durumuna, takviminize ve zevkinize göre seçilmiş." data-en="A floor-to-ceiling touchscreen wardrobe powered by AI. Every morning, the perfect outfit — chosen for the weather, your calendar, your taste.">Yapay zeka destekli, tavan yüksekliğinde dokunmatik ekranlı gardırop. Her sabah mükemmel kombin — hava durumuna, takviminize ve zevkinize göre seçilmiş.</p>
-      <a href="#waitlist" class="btn reveal reveal-d3" data-tr="Ön Sipariş Ver →" data-en="Pre-order Now →">Ön Sipariş Ver →</a>
+      <p class="eyebrow reveal-left" data-tr="AI Furniture'ı Tanıyın" data-en="Introducing AI Furniture">AI Furniture'ı Tanıyın</p>
+      <h2 class="section-title reveal-left reveal-d1" data-tr="Gardırobunuz.<br>Artık Düşünüyor." data-en="Your wardrobe.<br>Now it thinks.">Gardırobunuz.<br>Artık Düşünüyor.</h2>
+      <p class="section-body reveal-left reveal-d2" data-tr="Yapay zeka destekli, tavan yüksekliğinde dokunmatik ekranlı gardırop. Her sabah mükemmel kombin — hava durumuna, takviminize ve zevkinize göre seçilmiş." data-en="A floor-to-ceiling touchscreen wardrobe powered by AI. Every morning, the perfect outfit — chosen for the weather, your calendar, your taste.">Yapay zeka destekli, tavan yüksekliğinde dokunmatik ekranlı gardırop. Her sabah mükemmel kombin — hava durumuna, takviminize ve zevkinize göre seçilmiş.</p>
+      <a href="#waitlist" class="btn reveal-left reveal-d3" data-tr="Ön Sipariş Ver →" data-en="Pre-order Now →">Ön Sipariş Ver →</a>
     </div>
-    <div class="product-right reveal reveal-d2">
+    <div class="product-right reveal-right reveal-d1">
       <div class="stats-grid">
         <div class="stat-item">
           <span class="stat-number" data-target="3" data-suffix="s">3s</span>
@@ -423,7 +454,7 @@
   <p class="eyebrow reveal" data-tr="Mobil Uygulama" data-en="Mobile App">Mobil Uygulama</p>
   <h2 class="section-title reveal reveal-d1" data-tr="Gardırobunuz,<br>cebinizde." data-en="Your wardrobe,<br>in your pocket.">Gardırobunuz,<br>cebinizde.</h2>
   <p class="section-body reveal reveal-d2" data-tr="iOS ve Android'de kullanılabilir. Kıyafet ekle, yapay zeka kombin önerileri al, stil geçmişini takip et." data-en="Available on iOS and Android. Add clothes, get AI outfit suggestions, track your style history.">iOS ve Android'de kullanılabilir. Kıyafet ekle, yapay zeka kombin önerileri al, stil geçmişini takip et.</p>
-  <div class="reveal reveal-d3" style="max-width:960px; margin:0 auto; width:100%;">
+  <div class="reveal-scale reveal-d3" style="max-width:960px; margin:0 auto; width:100%;">
     <img src="img/app-screens.png" alt="xmobile uygulama ekranları" loading="lazy"
       style="width:100%; display:block; border-radius:12px; box-shadow:0 40px 80px rgba(0,0,0,0.7);"/>
   </div>
@@ -439,42 +470,42 @@
     <p class="section-body reveal reveal-d2" data-tr="Her gün harika görünmek için ihtiyacınız olan her şey." data-en="Everything you need to look great, every single day.">Her gün harika görünmek için ihtiyacınız olan her şey.</p>
   </div>
   <div class="features-grid">
-    <div class="feature-card reveal reveal-d1">
+    <div class="feature-card reveal-scale reveal-d1">
       <div class="feature-icon">
         <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
       </div>
       <h3 data-tr="Yapay Zeka Motoru" data-en="AI Outfit Engine">Yapay Zeka Motoru</h3>
       <p data-tr="Claude AI gardırobunuzu analiz eder ve hava durumuna, duruma ve renk uyumuna göre kişiselleştirilmiş kombinler oluşturur." data-en="Claude AI analyzes your wardrobe and generates personalized outfit combinations based on weather, occasion, and color harmony.">Claude AI gardırobunuzu analiz eder ve hava durumuna, duruma ve renk uyumuna göre kişiselleştirilmiş kombinler oluşturur.</p>
     </div>
-    <div class="feature-card reveal reveal-d2">
+    <div class="feature-card reveal-scale reveal-d2">
       <div class="feature-icon">
         <svg viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
       </div>
       <h3 data-tr="Hava Durumu Farkındalığı" data-en="Weather-Aware">Hava Durumu Farkındalığı</h3>
       <p data-tr="Gerçek zamanlı hava durumu verileri kombin önerinizin her zaman güne uygun olmasını sağlar — yağmur, güneş, rüzgar veya kar." data-en="Real-time weather data ensures your outfit is always suited for the day ahead — rain, sun, wind or snow.">Gerçek zamanlı hava durumu verileri kombin önerinizin her zaman güne uygun olmasını sağlar — yağmur, güneş, rüzgar veya kar.</p>
     </div>
-    <div class="feature-card reveal reveal-d3">
+    <div class="feature-card reveal-scale reveal-d3">
       <div class="feature-icon">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       </div>
       <h3 data-tr="Otomatik Tanıma" data-en="Auto Recognition">Otomatik Tanıma</h3>
       <p data-tr="Herhangi bir kıyafeti fotoğraflayın. Yapay zeka anında adını, türünü ve mevsimini tanımlar." data-en="Photograph any garment. AI instantly identifies its name, type and season.">Herhangi bir kıyafeti fotoğraflayın. Yapay zeka anında adını, türünü ve mevsimini tanımlar.</p>
     </div>
-    <div class="feature-card reveal reveal-d4">
+    <div class="feature-card reveal-scale reveal-d4">
       <div class="feature-icon">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </div>
       <h3 data-tr="Renk Uyumu Skoru" data-en="Color Harmony Score">Renk Uyumu Skoru</h3>
       <p data-tr="Gelişmiş renk teorisi motoru her kombinasyonu puanlar. Uyumsuz bir kıyafetle asla evden çıkmayın." data-en="Advanced color theory engine scores every combination. Never leave home in a clashing outfit again.">Gelişmiş renk teorisi motoru her kombinasyonu puanlar. Uyumsuz bir kıyafetle asla evden çıkmayın.</p>
     </div>
-    <div class="feature-card reveal reveal-d5">
+    <div class="feature-card reveal-scale reveal-d5">
       <div class="feature-icon">
         <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </div>
       <h3 data-tr="Kişisel Avatar" data-en="Personal Avatar">Kişisel Avatar</h3>
       <p data-tr="Her kombini, ten renginize ve vücudunuza uyan kişiselleştirilmiş avatarınızda görün — giymeden önce." data-en="See every outfit on a personalized avatar that matches your skin tone and body — before you wear it.">Her kombini, ten renginize ve vücudunuza uyan kişiselleştirilmiş avatarınızda görün — giymeden önce.</p>
     </div>
-    <div class="feature-card reveal reveal-d6">
+    <div class="feature-card reveal-scale reveal-d6">
       <div class="feature-icon">
         <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       </div>
@@ -488,7 +519,7 @@
 <section class="coming-soon" id="coming-soon">
   <div class="coming-soon-bg"></div>
   <div class="coming-soon-overlay"></div>
-  <div class="coming-soon-content">
+  <div class="coming-soon-content reveal-left">
     <div class="badge" data-tr="Yakında" data-en="Coming Soon">Yakında</div>
     <h2 class="section-title" data-tr="Yaşam Alanlarının<br>Geleceği." data-en="The Future of<br>Living Spaces.">Yaşam Alanlarının<br>Geleceği.</h2>
     <p class="hero-sub" style="margin-bottom:36px" data-tr="Yapay zeka destekli mobilya koleksiyonu. Her parça, sizi tanıyan ve yaşamınıza uyum sağlayan bir deneyim sunar." data-en="AI-powered furniture collection. Every piece offers an experience that knows you and adapts to your life.">Yapay zeka destekli mobilya koleksiyonu. Her parça, sizi tanıyan ve yaşamınıza uyum sağlayan bir deneyim sunar.</p>
@@ -500,7 +531,7 @@
 <section class="coming-soon" id="bedroom">
   <div class="coming-soon-bg" style="background-image: url('img/bedroom.png');"></div>
   <div class="coming-soon-overlay"></div>
-  <div class="coming-soon-content">
+  <div class="coming-soon-content reveal-left">
     <div class="badge" data-tr="Yakında" data-en="Coming Soon">Yakında</div>
     <h2 class="section-title" data-tr="Akıllı Yatak Odası.<br>Her Sabah Mükemmel." data-en="The Intelligent Bedroom.<br>Perfect Every Morning.">Akıllı Yatak Odası.<br>Her Sabah Mükemmel.</h2>
     <p class="hero-sub" style="margin-bottom:36px" data-tr="Uyku analizinden sabah rutinine, AI Bedroom Assistant yatak odanızı sizin için çalışan bir ortama dönüştürür." data-en="From sleep analysis to morning routine, AI Bedroom Assistant transforms your bedroom into a space that works for you.">Uyku analizinden sabah rutinine, AI Bedroom Assistant yatak odanızı sizin için çalışan bir ortama dönüştürür.</p>
@@ -512,7 +543,7 @@
 <section class="coming-soon" id="living-room">
   <div class="coming-soon-bg" style="background-image: url('img/living-room.png');"></div>
   <div class="coming-soon-overlay"></div>
-  <div class="coming-soon-content">
+  <div class="coming-soon-content reveal-left">
     <div class="badge" data-tr="Yakında" data-en="Coming Soon">Yakında</div>
     <h2 class="section-title" data-tr="Akıllı Oturma Odası.<br>Eviniz Sizi Tanısın." data-en="The Intelligent Living Room.<br>Your Home Knows You.">Akıllı Oturma Odası.<br>Eviniz Sizi Tanısın.</h2>
     <p class="hero-sub" style="margin-bottom:36px" data-tr="AI Living Assistant ile aydınlatmadan sıcaklığa, eğlenceden enerjiye — her şey sizin alışkanlıklarınıza göre öğrenir ve uyum sağlar." data-en="With AI Living Assistant, from lighting to temperature, entertainment to energy — everything learns and adapts to your habits.">AI Living Assistant ile aydınlatmadan sıcaklığa, eğlenceden enerjiye — her şey sizin alışkanlıklarınıza göre öğrenir ve uyum sağlar.</p>
@@ -571,17 +602,55 @@ document.querySelectorAll('.nav-lang button').forEach(function(btn) {
   });
 });
 
-// ── NAV SCROLL ──
+// ── SCROLL PROGRESS BAR ──
+var scrollBar = document.createElement('div');
+scrollBar.className = 'scroll-bar';
+document.body.prepend(scrollBar);
+
+// ── NAV SCROLL + PROGRESS + ACTIVE SECTION ──
 var nav = document.getElementById('mainNav');
+var navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+var sections = document.querySelectorAll('section[id]');
+
 window.addEventListener('scroll', function() {
-  nav.classList.toggle('scrolled', window.scrollY > 80);
+  var sy = window.scrollY;
+
+  // Nav blur
+  nav.classList.toggle('scrolled', sy > 80);
+
+  // Progress bar
+  var total = document.body.scrollHeight - window.innerHeight;
+  scrollBar.style.width = (total > 0 ? (sy / total * 100) : 0) + '%';
+
+  // Active section highlight
+  var fromTop = sy + 90;
+  sections.forEach(function(sec) {
+    var link = document.querySelector('.nav-links a[href="#' + sec.id + '"]');
+    if (!link) return;
+    var active = fromTop >= sec.offsetTop && fromTop < sec.offsetTop + sec.offsetHeight;
+    link.classList.toggle('nav-active', active);
+  });
+
+  // Hero parallax
+  if (sy < window.innerHeight * 1.3) {
+    var bg = document.getElementById('heroBg');
+    if (bg) bg.style.transform = 'scale(1) translateY(' + (sy * 0.22) + 'px)';
+  }
 }, { passive: true });
 
-// ── SCROLL REVEAL ──
-var obs = new IntersectionObserver(function(entries) {
-  entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-}, { threshold: 0.12 });
-document.querySelectorAll('.reveal').forEach(function(s) { obs.observe(s); });
+// ── SCROLL REVEAL (tüm varyantlar) ──
+var revealObs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(function(el) {
+  revealObs.observe(el);
+});
 
 // ── STATS COUNTER ──
 var cObs = new IntersectionObserver(function(entries) {
