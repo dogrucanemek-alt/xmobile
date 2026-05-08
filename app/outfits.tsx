@@ -101,6 +101,75 @@ interface AvatarProps {
   kiyafetler: Kiyafet[];
 }
 
+interface OverlayProps {
+  kombin: Kombin;
+  kiyafetler: Kiyafet[];
+}
+
+const KiyafetOverlay = React.memo(function KiyafetOverlay({ kombin, kiyafetler }: OverlayProps) {
+  const parcaEsle = (anahtar: string[]): string | null =>
+    kombin.parcalar.find(p => anahtar.some(k => p.toLowerCase().includes(k))) ?? null;
+
+  const kiyafetRenk = (parcaAdi: string | null): string => {
+    if (!parcaAdi) return renkBul(null);
+    const aranan = parcaAdi.toLowerCase();
+    const eslesen = kiyafetler.find(k => {
+      const kAd = (k.ad ?? '').toLowerCase();
+      return kAd === aranan || aranan.includes(kAd) || kAd.includes(aranan);
+    });
+    return renkBul(eslesen?.ad ?? parcaAdi);
+  };
+
+  const disParca  = parcaEsle(['mont', 'kaban', 'trençkot', 'trenkot', 'yağmurluk', 'yagmurluk', 'hırka', 'hirka']);
+  const ustParca  = parcaEsle(['gömlek', 'gomlek', 'tişört', 'tisort', 'kazak', 'bluz', 'ceket', 'sweatshirt', 'hoodie']);
+  const altParca  = parcaEsle(['pantolon', 'etek', 'şort', 'short', 'jean', 'takim', 'takım', 'elbise']);
+  const ayakParca = parcaEsle(['ayakkabı', 'ayakkabi', 'bot', 'sneaker', 'loafer', 'sandalet', 'çizme', 'cizme']);
+
+  const ust      = disParca ?? ustParca;
+  const ustRenk  = kiyafetRenk(ust);
+  const altRenk  = kiyafetRenk(altParca);
+  const ayakRenk = kiyafetRenk(ayakParca);
+
+  return (
+    <View style={{ position: 'absolute', top: 0, left: 0, width: DISP_W, height: DISP_H }} pointerEvents="none">
+      <Svg width={DISP_W} height={DISP_H} viewBox={`0 0 ${W} ${H}`}>
+        {/* Üst giysi */}
+        {disParca && ustParca ? (
+          <>
+            <Rect x={50}  y={186} width={100} height={88} rx={12} fill={kiyafetRenk(ustParca)} opacity={0.70} />
+            <Rect x={22}  y={188} width={28}  height={80} rx={12} fill={kiyafetRenk(ustParca)} opacity={0.70} />
+            <Rect x={150} y={188} width={28}  height={80} rx={12} fill={kiyafetRenk(ustParca)} opacity={0.70} />
+            <Path d="M 22 186 L 92 186 L 92 220 L 76 274 L 22 274 Z" fill={ustRenk} opacity={0.76} />
+            <Path d="M 178 186 L 108 186 L 108 220 L 124 274 L 178 274 Z" fill={ustRenk} opacity={0.76} />
+          </>
+        ) : ust ? (
+          <>
+            <Rect x={50}  y={186} width={100} height={88} rx={12} fill={ustRenk} opacity={0.70} />
+            <Rect x={22}  y={188} width={28}  height={80} rx={12} fill={ustRenk} opacity={0.70} />
+            <Rect x={150} y={188} width={28}  height={80} rx={12} fill={ustRenk} opacity={0.70} />
+          </>
+        ) : null}
+
+        {/* Alt giysi */}
+        {altParca ? (
+          <>
+            <Rect x={50}  y={272} width={100} height={92} rx={6} fill={altRenk} opacity={0.72} />
+            <Rect x={98}  y={296} width={4}   height={68} fill="rgba(0,0,0,0.10)" />
+          </>
+        ) : null}
+
+        {/* Ayakkabı */}
+        {ayakParca ? (
+          <>
+            <Rect x={38}  y={360} width={62} height={22} rx={9} fill={ayakRenk} opacity={0.82} />
+            <Rect x={100} y={360} width={62} height={22} rx={9} fill={ayakRenk} opacity={0.82} />
+          </>
+        ) : null}
+      </Svg>
+    </View>
+  );
+});
+
 // viewBox koordinat sistemi (iç çizim alanı)
 const W = 200, H = 400;
 // Ekranda gösterim boyutu
@@ -659,12 +728,15 @@ ${jsonFormat}`;
               <Animated.View style={[styles.avatarSatir, { transform: [{ translateX: slideAnim }] }]}>
                 <View style={styles.avatarOrtala}>
                   {avatarGlbUri ? (
-                    <ThreeDInline
-                      glbUrl={avatarGlbUri}
-                      width={DISP_W}
-                      height={DISP_H}
-                      onTap={() => setViewer3D({ visible: true, glbUrl: avatarGlbUri!, baslik: 'Avatar' })}
-                    />
+                    <>
+                      <ThreeDInline
+                        glbUrl={avatarGlbUri}
+                        width={DISP_W}
+                        height={DISP_H}
+                        onTap={() => setViewer3D({ visible: true, glbUrl: avatarGlbUri!, baslik: 'Avatar' })}
+                      />
+                      <KiyafetOverlay kombin={seciliKombin} kiyafetler={kiyafetler} />
+                    </>
                   ) : (
                     <AvatarSVG kombin={seciliKombin} profil={profil} kiyafetler={kiyafetler} />
                   )}
@@ -829,7 +901,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16, borderRadius: 24, padding: 16,
   },
   avatarSatir:    { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  avatarOrtala:   { width: DISP_W, height: DISP_H, alignItems: 'center' },
+  avatarOrtala:   { width: DISP_W, height: DISP_H, alignItems: 'center', position: 'relative' },
   avatarBilgi:    { flex: 1 },
   avatarBaslik:   { fontSize: 17, fontWeight: '700', marginBottom: 8, letterSpacing: 0.2 },
   badge:          { borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5, alignSelf: 'flex-start', marginBottom: 10 },
