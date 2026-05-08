@@ -152,7 +152,7 @@ export default function Onboarding() {
 
   const bitir = async () => {
     await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
-    router.replace('/');
+    router.replace('/login' as any);
   };
 
   return (

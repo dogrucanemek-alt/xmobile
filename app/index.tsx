@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from '../lib/context';
+import { useAuth } from '../lib/authContext';
 import { ONBOARDING_KEY } from './onboarding';
 
 const CYAN = '#00D4FF';
@@ -10,12 +11,15 @@ const CYAN = '#00D4FF';
 export default function Index() {
   const router = useRouter();
   const { t, renkler, temaToggle, dil, dilDegistir, karanlik } = useApp();
+  const { session, yukleniyor } = useAuth();
 
   useEffect(() => {
+    if (yukleniyor) return;
     AsyncStorage.getItem(ONBOARDING_KEY).then(v => {
-      if (!v) router.replace('/onboarding');
+      if (!v) { router.replace('/onboarding'); return; }
+      if (!session) { router.replace('/login' as any); }
     });
-  }, []);
+  }, [yukleniyor, session]);
 
   return (
     <View style={[styles.container, { backgroundColor: renkler.bg }]}>
@@ -96,11 +100,7 @@ export default function Index() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => Alert.alert(
-          dil === 'en' ? 'Coming Soon' : 'Yakında',
-          dil === 'en' ? 'Account sync and login will be available in the next update.' : 'Hesap senkronizasyonu ve giriş özelliği yakında geliyor.',
-          [{ text: 'OK' }]
-        )}>
+        <TouchableOpacity onPress={() => router.push('/login' as any)}>
           <Text style={[styles.loginText, { color: renkler.metin2 }]}>
             {t.hesabınVarMı}{' '}
             <Text style={{ color: CYAN, fontWeight: '600' }}>{t.girisYap}</Text>
