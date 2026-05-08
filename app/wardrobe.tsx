@@ -21,21 +21,7 @@ const fotografKaydet = async (uri: string): Promise<string> => {
   return hedef;
 };
 
-const BASLANGIC = [
-  { id: 1,  ad: 'Gri Jean Pantolon',              tur: 'Alt',       sezon: 'Tüm Sezon',         foto: null },
-  { id: 2,  ad: 'Bej Chino Pantolon (GANT)',      tur: 'Alt',       sezon: 'Tüm Sezon',         foto: null },
-  { id: 3,  ad: 'Yeşil Chino Pantolon (GANT)',    tur: 'Alt',       sezon: 'Tüm Sezon',         foto: null },
-  { id: 4,  ad: 'Beyaz Kumaş Pantolon',           tur: 'Alt',       sezon: 'Tüm Sezon',         foto: null },
-  { id: 5,  ad: 'Lacivert Kumaş Pantolon',        tur: 'Alt',       sezon: 'Tüm Sezon',         foto: null },
-  { id: 6,  ad: 'Saks Mavisi Kumaş Pantolon',     tur: 'Alt',       sezon: 'Tüm Sezon',         foto: null },
-  { id: 7,  ad: 'Kırmızı Oversize Tişört',        tur: 'Üst',       sezon: 'Tüm Sezon',         foto: null },
-  { id: 8,  ad: 'Siyah Gömlek (C&A)',             tur: 'Üst',       sezon: 'Tüm Sezon',         foto: null },
-  { id: 9,  ad: 'Açık Mavi Gömlek',               tur: 'Üst',       sezon: 'Tüm Sezon',         foto: null },
-  { id: 10, ad: 'Beyaz Gömlek (Ismont)',           tur: 'Üst',       sezon: 'Tüm Sezon',         foto: null },
-  { id: 11, ad: 'Siyah Trençkot',                 tur: 'Dış Giyim', sezon: 'İlkbahar/Sonbahar', foto: null },
-  { id: 12, ad: 'Bej Trençkot',                   tur: 'Dış Giyim', sezon: 'İlkbahar/Sonbahar', foto: null },
-  { id: 13, ad: 'Siyah Bomber Ceket',             tur: 'Dış Giyim', sezon: 'Tüm Sezon',         foto: null },
-];
+const BASLANGIC: import('../lib/types').Kiyafet[] = [];
 
 const TURLER   = ['Üst', 'Alt', 'Dış Giyim', 'Ayakkabı', 'Aksesuar'];
 const SEZONLAR = ['Tüm Sezon', 'İlkbahar', 'Yaz', 'Sonbahar', 'Kış'];
