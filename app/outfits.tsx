@@ -15,6 +15,10 @@ import Svg, {
 import { useApp } from '../lib/context';
 import type { Kiyafet, Kombin, HavaDurumu, Profil } from '../lib/types';
 import { GECMIS_KEY } from './history';
+import ThreeDViewer from '../components/ThreeDViewer';
+import UpsellModal from '../components/UpsellModal';
+import { useSubscription } from '../lib/subscriptionContext';
+import { meshyModelUret } from '../lib/meshyService';
 
 const WEATHER_KEY = process.env.EXPO_PUBLIC_WEATHER_KEY ?? '';
 const CLAUDE_KEY  = process.env.EXPO_PUBLIC_CLAUDE_KEY ?? '';
@@ -327,6 +331,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
 
 export default function Outfits() {
   const { t, renkler, aksanRenk, dil } = useApp();
+  const { can3D, kullanim3DArtir, tier, aylikKullanim } = useSubscription();
   const router = useRouter();
   const [hava, setHava]               = useState<HavaDurumu | null>(null);
   const [kombinler, setKombinler]     = useState<Kombin[]>([]);
@@ -336,6 +341,14 @@ export default function Outfits() {
   const [profil, setProfil]           = useState<Profil | null>(null);
   const [kiyafetler, setKiyafetler]   = useState<Kiyafet[]>([]);
   const [sehirAdi, setSehirAdi]       = useState('...');
+
+  const [viewer3D, setViewer3D]         = useState<{ visible: boolean; glbUrl: string; baslik: string }>({
+    visible: false, glbUrl: '', baslik: '',
+  });
+  const [upsellGoster, setUpsellGoster] = useState(false);
+  const [yuklenen3D, setYuklenen3D]     = useState<string | null>(null);
+  const [yukleniyor3D, setYukleniyor3D] = useState(false);
+  const [hata3D, setHata3D]             = useState<string | null>(null);
 
   const kombinlerRef = useRef<Kombin[]>([]);
   const indexRef     = useRef(0);
@@ -363,6 +376,27 @@ export default function Outfits() {
   ).current;
 
   useEffect(() => { baslat(); }, []);
+
+  const parcayi3DGoster = async (parcaAdi: string) => {
+    if (!can3D()) {
+      setUpsellGoster(true);
+      return;
+    }
+    setYukleniyor3D(true);
+    setHata3D(null);
+    setYuklenen3D(parcaAdi);
+    try {
+      const glbUrl = await meshyModelUret(parcaAdi);
+      await kullanim3DArtir();
+      setViewer3D({ visible: true, glbUrl, baslik: parcaAdi });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';
+      setHata3D(msg);
+    } finally {
+      setYukleniyor3D(false);
+      setYuklenen3D(null);
+    }
+  };
 
   const havaAl = async (): Promise<HavaDurumu> => {
     let url: string;
@@ -669,6 +703,7 @@ ${jsonFormat}`;
                     return kAd === aranan || aranan.includes(kAd) || kAd.includes(aranan);
                   });
                   const foto = eslesme?.foto ?? null;
+                  const yukleniyor = yukleniyor3D && yuklenen3D === p;
                   return (
                     <View key={i} style={[styles.parcaChip, { backgroundColor: renkler.chip }]}>
                       {foto
@@ -676,10 +711,20 @@ ${jsonFormat}`;
                         : <View style={[styles.parcaChipFotoYok, { backgroundColor: renkler.sinir }]} />
                       }
                       <Text style={[styles.parcaText, { color: renkler.metin }]}>{p}</Text>
+                      <TouchableOpacity
+                        style={[styles.ucBoyutBtn, yukleniyor && styles.ucBoyutBtnYukleniyor]}
+                        onPress={() => parcayi3DGoster(p)}
+                        disabled={yukleniyor}
+                      >
+                        <Text style={styles.ucBoyutBtnText}>{yukleniyor ? '⟳' : '3D'}</Text>
+                      </TouchableOpacity>
                     </View>
                   );
                 })}
               </View>
+              {hata3D && (
+                <Text style={[styles.hata3DText, { color: '#E74C3C' }]}>3D: {hata3D}</Text>
+              )}
               <TouchableOpacity
                 style={[styles.secButon, { backgroundColor: renkler.btnPrimary }]}
                 onPress={async () => {
@@ -711,6 +756,19 @@ ${jsonFormat}`;
           <View style={{ height: 40 }} />
         </ScrollView>
       )}
+
+      <ThreeDViewer
+        visible={viewer3D.visible}
+        glbUrl={viewer3D.glbUrl}
+        baslik={viewer3D.baslik}
+        onKapat={() => setViewer3D(v => ({ ...v, visible: false }))}
+      />
+      <UpsellModal
+        visible={upsellGoster}
+        onKapat={() => setUpsellGoster(false)}
+        aylikKullanim={aylikKullanim}
+        limit={tier === 'basic' ? 10 : undefined}
+      />
     </View>
   );
 }
@@ -774,4 +832,12 @@ const styles = StyleSheet.create({
   parcaText:       { fontSize: 13 },
   secButon:       { borderRadius: 50, padding: 16, alignItems: 'center' },
   secButonText:   { fontSize: 15, fontWeight: '600', letterSpacing: 0.2 },
+  ucBoyutBtn: {
+    backgroundColor: 'rgba(0,212,255,0.15)',
+    borderWidth: 1, borderColor: 'rgba(0,212,255,0.4)',
+    borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, marginLeft: 4,
+  },
+  ucBoyutBtnYukleniyor: { opacity: 0.5 },
+  ucBoyutBtnText: { color: '#00D4FF', fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
+  hata3DText:     { fontSize: 11, marginTop: 8, textAlign: 'center', marginBottom: 8 },
 });

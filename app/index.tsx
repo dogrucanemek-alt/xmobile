@@ -65,6 +65,15 @@ export default function Index() {
           </Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={[styles.btnSecondary, { borderColor: renkler.sinir2 }]}
+          onPress={() => router.push('/import-model' as any)}
+        >
+          <Text style={[styles.btnSecondaryText, { color: renkler.metin2 }]}>
+            📦 3D Model İçe Aktar
+          </Text>
+        </TouchableOpacity>
+
         <Text style={[styles.loginText, { color: renkler.metin2 }]}>
           {t.hesabınVarMı} <Text style={[styles.loginLink, { color: aksanRenk }]}>{t.girisYap}</Text>
         </Text>

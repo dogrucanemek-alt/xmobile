@@ -40,3 +40,15 @@ export interface KombinKayit {
   favori: boolean;
   hava?: { derece: number; durum: string };
 }
+
+export interface MeshyGorev {
+  taskId: string;
+  status: 'PENDING' | 'IN_PROGRESS' | 'SUCCEEDED' | 'FAILED' | 'EXPIRED';
+  glbUrl?: string;
+  progress?: number;
+}
+
+export interface MeshyCacheGirdisi {
+  glbUrl: string;
+  olusturuldu: number;
+}
