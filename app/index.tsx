@@ -113,19 +113,19 @@ const styles = StyleSheet.create({
   logoBlok:    { flex: 1, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 20 },
   xKutu: {
     width: 72, height: 72, borderRadius: 20,
-    backgroundColor: CYAN,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center', justifyContent: 'center', marginBottom: 14,
   },
   xHarf:       { fontSize: 40, fontWeight: '800', color: '#000', letterSpacing: -1 },
   marka:       { fontSize: 13, fontWeight: '800', letterSpacing: 5, marginBottom: 4 },
-  altBaslik:   { fontSize: 9, letterSpacing: 4, color: 'rgba(0,212,255,0.5)' },
+  altBaslik:   { fontSize: 9, letterSpacing: 4, color: 'rgba(255,255,255,0.35)' },
 
   orta:        { flex: 1, justifyContent: 'center' },
   tagline:     { fontSize: 15, lineHeight: 25, textAlign: 'center' },
 
   alt:         { flex: 1, justifyContent: 'center', gap: 10, paddingBottom: 20 },
   btnPrimary: {
-    backgroundColor: CYAN,
+    backgroundColor: '#FFFFFF',
     paddingVertical: 17, paddingHorizontal: 28, borderRadius: 50,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
   },

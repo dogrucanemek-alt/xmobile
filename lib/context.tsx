@@ -93,17 +93,17 @@ const açıkRenkler = {
 };
 
 const karanlıkRenkler = {
-  bg: '#00040F',
-  bg2: '#020812',
+  bg: '#000000',
+  bg2: '#000000',
   metin: '#FFFFFF',
-  metin2: 'rgba(255,255,255,0.5)',
-  sinir: 'rgba(0,212,255,0.15)',
-  sinir2: 'rgba(0,212,255,0.07)',
-  kart: 'rgba(0,212,255,0.04)',
-  chip: 'rgba(0,212,255,0.09)',
-  btnPrimary: '#00D4FF',
+  metin2: 'rgba(255,255,255,0.65)',
+  sinir: 'rgba(255,255,255,0.1)',
+  sinir2: 'rgba(255,255,255,0.06)',
+  kart: '#0D0D0D',
+  chip: 'rgba(255,255,255,0.1)',
+  btnPrimary: '#FFFFFF',
   btnPrimaryMetin: '#000000',
-  aksanRenk: '#00D4FF',
+  aksanRenk: '#2997ff',
   statusBar: 'light-content' as const,
 };
 
@@ -149,7 +149,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   const renkler = karanlik ? karanlıkRenkler : açıkRenkler;
   const t = çeviriler[dil];
-  const aksanRenk = '#00D4FF';
+  const aksanRenk = karanlik ? '#2997ff' : '#2997ff';
 
   const value = useMemo(
     () => ({ t, renkler, aksanRenk, temaToggle, dil, dilDegistir, karanlik }),

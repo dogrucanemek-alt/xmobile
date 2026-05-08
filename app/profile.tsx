@@ -1,9 +1,12 @@
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, TextInput, Image, Alert } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, TextInput, Image, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
+import { readAsStringAsync, copyAsync, documentDirectory, EncodingType } from 'expo-file-system/legacy';
 import { useApp } from '../lib/context';
+import ThreeDViewer from '../components/ThreeDViewer';
 
 const PROFIL_KEY = 'xmobile_profil';
 
@@ -42,6 +45,9 @@ export default function Profile() {
   const [profilFoto,  setProfilFoto]  = useState<string | null>(null);
   const [sacStili,    setSacStili]    = useState('orta');
   const [sakal,       setSakal]       = useState('yok');
+  const [avatarGlbUri, setAvatarGlbUri] = useState<string | null>(null);
+  const [viewer3D,    setViewer3D]    = useState(false);
+  const [glbYukleniyor, setGlbYukleniyor] = useState(false);
 
   useEffect(() => { yukle(); }, []);
 
@@ -59,6 +65,7 @@ export default function Profile() {
         setProfilFoto(p.profilFoto || null);
         setSacStili(p.sacStili     || 'orta');
         setSakal(p.sakal           || 'yok');
+        setAvatarGlbUri(p.avatarGlbUri || null);
       }
     } catch (e) {
       console.warn('Profil yüklenemedi:', e);
@@ -70,7 +77,7 @@ export default function Profile() {
       Alert.alert(dil === 'en' ? 'Missing Info' : 'Eksik Bilgi', dil === 'en' ? 'Please enter height and weight.' : 'Boy ve kilo alanlarını doldurun.');
       return;
     }
-    const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili, sakal };
+    const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili, sakal, avatarGlbUri };
     await AsyncStorage.setItem(PROFIL_KEY, JSON.stringify(profil));
     Alert.alert(
       dil === 'en' ? 'Saved ✓' : 'Kaydedildi ✓',
@@ -161,12 +168,50 @@ export default function Profile() {
           )}
           <TouchableOpacity
             style={[styles.fotoBtn, { backgroundColor: renkler.chip, borderWidth: 0.5, borderColor: renkler.sinir }]}
-            onPress={() => router.push('/avatar')}
+            onPress={async () => {
+              try {
+                const sonuc = await DocumentPicker.getDocumentAsync({ type: '*/*', copyToCacheDirectory: false });
+                if (sonuc.canceled) return;
+                const dosya = sonuc.assets[0];
+                if (!dosya.name.toLowerCase().endsWith('.glb')) {
+                  Alert.alert('Hata', 'Sadece .glb dosyaları destekleniyor');
+                  return;
+                }
+                setGlbYukleniyor(true);
+                const hedef = (documentDirectory ?? '') + 'avatar.glb';
+                await copyAsync({ from: dosya.uri, to: hedef });
+                const base64 = await readAsStringAsync(hedef, { encoding: EncodingType.Base64 });
+                const dataUri = `data:model/gltf-binary;base64,${base64}`;
+                setAvatarGlbUri(dataUri);
+                const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili, sakal, avatarGlbUri: dataUri };
+                await AsyncStorage.setItem('xmobile_profil', JSON.stringify(profil));
+              } catch (e) {
+                Alert.alert('Hata', 'Dosya yüklenemedi');
+              } finally {
+                setGlbYukleniyor(false);
+              }
+            }}
+            disabled={glbYukleniyor}
           >
-            <Text style={[styles.fotoBtnText, { color: renkler.metin }]}>
-              {dil === 'en' ? '🧍 Edit Avatar' : '🧍 Avatarı Düzenle'}
-            </Text>
+            {glbYukleniyor
+              ? <ActivityIndicator color={renkler.metin} />
+              : <Text style={[styles.fotoBtnText, { color: renkler.metin }]}>
+                  {avatarGlbUri
+                    ? (dil === 'en' ? '📦 Change 3D Avatar' : '📦 3D Avatarı Değiştir')
+                    : (dil === 'en' ? '📦 Set 3D Avatar (.glb)' : '📦 3D Avatar Yükle (.glb)')}
+                </Text>
+            }
           </TouchableOpacity>
+          {avatarGlbUri && (
+            <TouchableOpacity
+              style={[styles.fotoBtn, { backgroundColor: 'rgba(0,212,255,0.1)', borderWidth: 1, borderColor: 'rgba(0,212,255,0.3)', marginTop: 8 }]}
+              onPress={() => setViewer3D(true)}
+            >
+              <Text style={[styles.fotoBtnText, { color: '#00D4FF' }]}>
+                {dil === 'en' ? '▶ View 3D Avatar' : '▶ 3D Avatarı Görüntüle'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Avatar Önizleme — sadece fotoğraf yoksa göster */}
@@ -317,6 +362,15 @@ export default function Profile() {
 
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      {avatarGlbUri && (
+        <ThreeDViewer
+          visible={viewer3D}
+          glbUrl={avatarGlbUri}
+          baslik={dil === 'en' ? '3D Avatar' : '3D Avatarım'}
+          onKapat={() => setViewer3D(false)}
+        />
+      )}
     </View>
   );
 }
