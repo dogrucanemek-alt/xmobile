@@ -45,8 +45,9 @@ export default function Profile() {
   const [profilFoto,  setProfilFoto]  = useState<string | null>(null);
   const [sacStili,    setSacStili]    = useState('orta');
   const [sakal,       setSakal]       = useState('yok');
-  const [avatarGlbUri, setAvatarGlbUri] = useState<string | null>(null);
-  const [viewer3D,    setViewer3D]    = useState(false);
+  const [avatarGlbPath, setAvatarGlbPath] = useState<string | null>(null);
+  const [avatarGlbUri,  setAvatarGlbUri]  = useState<string | null>(null);
+  const [viewer3D,      setViewer3D]      = useState(false);
   const [glbYukleniyor, setGlbYukleniyor] = useState(false);
 
   useEffect(() => { yukle(); }, []);
@@ -62,10 +63,10 @@ export default function Profile() {
         setBoy(p.boy               || '175');
         setKilo(p.kilo             || '70');
         setCinsiyet(p.cinsiyet     || 'Erkek');
-        setProfilFoto(p.profilFoto || null);
-        setSacStili(p.sacStili     || 'orta');
-        setSakal(p.sakal           || 'yok');
-        setAvatarGlbUri(p.avatarGlbUri || null);
+        setProfilFoto(p.profilFoto   || null);
+        setSacStili(p.sacStili       || 'orta');
+        setSakal(p.sakal             || 'yok');
+        setAvatarGlbPath(p.avatarGlbPath || null);
       }
     } catch (e) {
       console.warn('Profil yüklenemedi:', e);
@@ -77,7 +78,7 @@ export default function Profile() {
       Alert.alert(dil === 'en' ? 'Missing Info' : 'Eksik Bilgi', dil === 'en' ? 'Please enter height and weight.' : 'Boy ve kilo alanlarını doldurun.');
       return;
     }
-    const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili, sakal, avatarGlbUri };
+    const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili, sakal, avatarGlbPath };
     await AsyncStorage.setItem(PROFIL_KEY, JSON.stringify(profil));
     Alert.alert(
       dil === 'en' ? 'Saved ✓' : 'Kaydedildi ✓',
@@ -180,10 +181,10 @@ export default function Profile() {
                 setGlbYukleniyor(true);
                 const hedef = (documentDirectory ?? '') + 'avatar.glb';
                 await copyAsync({ from: dosya.uri, to: hedef });
-                const base64 = await readAsStringAsync(hedef, { encoding: EncodingType.Base64 });
-                const dataUri = `data:model/gltf-binary;base64,${base64}`;
-                setAvatarGlbUri(dataUri);
-                const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili, sakal, avatarGlbUri: dataUri };
+                // Sadece yolu kaydet — base64 AsyncStorage'a sığmaz
+                setAvatarGlbPath(hedef);
+                setAvatarGlbUri(null); // görüntülerken okunacak
+                const profil = { tenRengi, sacRengi, gozRengi, boy, kilo, cinsiyet, profilFoto, sacStili, sakal, avatarGlbPath: hedef };
                 await AsyncStorage.setItem('xmobile_profil', JSON.stringify(profil));
               } catch (e) {
                 Alert.alert('Hata', 'Dosya yüklenemedi');
@@ -202,13 +203,25 @@ export default function Profile() {
                 </Text>
             }
           </TouchableOpacity>
-          {avatarGlbUri && (
+          {avatarGlbPath && (
             <TouchableOpacity
               style={[styles.fotoBtn, { backgroundColor: 'rgba(0,212,255,0.1)', borderWidth: 1, borderColor: 'rgba(0,212,255,0.3)', marginTop: 8 }]}
-              onPress={() => setViewer3D(true)}
+              onPress={async () => {
+                try {
+                  setGlbYukleniyor(true);
+                  const base64 = await readAsStringAsync(avatarGlbPath, { encoding: EncodingType.Base64 });
+                  setAvatarGlbUri(`data:model/gltf-binary;base64,${base64}`);
+                  setViewer3D(true);
+                } catch {
+                  Alert.alert('Hata', 'Model okunamadı');
+                } finally {
+                  setGlbYukleniyor(false);
+                }
+              }}
+              disabled={glbYukleniyor}
             >
               <Text style={[styles.fotoBtnText, { color: '#00D4FF' }]}>
-                {dil === 'en' ? '▶ View 3D Avatar' : '▶ 3D Avatarı Görüntüle'}
+                {glbYukleniyor ? '...' : (dil === 'en' ? '▶ View 3D Avatar' : '▶ 3D Avatarı Görüntüle')}
               </Text>
             </TouchableOpacity>
           )}
@@ -363,12 +376,12 @@ export default function Profile() {
         <View style={{ height: 40 }} />
       </ScrollView>
 
-      {avatarGlbUri && (
+      {avatarGlbUri && viewer3D && (
         <ThreeDViewer
           visible={viewer3D}
           glbUrl={avatarGlbUri}
           baslik={dil === 'en' ? '3D Avatar' : '3D Avatarım'}
-          onKapat={() => setViewer3D(false)}
+          onKapat={() => { setViewer3D(false); setAvatarGlbUri(null); }}
         />
       )}
     </View>
