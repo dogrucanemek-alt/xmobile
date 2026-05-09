@@ -100,7 +100,7 @@ export default function Index() {
       {/* Logo */}
       <View style={styles.logoBlok}>
         <View style={styles.xKutu}>
-          <Text style={styles.xHarf}>X</Text>
+          <Text style={styles.xHarf}>True</Text>
         </View>
         <Text style={[styles.marka, { color: renkler.metin }]}>XMOBILE</Text>
         <Text style={styles.altBaslik}>WARDROBE INTELLIGENCE</Text>
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center', justifyContent: 'center', marginBottom: 14,
   },
-  xHarf:       { fontSize: 40, fontWeight: '800', color: '#000', letterSpacing: -1 },
+  xHarf:       { fontSize: 22, fontWeight: '800', color: '#000', letterSpacing: -0.5 },
   marka:       { fontSize: 13, fontWeight: '800', letterSpacing: 5, marginBottom: 4 },
   altBaslik:   { fontSize: 9, letterSpacing: 4, color: 'rgba(255,255,255,0.35)' },
 
