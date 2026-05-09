@@ -481,20 +481,36 @@ export default function Outfits() {
       return 0;
     });
 
+    // Zincirleme modda fotoğrafsız parçaları atla; tek parçada DALL-E devreye girer
+    const tekParca = sirali.length === 1;
+    const islenecek = tekParca
+      ? sirali
+      : sirali.filter(p => !!parcaEslesmeAra(p)?.foto);
+
+    if (islenecek.length === 0) {
+      Alert.alert(
+        dil === 'en' ? 'No photos' : 'Fotoğraf yok',
+        dil === 'en'
+          ? 'Selected items have no photos. Add photos in your wardrobe.'
+          : 'Seçili parçaların fotoğrafı yok. Gardıroptan fotoğraf ekle.',
+      );
+      return;
+    }
+
     setTryOn(s => ({ ...s, adim: 'yukleniyor', sonucUri: null, hata: null, adimMetni: '' }));
 
     try {
       let aktifModel = modelUri;
 
-      for (let i = 0; i < sirali.length; i++) {
-        const parca = sirali[i];
+      for (let i = 0; i < islenecek.length; i++) {
+        const parca = islenecek[i];
         const eslesen = parcaEslesmeAra(parca);
         const kategori = kategoriSec(parca);
 
         setTryOn(s => ({
           ...s,
-          adimMetni: sirali.length > 1
-            ? `${i + 1}/${sirali.length}: ${parca}`
+          adimMetni: islenecek.length > 1
+            ? `${i + 1}/${islenecek.length}: ${parca}`
             : parca,
         }));
 
@@ -869,7 +885,7 @@ ${jsonFormat}`;
                   <View style={[styles.badge, { backgroundColor: renkler.chip }]}>
                     <Text style={[styles.badgeText, { color: renkler.metin2 }]}>{seciliKombin.tur}</Text>
                   </View>
-                  <Text style={[styles.avatarNeden, { color: renkler.metin2 }]}>{seciliKombin.neden}</Text>
+                  <Text style={[styles.avatarNeden, { color: renkler.metin2 }]} numberOfLines={3}>{seciliKombin.neden}</Text>
                   <View style={styles.skorKutu}>
                     <View style={styles.skorUstSatir}>
                       <Text style={[styles.skorLabel, { color: renkler.metin2 }]}>
@@ -967,11 +983,11 @@ ${jsonFormat}`;
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.paylasButon, { borderColor: '#27AE60', borderWidth: 1.5 }]}
+                style={[styles.ikonBtn, { borderColor: '#27AE60' }]}
                 onPress={feedePaylash}
                 disabled={feedPaylasiyor}
               >
-                <Text style={[styles.paylasButonText, { color: '#27AE60' }]}>
+                <Text style={{ fontSize: feedPaylasiyor ? 13 : 18 }}>
                   {feedPaylasiyor ? '...' : '🌍'}
                 </Text>
               </TouchableOpacity>
@@ -1263,7 +1279,8 @@ const styles = StyleSheet.create({
   parcaChipFoto:   { width: 38, height: 48, borderRadius: 18, resizeMode: 'cover' },
   parcaChipFotoYok:{ width: 38, height: 48, borderRadius: 18 },
   parcaText:       { fontSize: 13 },
-  altButonSatir:  { flexDirection: 'row', gap: 10, marginTop: 12 },
+  altButonSatir:  { flexDirection: 'row', gap: 8, marginTop: 12, alignItems: 'center' },
+  ikonBtn:        { width: 48, height: 48, borderRadius: 24, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
   paylasButon:    { borderRadius: 50, padding: 16, alignItems: 'center', borderWidth: 1, paddingHorizontal: 22 },
   paylasButonText:{ fontSize: 15, fontWeight: '600' },
   secButon:       { borderRadius: 50, padding: 16, alignItems: 'center' },
