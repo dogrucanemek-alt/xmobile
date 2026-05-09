@@ -106,7 +106,9 @@ function hexV3(h){
   return new THREE.Vector3(r,g,b);
 }
 
-var angle=0;
+camera.position.set(0,0.1,2.8);
+camera.lookAt(0,-0.2,0);
+
 new THREE.GLTFLoader().load('${glbUrl}',function(gltf){
   document.getElementById('y').style.display='none';
   var m=gltf.scene;
@@ -138,19 +140,10 @@ new THREE.GLTFLoader().load('${glbUrl}',function(gltf){
   });
 
   scene.add(m);
+  renderer.render(scene,camera);
 },undefined,function(){
   document.getElementById('y').textContent='—';
 });
-
-function animate(){
-  requestAnimationFrame(animate);
-  angle+=0.008;
-  camera.position.x=Math.sin(angle)*2.8;
-  camera.position.z=Math.cos(angle)*2.8;
-  camera.lookAt(0,-0.2,0);
-  renderer.render(scene,camera);
-}
-animate();
 </script>
 </body>
 </html>`;
