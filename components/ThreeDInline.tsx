@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { getThreeBundle } from '../lib/threejsLoader';
 
 interface ThreeDInlineProps {
   glbUrl: string;
@@ -10,7 +11,7 @@ interface ThreeDInlineProps {
   overlayHtml?: string;
 }
 
-function threejsHtml(glbUrl: string, overlayHtml: string): string {
+function threejsHtml(glbUrl: string, bundle: string, overlayHtml: string): string {
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -27,8 +28,7 @@ function threejsHtml(glbUrl: string, overlayHtml: string): string {
 <body>
 <div id="y">3D<br>yükleniyor</div>
 ${overlayHtml}
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script>${bundle}</script>
 <script>
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.01, 1000);
@@ -83,7 +83,18 @@ animate();
 }
 
 export default function ThreeDInline({ glbUrl, width, height, onTap, overlayHtml = '' }: ThreeDInlineProps) {
-  const html = useMemo(() => threejsHtml(glbUrl, overlayHtml), [glbUrl, overlayHtml]);
+  const [bundle, setBundle] = useState<string | null>(null);
+
+  useEffect(() => {
+    getThreeBundle().then(setBundle);
+  }, []);
+
+  const html = useMemo(
+    () => (bundle ? threejsHtml(glbUrl, bundle, overlayHtml) : null),
+    [glbUrl, bundle, overlayHtml],
+  );
+
+  if (!html) return <View style={{ width, height }} />;
 
   return (
     <TouchableOpacity activeOpacity={0.9} onPress={onTap} style={{ width, height }}>

@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Modal, SafeAreaView } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { getThreeBundle } from '../lib/threejsLoader';
 
 interface ThreeDViewerProps {
   glbUrl: string;
@@ -9,7 +10,7 @@ interface ThreeDViewerProps {
   onKapat: () => void;
 }
 
-function threejsHtml(glbUrl: string): string {
+function threejsHtml(glbUrl: string, bundle: string): string {
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -37,9 +38,7 @@ function threejsHtml(glbUrl: string): string {
   <div id="yukleniyorText">Model yukleniyor...</div>
 </div>
 <div id="hata">Model yuklenemedi</div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>${bundle}</script>
 <script>
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
@@ -111,7 +110,18 @@ animate();
 }
 
 export default function ThreeDViewer({ glbUrl, baslik, visible, onKapat }: ThreeDViewerProps) {
-  const html = useMemo(() => threejsHtml(glbUrl), [glbUrl]);
+  const [bundle, setBundle] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (visible && !bundle) {
+      getThreeBundle().then(setBundle);
+    }
+  }, [visible]);
+
+  const html = useMemo(
+    () => (bundle ? threejsHtml(glbUrl, bundle) : null),
+    [glbUrl, bundle],
+  );
 
   return (
     <Modal visible={visible} animationType="slide" statusBarTranslucent>
@@ -122,15 +132,21 @@ export default function ThreeDViewer({ glbUrl, baslik, visible, onKapat }: Three
             <Text style={styles.kapatText}>✕</Text>
           </TouchableOpacity>
         </View>
-        <WebView
-          style={styles.webview}
-          originWhitelist={['*']}
-          source={{ html }}
-          javaScriptEnabled
-          allowFileAccess
-          allowUniversalAccessFromFileURLs
-          mixedContentMode="always"
-        />
+        {html ? (
+          <WebView
+            style={styles.webview}
+            originWhitelist={['*']}
+            source={{ html }}
+            javaScriptEnabled
+            allowFileAccess
+            allowUniversalAccessFromFileURLs
+            mixedContentMode="always"
+          />
+        ) : (
+          <View style={styles.yukleniyor}>
+            <Text style={styles.yukleniyorText}>3D hazırlanıyor...</Text>
+          </View>
+        )}
         <View style={styles.ipucu}>
           <Text style={styles.ipucuText}>Döndürmek için sürükle · Zoom için sıkıştır</Text>
         </View>
@@ -150,6 +166,8 @@ const styles = StyleSheet.create({
   kapatBtn:   { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   kapatText:  { color: 'rgba(255,255,255,0.5)', fontSize: 18 },
   webview:    { flex: 1, backgroundColor: '#000' },
+  yukleniyor: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  yukleniyorText: { color: 'rgba(0,212,255,0.6)', fontSize: 13, letterSpacing: 1 },
   ipucu: {
     paddingVertical: 10, alignItems: 'center',
     borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.06)',

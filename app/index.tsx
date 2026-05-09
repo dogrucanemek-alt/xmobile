@@ -20,7 +20,7 @@ export default function Index() {
     AsyncStorage.multiGet([KVKK_KEY, ONBOARDING_KEY]).then(([kvkk, onb]) => {
       if (!kvkk[1]) { setKvkkGoster(true); return; }
       if (!onb[1])  { router.replace('/onboarding'); return; }
-      if (!session) { router.replace('/login' as any); }
+      if (!session && !__DEV__) { router.replace('/login' as any); }
     });
   }, [yukleniyor, session]);
 
@@ -29,7 +29,7 @@ export default function Index() {
     setKvkkGoster(false);
     const onb = await AsyncStorage.getItem(ONBOARDING_KEY);
     if (!onb) { router.replace('/onboarding'); return; }
-    if (!session) { router.replace('/login' as any); }
+    if (!session && !__DEV__) { router.replace('/login' as any); }
   };
 
   const kvkkReddet = () => {
