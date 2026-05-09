@@ -20,9 +20,13 @@ export const bildirimIzniAl = async (): Promise<boolean> => {
   return status === 'granted';
 };
 
-export const gunlukBildirimKur = async (dil: 'tr' | 'en' = 'tr') => {
+export const gunlukBildirimKur = async (dil?: 'tr' | 'en') => {
   const zatenKurulu = await AsyncStorage.getItem(NOTIF_KEY);
   if (zatenKurulu) return;
+  if (!dil) {
+    const stored = await AsyncStorage.getItem('xmobile_dil');
+    dil = stored === 'en' ? 'en' : 'tr';
+  }
 
   const izinVar = await bildirimIzniAl();
   if (!izinVar) return;
