@@ -26,6 +26,7 @@ import * as Sharing from 'expo-sharing';
 import { kombinHakkiVar, kombinKullan, kalanHakAl } from '../lib/freemium';
 import { proMuKontrol } from '../lib/revenueCat';
 import { tryOnBaslat, tryOnBekle, type TryOnCategory } from '../lib/fashnService';
+import * as ImagePicker from 'expo-image-picker';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 
@@ -336,7 +337,8 @@ export default function Outfits() {
     adim: 'sec' | 'yukleniyor' | 'sonuc';
     sonucUri: string | null;
     hata: string | null;
-  }>({ visible: false, adim: 'sec', sonucUri: null, hata: null });
+    modelFoto: string | null;
+  }>({ visible: false, adim: 'sec', sonucUri: null, hata: null, modelFoto: null });
   const viewShotRef = useRef<ViewShot>(null);
   const kombinlerRef = useRef<Kombin[]>([]);
   const indexRef     = useRef(0);
@@ -381,17 +383,31 @@ export default function Outfits() {
     }
   };
 
-  const tryOnBaslatParca = async (parcaAdi: string) => {
-    if (!profil?.profilFoto) {
+  const tryOnModelFotoSec = async () => {
+    const izin = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!izin.granted) {
       Alert.alert(
-        dil === 'en' ? 'Profile photo required' : 'Profil fotoğrafı gerekli',
+        dil === 'en' ? 'Permission required' : 'İzin gerekli',
+        dil === 'en' ? 'Allow photo access to pick a photo.' : 'Fotoğraf seçmek için izin ver.',
+      );
+      return;
+    }
+    const sonuc = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: false,
+      quality: 0.85,
+    });
+    if (!sonuc.canceled) {
+      setTryOn(s => ({ ...s, modelFoto: sonuc.assets[0].uri }));
+    }
+  };
+
+  const tryOnBaslatParca = async (parcaAdi: string, modelUri: string | null) => {
+    if (!modelUri) {
+      Alert.alert(
+        dil === 'en' ? 'Full-body photo required' : 'Tam boy fotoğraf gerekli',
         dil === 'en'
-          ? 'Add a full-body photo in your profile to use virtual try-on.'
-          : 'Sanal deneme için profil sayfasından bir boy fotoğrafı ekle.',
-        [
-          { text: dil === 'en' ? 'Go to Profile' : 'Profile Git', onPress: () => router.push('/profile' as any) },
-          { text: 'İptal', style: 'cancel' },
-        ],
+          ? 'Tap your photo above to add a full-body photo of yourself.'
+          : 'Yukarıdaki fotoğraf alanına tam boy bir fotoğrafını ekle.',
       );
       return;
     }
@@ -418,15 +434,15 @@ export default function Outfits() {
     if (onepiece.some(k => aranan.includes(k))) category = 'one-pieces';
     else if (alt.some(k => aranan.includes(k))) category = 'bottoms';
 
-    setTryOn({ visible: true, adim: 'yukleniyor', sonucUri: null, hata: null });
+    setTryOn(s => ({ ...s, adim: 'yukleniyor', sonucUri: null, hata: null }));
 
     try {
-      const jobId = await tryOnBaslat(profil.profilFoto!, eslesme.foto!, category);
+      const jobId = await tryOnBaslat(modelUri, eslesme.foto!, category);
       const sonuc = await tryOnBekle(jobId);
-      setTryOn({ visible: true, adim: 'sonuc', sonucUri: sonuc, hata: null });
+      setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: sonuc, hata: null }));
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      setTryOn({ visible: true, adim: 'sonuc', sonucUri: null, hata: msg });
+      setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: null, hata: msg }));
     }
   };
 
@@ -863,7 +879,7 @@ ${jsonFormat}`;
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.paylasButon, { borderColor: '#00D4FF', borderWidth: 1.5 }]}
-                onPress={() => setTryOn({ visible: true, adim: 'sec', sonucUri: null, hata: null })}
+                onPress={() => setTryOn({ visible: true, adim: 'sec', sonucUri: null, hata: null, modelFoto: profil?.profilFoto ?? null })}
               >
                 <Text style={[styles.paylasButonText, { color: '#00D4FF' }]}>
                   {dil === 'en' ? '👗 Try On' : '👗 Dene'}
@@ -921,10 +937,41 @@ ${jsonFormat}`;
 
           {tryOn.adim === 'sec' && seciliKombin && (
             <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.tryOnIcPadding}>
-              <Text style={[styles.tryOnAciklama, { color: renkler.metin2 }]}>
-                {dil === 'en'
-                  ? 'Pick a garment to try on. Uses your profile photo.'
-                  : 'Hangi parçayı denemek istiyorsun? Profil fotoğrafın kullanılır.'}
+              {/* Model photo picker */}
+              <View style={[styles.tryOnModelBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+                <TouchableOpacity style={styles.tryOnModelFotoBtn} onPress={tryOnModelFotoSec}>
+                  {tryOn.modelFoto ? (
+                    <Image source={{ uri: tryOn.modelFoto }} style={styles.tryOnModelFoto} resizeMode="cover" />
+                  ) : (
+                    <View style={[styles.tryOnModelFotoYok, { backgroundColor: renkler.chip }]}>
+                      <Text style={{ fontSize: 28 }}>👤</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+                <View style={{ flex: 1, gap: 4 }}>
+                  <Text style={[styles.tryOnModelBaslik, { color: renkler.metin }]}>
+                    {dil === 'en' ? 'Your photo' : 'Senin fotoğrafın'}
+                  </Text>
+                  <Text style={[styles.tryOnModelAciklama, { color: renkler.metin2 }]}>
+                    {dil === 'en'
+                      ? 'Full-body photo works best'
+                      : 'Tam boy fotoğraf en iyi sonucu verir'}
+                  </Text>
+                  <TouchableOpacity
+                    style={[styles.tryOnModelDegistirBtn, { borderColor: '#00D4FF' }]}
+                    onPress={tryOnModelFotoSec}
+                  >
+                    <Text style={{ color: '#00D4FF', fontSize: 12, fontWeight: '600' }}>
+                      {tryOn.modelFoto
+                        ? (dil === 'en' ? 'Change photo' : 'Fotoğrafı değiştir')
+                        : (dil === 'en' ? '+ Add photo' : '+ Fotoğraf ekle')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <Text style={[styles.tryOnAciklama, { color: renkler.metin2, marginTop: 16 }]}>
+                {dil === 'en' ? 'Pick a garment to try on:' : 'Hangi parçayı denemek istiyorsun?'}
               </Text>
               {seciliKombin.parcalar.map((p, i) => {
                 const aranan = p.toLowerCase();
@@ -936,7 +983,7 @@ ${jsonFormat}`;
                   <TouchableOpacity
                     key={i}
                     style={[styles.tryOnParcaBtn, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}
-                    onPress={() => tryOnBaslatParca(p)}
+                    onPress={() => tryOnBaslatParca(p, tryOn.modelFoto)}
                   >
                     {eslesme?.foto
                       ? <Image source={{ uri: eslesme.foto }} style={styles.tryOnParcaFoto} />
@@ -957,7 +1004,7 @@ ${jsonFormat}`;
                 {dil === 'en' ? 'AI is dressing you up...' : 'AI kıyafeti sana giydiriyor...'}
               </Text>
               <Text style={[styles.tryOnYukleniyorAlt, { color: renkler.metin2 }]}>
-                {dil === 'en' ? '~10 seconds' : '~10 saniye'}
+                {dil === 'en' ? '~15–30 seconds' : '~15–30 saniye'}
               </Text>
             </View>
           )}
@@ -970,7 +1017,7 @@ ${jsonFormat}`;
                   <Text style={[styles.tryOnHataText, { color: renkler.metin2 }]}>{tryOn.hata}</Text>
                   <TouchableOpacity
                     style={[styles.tryOnTekrar, { backgroundColor: renkler.btnPrimary }]}
-                    onPress={() => setTryOn(s => ({ ...s, adim: 'sec', hata: null }))}
+                    onPress={() => setTryOn(s => ({ ...s, adim: 'sec', hata: null, sonucUri: null }))}
                   >
                     <Text style={{ color: renkler.btnPrimaryMetin, fontWeight: '600' }}>
                       {dil === 'en' ? 'Try Again' : 'Tekrar Dene'}
@@ -986,7 +1033,7 @@ ${jsonFormat}`;
                   />
                   <TouchableOpacity
                     style={[styles.tryOnTekrarBtn, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}
-                    onPress={() => setTryOn(s => ({ ...s, adim: 'sec', sonucUri: null }))}
+                    onPress={() => setTryOn(s => ({ ...s, adim: 'sec', sonucUri: null, hata: null }))}
                   >
                     <Text style={{ color: renkler.metin, fontWeight: '600' }}>
                       {dil === 'en' ? '← Try another' : '← Başka parça dene'}
@@ -1106,6 +1153,16 @@ const styles = StyleSheet.create({
   tryOnTekrar:        { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 50, marginTop: 8 },
   tryOnSonucGorsel:   { flex: 1, width: '100%' },
   tryOnTekrarBtn:     { margin: 16, padding: 14, borderRadius: 50, alignItems: 'center', borderWidth: 1 },
+  tryOnModelBolum: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    padding: 14, borderRadius: 16, borderWidth: 1,
+  },
+  tryOnModelFotoBtn: {},
+  tryOnModelFoto:    { width: 60, height: 80, borderRadius: 10 },
+  tryOnModelFotoYok: { width: 60, height: 80, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  tryOnModelBaslik:  { fontSize: 14, fontWeight: '600' },
+  tryOnModelAciklama:{ fontSize: 11, lineHeight: 16 },
+  tryOnModelDegistirBtn: { alignSelf: 'flex-start', borderWidth: 1, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5, marginTop: 4 },
   freemiumBant: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     marginHorizontal: 16, marginTop: 8, marginBottom: 4,
