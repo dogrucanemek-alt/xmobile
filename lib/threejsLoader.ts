@@ -1,5 +1,5 @@
 import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
+import { readAsStringAsync } from './fileSystem';
 
 let cached: string | null = null;
 
@@ -13,7 +13,7 @@ export async function getThreeBundle(): Promise<string> {
   ]);
 
   const contents = await Promise.all(
-    assets.map(a => FileSystem.readAsStringAsync(a.localUri!))
+    assets.map(a => readAsStringAsync(a.localUri!))
   );
 
   cached = contents.join('\n');

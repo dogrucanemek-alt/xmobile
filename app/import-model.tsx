@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as DocumentPicker from 'expo-document-picker';
 import { readAsStringAsync, copyAsync, cacheDirectory, EncodingType } from '../lib/fileSystem';
 import { useRouter } from 'expo-router';
