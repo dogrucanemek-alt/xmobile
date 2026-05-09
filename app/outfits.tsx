@@ -338,7 +338,9 @@ export default function Outfits() {
     sonucUri: string | null;
     hata: string | null;
     modelFoto: string | null;
-  }>({ visible: false, adim: 'sec', sonucUri: null, hata: null, modelFoto: null });
+    secilenParcalar: string[];
+    adimMetni: string;
+  }>({ visible: false, adim: 'sec', sonucUri: null, hata: null, modelFoto: null, secilenParcalar: [], adimMetni: '' });
   const viewShotRef = useRef<ViewShot>(null);
   const kombinlerRef = useRef<Kombin[]>([]);
   const indexRef     = useRef(0);
@@ -401,7 +403,24 @@ export default function Outfits() {
     }
   };
 
-  const tryOnBaslatParca = async (parcaAdi: string, modelUri: string | null) => {
+  const kategoriSec = (parcaAdi: string): TryOnCategory => {
+    const a = parcaAdi.toLowerCase();
+    const alt      = ['pantolon', 'pant', 'şort', 'short', 'etek', 'skirt', 'tayt', 'jeans', 'kot'];
+    const onepiece = ['elbise', 'dress', 'tulum', 'jumpsuit', 'overall'];
+    if (onepiece.some(k => a.includes(k))) return 'one-pieces';
+    if (alt.some(k => a.includes(k)))      return 'bottoms';
+    return 'tops';
+  };
+
+  const parcaEslesmeAra = (parcaAdi: string) => {
+    const aranan = parcaAdi.toLowerCase();
+    return kiyafetler.find(k => {
+      const kAd = k.ad?.toLowerCase() ?? '';
+      return kAd === aranan || aranan.includes(kAd) || kAd.includes(aranan);
+    });
+  };
+
+  const tryOnZincir = async (parcalar: string[], modelUri: string | null) => {
     if (!modelUri) {
       Alert.alert(
         dil === 'en' ? 'Full-body photo required' : 'Tam boy fotoğraf gerekli',
@@ -412,38 +431,68 @@ export default function Outfits() {
       return;
     }
 
-    const aranan = parcaAdi.toLowerCase();
-    const eslesme = kiyafetler.find(k => {
-      const kAd = k.ad?.toLowerCase() ?? '';
-      return kAd === aranan || aranan.includes(kAd) || kAd.includes(aranan);
+    // Tops önce, bottoms/one-pieces sonra
+    const sirali = [...parcalar].sort((a, b) => {
+      const ka = kategoriSec(a), kb = kategoriSec(b);
+      if (ka === 'tops' && kb !== 'tops') return -1;
+      if (kb === 'tops' && ka !== 'tops') return 1;
+      return 0;
     });
 
-    if (!eslesme?.foto) {
+    // Fotoğrafı olmayan parçaları filtrele
+    const gecerliParcalar = sirali.filter(p => {
+      const eslesen = parcaEslesmeAra(p);
+      return !!eslesen?.foto;
+    });
+
+    if (gecerliParcalar.length === 0) {
       Alert.alert(
-        dil === 'en' ? 'No photo' : 'Fotoğraf yok',
+        dil === 'en' ? 'No photos' : 'Fotoğraf yok',
         dil === 'en'
-          ? `"${parcaAdi}" has no photo. Add a photo in your wardrobe.`
-          : `"${parcaAdi}" için gardıroptan fotoğraf ekle.`,
+          ? 'None of the selected items have photos. Add photos in your wardrobe.'
+          : 'Seçili parçaların hiçbirinde fotoğraf yok. Gardıroptan fotoğraf ekle.',
       );
       return;
     }
 
-    const alt = ['pantolon', 'pant', 'şort', 'short', 'etek', 'skirt', 'tayt', 'jeans', 'kot'];
-    const onepiece = ['elbise', 'dress', 'tulum', 'jumpsuit', 'overall'];
-    let category: TryOnCategory = 'tops';
-    if (onepiece.some(k => aranan.includes(k))) category = 'one-pieces';
-    else if (alt.some(k => aranan.includes(k))) category = 'bottoms';
-
-    setTryOn(s => ({ ...s, adim: 'yukleniyor', sonucUri: null, hata: null }));
+    setTryOn(s => ({ ...s, adim: 'yukleniyor', sonucUri: null, hata: null, adimMetni: '' }));
 
     try {
-      const jobId = await tryOnBaslat(modelUri, eslesme.foto!, category);
-      const sonuc = await tryOnBekle(jobId);
-      setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: sonuc, hata: null }));
+      let aktifModel = modelUri;
+
+      for (let i = 0; i < gecerliParcalar.length; i++) {
+        const parca = gecerliParcalar[i];
+        const eslesen = parcaEslesmeAra(parca)!;
+        const kategori = kategoriSec(parca);
+
+        setTryOn(s => ({
+          ...s,
+          adimMetni: gecerliParcalar.length > 1
+            ? `${i + 1}/${gecerliParcalar.length}: ${parca}`
+            : parca,
+        }));
+
+        const jobId = await tryOnBaslat(aktifModel, eslesen.foto!, kategori);
+        aktifModel  = await tryOnBekle(jobId);
+      }
+
+      setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: aktifModel, hata: null }));
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: null, hata: msg }));
     }
+  };
+
+  const parcaToggle = (parca: string) => {
+    setTryOn(s => {
+      const var_ = s.secilenParcalar.includes(parca);
+      return {
+        ...s,
+        secilenParcalar: var_
+          ? s.secilenParcalar.filter(p => p !== parca)
+          : [...s.secilenParcalar, parca],
+      };
+    });
   };
 
   useEffect(() => { baslat(); }, []);
@@ -879,7 +928,7 @@ ${jsonFormat}`;
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.paylasButon, { borderColor: '#00D4FF', borderWidth: 1.5 }]}
-                onPress={() => setTryOn({ visible: true, adim: 'sec', sonucUri: null, hata: null, modelFoto: profil?.profilFoto ?? null })}
+                onPress={() => setTryOn({ visible: true, adim: 'sec', sonucUri: null, hata: null, modelFoto: profil?.profilFoto ?? null, secilenParcalar: [], adimMetni: '' })}
               >
                 <Text style={[styles.paylasButonText, { color: '#00D4FF' }]}>
                   {dil === 'en' ? '👗 Try On' : '👗 Dene'}
@@ -923,14 +972,14 @@ ${jsonFormat}`;
         visible={tryOn.visible}
         animationType="slide"
         presentationStyle="pageSheet"
-        onRequestClose={() => setTryOn(s => ({ ...s, visible: false }))}
+        onRequestClose={() => setTryOn(s => ({ ...s, visible: false, secilenParcalar: [] }))}
       >
         <View style={[styles.tryOnModal, { backgroundColor: renkler.bg }]}>
           <View style={styles.tryOnHeader}>
             <Text style={[styles.tryOnBaslik, { color: renkler.metin }]}>
               {dil === 'en' ? '👗 Virtual Try-On' : '👗 Sanal Deneme'}
             </Text>
-            <TouchableOpacity onPress={() => setTryOn(s => ({ ...s, visible: false }))}>
+            <TouchableOpacity onPress={() => setTryOn(s => ({ ...s, visible: false, secilenParcalar: [] }))}>
               <Text style={[styles.tryOnKapat, { color: renkler.metin2 }]}>✕</Text>
             </TouchableOpacity>
           </View>
@@ -976,7 +1025,9 @@ ${jsonFormat}`;
               </View>
 
               <Text style={[styles.tryOnAciklama, { color: renkler.metin2, marginTop: 16 }]}>
-                {dil === 'en' ? 'Pick a garment to try on:' : 'Hangi parçayı denemek istiyorsun?'}
+                {dil === 'en'
+                  ? 'Select one or more garments to try on:'
+                  : 'Denemek istediğin parçaları seç:'}
               </Text>
               {seciliKombin.parcalar.map((p, i) => {
                 const aranan = p.toLowerCase();
@@ -984,21 +1035,58 @@ ${jsonFormat}`;
                   const kAd = k.ad?.toLowerCase() ?? '';
                   return kAd === aranan || aranan.includes(kAd) || kAd.includes(aranan);
                 });
+                const secili = tryOn.secilenParcalar.includes(p);
+                const fotoVar = !!eslesme?.foto;
                 return (
                   <TouchableOpacity
                     key={i}
-                    style={[styles.tryOnParcaBtn, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}
-                    onPress={() => tryOnBaslatParca(p, tryOn.modelFoto)}
+                    style={[
+                      styles.tryOnParcaBtn,
+                      { backgroundColor: renkler.kart, borderColor: secili ? '#00D4FF' : renkler.sinir },
+                      secili && { borderWidth: 1.5 },
+                      !fotoVar && { opacity: 0.45 },
+                    ]}
+                    onPress={() => fotoVar && parcaToggle(p)}
+                    activeOpacity={fotoVar ? 0.7 : 1}
                   >
                     {eslesme?.foto
                       ? <Image source={{ uri: eslesme.foto }} style={styles.tryOnParcaFoto} />
                       : <View style={[styles.tryOnParcaFotoYok, { backgroundColor: renkler.chip }]} />
                     }
-                    <Text style={[styles.tryOnParcaAd, { color: renkler.metin }]}>{p}</Text>
-                    <Text style={[styles.tryOnParcaOk, { color: '#00D4FF' }]}>→</Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.tryOnParcaAd, { color: renkler.metin }]}>{p}</Text>
+                      {!fotoVar && (
+                        <Text style={{ color: renkler.metin2, fontSize: 10 }}>
+                          {dil === 'en' ? 'No photo' : 'Fotoğraf yok'}
+                        </Text>
+                      )}
+                    </View>
+                    <View style={[
+                      styles.tryOnCheckbox,
+                      { borderColor: secili ? '#00D4FF' : renkler.sinir },
+                      secili && { backgroundColor: '#00D4FF' },
+                    ]}>
+                      {secili && <Text style={{ color: '#000', fontSize: 11, fontWeight: '800' }}>✓</Text>}
+                    </View>
                   </TouchableOpacity>
                 );
               })}
+
+              {/* Dene butonu */}
+              {tryOn.secilenParcalar.length > 0 && (
+                <TouchableOpacity
+                  style={[styles.tryOnDeneBtn, { backgroundColor: '#00D4FF' }]}
+                  onPress={() => tryOnZincir(tryOn.secilenParcalar, tryOn.modelFoto)}
+                >
+                  <Text style={styles.tryOnDeneBtnText}>
+                    {tryOn.secilenParcalar.length === 1
+                      ? (dil === 'en' ? '👗 Try On' : '👗 Dene')
+                      : (dil === 'en'
+                          ? `👗 Try On (${tryOn.secilenParcalar.length} items)`
+                          : `👗 Kombin Dene (${tryOn.secilenParcalar.length} parça)`)}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </ScrollView>
           )}
 
@@ -1008,8 +1096,13 @@ ${jsonFormat}`;
               <Text style={[styles.tryOnYukleniyorText, { color: renkler.metin2 }]}>
                 {dil === 'en' ? 'AI is dressing you up...' : 'AI kıyafeti sana giydiriyor...'}
               </Text>
+              {tryOn.adimMetni ? (
+                <Text style={[styles.tryOnYukleniyorAlt, { color: '#00D4FF' }]}>
+                  {tryOn.adimMetni}
+                </Text>
+              ) : null}
               <Text style={[styles.tryOnYukleniyorAlt, { color: renkler.metin2 }]}>
-                {dil === 'en' ? '~15–30 seconds' : '~15–30 saniye'}
+                {dil === 'en' ? '~15–30 sec per item' : 'Her parça ~15–30 saniye'}
               </Text>
             </View>
           )}
@@ -1158,6 +1251,15 @@ const styles = StyleSheet.create({
   tryOnTekrar:        { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 50, marginTop: 8 },
   tryOnSonucGorsel:   { flex: 1, width: '100%' },
   tryOnTekrarBtn:     { margin: 16, padding: 14, borderRadius: 50, alignItems: 'center', borderWidth: 1 },
+  tryOnCheckbox: {
+    width: 22, height: 22, borderRadius: 6, borderWidth: 1.5,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  tryOnDeneBtn: {
+    marginTop: 16, borderRadius: 50, paddingVertical: 14,
+    alignItems: 'center',
+  },
+  tryOnDeneBtnText: { color: '#000', fontSize: 15, fontWeight: '800' },
   tryOnModelBolum: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
     padding: 14, borderRadius: 16, borderWidth: 1,
