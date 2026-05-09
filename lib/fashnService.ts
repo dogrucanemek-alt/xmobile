@@ -1,4 +1,4 @@
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 
 async function uriToBase64(uri: string): Promise<string> {
   if (uri.startsWith('data:')) return uri.split(',')[1];

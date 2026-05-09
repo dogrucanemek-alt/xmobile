@@ -1,5 +1,6 @@
-const BASE_URL = `${process.env.EXPO_PUBLIC_API_URL ?? ''}/api/ai`;
-const CHAT_URL = `${process.env.EXPO_PUBLIC_API_URL ?? ''}/api/chat`;
+const PROXY = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
+const BASE_URL = `${PROXY}/api/ai`;
+const CHAT_URL = `${PROXY}/api/chat`;
 
 export type TaskType = 'general' | 'marketing' | 'sales' | 'code' | 'architecture' | 'document';
 export type CompanyKey = 'dogrucan' | 'ai_furniture' | 'core';

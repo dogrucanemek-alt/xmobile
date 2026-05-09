@@ -1,7 +1,7 @@
 import * as FileSystem from './fileSystem';
 import * as ImageManipulator from 'expo-image-manipulator';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 const TURLER = ['Üst', 'Alt', 'Dış Giyim', 'Ayakkabı', 'Aksesuar'];
 
 export async function kiyafetTani(

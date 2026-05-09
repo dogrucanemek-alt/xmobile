@@ -27,7 +27,7 @@ import { kombinHakkiVar, kombinKullan, kalanHakAl } from '../lib/freemium';
 import { proMuKontrol } from '../lib/revenueCat';
 import { tryOnBaslat, tryOnBekle, type TryOnCategory } from '../lib/fashnService';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 
 const NEON    = '#00D4FF';
 const DARK_BG = '#00040F';

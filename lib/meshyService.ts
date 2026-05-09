@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { MeshyGorev, MeshyCacheGirdisi } from './types';
 
-const BASE_URL = `${process.env.EXPO_PUBLIC_API_URL ?? ''}/api/meshy`;
+const BASE_URL = `${process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app'}/api/meshy`;
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 function cacheAnahtari(prompt: string): string {
