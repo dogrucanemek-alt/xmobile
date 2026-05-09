@@ -1,19 +1,36 @@
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 
+function errMsg(e: unknown): string {
+  if (!e) return 'Bilinmeyen hata';
+  if (typeof e === 'string') return e;
+  if (e instanceof Error) return e.message;
+  if (typeof e === 'object') {
+    const o = e as Record<string, unknown>;
+    const v = o.message ?? o.detail ?? o.error ?? o.msg;
+    if (v) return typeof v === 'string' ? v : JSON.stringify(v);
+    return JSON.stringify(e);
+  }
+  return String(e);
+}
+
 async function uriToBase64(uri: string): Promise<string> {
   if (uri.startsWith('data:')) return uri.split(',')[1];
   const res = await fetch(uri);
+  if (!res.ok) throw new Error(`Fotoğraf okunamadı (${res.status}): ${uri.slice(-40)}`);
   const blob = await res.blob();
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve((reader.result as string).split(',')[1]);
-    reader.onerror = reject;
+    reader.onload  = () => resolve((reader.result as string).split(',')[1]);
+    reader.onerror = (ev) => reject(new Error('FileReader hatası: ' + String((ev.target as any)?.error ?? ev)));
     reader.readAsDataURL(blob);
   });
 }
 
 function mimeType(uri: string): string {
-  return uri.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg';
+  const u = uri.toLowerCase();
+  if (u.includes('.png'))  return 'image/png';
+  if (u.includes('.webp')) return 'image/webp';
+  return 'image/jpeg';
 }
 
 export type TryOnCategory = 'auto' | 'tops' | 'bottoms' | 'one-pieces';
@@ -39,8 +56,8 @@ export async function tryOnBaslat(
   });
 
   const data = await res.json();
-  if (!res.ok || data.error) throw new Error(data.error ?? `Fashn API hatası: ${res.status}`);
-  if (!data.id) throw new Error('Fashn API: id gelmedi');
+  if (!res.ok || data.error) throw new Error(errMsg(data.error) || `Fashn API hatası: ${res.status}`);
+  if (!data.id) throw new Error(`Fashn API: id gelmedi. Yanıt: ${JSON.stringify(data).slice(0, 120)}`);
   return data.id as string;
 }
 
@@ -61,7 +78,7 @@ export async function tryOnBekle(id: string, onProgress?: () => void): Promise<s
       if (!durum.output?.[0]) throw new Error('Sonuç görseli gelmedi');
       return durum.output[0];
     }
-    if (durum.status === 'failed') throw new Error(durum.error ?? 'Try-on başarısız');
+    if (durum.status === 'failed') throw new Error(errMsg(durum.error) || 'Try-on başarısız');
     onProgress?.();
   }
   throw new Error('Zaman aşımı: 60 saniyede sonuç gelmedi');
