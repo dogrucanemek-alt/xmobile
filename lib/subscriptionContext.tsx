@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { proMuKontrol } from './revenueCat';
 
 type Tier = 'free' | 'basic' | 'pro';
 
@@ -42,11 +43,16 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     (async () => {
-      const [kayitliTier, kayitliSayac] = await Promise.all([
+      const [kayitliTier, kayitliSayac, isPro] = await Promise.all([
         AsyncStorage.getItem(TIER_KEY),
         AsyncStorage.getItem(SAYAC_KEY),
+        proMuKontrol(),
       ]);
-      if (kayitliTier) setTier(kayitliTier as Tier);
+      if (isPro) {
+        setTier('pro');
+      } else if (kayitliTier) {
+        setTier(kayitliTier as Tier);
+      }
       if (kayitliSayac) {
         const sayac: AylikSayac = JSON.parse(kayitliSayac);
         if (sayac.ay === simdikiAy()) setAylikKullanim(sayac.sayi);

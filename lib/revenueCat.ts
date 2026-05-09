@@ -44,6 +44,18 @@ export async function tekliflerAl() {
           currencyCode: 'TRY',
         },
       },
+      {
+        identifier: 'lifetime',
+        packageType: 'LIFETIME',
+        product: {
+          identifier: 'xmobile_pro_lifetime',
+          description: 'xmobile Pro Ömür Boyu',
+          title: 'Pro Ömür Boyu',
+          price: 2499.99,
+          priceString: '₺2.499,99',
+          currencyCode: 'TRY',
+        },
+      },
     ],
   };
 }
