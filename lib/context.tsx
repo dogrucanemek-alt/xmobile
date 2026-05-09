@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as FileSystem from 'expo-file-system/legacy';
+import * as FileSystem from './fileSystem';
 
 const TEMA_KEY = 'xmobile_karanlik';
 const DIL_KEY  = 'xmobile_dil';

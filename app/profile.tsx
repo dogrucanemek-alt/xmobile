@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { copyAsync, documentDirectory } from 'expo-file-system/legacy';
+import { copyAsync, documentDirectory } from '../lib/fileSystem';
 import { useApp } from '../lib/context';
 import ThreeDViewer from '../components/ThreeDViewer';
 

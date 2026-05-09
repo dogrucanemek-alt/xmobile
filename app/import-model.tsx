@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import { readAsStringAsync, copyAsync, cacheDirectory, EncodingType } from 'expo-file-system/legacy';
+import { readAsStringAsync, copyAsync, cacheDirectory, EncodingType } from '../lib/fileSystem';
 import { useRouter } from 'expo-router';
 import ThreeDViewer from '../components/ThreeDViewer';
 import { useApp } from '../lib/context';

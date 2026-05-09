@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system/legacy';
+import * as FileSystem from './fileSystem';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? '';

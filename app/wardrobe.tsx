@@ -2,7 +2,7 @@ import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, Image,
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system/legacy';
+import * as FileSystem from '../lib/fileSystem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from '../lib/context';
 import type { Kiyafet } from '../lib/types';
