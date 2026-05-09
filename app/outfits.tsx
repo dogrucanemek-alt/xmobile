@@ -745,15 +745,25 @@ ${jsonFormat}`;
             {seciliKombin && (
               <Animated.View style={[styles.avatarSatir, { transform: [{ translateX: slideAnim }] }]}>
                 <View style={styles.avatarOrtala}>
-                  {avatarGlbUri ? (
-                    <ThreeDInline
-                      glbUrl={avatarGlbUri}
-                      width={DISP_W}
-                      height={DISP_H}
-                      onTap={() => setViewer3D({ visible: true, glbUrl: avatarGlbUri!, baslik: 'Avatar' })}
-                      overlayHtml={buildOverlayHtml(seciliKombin, kiyafetler)}
-                    />
-                  ) : (
+                  {avatarGlbUri ? (() => {
+                    const _esle = (keys: string[]) => parcaEsle(seciliKombin, keys);
+                    const _renk = (ad: string | null) => kiyafetRenkBul(ad, kiyafetler);
+                    const disParca  = _esle(['mont','kaban','trençkot','trenkot','yağmurluk','yagmurluk','hırka','hirka','coat','jacket','raincoat','cardigan','blazer','trench','parka','overcoat']);
+                    const ustParca  = _esle(['gömlek','gomlek','tişört','tisort','kazak','bluz','ceket','sweatshirt','hoodie','shirt','t-shirt','tshirt','sweater','blouse','top','polo','turtleneck','knit']);
+                    const altParca  = _esle(['pantolon','etek','şort','short','jean','takim','takım','elbise','pants','trousers','skirt','shorts','jeans','dress','suit','chinos','leggings','culottes']);
+                    const ayakParca = _esle(['ayakkabı','ayakkabi','bot','sneaker','loafer','sandalet','çizme','cizme','shoes','boots','sneakers','loafers','sandals','heels','flats','mules','oxfords']);
+                    return (
+                      <ThreeDInline
+                        glbUrl={avatarGlbUri}
+                        width={DISP_W}
+                        height={DISP_H}
+                        onTap={() => setViewer3D({ visible: true, glbUrl: avatarGlbUri!, baslik: 'Avatar' })}
+                        ustRenk={_renk(disParca ?? ustParca)}
+                        altRenk={_renk(altParca)}
+                        ayakRenk={_renk(ayakParca)}
+                      />
+                    );
+                  })() : (
                     <AvatarSVG kombin={seciliKombin} profil={profil} kiyafetler={kiyafetler} />
                   )}
                 </View>
