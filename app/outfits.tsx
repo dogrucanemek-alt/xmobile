@@ -954,8 +954,13 @@ ${jsonFormat}`;
                   </Text>
                   <Text style={[styles.tryOnModelAciklama, { color: renkler.metin2 }]}>
                     {dil === 'en'
-                      ? 'Full-body photo works best'
-                      : 'Tam boy fotoğraf en iyi sonucu verir'}
+                      ? '✅ Full body · standing · head to toe'
+                      : '✅ Tam boy · ayakta · baştan ayağa'}
+                  </Text>
+                  <Text style={[styles.tryOnModelAciklama, { color: 'rgba(231,76,60,0.8)', fontSize: 11 }]}>
+                    {dil === 'en'
+                      ? '❌ No selfies or sitting poses'
+                      : '❌ Selfie veya oturma pozu olmasın'}
                   </Text>
                   <TouchableOpacity
                     style={[styles.tryOnModelDegistirBtn, { borderColor: '#00D4FF' }]}
