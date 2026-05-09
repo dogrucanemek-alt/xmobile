@@ -25,6 +25,8 @@ function threejsHtml(
   ustRenk: string,
   altRenk: string,
   ayakRenk: string,
+  compW: number,
+  compH: number,
 ): string {
   const VS = [
     'varying vec3 vWorldPos;',
@@ -54,8 +56,9 @@ function threejsHtml(
     '  else if(t<0.52){col=aRenk;}',
     '  else{col=uRenk;}',
     '  vec3 ld=normalize(vec3(1.0,2.0,3.0));',
-    '  float d=max(dot(vNorm,ld),0.0);',
-    '  gl_FragColor=vec4(col*(0.40+0.70*d),1.0);',
+    '  vec3 ld2=normalize(vec3(-1.0,0.5,-1.0));',
+    '  float d=max(dot(vNorm,ld),0.0)*0.5+max(dot(vNorm,ld2),0.0)*0.2;',
+    '  gl_FragColor=vec4(col*(0.65+0.45*d),1.0);',
     '}',
   ].join('\\n');
 
@@ -66,7 +69,7 @@ function threejsHtml(
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:transparent;overflow:hidden;width:100vw;height:100vh;}
+html,body{background:transparent;overflow:hidden;width:${compW}px;height:${compH}px;}
 #y{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
    color:rgba(0,212,255,0.6);font-family:system-ui;font-size:10px;
    letter-spacing:1px;text-align:center;pointer-events:none;}
@@ -79,16 +82,17 @@ body{background:transparent;overflow:hidden;width:100vw;height:100vh;}
 var UST="${ustRenk}",ALT="${altRenk}",AYAK="${ayakRenk}";
 var VS="${VS}",FS="${FS}";
 
+var W=${compW},H=${compH};
 var scene=new THREE.Scene();
-var camera=new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,0.01,1000);
-camera.position.set(0,0.3,2.8);
+var camera=new THREE.PerspectiveCamera(45,W/H,0.01,1000);
+camera.position.set(0,0.1,2.8);
 
 var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
 renderer.setClearColor(0x000000,0);
-renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.setSize(W,H);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 renderer.outputEncoding=THREE.sRGBEncoding;
-renderer.domElement.style.cssText='position:absolute;top:0;left:0;z-index:1;';
+renderer.domElement.style.cssText='position:absolute;top:0;left:0;z-index:1;width:'+W+'px;height:'+H+'px;';
 document.body.appendChild(renderer.domElement);
 
 scene.add(new THREE.AmbientLight(0xffffff,1.2));
@@ -143,7 +147,7 @@ function animate(){
   angle+=0.008;
   camera.position.x=Math.sin(angle)*2.8;
   camera.position.z=Math.cos(angle)*2.8;
-  camera.lookAt(0,0,0);
+  camera.lookAt(0,-0.2,0);
   renderer.render(scene,camera);
 }
 animate();
@@ -162,8 +166,8 @@ export default function ThreeDInline({ glbUrl, width, height, onTap, ustRenk, al
   const ay = normalizeHex(ayakRenk, '#2A2A2A');
 
   const html = useMemo(
-    () => (bundle ? threejsHtml(glbUrl, bundle, u, a, ay) : null),
-    [glbUrl, bundle, u, a, ay],
+    () => (bundle ? threejsHtml(glbUrl, bundle, u, a, ay, width, height) : null),
+    [glbUrl, bundle, u, a, ay, width, height],
   );
 
   if (!html) return <View style={{ width, height }} />;
