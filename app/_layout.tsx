@@ -57,6 +57,7 @@ export default function RootLayout() {
               <Stack.Screen name="jarvis" options={{ headerShown: false }} />
               <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
               <Stack.Screen name="subscription" options={{ headerShown: false, presentation: 'modal' }} />
+              <Stack.Screen name="discover" options={{ headerShown: false }} />
             </Stack>
           </SubscriptionProvider>
         </AuthProvider>

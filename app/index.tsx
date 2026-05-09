@@ -152,6 +152,16 @@ export default function Index() {
           </Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={[styles.btnSecondary, { borderColor: 'rgba(39,174,96,0.5)' }]}
+          onPress={() => router.push('/discover' as any)}
+          activeOpacity={0.75}
+        >
+          <Text style={[styles.btnSecondaryText, { color: '#27AE60' }]}>
+            🌍 {dil === 'en' ? 'Community Outfits' : 'Topluluk Kombinleri'}
+          </Text>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={() => router.push('/login' as any)}>
           <Text style={[styles.loginText, { color: renkler.metin2 }]}>
             {t.hesabınVarMı}{' '}

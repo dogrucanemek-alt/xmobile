@@ -26,6 +26,8 @@ import * as Sharing from 'expo-sharing';
 import { kombinHakkiVar, kombinKullan, kalanHakAl } from '../lib/freemium';
 import { proMuKontrol } from '../lib/revenueCat';
 import { tryOnBaslat, tryOnBekle, kiyafetGorseliUret, type TryOnCategory } from '../lib/fashnService';
+import { postOlustur } from '../lib/socialService';
+import { useAuth } from '../lib/authContext';
 import * as ImagePicker from 'expo-image-picker';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
@@ -313,6 +315,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
 export default function Outfits() {
   const { t, renkler, aksanRenk, dil, avatarGlbUri, loadAvatarGlb } = useApp();
   const { can3D, kullanim3DArtir, tier, aylikKullanim } = useSubscription();
+  const { user } = useAuth();
   const router = useRouter();
   const [hava, setHava]               = useState<HavaDurumu | null>(null);
   const [kombinler, setKombinler]     = useState<Kombin[]>([]);
@@ -330,7 +333,8 @@ export default function Outfits() {
   const [yuklenen3D, setYuklenen3D]     = useState<string | null>(null);
   const [yukleniyor3D, setYukleniyor3D] = useState(false);
   const [hata3D, setHata3D]             = useState<string | null>(null);
-  const [paylasiyor, setPaylasiyor]     = useState(false);
+  const [paylasiyor, setPaylasiyor]         = useState(false);
+  const [feedPaylasiyor, setFeedPaylasiyor] = useState(false);
   const [kalanHak, setKalanHak]         = useState<number | null>(null);
   const [tryOn, setTryOn] = useState<{
     visible: boolean;
@@ -382,6 +386,44 @@ export default function Outfits() {
       Alert.alert(dil === 'en' ? 'Could not share' : 'Paylaşılamadı');
     } finally {
       setPaylasiyor(false);
+    }
+  };
+
+  const feedePaylash = async () => {
+    if (!user) {
+      Alert.alert(
+        dil === 'en' ? 'Sign in required' : 'Giriş gerekli',
+        dil === 'en' ? 'Sign in to share to the community.' : 'Topluluğa paylaşmak için giriş yap.',
+        [
+          { text: dil === 'en' ? 'Cancel' : 'İptal', style: 'cancel' },
+          { text: dil === 'en' ? 'Sign In' : 'Giriş Yap', onPress: () => router.push('/login' as any) },
+        ],
+      );
+      return;
+    }
+    if (!seciliKombin) return;
+    setFeedPaylasiyor(true);
+    try {
+      const localUri = await captureRef(viewShotRef, { format: 'png', quality: 0.9 });
+      await postOlustur({
+        userId:     user.id,
+        email:      user.email ?? '',
+        baslik:     seciliKombin.baslik,
+        tur:        seciliKombin.tur,
+        parcalar:   seciliKombin.parcalar,
+        neden:      seciliKombin.neden ?? '',
+        gorselUri:  localUri,
+        havaDerece: hava?.derece,
+        havaDurum:  hava?.durum,
+      });
+      Alert.alert(
+        dil === 'en' ? '🎉 Shared!' : '🎉 Paylaşıldı!',
+        dil === 'en' ? 'Your outfit is now visible in Discover.' : 'Kombinin Keşfet\'te görünüyor.',
+      );
+    } catch (e) {
+      Alert.alert(dil === 'en' ? 'Error' : 'Hata', e instanceof Error ? e.message : String(e));
+    } finally {
+      setFeedPaylasiyor(false);
     }
   };
 
@@ -925,6 +967,15 @@ ${jsonFormat}`;
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
+                style={[styles.paylasButon, { borderColor: '#27AE60', borderWidth: 1.5 }]}
+                onPress={feedePaylash}
+                disabled={feedPaylasiyor}
+              >
+                <Text style={[styles.paylasButonText, { color: '#27AE60' }]}>
+                  {feedPaylasiyor ? '...' : '🌍'}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
                 style={[styles.secButon, { backgroundColor: renkler.btnPrimary, flex: 1 }]}
                 onPress={async () => {
                   const kayitli = await AsyncStorage.getItem(GECMIS_KEY);
@@ -942,6 +993,7 @@ ${jsonFormat}`;
                     `"${seciliKombin.baslik}" ${t.iyiGunler}`,
                     [
                       { text: dil === 'en' ? 'View History' : 'Geçmişi Gör', onPress: () => router.push('/history') },
+                      { text: dil === 'en' ? '🌍 Share to Community' : '🌍 Topluluğa Paylaş', onPress: feedePaylash },
                       { text: 'OK' },
                     ],
                   );
