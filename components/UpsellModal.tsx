@@ -1,38 +1,52 @@
 import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
 interface UpsellModalProps {
   visible: boolean;
   onKapat: () => void;
   aylikKullanim?: number;
   limit?: number;
+  dil?: 'tr' | 'en';
 }
 
-export default function UpsellModal({ visible, onKapat, aylikKullanim, limit }: UpsellModalProps) {
+export default function UpsellModal({ visible, onKapat, aylikKullanim, limit, dil = 'tr' }: UpsellModalProps) {
+  const router = useRouter();
   const temel = limit !== undefined && limit > 0;
+  const tr = dil === 'tr';
+
+  const proGec = () => {
+    onKapat();
+    router.push('/subscription' as any);
+  };
 
   return (
     <Modal visible={visible} animationType="fade" transparent statusBarTranslucent>
       <View style={styles.overlay}>
         <View style={styles.kart}>
           <Text style={styles.icon}>🧊</Text>
-          <Text style={styles.baslik}>3D Görüntüleme</Text>
-          <Text style={styles.baslik2}>PRO ÖZELLİĞİ</Text>
+          <Text style={styles.baslik}>{tr ? '3D Görüntüleme' : '3D Visualization'}</Text>
+          <Text style={styles.baslik2}>{tr ? 'PRO ÖZELLİĞİ' : 'PRO FEATURE'}</Text>
 
           {temel ? (
             <Text style={styles.aciklama}>
-              Bu ay {aylikKullanim}/{limit} 3D modelini kullandın.{'\n'}
-              Sınırsız 3D için Pro'ya geç.
+              {tr
+                ? `Bu ay ${aylikKullanim}/${limit} 3D modelini kullandın.\nSınırsız 3D için Pro'ya geç.`
+                : `You've used ${aylikKullanim}/${limit} 3D models this month.\nUpgrade to Pro for unlimited 3D.`}
             </Text>
           ) : (
             <Text style={styles.aciklama}>
-              Kıyafetlerini gerçek zamanlı döndürülebilir 3D modellerle görselleştir.{'\n\n'}
-              Ücretsiz planda bu özellik mevcut değil.
+              {tr
+                ? 'Kıyafetlerini gerçek zamanlı döndürülebilir 3D modellerle görselleştir.\n\nÜcretsiz planda bu özellik mevcut değil.'
+                : 'Visualize your clothes with real-time rotatable 3D models.\n\nThis feature is not available on the free plan.'}
             </Text>
           )}
 
           <View style={styles.ozellikler}>
-            {['Sınırsız 3D model', 'Sınırsız fal.ai 2D render', 'Öncelikli kombin önerisi'].map(o => (
+            {(tr
+              ? ['Sınırsız 3D model', 'Sınırsız sanal deneme', 'Öncelikli kombin önerisi']
+              : ['Unlimited 3D models', 'Unlimited virtual try-on', 'Priority outfit suggestions']
+            ).map(o => (
               <View key={o} style={styles.ozellikSatir}>
                 <Text style={styles.ozellikIkon}>✓</Text>
                 <Text style={styles.ozellikText}>{o}</Text>
@@ -40,12 +54,12 @@ export default function UpsellModal({ visible, onKapat, aylikKullanim, limit }: 
             ))}
           </View>
 
-          <TouchableOpacity style={styles.proBtn}>
-            <Text style={styles.proBtnText}>Pro'ya Geç →</Text>
+          <TouchableOpacity style={styles.proBtn} onPress={proGec}>
+            <Text style={styles.proBtnText}>{tr ? "Pro'ya Geç →" : 'Upgrade to Pro →'}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onKapat} style={styles.iptalBtn}>
-            <Text style={styles.iptalText}>Şimdi değil</Text>
+            <Text style={styles.iptalText}>{tr ? 'Şimdi değil' : 'Not now'}</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -1000,6 +1000,7 @@ ${jsonFormat}`;
         onKapat={() => setUpsellGoster(false)}
         aylikKullanim={aylikKullanim}
         limit={tier === 'basic' ? 10 : undefined}
+        dil={dil}
       />
     </View>
   );

@@ -390,6 +390,33 @@ export default function Profile() {
           </View>
         </View>
 
+        {/* Hesap */}
+        <Text style={[styles.bolumEtiket, { color: renkler.metin2 }]}>
+          {dil === 'en' ? 'ACCOUNT' : 'HESAP'}
+        </Text>
+        <View style={[styles.bolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir, padding: 0 }]}>
+          <TouchableOpacity
+            style={[styles.hesapSatir, { borderBottomColor: renkler.sinir, borderBottomWidth: 0.5 }]}
+            onPress={() => router.push('/subscription' as any)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.hesapSatirText, { color: renkler.metin }]}>
+              {dil === 'en' ? '✦ Upgrade to Pro' : '✦ Pro\'ya Geç'}
+            </Text>
+            <Text style={[styles.hesapSatirOk, { color: renkler.metin2 }]}>›</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.hesapSatir}
+            onPress={() => router.push('/privacy' as any)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.hesapSatirText, { color: renkler.metin }]}>
+              {dil === 'en' ? 'Privacy Policy' : 'Gizlilik Politikası'}
+            </Text>
+            <Text style={[styles.hesapSatirOk, { color: renkler.metin2 }]}>›</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={{ height: 40 }} />
       </ScrollView>
 
@@ -468,6 +495,9 @@ const styles = StyleSheet.create({
   renkDaire:             { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#EEEEEE' },
   renkSecili:            { borderWidth: 3, borderColor: '#000000' },
   renkTik:               { fontSize: 16, color: '#000000', fontWeight: 'bold' },
+  hesapSatir:            { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 18, paddingVertical: 16 },
+  hesapSatirText:        { fontSize: 15 },
+  hesapSatirOk:          { fontSize: 20 },
   olcuSatir:             { flexDirection: 'row', gap: 16 },
   olcuInput:             { flex: 1 },
   olcuLabel:             { fontSize: 12, marginBottom: 8 },
