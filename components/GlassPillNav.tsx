@@ -6,6 +6,7 @@ const TABS = [
   { route: '/',         icon: '⬡',  label: 'Ana Sayfa' },
   { route: '/wardrobe', icon: '👔', label: 'Gardırop'  },
   { route: '/outfits',  icon: '✦',  label: 'Kombin'    },
+  { route: '/jarvis',   icon: 'J',  label: 'Jarvis'    },
   { route: '/profile',  icon: '◎',  label: 'Profil'    },
 ];
 
@@ -74,6 +75,7 @@ const styles = StyleSheet.create({
   },
   iconAktif: {
     color: '#000',
+    fontWeight: '900',
   },
   label: {
     fontSize: 12,
