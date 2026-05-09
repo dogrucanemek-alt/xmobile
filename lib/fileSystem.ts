@@ -31,7 +31,9 @@ export async function copyAsync(options: { from: string; to: string }): Promise<
   const arrayBuffer = await response.arrayBuffer();
   const bytes = new Uint8Array(arrayBuffer);
   const dest = new File(options.to);
-  dest.parentDirectory.create();
+  try { dest.parentDirectory.create(); } catch (e: unknown) {
+    if (!String(e).includes('already exists')) throw e;
+  }
   const writer = dest.writableStream().getWriter();
   await writer.write(bytes);
   await writer.close();
