@@ -15,7 +15,7 @@ const METINLER = {
           '• Profil bilgileri (ten rengi, saç rengi, göz rengi, boy, kilo, cinsiyet)\n' +
           '• Kombin geçmişi\n' +
           '• Konum bilgisi (yalnızca anlık hava durumu için, kaydedilmez)\n\n' +
-          'Bu veriler cihazınızda yerel olarak saklanır ve herhangi bir sunucuya aktarılmaz.',
+          'Kıyafet fotoğrafları, profil bilgileri ve kombin geçmişi cihazınızda yerel olarak saklanır. Giriş yapan kullanıcılar için kimlik doğrulama bilgileri ve Jarvis AI asistan geçmişi güvenli bulut altyapısında tutulur.',
       },
       {
         baslik: '2. Üçüncü Taraf Hizmetler',
@@ -23,12 +23,19 @@ const METINLER = {
           'Uygulama aşağıdaki üçüncü taraf hizmetleri kullanmaktadır:\n\n' +
           '• Anthropic Claude API — Kombin önerileri ve kıyafet tanıma için fotoğraflar gönderilir. Anthropic Gizlilik Politikası geçerlidir (anthropic.com/privacy).\n\n' +
           '• OpenWeatherMap API — Anlık hava durumu verisi için konumunuz gönderilir. OpenWeatherMap Gizlilik Politikası geçerlidir (openweathermap.org/privacy-policy).\n\n' +
-          '• Meshy API — 3D model oluşturmak için kıyafet adı gönderilir. Meshy Gizlilik Politikası geçerlidir (meshy.ai/privacy).',
+          '• Meshy API — 3D model oluşturmak için kıyafet adı gönderilir. Meshy Gizlilik Politikası geçerlidir (meshy.ai/privacy).\n\n' +
+          '• Fashn.ai API — Sanal deneme özelliği için kıyafet ve model fotoğrafları gönderilir. Fashn Gizlilik Politikası geçerlidir (fashn.ai/privacy).\n\n' +
+          '• OpenAI API — Genel asistan sorguları için metin gönderilir. OpenAI Gizlilik Politikası geçerlidir (openai.com/privacy).\n\n' +
+          '• Supabase — Giriş yapan kullanıcılar için kimlik doğrulama ve Jarvis AI asistan geçmişi bulut ortamında saklanır. Supabase Gizlilik Politikası geçerlidir (supabase.com/privacy).\n\n' +
+          '• Sentry — Anonim uygulama hata raporları gönderilir. Sentry Gizlilik Politikası geçerlidir (sentry.io/privacy).\n\n' +
+          '• RevenueCat — Abonelik ve satın alma yönetimi için kullanılır. RevenueCat Gizlilik Politikası geçerlidir (revenuecat.com/privacy).',
       },
       {
         baslik: '3. Veri Güvenliği',
         icerik:
-          'Tüm kişisel verileriniz yalnızca cihazınızın yerel depolama alanında (AsyncStorage ve dosya sistemi) tutulur. Uygulama herhangi bir kullanıcı hesabı oluşturmaz ve verilerinizi bulut sunuculara yüklemez.',
+          'Kıyafet fotoğraflarınız ve profil bilgileriniz cihazınızın yerel depolama alanında (AsyncStorage ve dosya sistemi) tutulur.\n\n' +
+          'Giriş yapan kullanıcılar için kimlik doğrulama bilgileri ve Jarvis AI asistan geçmişi şifreli bağlantı (HTTPS/TLS) üzerinden Supabase bulut altyapısında güvenli biçimde saklanır.\n\n' +
+          'API anahtarlarınız uygulama paketinde yer almaz; tüm AI ve harici servis çağrıları güvenli bir sunucu proxy üzerinden gerçekleştirilir.',
       },
       {
         baslik: '4. KVKK Uyumu',
@@ -64,7 +71,7 @@ const METINLER = {
           '• Profile information (skin tone, hair color, eye color, height, weight, gender)\n' +
           '• Outfit history\n' +
           '• Location (only for instant weather data, never stored)\n\n' +
-          'All data is stored locally on your device and is never sent to our servers.',
+          'Clothing photos, profile data, and outfit history are stored locally on your device. For signed-in users, authentication and Jarvis AI history are stored on secure cloud infrastructure.',
       },
       {
         baslik: '2. Third-Party Services',
@@ -72,12 +79,19 @@ const METINLER = {
           'The app uses the following third-party services:\n\n' +
           '• Anthropic Claude API — Photos are sent for outfit suggestions and clothing recognition. Anthropic\'s Privacy Policy applies (anthropic.com/privacy).\n\n' +
           '• OpenWeatherMap API — Your location is sent for real-time weather data. OpenWeatherMap\'s Privacy Policy applies (openweathermap.org/privacy-policy).\n\n' +
-          '• Meshy API — Clothing names are sent to generate 3D models. Meshy\'s Privacy Policy applies (meshy.ai/privacy).',
+          '• Meshy API — Clothing names are sent to generate 3D models. Meshy\'s Privacy Policy applies (meshy.ai/privacy).\n\n' +
+          '• Fashn.ai API — Clothing and model photos are sent for virtual try-on. Fashn\'s Privacy Policy applies (fashn.ai/privacy).\n\n' +
+          '• OpenAI API — Text is sent for general assistant queries. OpenAI\'s Privacy Policy applies (openai.com/privacy).\n\n' +
+          '• Supabase — Authentication data and Jarvis AI assistant history are stored in the cloud for signed-in users. Supabase\'s Privacy Policy applies (supabase.com/privacy).\n\n' +
+          '• Sentry — Anonymous crash and error reports are sent. Sentry\'s Privacy Policy applies (sentry.io/privacy).\n\n' +
+          '• RevenueCat — Used for subscription and purchase management. RevenueCat\'s Privacy Policy applies (revenuecat.com/privacy).',
       },
       {
         baslik: '3. Data Security',
         icerik:
-          'All your personal data is stored only in your device\'s local storage (AsyncStorage and file system). The app does not create any user accounts and does not upload your data to cloud servers.',
+          'Your clothing photos and profile data are stored locally on your device (AsyncStorage and file system).\n\n' +
+          'For signed-in users, authentication data and Jarvis AI assistant history are securely stored on Supabase cloud infrastructure over encrypted connections (HTTPS/TLS).\n\n' +
+          'API keys are not bundled in the app; all AI and external service calls are routed through a secure server-side proxy.',
       },
       {
         baslik: '4. Data Sharing',
