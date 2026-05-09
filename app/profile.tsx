@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, TextInput, Image, Alert, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, TextInput, Image, Alert, ActivityIndicator, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,6 +8,7 @@ import { copyAsync, documentDirectory } from '../lib/fileSystem';
 import { useApp } from '../lib/context';
 import { useAuth } from '../lib/authContext';
 import ThreeDViewer from '../components/ThreeDViewer';
+import { bildirimAcikMi, bildirimAc, bildirimKapat } from '../lib/notifications';
 
 const PROFIL_KEY = 'xmobile_profil';
 
@@ -50,8 +51,12 @@ export default function Profile() {
   const [avatarGlbPath, setAvatarGlbPath] = useState<string | null>(null);
   const [viewer3D,      setViewer3D]      = useState(false);
   const [glbYukleniyor, setGlbYukleniyor] = useState(false);
+  const [bildirimAcik,  setBildirimAcik]  = useState(true);
 
-  useEffect(() => { yukle(); }, []);
+  useEffect(() => {
+    yukle();
+    bildirimAcikMi().then(setBildirimAcik);
+  }, []);
 
   const glbSec = async () => {
     try {
@@ -407,6 +412,21 @@ export default function Profile() {
             </Text>
             <Text style={[styles.hesapSatirOk, { color: renkler.metin2 }]}>›</Text>
           </TouchableOpacity>
+          <View style={[styles.hesapSatir, { borderBottomColor: renkler.sinir, borderBottomWidth: 0.5 }]}>
+            <Text style={[styles.hesapSatirText, { color: renkler.metin }]}>
+              {dil === 'en' ? '🔔 Morning Notification' : '🔔 Sabah Bildirimi'}
+            </Text>
+            <Switch
+              value={bildirimAcik}
+              onValueChange={async (val) => {
+                setBildirimAcik(val);
+                if (val) await bildirimAc(dil);
+                else await bildirimKapat();
+              }}
+              trackColor={{ false: renkler.sinir, true: 'rgba(0,212,255,0.4)' }}
+              thumbColor={bildirimAcik ? '#00D4FF' : renkler.metin2}
+            />
+          </View>
           <TouchableOpacity
             style={[styles.hesapSatir, { borderBottomColor: renkler.sinir, borderBottomWidth: 0.5 }]}
             onPress={() => router.push('/privacy' as any)}

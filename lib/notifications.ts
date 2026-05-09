@@ -2,6 +2,7 @@ import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NOTIF_KEY = 'xmobile_notif_scheduled';
+const NOTIF_ACIK_KEY = 'xmobile_notif_acik';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -20,9 +21,15 @@ export const bildirimIzniAl = async (): Promise<boolean> => {
   return status === 'granted';
 };
 
+export const bildirimAcikMi = async (): Promise<boolean> => {
+  const val = await AsyncStorage.getItem(NOTIF_ACIK_KEY);
+  return val !== 'false';
+};
+
 export const gunlukBildirimKur = async (dil?: 'tr' | 'en') => {
-  const zatenKurulu = await AsyncStorage.getItem(NOTIF_KEY);
-  if (zatenKurulu) return;
+  const acik = await bildirimAcikMi();
+  if (!acik) return;
+
   if (!dil) {
     const stored = await AsyncStorage.getItem('xmobile_dil');
     dil = stored === 'en' ? 'en' : 'tr';
@@ -39,6 +46,7 @@ export const gunlukBildirimKur = async (dil?: 'tr' | 'en') => {
       body: dil === 'en'
         ? 'Open xmobile to get your AI outfit suggestion!'
         : 'xmobile\'ı aç, bugünkü AI kombin önerini al!',
+      data: { ekran: 'outfits' },
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
@@ -48,6 +56,17 @@ export const gunlukBildirimKur = async (dil?: 'tr' | 'en') => {
   });
 
   await AsyncStorage.setItem(NOTIF_KEY, 'true');
+};
+
+export const bildirimAc = async (dil?: 'tr' | 'en') => {
+  await AsyncStorage.setItem(NOTIF_ACIK_KEY, 'true');
+  await gunlukBildirimKur(dil);
+};
+
+export const bildirimKapat = async () => {
+  await AsyncStorage.setItem(NOTIF_ACIK_KEY, 'false');
+  await Notifications.cancelAllScheduledNotificationsAsync();
+  await AsyncStorage.removeItem(NOTIF_KEY);
 };
 
 export const bildirimIptal = async () => {
