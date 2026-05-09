@@ -1,24 +1,35 @@
 import type { Kiyafet, Kombin } from './types';
 
+const RENK_TABLOSU: [string[], string][] = [
+  [['beyaz', 'ekru', 'kırık', 'white', 'cream', 'ivory', 'off-white'], '#F0F0F0'],
+  [['siyah', 'black'],                                                   '#1A1A1A'],
+  [['antrasit', 'füme', 'charcoal', 'anthracite'],                       '#3B3B3B'],
+  [['lacivert', 'indigo', 'navy'],                                       '#1B2A4A'],
+  [['saks', 'steel blue'],                                               '#4A7FA5'],
+  [['mavi', 'blue', 'cobalt'],                                           '#2E6DA4'],
+  [['kirmizi', 'kırmızı', 'red', 'crimson'],                            '#C0392B'],
+  [['yesil', 'yeşil', 'haki', 'green', 'khaki', 'olive'],              '#27AE60'],
+  [['sari', 'sarı', 'hardal', 'yellow', 'mustard'],                     '#F1C40F'],
+  [['gri', 'grimelanj', 'grey', 'gray'],                                 '#7F8C8D'],
+  [['bej', 'krem', 'kum', 'beige', 'tan', 'camel'],                    '#D4B896'],
+  [['kahve', 'taba', 'vizon', 'brown', 'chocolate'],                    '#8B6347'],
+  [['bordo', 'mürdüm', 'burgundy', 'maroon', 'wine'],                  '#6B1A1A'],
+  [['pembe', 'pudra', 'pink', 'blush', 'rose'],                         '#E91E8C'],
+  [['turuncu', 'kiremit', 'orange', 'coral', 'rust'],                   '#E67E22'],
+  [['mor', 'lila', 'leylak', 'purple', 'lilac', 'violet'],             '#8E44AD'],
+];
+
 export const renkBul = (parcaAdi: string | null): string => {
   const ad = (parcaAdi ?? '').toLowerCase();
-  if (ad.includes('beyaz') || ad.includes('ekru') || ad.includes('kırık') || ad.includes('white') || ad.includes('cream') || ad.includes('ivory') || ad.includes('off-white')) return '#F0F0F0';
-  if (ad.includes('siyah') || ad.includes('black'))                         return '#1A1A1A';
-  if (ad.includes('antrasit') || ad.includes('füme') || ad.includes('charcoal') || ad.includes('anthracite')) return '#3B3B3B';
-  if (ad.includes('lacivert') || ad.includes('indigo') || ad.includes('navy')) return '#1B2A4A';
-  if (ad.includes('saks') || ad.includes('steel blue'))                     return '#4A7FA5';
-  if (ad.includes('mavi') || ad.includes('blue') || ad.includes('cobalt'))  return '#2E6DA4';
-  if (ad.includes('kirmizi') || ad.includes('kırmızı') || ad.includes('red') || ad.includes('crimson')) return '#C0392B';
-  if (ad.includes('yesil') || ad.includes('yeşil') || ad.includes('haki') || ad.includes('green') || ad.includes('khaki') || ad.includes('olive')) return '#27AE60';
-  if (ad.includes('sari') || ad.includes('sarı') || ad.includes('hardal') || ad.includes('yellow') || ad.includes('mustard')) return '#F1C40F';
-  if (ad.includes('gri') || ad.includes('grimelanj') || ad.includes('grey') || ad.includes('gray')) return '#7F8C8D';
-  if (ad.includes('bej') || ad.includes('krem') || ad.includes('kum') || ad.includes('beige') || ad.includes('tan') || ad.includes('camel')) return '#D4B896';
-  if (ad.includes('kahve') || ad.includes('taba') || ad.includes('vizon') || ad.includes('brown') || ad.includes('chocolate')) return '#8B6347';
-  if (ad.includes('bordo') || ad.includes('mürdüm') || ad.includes('burgundy') || ad.includes('maroon') || ad.includes('wine')) return '#6B1A1A';
-  if (ad.includes('pembe') || ad.includes('pudra') || ad.includes('pink') || ad.includes('blush') || ad.includes('rose')) return '#E91E8C';
-  if (ad.includes('turuncu') || ad.includes('kiremit') || ad.includes('orange') || ad.includes('coral') || ad.includes('rust')) return '#E67E22';
-  if (ad.includes('mor') || ad.includes('lila') || ad.includes('leylak') || ad.includes('purple') || ad.includes('lilac') || ad.includes('violet')) return '#8E44AD';
-  return '#6B6B6B';
+  let enYakin = Infinity;
+  let secilen = '#6B6B6B';
+  for (const [anahtarlar, renk] of RENK_TABLOSU) {
+    for (const kw of anahtarlar) {
+      const idx = ad.indexOf(kw);
+      if (idx !== -1 && idx < enYakin) { enYakin = idx; secilen = renk; }
+    }
+  }
+  return secilen;
 };
 
 export const parcaEsle = (kombin: Kombin, anahtarlar: string[]): string | null =>

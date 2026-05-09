@@ -7,24 +7,29 @@ import { AuthProvider } from '../lib/authContext';
 import { gunlukBildirimKur } from '../lib/notifications';
 import { sentryBaslat } from '../lib/sentry';
 import { revenueCatBaslat } from '../lib/revenueCat';
-import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 
 sentryBaslat();
 revenueCatBaslat();
 
+// expo-notifications push support removed from Expo Go in SDK 53+
+const isExpoGo = Constants.appOwnership === 'expo';
+
 function NotificationHandler() {
   const router = useRouter();
-  const listener = useRef<Notifications.EventSubscription | null>(null);
+  const listener = useRef<any>(null);
 
   useEffect(() => {
-    listener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      const ekran = response.notification.request.content.data?.ekran;
-      if (ekran === 'outfits') {
-        router.push('/outfits' as any);
-      }
-    });
-    return () => listener.current?.remove();
+    if (isExpoGo) return;
+    try {
+      const N = require('expo-notifications');
+      listener.current = N.addNotificationResponseReceivedListener((response: any) => {
+        const ekran = response.notification.request.content.data?.ekran;
+        if (ekran === 'outfits') router.push('/outfits' as any);
+      });
+    } catch (_) {}
+    return () => { try { listener.current?.remove(); } catch (_) {} };
   }, []);
 
   return null;

@@ -41,5 +41,9 @@ export async function makeDirectoryAsync(
   uri: string,
   _options?: { intermediates?: boolean },
 ): Promise<void> {
-  new Directory(uri).create();
+  try {
+    new Directory(uri).create();
+  } catch (e: unknown) {
+    if (!String(e).includes('already exists')) throw e;
+  }
 }
