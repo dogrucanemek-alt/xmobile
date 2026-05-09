@@ -45,7 +45,7 @@ export async function tryOnBaslat(
     uriToBase64(garmentImageUri),
   ]);
 
-  const res = await fetch(`${API_URL}/api/fashn/run`, {
+  const res = await fetch(`${API_URL}/api/fashn`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -61,12 +61,24 @@ export async function tryOnBaslat(
   return data.id as string;
 }
 
+export async function kiyafetGorseliUret(garmentName: string): Promise<string> {
+  const res = await fetch(`${API_URL}/api/dalle/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ garmentName }),
+  });
+  const data = await res.json();
+  if (!res.ok || data.error) throw new Error(errMsg(data.error) || `DALL-E hatası: ${res.status}`);
+  if (!data.url) throw new Error('DALL-E görsel URL gelmedi');
+  return data.url as string;
+}
+
 export async function tryOnDurumuKontrol(id: string): Promise<{
   status: 'starting' | 'in_queue' | 'processing' | 'completed' | 'failed';
   output?: string[];
   error?: string;
 }> {
-  const res = await fetch(`${API_URL}/api/fashn/status?id=${encodeURIComponent(id)}`);
+  const res = await fetch(`${API_URL}/api/fashn?id=${encodeURIComponent(id)}`);
   return res.json();
 }
 

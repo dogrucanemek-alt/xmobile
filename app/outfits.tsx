@@ -25,7 +25,7 @@ import ViewShot, { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { kombinHakkiVar, kombinKullan, kalanHakAl } from '../lib/freemium';
 import { proMuKontrol } from '../lib/revenueCat';
-import { tryOnBaslat, tryOnBekle, type TryOnCategory } from '../lib/fashnService';
+import { tryOnBaslat, tryOnBekle, kiyafetGorseliUret, type TryOnCategory } from '../lib/fashnService';
 import * as ImagePicker from 'expo-image-picker';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
@@ -439,40 +439,30 @@ export default function Outfits() {
       return 0;
     });
 
-    // Fotoğrafı olmayan parçaları filtrele
-    const gecerliParcalar = sirali.filter(p => {
-      const eslesen = parcaEslesmeAra(p);
-      return !!eslesen?.foto;
-    });
-
-    if (gecerliParcalar.length === 0) {
-      Alert.alert(
-        dil === 'en' ? 'No photos' : 'Fotoğraf yok',
-        dil === 'en'
-          ? 'None of the selected items have photos. Add photos in your wardrobe.'
-          : 'Seçili parçaların hiçbirinde fotoğraf yok. Gardıroptan fotoğraf ekle.',
-      );
-      return;
-    }
-
     setTryOn(s => ({ ...s, adim: 'yukleniyor', sonucUri: null, hata: null, adimMetni: '' }));
 
     try {
       let aktifModel = modelUri;
 
-      for (let i = 0; i < gecerliParcalar.length; i++) {
-        const parca = gecerliParcalar[i];
-        const eslesen = parcaEslesmeAra(parca)!;
+      for (let i = 0; i < sirali.length; i++) {
+        const parca = sirali[i];
+        const eslesen = parcaEslesmeAra(parca);
         const kategori = kategoriSec(parca);
 
         setTryOn(s => ({
           ...s,
-          adimMetni: gecerliParcalar.length > 1
-            ? `${i + 1}/${gecerliParcalar.length}: ${parca}`
+          adimMetni: sirali.length > 1
+            ? `${i + 1}/${sirali.length}: ${parca}`
             : parca,
         }));
 
-        const jobId = await tryOnBaslat(aktifModel, eslesen.foto!, kategori);
+        let garmentUri = eslesen?.foto ?? null;
+        if (!garmentUri) {
+          setTryOn(s => ({ ...s, adimMetni: `🪄 AI görsel üretiyor: ${parca}` }));
+          garmentUri = await kiyafetGorseliUret(parca);
+        }
+
+        const jobId = await tryOnBaslat(aktifModel, garmentUri, kategori);
         aktifModel  = await tryOnBekle(jobId);
       }
 
@@ -1044,20 +1034,23 @@ ${jsonFormat}`;
                       styles.tryOnParcaBtn,
                       { backgroundColor: renkler.kart, borderColor: secili ? '#00D4FF' : renkler.sinir },
                       secili && { borderWidth: 1.5 },
-                      !fotoVar && { opacity: 0.45 },
                     ]}
-                    onPress={() => fotoVar && parcaToggle(p)}
-                    activeOpacity={fotoVar ? 0.7 : 1}
+                    onPress={() => parcaToggle(p)}
+                    activeOpacity={0.7}
                   >
                     {eslesme?.foto
                       ? <Image source={{ uri: eslesme.foto }} style={styles.tryOnParcaFoto} />
-                      : <View style={[styles.tryOnParcaFotoYok, { backgroundColor: renkler.chip }]} />
+                      : (
+                        <View style={[styles.tryOnParcaFotoYok, { backgroundColor: renkler.chip, alignItems: 'center', justifyContent: 'center' }]}>
+                          <Text style={{ fontSize: 22 }}>🪄</Text>
+                        </View>
+                      )
                     }
                     <View style={{ flex: 1 }}>
                       <Text style={[styles.tryOnParcaAd, { color: renkler.metin }]}>{p}</Text>
                       {!fotoVar && (
-                        <Text style={{ color: renkler.metin2, fontSize: 10 }}>
-                          {dil === 'en' ? 'No photo' : 'Fotoğraf yok'}
+                        <Text style={{ color: '#00D4FF', fontSize: 10 }}>
+                          {dil === 'en' ? '🪄 AI will generate photo' : '🪄 AI fotoğraf üretecek'}
                         </Text>
                       )}
                     </View>
