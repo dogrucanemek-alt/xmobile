@@ -6,6 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { copyAsync, documentDirectory } from '../lib/fileSystem';
 import { useApp } from '../lib/context';
+import { useAuth } from '../lib/authContext';
 import ThreeDViewer from '../components/ThreeDViewer';
 
 const PROFIL_KEY = 'xmobile_profil';
@@ -35,6 +36,7 @@ const GOZ_RENKLERI = [
 export default function Profile() {
   const router = useRouter();
   const { t, renkler, aksanRenk, dil, clearAvatarGlb, loadAvatarGlb, avatarGlbUri } = useApp();
+  const { session, cikisYap } = useAuth();
 
   const [tenRengi,    setTenRengi]    = useState('#FDDBB4');
   const [sacRengi,    setSacRengi]    = useState('#1A1A1A');
@@ -406,7 +408,7 @@ export default function Profile() {
             <Text style={[styles.hesapSatirOk, { color: renkler.metin2 }]}>›</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.hesapSatir}
+            style={[styles.hesapSatir, { borderBottomColor: renkler.sinir, borderBottomWidth: 0.5 }]}
             onPress={() => router.push('/privacy' as any)}
             activeOpacity={0.7}
           >
@@ -415,6 +417,24 @@ export default function Profile() {
             </Text>
             <Text style={[styles.hesapSatirOk, { color: renkler.metin2 }]}>›</Text>
           </TouchableOpacity>
+          {session && (
+            <TouchableOpacity
+              style={styles.hesapSatir}
+              onPress={() => Alert.alert(
+                dil === 'en' ? 'Sign Out' : 'Çıkış Yap',
+                dil === 'en' ? 'Are you sure you want to sign out?' : 'Çıkış yapmak istediğinize emin misiniz?',
+                [
+                  { text: dil === 'en' ? 'Cancel' : 'İptal', style: 'cancel' },
+                  { text: dil === 'en' ? 'Sign Out' : 'Çıkış Yap', style: 'destructive', onPress: cikisYap },
+                ]
+              )}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.hesapSatirText, { color: '#FF3B30' }]}>
+                {dil === 'en' ? 'Sign Out' : 'Çıkış Yap'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={{ height: 40 }} />

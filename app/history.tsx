@@ -10,9 +10,9 @@ import type { KombinKayit } from '../lib/types';
 
 export const GECMIS_KEY = 'xmobile_gecmis';
 
-const tarihFormat = (iso: string) => {
+const tarihFormat = (iso: string, dil: 'tr' | 'en') => {
   const d = new Date(iso);
-  return d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+  return d.toLocaleDateString(dil === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 };
 
 const saatFormat = (iso: string) => {
@@ -144,7 +144,7 @@ export default function History() {
               <View style={styles.kartUst}>
                 <View>
                   <Text style={[styles.tarih, { color: renkler.metin2 }]}>
-                    {tarihFormat(kayit.tarih)}
+                    {tarihFormat(kayit.tarih, dil)}
                   </Text>
                   <Text style={[styles.saat, { color: renkler.metin2 }]}>
                     {saatFormat(kayit.tarih)}
