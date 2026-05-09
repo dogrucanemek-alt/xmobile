@@ -25,9 +25,9 @@ const TIER_LIMITLER: Record<Tier, number> = {
 };
 
 const SubscriptionContext = createContext<SubscriptionContextType>({
-  tier: 'pro',
+  tier: 'free',
   aylikKullanim: 0,
-  can3D: () => true,
+  can3D: () => false,
   kullanim3DArtir: async () => {},
   tierDegistir: async () => {},
 });
@@ -37,7 +37,7 @@ function simdikiAy(): string {
 }
 
 export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
-  const [tier, setTier] = useState<Tier>('pro');
+  const [tier, setTier] = useState<Tier>('free');
   const [aylikKullanim, setAylikKullanim] = useState(0);
 
   useEffect(() => {
