@@ -864,6 +864,7 @@ ${jsonFormat}`;
           >
             {seciliKombin && (
               <Animated.View style={[styles.avatarSatir, { transform: [{ translateX: slideAnim }] }]}>
+                <View style={{ alignItems: 'center' }}>
                 <View style={styles.avatarOrtala}>
                   {(() => {
                     const hasFoto = !!profil?.profilFoto;
@@ -915,7 +916,9 @@ ${jsonFormat}`;
                     return <AvatarSVG kombin={seciliKombin} profil={profil} kiyafetler={kiyafetler} />;
                   })()}
 
-                  {/* Fotoğraf / 3D geçiş butonu */}
+                </View>
+
+                  {/* Fotoğraf / 3D geçiş butonu - fotoğrafın altında */}
                   {profil?.profilFoto && avatarGlbUri && (
                     <View style={styles.gorselToggle}>
                       <TouchableOpacity
@@ -1047,8 +1050,9 @@ ${jsonFormat}`;
                   {feedPaylasiyor ? '...' : '🌍'}
                 </Text>
               </TouchableOpacity>
+              </View>
               <TouchableOpacity
-                style={[styles.secButon, { backgroundColor: renkler.btnPrimary, flex: 1 }]}
+                style={[styles.secButon, { backgroundColor: renkler.btnPrimary, marginTop: 8 }]}
                 onPress={async () => {
                   const kayitli = await AsyncStorage.getItem(GECMIS_KEY);
                   const liste = kayitli ? JSON.parse(kayitli) : [];
@@ -1073,7 +1077,6 @@ ${jsonFormat}`;
               >
                 <Text style={[styles.secButonText, { color: renkler.btnPrimaryMetin }]}>{t.buKombiniSec}</Text>
               </TouchableOpacity>
-              </View>
             </View>
           )}
 
@@ -1309,7 +1312,7 @@ const styles = StyleSheet.create({
   },
   avatarSatir:    { flexDirection: 'row', alignItems: 'center', gap: 14 },
   avatarOrtala:   { width: DISP_W, height: DISP_H, alignItems: 'center' },
-  gorselToggle:   { position: 'absolute', bottom: 4, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center', gap: 4 },
+  gorselToggle:   { flexDirection: 'row', justifyContent: 'center', gap: 4, marginTop: 6 },
   gorselToggleBtn:{ borderRadius: 12, padding: 4, backgroundColor: 'rgba(0,0,0,0.18)' },
   gorselToggleIkon:{ fontSize: 14 },
   avatarBilgi:    { flex: 1 },
