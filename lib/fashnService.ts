@@ -13,6 +13,15 @@ function errMsg(e: unknown): string {
   return String(e);
 }
 
+async function safeJson(res: Response): Promise<any> {
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(`Geçersiz API yanıtı (${res.status}): ${text.slice(0, 120)}`);
+  }
+}
+
 async function uriToBase64(uri: string): Promise<string> {
   if (uri.startsWith('data:')) return uri.split(',')[1];
   const res = await fetch(uri);
@@ -62,7 +71,7 @@ export async function tryOnBaslat(
     }),
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || data.error) throw new Error(errMsg(data.error) || `Fashn API hatası: ${res.status}`);
   if (!data.id) throw new Error(`Fashn API: id gelmedi. Yanıt: ${JSON.stringify(data).slice(0, 120)}`);
   return data.id as string;
@@ -74,7 +83,7 @@ export async function kiyafetGorseliUret(garmentName: string): Promise<string> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ garmentName }),
   });
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || data.error) throw new Error(errMsg(data.error) || `DALL-E hatası: ${res.status}`);
   if (!data.url) throw new Error('DALL-E görsel URL gelmedi');
   return data.url as string;
@@ -86,7 +95,7 @@ export async function tryOnDurumuKontrol(id: string): Promise<{
   error?: string;
 }> {
   const res = await fetch(`${API_URL}/api/fashn?id=${encodeURIComponent(id)}`);
-  return res.json();
+  return safeJson(res);
 }
 
 export async function tryOnBekle(id: string, onProgress?: () => void): Promise<string> {
