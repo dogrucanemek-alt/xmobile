@@ -894,9 +894,6 @@ ${jsonFormat}`;
 
                     // Fotoğraf modu: ücretsiz, tam boy profil fotoğrafı + renk katmanı
                     if (hasFoto) {
-                      const oUst  = _renk(disParca ?? ustParca);
-                      const oAlt  = _renk(altParca);
-                      const oAyak = _renk(ayakParca);
                       return (
                         <View style={{ width: DISP_W, height: DISP_H, borderRadius: 12, overflow: 'hidden' }}>
                           <Image
@@ -904,10 +901,6 @@ ${jsonFormat}`;
                             style={{ width: DISP_W, height: DISP_H }}
                             resizeMode="cover"
                           />
-                          {/* Kıyafet renk katmanları */}
-                          <View style={{ position: 'absolute', top: '16%', left: 0, right: 0, height: '37%', backgroundColor: oUst, opacity: 0.28 }} />
-                          <View style={{ position: 'absolute', top: '53%', left: 0, right: 0, height: '35%', backgroundColor: oAlt, opacity: 0.28 }} />
-                          <View style={{ position: 'absolute', top: '88%', left: 0, right: 0, height: '12%', backgroundColor: oAyak, opacity: 0.35 }} />
                         </View>
                       );
                     }
