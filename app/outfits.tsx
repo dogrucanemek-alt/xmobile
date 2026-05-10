@@ -1245,6 +1245,7 @@ ${jsonFormat}`;
                     source={{ uri: tryOn.sonucUri! }}
                     style={styles.tryOnSonucGorsel}
                     resizeMode="contain"
+                    onError={() => setTryOn(s => ({ ...s, hata: `Görsel yüklenemedi. URL: ${s.sonucUri?.slice(0, 60)}` }))}
                   />
                   <TouchableOpacity
                     style={[styles.tryOnTekrarBtn, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}
