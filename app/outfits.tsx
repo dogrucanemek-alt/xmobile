@@ -733,7 +733,7 @@ ${jsonFormat}`;
           return;
         }
         setKombinler(parsed.kombinler);
-        takipEt(Olaylar.KOMBİN_OLUSTURULDU, { kombin_sayisi: parsed.kombinler.length });
+        takipEt(Olaylar.KOMBIN_OLUSTURULDU, { kombin_sayisi: parsed.kombinler.length });
         await kombinKullan();
         const isPro2 = await proMuKontrol();
         const hak2 = await kalanHakAl(isPro2);
