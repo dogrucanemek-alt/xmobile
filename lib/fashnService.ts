@@ -35,22 +35,29 @@ function mimeType(uri: string): string {
 
 export type TryOnCategory = 'auto' | 'tops' | 'bottoms' | 'one-pieces';
 
+async function gorselParam(uri: string): Promise<string> {
+  // Fashn.ai CDN URL'lerini tekrar encode etme, doğrudan geç
+  if (uri.startsWith('http')) return uri;
+  const b64 = await uriToBase64(uri);
+  return `data:${mimeType(uri)};base64,${b64}`;
+}
+
 export async function tryOnBaslat(
   modelImageUri: string,
   garmentImageUri: string,
   category: TryOnCategory = 'auto',
 ): Promise<string> {
-  const [modelB64, garmentB64] = await Promise.all([
-    uriToBase64(modelImageUri),
-    uriToBase64(garmentImageUri),
+  const [modelParam, garmentParam] = await Promise.all([
+    gorselParam(modelImageUri),
+    gorselParam(garmentImageUri),
   ]);
 
   const res = await fetch(`${API_URL}/api/fashn`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model_image:   `data:${mimeType(modelImageUri)};base64,${modelB64}`,
-      garment_image: `data:${mimeType(garmentImageUri)};base64,${garmentB64}`,
+      model_image:   modelParam,
+      garment_image: garmentParam,
       category,
     }),
   });
@@ -83,8 +90,8 @@ export async function tryOnDurumuKontrol(id: string): Promise<{
 }
 
 export async function tryOnBekle(id: string, onProgress?: () => void): Promise<string> {
-  for (let i = 0; i < 30; i++) {
-    await new Promise(r => setTimeout(r, 2000));
+  for (let i = 0; i < 50; i++) {
+    await new Promise(r => setTimeout(r, 3000));
     const durum = await tryOnDurumuKontrol(id);
     if (durum.status === 'completed') {
       if (!durum.output?.[0]) throw new Error('Sonuç görseli gelmedi');
@@ -93,5 +100,5 @@ export async function tryOnBekle(id: string, onProgress?: () => void): Promise<s
     if (durum.status === 'failed') throw new Error(errMsg(durum.error) || 'Try-on başarısız');
     onProgress?.();
   }
-  throw new Error('Zaman aşımı: 60 saniyede sonuç gelmedi');
+  throw new Error('Zaman aşımı: 150 saniyede sonuç gelmedi');
 }
