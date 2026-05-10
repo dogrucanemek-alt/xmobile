@@ -336,6 +336,7 @@ export default function Outfits() {
   const [paylasiyor, setPaylasiyor]         = useState(false);
   const [feedPaylasiyor, setFeedPaylasiyor] = useState(false);
   const [kalanHak, setKalanHak]         = useState<number | null>(null);
+  const [gorselMod, setGorselMod] = useState<'foto' | '3d'>('foto');
   const [tryOn, setTryOn] = useState<{
     visible: boolean;
     adim: 'sec' | 'yukleniyor' | 'sonuc';
@@ -858,26 +859,75 @@ ${jsonFormat}`;
             {seciliKombin && (
               <Animated.View style={[styles.avatarSatir, { transform: [{ translateX: slideAnim }] }]}>
                 <View style={styles.avatarOrtala}>
-                  {avatarGlbUri ? (() => {
+                  {(() => {
+                    const hasFoto = !!profil?.profilFoto;
+                    const has3D   = !!avatarGlbUri;
+
                     const _esle = (keys: string[]) => parcaEsle(seciliKombin, keys);
                     const _renk = (ad: string | null) => kiyafetRenkBul(ad, kiyafetler);
                     const disParca  = _esle(['mont','kaban','trençkot','trenkot','yağmurluk','yagmurluk','hırka','hirka','coat','jacket','raincoat','cardigan','blazer','trench','parka','overcoat']);
                     const ustParca  = _esle(['gömlek','gomlek','tişört','tisort','kazak','bluz','ceket','sweatshirt','hoodie','shirt','t-shirt','tshirt','sweater','blouse','top','polo','turtleneck','knit']);
                     const altParca  = _esle(['pantolon','etek','şort','short','jean','takim','takım','elbise','pants','trousers','skirt','shorts','jeans','dress','suit','chinos','leggings','culottes']);
                     const ayakParca = _esle(['ayakkabı','ayakkabi','bot','sneaker','loafer','sandalet','çizme','cizme','shoes','boots','sneakers','loafers','sandals','heels','flats','mules','oxfords']);
-                    return (
-                      <ThreeDInline
-                        glbUrl={avatarGlbUri}
-                        width={DISP_W}
-                        height={DISP_H}
-                        onTap={() => setViewer3D({ visible: true, glbUrl: avatarGlbUri!, baslik: 'Avatar' })}
-                        ustRenk={_renk(disParca ?? ustParca)}
-                        altRenk={_renk(altParca)}
-                        ayakRenk={_renk(ayakParca)}
-                      />
-                    );
-                  })() : (
-                    <AvatarSVG kombin={seciliKombin} profil={profil} kiyafetler={kiyafetler} />
+
+                    // 3D modu: ücretli, GLB gerekli
+                    if (gorselMod === '3d' && has3D) {
+                      return (
+                        <ThreeDInline
+                          glbUrl={avatarGlbUri!}
+                          width={DISP_W}
+                          height={DISP_H}
+                          onTap={() => setViewer3D({ visible: true, glbUrl: avatarGlbUri!, baslik: 'Avatar' })}
+                          ustRenk={_renk(disParca ?? ustParca)}
+                          altRenk={_renk(altParca)}
+                          ayakRenk={_renk(ayakParca)}
+                        />
+                      );
+                    }
+
+                    // Fotoğraf modu: ücretsiz, tam boy profil fotoğrafı + renk katmanı
+                    if (hasFoto) {
+                      const oUst  = _renk(disParca ?? ustParca);
+                      const oAlt  = _renk(altParca);
+                      const oAyak = _renk(ayakParca);
+                      return (
+                        <View style={{ width: DISP_W, height: DISP_H, borderRadius: 12, overflow: 'hidden' }}>
+                          <Image
+                            source={{ uri: profil!.profilFoto! }}
+                            style={{ width: DISP_W, height: DISP_H }}
+                            resizeMode="cover"
+                          />
+                          {/* Kıyafet renk katmanları */}
+                          <View style={{ position: 'absolute', top: '16%', left: 0, right: 0, height: '37%', backgroundColor: oUst, opacity: 0.28 }} />
+                          <View style={{ position: 'absolute', top: '53%', left: 0, right: 0, height: '35%', backgroundColor: oAlt, opacity: 0.28 }} />
+                          <View style={{ position: 'absolute', top: '88%', left: 0, right: 0, height: '12%', backgroundColor: oAyak, opacity: 0.35 }} />
+                        </View>
+                      );
+                    }
+
+                    // SVG fallback
+                    return <AvatarSVG kombin={seciliKombin} profil={profil} kiyafetler={kiyafetler} />;
+                  })()}
+
+                  {/* Fotoğraf / 3D geçiş butonu */}
+                  {profil?.profilFoto && avatarGlbUri && (
+                    <View style={styles.gorselToggle}>
+                      <TouchableOpacity
+                        style={[styles.gorselToggleBtn, gorselMod === 'foto' && { backgroundColor: 'rgba(0,212,255,0.25)' }]}
+                        onPress={() => setGorselMod('foto')}
+                      >
+                        <Text style={styles.gorselToggleIkon}>📷</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[styles.gorselToggleBtn, gorselMod === '3d' && { backgroundColor: 'rgba(0,212,255,0.25)' }]}
+                        onPress={() => {
+                          if (!can3D()) { setUpsellGoster(true); return; }
+                          setGorselMod('3d');
+                        }}
+                      >
+                        <Text style={styles.gorselToggleIkon}>🎮</Text>
+                      </TouchableOpacity>
+                    </View>
                   )}
                 </View>
                 <View style={styles.avatarBilgi}>
@@ -1252,6 +1302,9 @@ const styles = StyleSheet.create({
   },
   avatarSatir:    { flexDirection: 'row', alignItems: 'center', gap: 14 },
   avatarOrtala:   { width: DISP_W, height: DISP_H, alignItems: 'center' },
+  gorselToggle:   { position: 'absolute', bottom: 4, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center', gap: 4 },
+  gorselToggleBtn:{ borderRadius: 12, padding: 4, backgroundColor: 'rgba(0,0,0,0.18)' },
+  gorselToggleIkon:{ fontSize: 14 },
   avatarBilgi:    { flex: 1 },
   avatarBaslik:   { fontSize: 17, fontWeight: '700', marginBottom: 8, letterSpacing: 0.2 },
   badge:          { borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5, alignSelf: 'flex-start', marginBottom: 10 },
