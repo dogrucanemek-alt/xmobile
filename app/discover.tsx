@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router';
 import { useApp } from '../lib/context';
 import { useAuth } from '../lib/authContext';
 import { postListesiAl, begeniToggle, kullaniciBegendimi, type SocialPost } from '../lib/socialService';
+import { takipEt, Olaylar } from '../lib/analytics';
 
 const { width } = Dimensions.get('window');
 const KART_W = (width - 48) / 2;
@@ -40,6 +41,7 @@ export default function Discover() {
   }, [user]);
 
   useEffect(() => {
+    takipEt(Olaylar.KESFET_ACILDI);
     yukle().finally(() => setYukleniyor(false));
   }, [yukle]);
 
@@ -55,6 +57,7 @@ export default function Discover() {
       return;
     }
     const yeniDurum = await begeniToggle(postId, user.id);
+    if (yeniDurum) takipEt(Olaylar.BEGENI_YAPILDI);
     setBegenilenler(prev => {
       const yeni = new Set(prev);
       if (yeniDurum) yeni.add(postId); else yeni.delete(postId);

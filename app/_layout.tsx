@@ -7,11 +7,13 @@ import { AuthProvider } from '../lib/authContext';
 import { gunlukBildirimKur } from '../lib/notifications';
 import { sentryBaslat } from '../lib/sentry';
 import { revenueCatBaslat } from '../lib/revenueCat';
+import { analyticsBaslat } from '../lib/analytics';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 
 sentryBaslat();
 revenueCatBaslat();
+analyticsBaslat();
 
 // expo-notifications push support removed from Expo Go in SDK 53+
 const isExpoGo = Constants.appOwnership === 'expo';

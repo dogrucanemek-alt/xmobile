@@ -28,6 +28,7 @@ import { proMuKontrol } from '../lib/revenueCat';
 import { tryOnBaslat, tryOnBekle, kiyafetGorseliUret, type TryOnCategory } from '../lib/fashnService';
 import { postOlustur } from '../lib/socialService';
 import { useAuth } from '../lib/authContext';
+import { takipEt, Olaylar } from '../lib/analytics';
 import * as ImagePicker from 'expo-image-picker';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
@@ -417,6 +418,7 @@ export default function Outfits() {
         havaDerece: hava?.derece,
         havaDurum:  hava?.durum,
       });
+      takipEt(Olaylar.SOSYAL_PAYLASILDI, { kombin_turu: seciliKombin.tur });
       Alert.alert(
         dil === 'en' ? '🎉 Shared!' : '🎉 Paylaşıldı!',
         dil === 'en' ? 'Your outfit is now visible in Discover.' : 'Kombinin Keşfet\'te görünüyor.',
@@ -474,6 +476,8 @@ export default function Outfits() {
       return;
     }
 
+    takipEt(Olaylar.TRYON_BASLADI, { parca_sayisi: parcalar.length });
+
     // Tops önce, bottoms/one-pieces sonra
     const sirali = [...parcalar].sort((a, b) => {
       const ka = kategoriSec(a), kb = kategoriSec(b);
@@ -526,6 +530,7 @@ export default function Outfits() {
       }
 
       setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: aktifModel, hata: null }));
+      takipEt(Olaylar.TRYON_TAMAMLANDI, { parca_sayisi: parcalar.length });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: null, hata: msg }));
@@ -728,6 +733,7 @@ ${jsonFormat}`;
           return;
         }
         setKombinler(parsed.kombinler);
+        takipEt(Olaylar.KOMBİN_OLUSTURULDU, { kombin_sayisi: parsed.kombinler.length });
         await kombinKullan();
         const isPro2 = await proMuKontrol();
         const hak2 = await kalanHakAl(isPro2);

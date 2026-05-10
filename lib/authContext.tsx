@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
+import { kullaniciBelirle, oturumKapat } from './analytics';
 
 interface AuthContextValue {
   session: Session | null;
@@ -23,6 +24,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
+      if (s?.user) kullaniciBelirle(s.user.id, s.user.email);
+      else oturumKapat();
     });
 
     return () => listener.subscription.unsubscribe();
