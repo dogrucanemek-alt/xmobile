@@ -236,6 +236,50 @@
     }
     .feature-card p { font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.45); line-height: 1.8; }
 
+    /* ── PRİCİNG ── */
+    .pricing-section { background: #000; padding: 128px 60px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .pricing-header { text-align: center; margin-bottom: 72px; }
+    .pricing-header .eyebrow { margin-bottom: 18px; }
+    .pricing-header .section-body { margin: 0 auto; max-width: 480px; }
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      max-width: 1100px; margin: 0 auto;
+    }
+    .pricing-card { background: #000; padding: 52px 40px; position: relative; }
+    .pricing-card.featured { background: #0a0a0a; }
+    .pricing-badge {
+      display: inline-block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+      color: #000; background: #fff; padding: 4px 12px; border-radius: 2px;
+      margin-bottom: 28px;
+    }
+    .pricing-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.4); margin-bottom: 16px;
+    }
+    .pricing-price {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(42px, 5vw, 64px); font-weight: 700; color: #fff;
+      line-height: 1; margin-bottom: 6px;
+    }
+    .pricing-period { font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 1px; margin-bottom: 36px; }
+    .pricing-features { list-style: none; margin-bottom: 44px; }
+    .pricing-features li {
+      font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.55);
+      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .pricing-features li::before { content: '—'; color: rgba(255,255,255,0.2); font-size: 11px; flex-shrink: 0; }
+    .pricing-features li.active { color: rgba(255,255,255,0.85); }
+    .pricing-features li.active::before { content: '✓'; color: #fff; }
+    .pricing-note { font-size: 11px; color: rgba(255,255,255,0.18); letter-spacing: 0.5px; margin-top: 16px; }
+    @media (max-width: 1024px) { .pricing-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .pricing-section { padding: 80px 24px; } .pricing-card { padding: 40px 28px; } }
+
     /* ── COMING SOON ── */
     .coming-soon {
       position: relative; width: 100%; height: 100vh; min-height: 680px; overflow: hidden;
@@ -428,6 +472,7 @@
     <li><a href="#product" data-tr="Ürün" data-en="Product">Ürün</a></li>
     <li><a href="#app" data-tr="Uygulama" data-en="App">Uygulama</a></li>
     <li><a href="#features" data-tr="Özellikler" data-en="Features">Özellikler</a></li>
+    <li><a href="#pricing" data-tr="Fiyat" data-en="Pricing">Fiyat</a></li>
     <li><a href="#coming-soon" data-tr="Mobilya" data-en="Furniture">Mobilya</a></li>
     <li><a href="#bedroom" data-tr="Yatak Odası" data-en="Bedroom">Yatak Odası</a></li>
     <li><a href="#living-room" data-tr="Oturma Odası" data-en="Living Room">Oturma Odası</a></li>
@@ -449,6 +494,7 @@
   <a href="#product" data-tr="Ürün" data-en="Product">Ürün</a>
   <a href="#app" data-tr="Uygulama" data-en="App">Uygulama</a>
   <a href="#features" data-tr="Özellikler" data-en="Features">Özellikler</a>
+  <a href="#pricing" data-tr="Fiyat" data-en="Pricing">Fiyat</a>
   <a href="#coming-soon" data-tr="Mobilya" data-en="Furniture">Mobilya</a>
   <a href="#bedroom" data-tr="Yatak Odası" data-en="Bedroom">Yatak Odası</a>
   <a href="#living-room" data-tr="Oturma Odası" data-en="Living Room">Oturma Odası</a>
@@ -572,6 +618,64 @@
       </div>
       <h3 data-tr="Dev Dokunmatik Ekran" data-en="Giant Touchscreen">Dev Dokunmatik Ekran</h3>
       <p data-tr="Gardırop kapısına entegre edilmiş tam boyutlu interaktif ekran. Göz atın, seçin, karar verin — doğrudan dolabın başında." data-en="A full-size interactive display built into the wardrobe door. Browse, select, decide — right at the closet.">Gardırop kapısına entegre edilmiş tam boyutlu interaktif ekran. Göz atın, seçin, karar verin — doğrudan dolabın başında.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRİCİNG -->
+<section class="pricing-section" id="pricing">
+  <div class="pricing-header">
+    <p class="eyebrow reveal" data-tr="Fiyatlandırma" data-en="Pricing">Fiyatlandırma</p>
+    <h2 class="section-title reveal reveal-d1" data-tr="Sabahlarınıza<br>değer katın." data-en="Invest in your<br>mornings.">Sabahlarınıza<br>değer katın.</h2>
+    <p class="section-body reveal reveal-d2" data-tr="Uygulama ücretsiz başlar. Akıllı gardırop için erken erişim fiyatı bekleme listesinde." data-en="The app starts free. Early access pricing for the smart wardrobe on the waitlist.">Uygulama ücretsiz başlar. Akıllı gardırop için erken erişim fiyatı bekleme listesinde.</p>
+  </div>
+  <div class="pricing-grid reveal">
+    <!-- FREE -->
+    <div class="pricing-card">
+      <p class="pricing-name" data-tr="Ücretsiz" data-en="Free">Ücretsiz</p>
+      <div class="pricing-price">₺0</div>
+      <p class="pricing-period" data-tr="sonsuza dek ücretsiz" data-en="free forever">sonsuza dek ücretsiz</p>
+      <ul class="pricing-features">
+        <li class="active" data-tr="Günlük 3 kombin önerisi" data-en="3 outfit suggestions/day">Günlük 3 kombin önerisi</li>
+        <li class="active" data-tr="Hava durumu entegrasyonu" data-en="Weather integration">Hava durumu entegrasyonu</li>
+        <li class="active" data-tr="Kıyafet kataloğu (50 ürün)" data-en="Wardrobe catalog (50 items)">Kıyafet kataloğu (50 ürün)</li>
+        <li data-tr="Sanal deneme (try-on)" data-en="Virtual try-on">Sanal deneme (try-on)</li>
+        <li data-tr="Sınırsız kombin önerisi" data-en="Unlimited outfit suggestions">Sınırsız kombin önerisi</li>
+        <li data-tr="Renk uyumu skoru" data-en="Color harmony score">Renk uyumu skoru</li>
+      </ul>
+      <a href="#waitlist" class="btn" style="width:100%;justify-content:center;" data-tr="Ücretsiz Başla" data-en="Start Free">Ücretsiz Başla</a>
+    </div>
+    <!-- PRO -->
+    <div class="pricing-card featured">
+      <div class="pricing-badge" data-tr="En Popüler" data-en="Most Popular">En Popüler</div>
+      <p class="pricing-name" data-tr="Pro" data-en="Pro">Pro</p>
+      <div class="pricing-price">₺149</div>
+      <p class="pricing-period" data-tr="/ ay · yıllık ödeme" data-en="/ mo · billed annually">/ ay · yıllık ödeme</p>
+      <ul class="pricing-features">
+        <li class="active" data-tr="Sınırsız kombin önerisi" data-en="Unlimited outfit suggestions">Sınırsız kombin önerisi</li>
+        <li class="active" data-tr="Sanal deneme (try-on)" data-en="Virtual try-on">Sanal deneme (try-on)</li>
+        <li class="active" data-tr="Renk uyumu skoru" data-en="Color harmony score">Renk uyumu skoru</li>
+        <li class="active" data-tr="Sınırsız kıyafet kataloğu" data-en="Unlimited wardrobe catalog">Sınırsız kıyafet kataloğu</li>
+        <li class="active" data-tr="Takvim entegrasyonu" data-en="Calendar integration">Takvim entegrasyonu</li>
+        <li class="active" data-tr="Öncelikli destek" data-en="Priority support">Öncelikli destek</li>
+      </ul>
+      <a href="#waitlist" class="btn btn-solid" style="width:100%;justify-content:center;" data-tr="Pro'ya Geç →" data-en="Go Pro →">Pro'ya Geç →</a>
+    </div>
+    <!-- WARDROBE -->
+    <div class="pricing-card">
+      <p class="pricing-name" data-tr="Akıllı Gardırop" data-en="Smart Wardrobe">Akıllı Gardırop</p>
+      <div class="pricing-price" style="font-size:clamp(28px,3.5vw,44px);line-height:1.2;" data-tr="Erken Erişim" data-en="Early Access">Erken Erişim</div>
+      <p class="pricing-period" data-tr="fiyat bekleme listesinde açıklanacak" data-en="price revealed on waitlist">fiyat bekleme listesinde açıklanacak</p>
+      <ul class="pricing-features">
+        <li class="active" data-tr="Pro uygulama dahil" data-en="Pro app included">Pro uygulama dahil</li>
+        <li class="active" data-tr="Dokunmatik ekranlı gardırop ünitesi" data-en="Touchscreen wardrobe unit">Dokunmatik ekranlı gardırop ünitesi</li>
+        <li class="active" data-tr="Otomatik kıyafet tanıma" data-en="Auto garment recognition">Otomatik kıyafet tanıma</li>
+        <li class="active" data-tr="Kurulum ve kalibrasyon" data-en="Setup & calibration">Kurulum ve kalibrasyon</li>
+        <li class="active" data-tr="2 yıl garanti" data-en="2-year warranty">2 yıl garanti</li>
+        <li class="active" data-tr="Erken erişim indirimi" data-en="Early access discount">Erken erişim indirimi</li>
+      </ul>
+      <a href="#waitlist" class="btn" style="width:100%;justify-content:center;" data-tr="Fiyatı Öğren →" data-en="Get Early Price →">Fiyatı Öğren →</a>
+      <p class="pricing-note" data-tr="* Fiyat bekleme listesi üyelerine önce açıklanacak." data-en="* Price revealed to waitlist members first.">* Fiyat bekleme listesi üyelerine önce açıklanacak.</p>
     </div>
   </div>
 </section>
