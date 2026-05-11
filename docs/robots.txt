@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aifurniture.com.tr/sitemap.xml
