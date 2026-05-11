@@ -7,6 +7,14 @@
   <meta property="og:title" content="AI Furniture — Wardrobe Intelligence"/>
   <meta property="og:image" content="https://dogrucanemek-alt.github.io/xmobile/img/hero.png"/>
   <title>AI Furniture — Wardrobe Intelligence</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6QDR74YY79"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-6QDR74YY79');
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -822,6 +830,7 @@ function handleWaitlist(e) {
     var s = document.getElementById('waitlistSuccess');
     if (res.ok) {
       s.textContent = lang === 'tr' ? 'Harika! Bekleme listesine eklendin.' : "You're on the list!";
+      gtag('event', 'waitlist_signup', { event_category: 'engagement', email: email });
     } else if (res.status === 409) {
       s.textContent = lang === 'tr' ? 'Bu e-posta zaten kayıtlı.' : 'This email is already registered.';
     } else {
