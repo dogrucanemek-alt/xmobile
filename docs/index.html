@@ -524,6 +524,180 @@
       footer { padding: 32px 24px; }
       .footer-inner { flex-direction: column; text-align: center; }
     }
+
+    /* ── DEMO SECTION ── */
+    .demo-section { background: #000; padding: 128px 60px; }
+    .demo-container {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .demo-text { }
+    .demo-text .section-title { margin-bottom: 20px; }
+    .demo-text .section-body { margin-bottom: 48px; }
+    .demo-steps { display: flex; flex-direction: column; gap: 20px; }
+    .demo-step {
+      display: flex; align-items: center; gap: 20px;
+      opacity: 0; transform: translateX(-12px);
+      transition: opacity 0.5s, transform 0.5s;
+    }
+    .demo-step.visible { opacity: 1; transform: none; }
+    .demo-step-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px; font-weight: 700; letter-spacing: 3px;
+      color: rgba(255,255,255,0.2); min-width: 28px;
+    }
+    .demo-step-line {
+      flex: 1; height: 1px; background: rgba(255,255,255,0.08);
+      position: relative; overflow: hidden;
+    }
+    .demo-step-line::after {
+      content: ''; position: absolute; top: 0; left: -100%; height: 100%;
+      width: 100%; background: rgba(255,255,255,0.5);
+      transition: left 0.8s ease;
+    }
+    .demo-step.active .demo-step-line::after { left: 0; }
+    .demo-step-label {
+      font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.5);
+      letter-spacing: 0.3px; transition: color 0.4s;
+      min-width: 160px;
+    }
+    .demo-step.active .demo-step-label { color: #fff; }
+    .demo-step.active .demo-step-num { color: rgba(255,255,255,0.6); }
+
+    /* Phone mockup */
+    .demo-phone { display: flex; justify-content: center; }
+    .phone-mockup {
+      width: 260px; height: 530px;
+      background: #0d0d0d;
+      border-radius: 40px;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      box-shadow: 0 0 0 6px rgba(255,255,255,0.03), 0 40px 80px rgba(0,0,0,0.7);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .phone-notch {
+      width: 80px; height: 20px;
+      background: #0d0d0d;
+      border-radius: 0 0 14px 14px;
+      margin: 0 auto; position: relative; z-index: 2;
+    }
+    .phone-screen-area {
+      flex: 1; position: relative; overflow: hidden;
+    }
+    .app-slide {
+      position: absolute; inset: 0;
+      padding: 20px 18px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      display: flex; flex-direction: column;
+    }
+    .app-slide.active { opacity: 1; }
+
+    /* Slide 1: Scanning */
+    .slide-header {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px; font-weight: 700; letter-spacing: 3px;
+      color: rgba(255,255,255,0.3); text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .scan-area {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px;
+    }
+    .scan-icon {
+      width: 72px; height: 72px;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .scan-icon svg { width: 32px; height: 32px; stroke: rgba(255,255,255,0.4); fill: none; stroke-width: 1.5; }
+    .scan-line {
+      position: absolute; left: 0; right: 0; height: 1.5px;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+      animation: scanMove 2s ease-in-out infinite;
+    }
+    @keyframes scanMove {
+      0%   { top: 8px; opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { top: 64px; opacity: 0; }
+    }
+    .scan-label {
+      font-size: 13px; color: rgba(255,255,255,0.6); text-align: center; line-height: 1.6;
+    }
+    .scan-dots { display: flex; gap: 6px; }
+    .scan-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+    }
+    .scan-dot.lit { background: rgba(255,255,255,0.8); animation: dotPulse 1.5s ease-in-out infinite; }
+    .scan-dot:nth-child(2).lit { animation-delay: 0.3s; }
+    .scan-dot:nth-child(3).lit { animation-delay: 0.6s; }
+    @keyframes dotPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+    /* Slide 2: Outfit cards */
+    .outfit-list { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .outfit-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px; padding: 12px 14px;
+      display: flex; align-items: center; gap: 12px;
+      transform: translateY(16px); opacity: 0;
+      transition: transform 0.4s ease, opacity 0.4s ease;
+    }
+    .app-slide.active .outfit-card:nth-child(1) { transform: none; opacity: 1; transition-delay: 0.1s; }
+    .app-slide.active .outfit-card:nth-child(2) { transform: none; opacity: 1; transition-delay: 0.3s; }
+    .app-slide.active .outfit-card:nth-child(3) { transform: none; opacity: 1; transition-delay: 0.5s; }
+    .outfit-swatch {
+      width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    }
+    .outfit-info { flex: 1; }
+    .outfit-name { font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 500; margin-bottom: 3px; }
+    .outfit-tag { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.5px; }
+    .outfit-check {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .outfit-check svg { width: 10px; height: 10px; stroke: #000; fill: none; stroke-width: 2.5; }
+
+    /* Slide 3: Result */
+    .result-score {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .score-badge {
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 8px 14px;
+    }
+    .score-num { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1; }
+    .score-label { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase; }
+    .score-desc { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+    .result-outfit {
+      flex: 1; display: flex; gap: 10px; margin-bottom: 20px;
+    }
+    .result-item {
+      flex: 1; border-radius: 10px; height: 110px;
+      transform: scale(0.9); opacity: 0;
+      transition: transform 0.4s ease, opacity 0.4s ease;
+    }
+    .app-slide.active .result-item:nth-child(1) { transform: scale(1); opacity: 1; transition-delay: 0.15s; }
+    .app-slide.active .result-item:nth-child(2) { transform: scale(1); opacity: 1; transition-delay: 0.3s; }
+    .app-slide.active .result-item:nth-child(3) { transform: scale(1); opacity: 1; transition-delay: 0.45s; }
+    .result-btn {
+      width: 100%; padding: 13px;
+      background: #fff; border-radius: 8px;
+      font-size: 12px; font-weight: 700; color: #000;
+      text-align: center; letter-spacing: 1px;
+      font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase;
+    }
+    @media (max-width: 960px) {
+      .demo-container { grid-template-columns: 1fr; }
+      .demo-phone { order: -1; }
+      .phone-mockup { width: 220px; height: 450px; }
+      .demo-section { padding: 80px 24px; }
+    }
   </style>
 </head>
 <body>
@@ -627,6 +801,113 @@
   <div class="reveal-scale reveal-d3" style="max-width:960px; margin:0 auto; width:100%;">
     <img src="https://dogrucanemek-alt.github.io/xmobile/img/app-screens.png" alt="xmobile uygulama ekranları" loading="lazy"
       style="width:100%; display:block; border-radius:12px; box-shadow:0 40px 80px rgba(0,0,0,0.7);"/>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEMO -->
+<section class="demo-section" id="demo">
+  <div class="demo-container">
+    <div class="demo-text">
+      <p class="eyebrow reveal" data-tr="Nasıl Çalışır" data-en="How It Works">Nasıl Çalışır</p>
+      <h2 class="section-title reveal reveal-d1" data-tr="Sabah rutininiz<br>artık farklı." data-en="Your morning routine,<br>reimagined.">Sabah rutininiz<br>artık farklı.</h2>
+      <p class="section-body reveal reveal-d2" data-tr="AI Furniture gardırobunuzu tarar, hava durumunu kontrol eder ve size en uygun kombini saniyeler içinde önerir." data-en="AI Furniture scans your wardrobe, checks the weather, and suggests your perfect outfit in seconds.">AI Furniture gardırobunuzu tarar, hava durumunu kontrol eder ve size en uygun kombini saniyeler içinde önerir.</p>
+      <div class="demo-steps reveal reveal-d3">
+        <div class="demo-step" id="demoStep1">
+          <span class="demo-step-num">01</span>
+          <span class="demo-step-line"></span>
+          <span class="demo-step-label" data-tr="Gardırobunu tara" data-en="Scan your wardrobe">Gardırobunu tara</span>
+        </div>
+        <div class="demo-step" id="demoStep2">
+          <span class="demo-step-num">02</span>
+          <span class="demo-step-line"></span>
+          <span class="demo-step-label" data-tr="Yapay zeka analiz eder" data-en="AI analyzes & matches">Yapay zeka analiz eder</span>
+        </div>
+        <div class="demo-step" id="demoStep3">
+          <span class="demo-step-num">03</span>
+          <span class="demo-step-line"></span>
+          <span class="demo-step-label" data-tr="Mükemmel kombin hazır" data-en="Perfect outfit, ready">Mükemmel kombin hazır</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-phone reveal-scale reveal-d2">
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="phone-screen-area">
+
+          <!-- Slide 1: Scanning -->
+          <div class="app-slide active" id="appSlide1">
+            <p class="slide-header" data-tr="AI Furniture" data-en="AI Furniture">AI Furniture</p>
+            <div class="scan-area">
+              <div class="scan-icon">
+                <svg viewBox="0 0 24 24"><path d="M20 7h-3a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><circle cx="12" cy="13" r="3"/></svg>
+                <div class="scan-line"></div>
+              </div>
+              <div>
+                <p class="scan-label" data-tr="Gardırobunuz<br>analiz ediliyor..." data-en="Scanning your<br>wardrobe...">Gardırobunuz<br>analiz ediliyor...</p>
+              </div>
+              <div class="scan-dots">
+                <div class="scan-dot lit"></div>
+                <div class="scan-dot lit"></div>
+                <div class="scan-dot lit"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Outfit items -->
+          <div class="app-slide" id="appSlide2">
+            <p class="slide-header" data-tr="Bugün için seçimler" data-en="Today's picks">Bugün için seçimler</p>
+            <div class="outfit-list">
+              <div class="outfit-card">
+                <div class="outfit-swatch" style="background:linear-gradient(135deg,#2c3e6e,#1a2444);"></div>
+                <div class="outfit-info">
+                  <div class="outfit-name" data-tr="Lacivert Gömlek" data-en="Navy Shirt">Lacivert Gömlek</div>
+                  <div class="outfit-tag" data-tr="Üst — Slim Fit" data-en="Top — Slim Fit">Üst — Slim Fit</div>
+                </div>
+                <div class="outfit-check"><svg viewBox="0 0 10 10"><polyline points="2,5 4.5,7.5 8,3"/></svg></div>
+              </div>
+              <div class="outfit-card">
+                <div class="outfit-swatch" style="background:linear-gradient(135deg,#2a2a2a,#111);"></div>
+                <div class="outfit-info">
+                  <div class="outfit-name" data-tr="Siyah Chino" data-en="Black Chinos">Siyah Chino</div>
+                  <div class="outfit-tag" data-tr="Alt — Regular" data-en="Bottom — Regular">Alt — Regular</div>
+                </div>
+                <div class="outfit-check"><svg viewBox="0 0 10 10"><polyline points="2,5 4.5,7.5 8,3"/></svg></div>
+              </div>
+              <div class="outfit-card">
+                <div class="outfit-swatch" style="background:linear-gradient(135deg,#8b7355,#6b5a44);"></div>
+                <div class="outfit-info">
+                  <div class="outfit-name" data-tr="Deri Ayakkabı" data-en="Leather Shoes">Deri Ayakkabı</div>
+                  <div class="outfit-tag" data-tr="Ayakkabı — Klasik" data-en="Shoes — Classic">Ayakkabı — Klasik</div>
+                </div>
+                <div class="outfit-check"><svg viewBox="0 0 10 10"><polyline points="2,5 4.5,7.5 8,3"/></svg></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Result -->
+          <div class="app-slide" id="appSlide3">
+            <p class="slide-header" data-tr="Günün Kombini" data-en="Today's Outfit">Günün Kombini</p>
+            <div class="result-score">
+              <div class="score-badge">
+                <div class="score-num">97</div>
+                <div class="score-label" data-tr="Puan" data-en="Score">Puan</div>
+              </div>
+              <div class="score-desc" data-tr="Renk uyumu mükemmel.<br>Bugünün havasına uygun." data-en="Perfect color harmony.<br>Matched to today's weather.">Renk uyumu mükemmel.<br>Bugünün havasına uygun.</div>
+            </div>
+            <div class="result-outfit">
+              <div class="result-item" style="background:linear-gradient(160deg,#2c3e6e 0%,#1a2444 100%);"></div>
+              <div class="result-item" style="background:linear-gradient(160deg,#2a2a2a 0%,#111 100%);"></div>
+              <div class="result-item" style="background:linear-gradient(160deg,#8b7355 0%,#5a4535 100%);"></div>
+            </div>
+            <div class="result-btn" data-tr="Kombin Hazır ✓" data-en="Outfit Ready ✓">Kombin Hazır ✓</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1077,6 +1358,61 @@ function handleWaitlist(e) {
     alert(lang === 'tr' ? 'Bağlantı hatası. İnternet bağlantını kontrol et.' : 'Connection error. Check your internet.');
   });
 }
+
+/* ── DEMO SLIDESHOW ── */
+(function() {
+  var slides = ['appSlide1','appSlide2','appSlide3'];
+  var steps  = ['demoStep1','demoStep2','demoStep3'];
+  var current = 0;
+  var interval = null;
+
+  function showSlide(idx) {
+    slides.forEach(function(id, i) {
+      var el = document.getElementById(id);
+      if (el) el.classList.toggle('active', i === idx);
+    });
+    steps.forEach(function(id, i) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.toggle('active', i === idx);
+      el.classList.add('visible');
+    });
+    current = idx;
+  }
+
+  function startDemo() {
+    if (interval) return;
+    showSlide(0);
+    interval = setInterval(function() {
+      showSlide((current + 1) % slides.length);
+    }, 3500);
+  }
+
+  /* Start when demo section scrolls into view */
+  var demoSection = document.querySelector('.demo-section');
+  if (demoSection) {
+    var demoObs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) {
+        startDemo();
+        demoObs.disconnect();
+      }
+    }, { threshold: 0.3 });
+    demoObs.observe(demoSection);
+  }
+
+  /* Make steps clickable */
+  steps.forEach(function(id, i) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('click', function() {
+      clearInterval(interval);
+      interval = null;
+      showSlide(i);
+      interval = setInterval(function() {
+        showSlide((current + 1) % slides.length);
+      }, 3500);
+    });
+  });
+})();
 </script>
 </body>
 </html>
