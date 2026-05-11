@@ -363,9 +363,47 @@
       .product-section { grid-template-columns: 1fr; gap: 56px; }
       .features-grid { grid-template-columns: repeat(2, 1fr); }
     }
+    /* ── HAMBURGER ── */
+    .nav-hamburger {
+      display: none; flex-direction: column; justify-content: center;
+      gap: 5px; background: none; border: none; cursor: pointer; padding: 6px;
+    }
+    .nav-hamburger span {
+      display: block; width: 22px; height: 1.5px;
+      background: #fff; border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none; position: fixed; top: 56px; left: 0; right: 0;
+      background: rgba(0,0,0,0.96); backdrop-filter: blur(16px);
+      padding: 24px 24px 32px; z-index: 999;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      flex-direction: column; gap: 0;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: rgba(255,255,255,0.75); text-decoration: none;
+      font-size: 15px; font-weight: 400; letter-spacing: 0.5px;
+      padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: #fff; }
+    .mobile-menu .mobile-cta {
+      margin-top: 20px; text-align: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      background: #fff; color: #000; padding: 13px; border-radius: 2px;
+      border-bottom: none;
+    }
+
     @media (max-width: 768px) {
       nav { padding: 0 20px; height: 56px; }
       .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
       .hero-content { left: 24px; right: 24px; bottom: 72px; }
       .coming-soon-content { left: 24px; right: 24px; bottom: 72px; }
       .product-section { padding: 80px 24px; }
@@ -400,8 +438,22 @@
       <button data-lang="en">EN</button>
     </div>
     <a href="#waitlist" class="nav-cta" data-tr="Ön Sipariş →" data-en="Pre-order →">Ön Sipariş →</a>
+    <button class="nav-hamburger" id="hamburgerBtn" aria-label="Menü">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<!-- MOBİL MENÜ -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#product" data-tr="Ürün" data-en="Product">Ürün</a>
+  <a href="#app" data-tr="Uygulama" data-en="App">Uygulama</a>
+  <a href="#features" data-tr="Özellikler" data-en="Features">Özellikler</a>
+  <a href="#coming-soon" data-tr="Mobilya" data-en="Furniture">Mobilya</a>
+  <a href="#bedroom" data-tr="Yatak Odası" data-en="Bedroom">Yatak Odası</a>
+  <a href="#living-room" data-tr="Oturma Odası" data-en="Living Room">Oturma Odası</a>
+  <a href="#waitlist" class="mobile-cta" data-tr="Ön Sipariş Ver →" data-en="Pre-order Now →">Ön Sipariş Ver →</a>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="home">
@@ -589,6 +641,20 @@
 </footer>
 
 <script>
+// ── MOBİL MENÜ ──
+var hamburgerBtn = document.getElementById('hamburgerBtn');
+var mobileMenu   = document.getElementById('mobileMenu');
+hamburgerBtn.addEventListener('click', function() {
+  var isOpen = mobileMenu.classList.toggle('open');
+  hamburgerBtn.classList.toggle('open', isOpen);
+});
+mobileMenu.querySelectorAll('a').forEach(function(link) {
+  link.addEventListener('click', function() {
+    mobileMenu.classList.remove('open');
+    hamburgerBtn.classList.remove('open');
+  });
+});
+
 // ── HERO BG ZOOM ──
 window.addEventListener('load', function() {
   document.getElementById('heroBg').classList.add('loaded');
