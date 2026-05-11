@@ -797,12 +797,43 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
 })();
 
 // ── WAITLIST ──
+var SB_URL  = 'https://hhzcfculfxzaammvfbwn.supabase.co';
+var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoemNmY3VsZnh6YWFtbXZmYnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNjY3NDYsImV4cCI6MjA5Mzg0Mjc0Nn0.Td69oOO8MCapyIvtpN5lwmUxnX9kjgdc4P9p_3n2zYs';
+
 function handleWaitlist(e) {
   e.preventDefault();
-  document.getElementById('waitlistForm').style.display = 'none';
-  var s = document.getElementById('waitlistSuccess');
-  s.textContent = lang === 'tr' ? 'Harika! Bekleme listesine eklendin.' : "You're on the list!";
-  s.style.display = 'block';
+  var email = document.getElementById('waitlistEmail').value.trim();
+  var btn = document.querySelector('.waitlist-btn');
+  btn.disabled = true;
+  btn.textContent = lang === 'tr' ? 'Kaydediliyor...' : 'Saving...';
+
+  fetch(SB_URL + '/rest/v1/aifurniture_waitlist', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SB_ANON,
+      'Authorization': 'Bearer ' + SB_ANON,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({ email: email, source: 'website' })
+  })
+  .then(function(res) {
+    document.getElementById('waitlistForm').style.display = 'none';
+    var s = document.getElementById('waitlistSuccess');
+    if (res.ok) {
+      s.textContent = lang === 'tr' ? 'Harika! Bekleme listesine eklendin.' : "You're on the list!";
+    } else if (res.status === 409) {
+      s.textContent = lang === 'tr' ? 'Bu e-posta zaten kayıtlı.' : 'This email is already registered.';
+    } else {
+      s.textContent = lang === 'tr' ? 'Bir hata oluştu. Tekrar dene.' : 'Something went wrong. Try again.';
+    }
+    s.style.display = 'block';
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = lang === 'tr' ? 'Katıl' : 'Join';
+    alert(lang === 'tr' ? 'Bağlantı hatası. İnternet bağlantını kontrol et.' : 'Connection error. Check your internet.');
+  });
 }
 </script>
 </body>
