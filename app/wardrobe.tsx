@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, Image, Alert, TextInput, Modal, TextStyle } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, Image, Alert, TextInput, Modal, TextStyle, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
@@ -257,7 +257,7 @@ export default function Wardrobe() {
       </View>
 
       {/* Düzenleme Modalı */}
-      <Modal visible={modalAcik} animationType="slide" presentationStyle="pageSheet">
+      <Modal visible={modalAcik} animationType="slide" presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen'}>
         <View style={[styles.modal, { backgroundColor: renkler.bg2 }]}>
           <View style={[styles.modalHeader, { backgroundColor: renkler.bg }]}>
             <TouchableOpacity onPress={() => setModalAcik(false)}>

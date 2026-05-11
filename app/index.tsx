@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity, Alert, Modal, ScrollView, Linking } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TouchableOpacity, Alert, Modal, ScrollView, Linking, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -45,7 +45,7 @@ export default function Index() {
     <View style={[styles.container, { backgroundColor: renkler.bg }]}>
       <StatusBar barStyle={renkler.statusBar} backgroundColor={renkler.bg} />
 
-      <Modal visible={kvkkGoster} animationType="slide" presentationStyle="pageSheet">
+      <Modal visible={kvkkGoster} animationType="slide" presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen'}>
         <View style={[styles.kvkkModal, { backgroundColor: renkler.bg }]}>
           <Text style={[styles.kvkkBaslik, { color: renkler.metin }]}>
             {dil === 'en' ? '🔒 Privacy & Terms' : '🔒 Gizlilik ve Kullanım Koşulları'}
