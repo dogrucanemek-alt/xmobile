@@ -1222,10 +1222,12 @@ ${jsonFormat}`;
 
           {tryOn.adim === 'sonuc' && (
             <View style={{ flex: 1 }}>
-              {tryOn.hata ? (
+              {(tryOn.hata || !tryOn.sonucUri) ? (
                 <View style={styles.tryOnHata}>
                   <Text style={styles.tryOnHataIkon}>⚠️</Text>
-                  <Text style={[styles.tryOnHataText, { color: renkler.metin2 }]}>{tryOn.hata}</Text>
+                  <Text style={[styles.tryOnHataText, { color: renkler.metin2 }]}>
+                    {tryOn.hata || (dil === 'en' ? 'No result received. Check Fashn API key.' : 'Sonuç gelmedi. Fashn API key kontrol et.')}
+                  </Text>
                   <TouchableOpacity
                     style={[styles.tryOnTekrar, { backgroundColor: renkler.btnPrimary }]}
                     onPress={() => setTryOn(s => ({ ...s, adim: 'sec', hata: null, sonucUri: null }))}
@@ -1238,10 +1240,10 @@ ${jsonFormat}`;
               ) : (
                 <View style={{ flex: 1 }}>
                   <Image
-                    source={{ uri: tryOn.sonucUri! }}
+                    source={{ uri: tryOn.sonucUri }}
                     style={styles.tryOnSonucGorsel}
                     resizeMode="contain"
-                    onError={() => setTryOn(s => ({ ...s, hata: `Görsel yüklenemedi. URL: ${s.sonucUri?.slice(0, 60)}` }))}
+                    onError={() => setTryOn(s => ({ ...s, hata: `Görsel yüklenemedi. URL: ${s.sonucUri?.slice(0, 80)}` }))}
                   />
                   <TouchableOpacity
                     style={[styles.tryOnTekrarBtn, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}
