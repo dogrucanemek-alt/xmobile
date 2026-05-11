@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import {
   Text, View, StyleSheet, StatusBar, TouchableOpacity,
   ScrollView, ActivityIndicator, Alert, Image,
-  PanResponder, Animated, Modal,
+  PanResponder, Animated, Modal, Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -689,7 +689,7 @@ ${jsonFormat}`;
     const zaman = setTimeout(() => controller.abort(), 60000);
 
     try {
-      const res = await fetch(`${API_URL}/api/claude`, {
+      const res = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         signal: controller.signal,
         headers: { 'Content-Type': 'application/json' },
@@ -1081,7 +1081,7 @@ ${jsonFormat}`;
       <Modal
         visible={tryOn.visible}
         animationType="slide"
-        presentationStyle="pageSheet"
+        presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen'}
         onRequestClose={() => setTryOn(s => ({ ...s, visible: false, secilenParcalar: [] }))}
       >
         <View style={[styles.tryOnModal, { backgroundColor: renkler.bg }]}>
