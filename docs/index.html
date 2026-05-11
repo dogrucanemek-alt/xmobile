@@ -15,7 +15,7 @@
   <meta property="og:url" content="https://aifurniture.com.tr/"/>
   <meta property="og:title" content="AI Furniture — Yapay Zeka Destekli Akıllı Gardırop"/>
   <meta property="og:description" content="Her sabah dolu dolaba bakıp ne giyeceğini bilemiyorsan — AI Furniture bitiriyor bunu. Yapay zeka + IoT entegreli dünyada ilk akıllı gardırop sistemi."/>
-  <meta property="og:image" content="https://dogrucanemek-alt.github.io/xmobile/img/hero.png"/>
+  <meta property="og:image" content="https://dogrucanemek-alt.github.io/xmobile/img/wardrobe-concept.png"/>
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
   <meta property="og:locale" content="tr_TR"/>
@@ -25,7 +25,7 @@
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:title" content="AI Furniture — Yapay Zeka Destekli Akıllı Gardırop"/>
   <meta name="twitter:description" content="Her sabah dolu dolaba bakıp ne giyeceğini bilemiyorsan — AI Furniture bitiriyor bunu."/>
-  <meta name="twitter:image" content="https://dogrucanemek-alt.github.io/xmobile/img/hero.png"/>
+  <meta name="twitter:image" content="https://dogrucanemek-alt.github.io/xmobile/img/wardrobe-concept.png"/>
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -154,17 +154,17 @@
     }
     .hero-bg {
       position: absolute; inset: 0;
-      background: url('https://dogrucanemek-alt.github.io/xmobile/img/hero.png') center 30% / cover no-repeat;
+      background: url('img/wardrobe-concept.png') center 40% / cover no-repeat;
       transform: scale(1.04); transition: transform 8s ease-out;
     }
     .hero-bg.loaded { transform: scale(1); }
     .hero-overlay {
       position: absolute; inset: 0;
       background: linear-gradient(to bottom,
-        rgba(0,0,0,0.18) 0%,
-        rgba(0,0,0,0.05) 35%,
-        rgba(0,0,0,0.55) 68%,
-        rgba(0,0,0,0.94) 90%,
+        rgba(0,0,0,0.55) 0%,
+        rgba(0,0,0,0.25) 30%,
+        rgba(0,0,0,0.45) 60%,
+        rgba(0,0,0,0.92) 85%,
         #000 100%
       );
     }
@@ -239,6 +239,59 @@
     .stat-label {
       font-size: 10px; font-weight: 400;
       color: rgba(255,255,255,0.35); letter-spacing: 1.5px; text-transform: uppercase;
+    }
+
+    /* ── WARDROBE SHOWCASE ── */
+    .wardrobe-showcase {
+      position: relative; width: 100%; overflow: hidden;
+      background: #000;
+    }
+    .wardrobe-showcase-inner {
+      position: relative; max-width: 1360px; margin: 0 auto;
+      padding: 0 60px 0;
+    }
+    .wardrobe-img-wrap {
+      position: relative; width: 100%;
+      border-radius: 4px; overflow: hidden;
+    }
+    .wardrobe-img-wrap::before {
+      content: ''; position: absolute; inset: 0; z-index: 2;
+      background: linear-gradient(to bottom,
+        rgba(0,0,0,0.35) 0%,
+        rgba(0,0,0,0) 30%,
+        rgba(0,0,0,0) 65%,
+        rgba(0,0,0,0.7) 100%
+      );
+    }
+    .wardrobe-img-wrap img {
+      width: 100%; display: block;
+      object-fit: cover; max-height: 620px;
+      filter: brightness(0.88) contrast(1.08) saturate(0.9);
+    }
+    .wardrobe-img-caption {
+      position: absolute; bottom: 40px; left: 52px; z-index: 3;
+    }
+    .wardrobe-img-caption .eyebrow { margin-bottom: 10px; }
+    .wardrobe-img-caption p {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(22px, 3vw, 38px); font-weight: 600;
+      letter-spacing: 0.5px; color: #fff; line-height: 1.2;
+      text-transform: uppercase; max-width: 480px;
+    }
+    .wardrobe-badge {
+      position: absolute; top: 36px; right: 52px; z-index: 3;
+      border: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(12px); background: rgba(0,0,0,0.45);
+      padding: 14px 22px; border-radius: 2px; text-align: right;
+    }
+    .wardrobe-badge .badge-label {
+      font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+      color: rgba(255,255,255,0.4); display: block; margin-bottom: 6px;
+    }
+    .wardrobe-badge .badge-value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 600; letter-spacing: 2px;
+      color: #fff; text-transform: uppercase;
     }
 
     /* ── APP SECTION ── */
@@ -786,6 +839,25 @@
           <span class="stat-number" data-target="24" data-suffix="/7">24/7</span>
           <span class="stat-label" data-tr="Hava durumu takibi" data-en="Weather-aware">Hava durumu takibi</span>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WARDROBE SHOWCASE -->
+<section class="wardrobe-showcase">
+  <div class="wardrobe-showcase-inner">
+    <div class="wardrobe-img-wrap reveal">
+      <img src="img/wardrobe-concept.png"
+           alt="AI Furniture akıllı gardırop — yapay zeka destekli dokunmatik ekran"
+           loading="lazy" width="1360" height="620"/>
+      <div class="wardrobe-img-caption">
+        <p class="eyebrow" data-tr="Dünyanın İlki" data-en="World's First">Dünyanın İlki</p>
+        <p data-tr="Yapay Zeka Destekli<br>Dokunmatik Gardırop" data-en="AI-Powered<br>Touchscreen Wardrobe">Yapay Zeka Destekli<br>Dokunmatik Gardırop</p>
+      </div>
+      <div class="wardrobe-badge">
+        <span class="badge-label" data-tr="Teknoloji" data-en="Technology">Teknoloji</span>
+        <span class="badge-value">AI · IoT · Claude</span>
       </div>
     </div>
   </div>
