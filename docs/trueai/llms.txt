@@ -1,38 +1,37 @@
-# True AI — XMOBILE WARDROBE INTELLIGENCE
+# True AI — XMOBILE
 
-## Product
-True AI (XMOBILE) is a Turkish AI-powered wardrobe assistant mobile app for iOS and Android.
+True AI is an AI-powered smart wardrobe app for iOS and Android, currently in pre-launch with an open waitlist.
 
 ## What it does
-- Analyzes the user's wardrobe (photos of clothes)
-- Generates daily outfit suggestions based on weather, calendar events, and personal style
-- Virtual try-on: AI renders the user wearing selected clothes (30-60 seconds)
-- 3D avatar with clothing overlay
-- Outfit history tracking with favorites
 
-## Target audience
-Turkish-speaking users, age 25-45, urban, fashion-conscious, tech-savvy.
-Also available in English.
+- AI outfit suggestions based on your wardrobe, weather forecast, and calendar events
+- Virtual try-on: wear clothing from brands like Zara, H&M, Mango on your own photo (powered by Fashn.ai)
+- 3D avatar clothing overlay
+- Personal style advisor with style profile analysis
+- Instagram Story export of your outfit combinations
+- Community outfit sharing and trend discovery
+- Full wardrobe management with AI tagging
 
-## Business model
-Freemium mobile app:
-- Free: unlimited wardrobe + 5 AI outfit suggestions/month + last 10 outfit history
-- Pro: ₺149/month or ₺999/year (unlimited suggestions, virtual try-on, 3D avatar, Instagram Story export)
-- Lifetime: ₺2,499 one-time payment
+## Pricing
 
-## Status
-Pre-launch. Building waitlist at this website. Expected App Store launch: 2026.
+See /pricing.md for machine-readable pricing tiers.
 
-## Tech stack
-React Native (Expo), Claude API for outfit generation, Fashn.ai for virtual try-on, OpenWeatherMap for weather data.
+- Free: TRY 0/month — unlimited wardrobe, 5 AI suggestions/month
+- Pro: TRY 149/month — unlimited everything + virtual try-on + avatar + style advisor
+- Lifetime: TRY 2,499 one-time — all Pro features forever
 
-## Key differentiators
-1. AI outfit suggestion based on real-time weather + calendar context
-2. Virtual try-on (AI renders outfit on user's photo in 30-60s)
-3. On-device processing — photos don't leave the device
-4. Turkish market focus with full Turkish language support
+Early access: first 500 waitlist members get 3 months of Pro free.
+
+## Technology stack
+
+- React Native (iOS + Android)
+- Claude AI by Anthropic (outfit suggestions, style analysis)
+- Fashn.ai (virtual try-on rendering)
+- OpenWeatherMap API (weather integration)
 
 ## Links
-- Waitlist: https://trueai-inky.vercel.app
-- Contact: dogrucanemek@gmail.com
+
+- Website: https://trueai-inky.vercel.app
+- Waitlist: https://trueai-inky.vercel.app/#waitlist
 - Pricing: https://trueai-inky.vercel.app/pricing.md
+- Sitemap: https://trueai-inky.vercel.app/sitemap.xml
