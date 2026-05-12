@@ -1,3 +1,5 @@
+import * as FileSystem from 'expo-file-system';
+
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 
 function errMsg(e: unknown): string {
@@ -104,8 +106,11 @@ export async function tryOnBekle(id: string, onProgress?: () => void): Promise<s
     const durum = await tryOnDurumuKontrol(id);
     if (durum.status === 'completed') {
       if (!durum.output?.[0]) throw new Error('Sonuç görseli gelmedi');
-      // Fashn CDN URL'ini kendi proxy'mizden serve et — Android Image bileşeni CDN'i direkt yükleyemiyor
-      return `${API_URL}/api/fashn?url=${encodeURIComponent(durum.output[0])}`;
+      // CDN URL'ini telefona indir — Android Image bileşeni bazı CDN'leri direkt yükleyemiyor
+      const localPath = `${FileSystem.cacheDirectory}tryon_${Date.now()}.jpg`;
+      const { status } = await FileSystem.downloadAsync(durum.output[0], localPath);
+      if (status !== 200) throw new Error(`Görsel indirilemedi (${status}): ${durum.output[0].slice(0, 80)}`);
+      return localPath;
     }
     if (durum.status === 'failed') throw new Error(errMsg(durum.error) || 'Try-on başarısız');
     onProgress?.();
