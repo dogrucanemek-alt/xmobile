@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import {
   Text, View, StyleSheet, StatusBar, TouchableOpacity,
   ScrollView, ActivityIndicator, Alert, Image,
-  PanResponder, Animated, Modal, Platform,
+  PanResponder, Animated, Modal, Platform, Linking,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -347,6 +347,7 @@ export default function Outfits() {
     secilenParcalar: string[];
     adimMetni: string;
   }>({ visible: false, adim: 'sec', sonucUri: null, hata: null, modelFoto: null, secilenParcalar: [], adimMetni: '' });
+  const [tryOnImgLoading, setTryOnImgLoading] = useState(false);
   const viewShotRef = useRef<ViewShot>(null);
   const kombinlerRef = useRef<Kombin[]>([]);
   const indexRef     = useRef(0);
@@ -1239,12 +1240,35 @@ ${jsonFormat}`;
                 </View>
               ) : (
                 <View style={{ flex: 1 }}>
-                  <Image
-                    source={{ uri: tryOn.sonucUri }}
-                    style={styles.tryOnSonucGorsel}
-                    resizeMode="contain"
-                    onError={() => setTryOn(s => ({ ...s, hata: `Görsel yüklenemedi. URL: ${s.sonucUri?.slice(0, 80)}` }))}
-                  />
+                  <View style={{ position: 'relative', flex: 1 }}>
+                    <Image
+                      source={{ uri: tryOn.sonucUri! }}
+                      style={styles.tryOnSonucGorsel}
+                      resizeMode="contain"
+                      onLoadStart={() => setTryOnImgLoading(true)}
+                      onLoadEnd={() => setTryOnImgLoading(false)}
+                      onError={(e) => {
+                        setTryOnImgLoading(false);
+                        setTryOn(s => ({ ...s, hata: `Görsel yüklenemedi. Hata: ${e.nativeEvent.error ?? 'bilinmiyor'}. URL: ${s.sonucUri?.slice(0, 100)}` }));
+                      }}
+                    />
+                    {tryOnImgLoading && (
+                      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <ActivityIndicator size="large" color={NEON} />
+                      </View>
+                    )}
+                  </View>
+                  {/* DEBUG: URL göster — sonuç beyazsa tarayıcıda kontrol et */}
+                  <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
+                    <Text style={{ color: renkler.metin2, fontSize: 10, marginBottom: 4 }} numberOfLines={2}>
+                      URL: {tryOn.sonucUri}
+                    </Text>
+                    <TouchableOpacity onPress={() => Linking.openURL(tryOn.sonucUri!)}>
+                      <Text style={{ color: NEON, fontSize: 12, textDecorationLine: 'underline', marginBottom: 4 }}>
+                        {dil === 'en' ? 'Open in browser' : 'Tarayıcıda aç'}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                   <TouchableOpacity
                     style={[styles.tryOnTekrarBtn, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}
                     onPress={() => setTryOn(s => ({ ...s, adim: 'sec', sonucUri: null, hata: null }))}
