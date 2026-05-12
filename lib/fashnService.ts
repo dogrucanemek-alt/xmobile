@@ -2,6 +2,12 @@ import * as FileSystem from 'expo-file-system/legacy';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 
+function timeoutSignal(ms: number): AbortSignal {
+  const ctrl = new AbortController();
+  setTimeout(() => ctrl.abort(), ms);
+  return ctrl.signal;
+}
+
 function errMsg(e: unknown): string {
   if (!e) return 'Bilinmeyen hata';
   if (typeof e === 'string') return e;
@@ -26,7 +32,7 @@ async function safeJson(res: Response): Promise<any> {
 
 async function uriToBase64(uri: string): Promise<string> {
   if (uri.startsWith('data:')) return uri.split(',')[1];
-  const res = await fetch(uri, { signal: AbortSignal.timeout(20000) });
+  const res = await fetch(uri, { signal: timeoutSignal(20000) });
   if (!res.ok) throw new Error(`Fotoğraf okunamadı (${res.status}): ${uri.slice(-40)}`);
   const blob = await res.blob();
   return new Promise((resolve, reject) => {
@@ -66,7 +72,7 @@ export async function tryOnBaslat(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ model_image: modelParam, garment_image: garmentParam, category }),
-    signal: AbortSignal.timeout(40000),
+    signal: timeoutSignal(40000),
   });
 
   const data = await safeJson(res);
@@ -80,7 +86,7 @@ export async function kiyafetGorseliUret(garmentName: string): Promise<string> {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ garmentName }),
-    signal: AbortSignal.timeout(30000),
+    signal: timeoutSignal(30000),
   });
   const data = await safeJson(res);
   if (!res.ok || data.error) throw new Error(errMsg(data.error) || `DALL-E hatası: ${res.status}`);
@@ -94,7 +100,7 @@ export async function tryOnDurumuKontrol(id: string): Promise<{
   error?: string;
 }> {
   const res = await fetch(`${API_URL}/api/fashn?id=${encodeURIComponent(id)}`, {
-    signal: AbortSignal.timeout(10000),
+    signal: timeoutSignal(10000),
   });
   return safeJson(res);
 }
