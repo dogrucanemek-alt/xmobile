@@ -939,9 +939,97 @@
       .phone-mockup { width: 220px; height: 450px; }
       .demo-section { padding: 80px 24px; }
     }
+
+    /* ── SCROLL PROGRESS ── */
+    #scrollProgress {
+      position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+      background: linear-gradient(90deg, var(--gold) 0%, #f59e0b 100%);
+      z-index: 10000; pointer-events: none;
+      transition: width 80ms linear;
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-section {
+      background: #000; padding: 128px 60px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .testimonials-header { text-align: center; margin-bottom: 72px; }
+    .testimonials-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 24px; max-width: 1200px; margin: 0 auto;
+    }
+    .testimonial-card {
+      background: #080808; border: 1px solid rgba(255,255,255,0.07);
+      padding: 44px 36px; position: relative; overflow: hidden;
+      transition: border-color 0.3s ease, transform 0.25s ease;
+    }
+    .testimonial-card:hover {
+      border-color: rgba(202,138,4,0.3);
+      transform: translateY(-5px);
+    }
+    .testimonial-card::before {
+      content: '\201C';
+      font-family: 'Bodoni Moda', serif; font-size: 96px; line-height: 1;
+      color: rgba(202,138,4,0.1); display: block;
+      margin-bottom: -28px; margin-left: -6px;
+      pointer-events: none;
+    }
+    .testimonial-stars { display: flex; gap: 3px; margin-bottom: 20px; }
+    .testimonial-stars svg { width: 14px; height: 14px; fill: var(--gold); }
+    .testimonial-quote {
+      font-family: 'Jost', sans-serif; font-size: 14.5px; font-weight: 300;
+      color: rgba(255,255,255,0.6); line-height: 1.85; margin-bottom: 32px;
+      font-style: italic;
+    }
+    .testimonial-author { display: flex; align-items: center; gap: 14px; }
+    .testimonial-avatar {
+      width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(202,138,4,0.35) 0%, rgba(202,138,4,0.08) 100%);
+      border: 1px solid rgba(202,138,4,0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bodoni Moda', serif; font-size: 15px; font-weight: 600;
+      color: var(--gold);
+    }
+    .testimonial-name {
+      font-family: 'Jost', sans-serif; font-size: 13.5px; font-weight: 500;
+      color: #fff; margin-bottom: 3px;
+    }
+    .testimonial-role {
+      font-family: 'Jost', sans-serif; font-size: 11.5px; font-weight: 300;
+      color: rgba(255,255,255,0.38); letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    @media (max-width: 1024px) { .testimonials-grid { grid-template-columns: 1fr; gap: 16px; } }
+    @media (max-width: 768px) { .testimonials-section { padding: 80px 24px; } .testimonial-card { padding: 36px 28px; } }
+
+    /* ── WHATSAPP BUTTON ── */
+    #waBtn {
+      position: fixed; bottom: 28px; right: 28px;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #25D366; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+      z-index: 8888; text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    #waBtn:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(37,211,102,0.55); }
+    #waBtn svg { width: 30px; height: 30px; fill: #fff; }
+
+    /* ── BACK TO TOP ── */
+    #backToTop {
+      position: fixed; bottom: 96px; right: 30px;
+      width: 42px; height: 42px; border-radius: 50%;
+      background: rgba(202,138,4,0.1); border: 1px solid rgba(202,138,4,0.3);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 8888;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s, transform 0.2s, background 0.2s;
+    }
+    #backToTop.visible { opacity: 1; pointer-events: auto; }
+    #backToTop:hover { background: rgba(202,138,4,0.22); transform: translateY(-3px); }
+    #backToTop svg { width: 17px; height: 17px; stroke: var(--gold); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
   </style>
 </head>
 <body>
+<div id="scrollProgress"></div>
 
 <!-- NAV -->
 <nav id="mainNav">
@@ -1224,6 +1312,67 @@
       </div>
       <h3 data-tr="Dev Dokunmatik Ekran" data-en="Giant Touchscreen">Dev Dokunmatik Ekran</h3>
       <p data-tr="Gardırop kapısına entegre edilmiş tam boyutlu interaktif ekran. Göz atın, seçin, karar verin — doğrudan dolabın başında." data-en="A full-size interactive display built into the wardrobe door. Browse, select, decide — right at the closet.">Gardırop kapısına entegre edilmiş tam boyutlu interaktif ekran. Göz atın, seçin, karar verin — doğrudan dolabın başında.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTİMONİALS -->
+<section class="testimonials-section">
+  <div class="testimonials-header">
+    <p class="eyebrow reveal" data-tr="Kullanıcı Yorumları" data-en="User Reviews">Kullanıcı Yorumları</p>
+    <h2 class="section-title reveal reveal-d1" data-tr="Beta kullanıcıları<br>ne diyor?" data-en="What beta users<br>are saying?">Beta kullanıcıları<br>ne diyor?</h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal-scale reveal-d1">
+      <div class="testimonial-stars">
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+      </div>
+      <p class="testimonial-quote" data-tr="Her sabah ne giyeceğimi bulmak için dakikalar harcardım. AI Furniture bunu saniyeye indirdi — ve her öneri gerçekten tarzıma uyuyor." data-en="I used to spend minutes figuring out what to wear every morning. AI Furniture reduced that to seconds — and every suggestion actually matches my style.">Her sabah ne giyeceğimi bulmak için dakikalar harcardım. AI Furniture bunu saniyeye indirdi — ve her öneri gerçekten tarzıma uyuyor.</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">AK</div>
+        <div>
+          <div class="testimonial-name">Ayşe K.</div>
+          <div class="testimonial-role" data-tr="Moda Editörü · İstanbul" data-en="Fashion Editor · Istanbul">Moda Editörü · İstanbul</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal-scale reveal-d2">
+      <div class="testimonial-stars">
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+      </div>
+      <p class="testimonial-quote" data-tr="Moda ile pek ilgilenmezdim ama bu uygulama renk uyumunu öğretti bana. Gardırobumu ilk kez gerçekten verimli kullandığımı hissediyorum." data-en="I never cared much about fashion, but this app taught me color harmony. For the first time I feel like I'm actually getting value from my wardrobe.">Moda ile pek ilgilenmezdim ama bu uygulama renk uyumunu öğretti bana. Gardırobumu ilk kez gerçekten verimli kullandığımı hissediyorum.</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">MS</div>
+        <div>
+          <div class="testimonial-name">Mert S.</div>
+          <div class="testimonial-role" data-tr="Yazılım Geliştirici · Ankara" data-en="Software Engineer · Ankara">Yazılım Geliştirici · Ankara</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal-scale reveal-d3">
+      <div class="testimonial-stars">
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+      </div>
+      <p class="testimonial-quote" data-tr="Gardırobumun ne kadar zengin olduğunu fark etmemiştim. AI Furniture her sabah yeni bir kombinle beni şaşırtıyor — giyinmek artık eğlenceli." data-en="I didn't realize how rich my wardrobe already was. AI Furniture surprises me with a new combination every morning — getting dressed is fun now.">Gardırobumun ne kadar zengin olduğunu fark etmemiştim. AI Furniture her sabah yeni bir kombinle beni şaşırtıyor — giyinmek artık eğlenceli.</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">ED</div>
+        <div>
+          <div class="testimonial-name">Elif D.</div>
+          <div class="testimonial-role" data-tr="Girişimci · İstanbul" data-en="Entrepreneur · Istanbul">Girişimci · İstanbul</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -2152,6 +2301,35 @@ function handleWaitlist(e) {
         showSlide((current + 1) % slides.length);
       }, 3500);
     });
+  });
+})();
+</script>
+
+<!-- WhatsApp CTA -->
+<!-- TODO: href içindeki numarayı kendi WhatsApp numaranla güncelle: https://wa.me/905XXXXXXXXX -->
+<a id="waBtn" href="https://wa.me/?text=AI%20Furniture%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum" target="_blank" rel="noopener" aria-label="WhatsApp ile iletişim">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 1C7.716 1 1 7.716 1 16c0 2.627.678 5.098 1.867 7.244L1 31l7.99-2.093A14.93 14.93 0 0 0 16 31c8.284 0 15-6.716 15-15S24.284 1 16 1zm0 27.5a12.44 12.44 0 0 1-6.348-1.736l-.454-.27-4.741 1.243 1.267-4.621-.296-.476A12.43 12.43 0 0 1 3.5 16C3.5 9.096 9.096 3.5 16 3.5S28.5 9.096 28.5 16 22.904 28.5 16 28.5zm6.84-9.352c-.375-.188-2.218-1.094-2.562-1.219-.344-.125-.594-.188-.844.188-.25.375-.968 1.219-1.188 1.469-.219.25-.437.281-.812.094-.375-.188-1.584-.584-3.018-1.862-1.115-.996-1.868-2.225-2.088-2.6-.219-.375-.023-.578.164-.766.169-.168.375-.437.563-.656.187-.219.25-.375.375-.625.125-.25.063-.469-.031-.656-.094-.188-.844-2.031-1.156-2.781-.305-.731-.614-.631-.844-.643-.219-.012-.469-.015-.719-.015s-.656.094-1 .469c-.344.375-1.312 1.281-1.312 3.125s1.343 3.625 1.53 3.875c.188.25 2.645 4.037 6.408 5.662.896.388 1.595.619 2.14.791.899.287 1.717.246 2.364.149.721-.108 2.218-.908 2.531-1.785.313-.875.313-1.625.219-1.781-.094-.156-.344-.25-.719-.438z"/></svg>
+</a>
+
+<!-- Back to Top -->
+<button id="backToTop" aria-label="Yukarı çık">
+  <svg viewBox="0 0 24 24"><polyline points="18,15 12,9 6,15"/></svg>
+</button>
+
+<script>
+/* ── SCROLL PROGRESS + BACK TO TOP ── */
+(function() {
+  var bar = document.getElementById('scrollProgress');
+  var btt = document.getElementById('backToTop');
+  function onScroll() {
+    var s = document.documentElement;
+    var pct = s.scrollTop / (s.scrollHeight - s.clientHeight);
+    if (bar) bar.style.width = (pct * 100).toFixed(2) + '%';
+    if (btt) btt.classList.toggle('visible', s.scrollTop > 500);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  if (btt) btt.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 })();
 </script>
