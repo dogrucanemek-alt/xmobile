@@ -1760,6 +1760,13 @@ function submitWaitlist(e) {
   document.getElementById('waitlist-form').style.display = 'none';
   document.getElementById('waitlist-success').style.display = 'block';
   incrementCounter();
+  // Primary: Brevo via serverless function
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
+  }).catch(function() {});
+  // Fallback: FormSubmit.co (email notification)
   fetch('https://formsubmit.co/ajax/dogrucanemek@gmail.com', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
