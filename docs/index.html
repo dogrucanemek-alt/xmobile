@@ -2047,13 +2047,16 @@ function handleWaitlist(e) {
     (function wTick() {
       requestAnimationFrame(wTick);
       if (!wVis) return;
-      // Wait for GSAP reveal to finish before overriding transform
       if (parseFloat(getComputedStyle(wWrap).opacity) < 0.95) return;
-      wft += 0.006;
-      wcx += (wtx - wcx) * 0.06;
-      wcy += (wty - wcy) * 0.06;
-      var fy = Math.sin(wft) * 5 + Math.sin(wft * 0.41) * 2.5;
-      wWrap.style.transform = 'perspective(900px) rotateY(' + wcx.toFixed(3) + 'deg) rotateX(' + wcy.toFixed(3) + 'deg) translateY(' + fy.toFixed(2) + 'px)';
+      wft += 0.007;
+      // Auto-oscillate in 3D — no mouse needed
+      var autoX = Math.sin(wft * 0.28) * 11;
+      var autoY = Math.sin(wft * 0.19) * 5;
+      // Mouse adds on top of auto
+      wcx += ((wtx + autoX) - wcx) * 0.045;
+      wcy += ((wty + autoY) - wcy) * 0.045;
+      var fy = Math.sin(wft * 0.52) * 7 + Math.sin(wft * 0.31) * 3;
+      wWrap.style.transform = 'perspective(700px) rotateY(' + wcx.toFixed(3) + 'deg) rotateX(' + wcy.toFixed(3) + 'deg) translateY(' + fy.toFixed(2) + 'px)';
     })();
   }
 
@@ -2078,16 +2081,18 @@ function handleWaitlist(e) {
         aStarted = true;
         (function aLoop() {
           requestAnimationFrame(aLoop);
-          // Wait for reveal-scale transition to finish
           if (parseFloat(getComputedStyle(appWrap).opacity) < 0.95) return;
-          acx += (atx - acx) * 0.055;
-          acy += (aty - acy) * 0.055;
           aft += 0.007;
-          var fy    = Math.sin(aft) * 16 + Math.sin(aft * 0.45) * 7;
+          // Auto-oscillate — visible without any mouse
+          var autoX = Math.sin(aft * 0.22) * 13;
+          var autoY = Math.sin(aft * 0.15) * 6;
+          acx += ((atx + autoX) - acx) * 0.04;
+          acy += ((aty + autoY) - acy) * 0.04;
+          var fy    = Math.sin(aft * 0.48) * 18 + Math.sin(aft * 0.29) * 8;
           var sx    = (-acx * 3).toFixed(1);
           var sy    = (50 + Math.abs(acy) * 5).toFixed(1);
           var sblur = (90 + Math.abs(acx) * 2).toFixed(0);
-          appImg.style.transform = 'perspective(900px) rotateY(' + acx.toFixed(3) + 'deg) rotateX(' + acy.toFixed(3) + 'deg) translateY(' + fy.toFixed(2) + 'px)';
+          appImg.style.transform = 'perspective(700px) rotateY(' + acx.toFixed(3) + 'deg) rotateX(' + acy.toFixed(3) + 'deg) translateY(' + fy.toFixed(2) + 'px)';
           appImg.style.boxShadow = sx + 'px ' + sy + 'px ' + sblur + 'px rgba(0,0,0,0.8)';
         })();
       }
