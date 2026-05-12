@@ -527,7 +527,9 @@ export default function Outfits() {
         }
 
         const jobId = await tryOnBaslat(aktifModel, garmentUri, kategori);
-        aktifModel  = await tryOnBekle(jobId);
+        aktifModel  = await tryOnBekle(jobId, (adim, toplam) => {
+          setTryOn(s => ({ ...s, adimMetni: `⏳ ${adim * 5}s / ~200s` }));
+        });
       }
 
       setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: aktifModel, hata: null }));
@@ -1207,7 +1209,7 @@ ${jsonFormat}`;
           {tryOn.adim === 'yukleniyor' && (
             <View style={styles.tryOnYukleniyor}>
               <ActivityIndicator size="large" color="#00D4FF" />
-              <Text style={[styles.tryOnYukleniyorText, { color: renkler.metin2 }]}>
+              <Text style={[styles.tryOnYukleniyorText, { color: renkler.metin }]}>
                 {dil === 'en' ? 'AI is dressing you up...' : 'AI kıyafeti sana giydiriyor...'}
               </Text>
               {tryOn.adimMetni ? (
@@ -1216,8 +1218,16 @@ ${jsonFormat}`;
                 </Text>
               ) : null}
               <Text style={[styles.tryOnYukleniyorAlt, { color: renkler.metin2 }]}>
-                {dil === 'en' ? '~15–30 sec per item' : 'Her parça ~15–30 saniye'}
+                {dil === 'en' ? '~30–60 sec. Please wait...' : '~30–60 saniye. Lütfen bekle...'}
               </Text>
+              <TouchableOpacity
+                style={[styles.tryOnTekrar, { backgroundColor: 'transparent', borderWidth: 1, borderColor: renkler.sinir, marginTop: 16 }]}
+                onPress={() => setTryOn(s => ({ ...s, adim: 'sec', hata: null, sonucUri: null, adimMetni: '' }))}
+              >
+                <Text style={{ color: renkler.metin2, fontWeight: '600', fontSize: 14 }}>
+                  {dil === 'en' ? '✕ Cancel' : '✕ Vazgeç'}
+                </Text>
+              </TouchableOpacity>
             </View>
           )}
 

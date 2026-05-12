@@ -26,7 +26,7 @@ async function safeJson(res: Response): Promise<any> {
 
 async function uriToBase64(uri: string): Promise<string> {
   if (uri.startsWith('data:')) return uri.split(',')[1];
-  const res = await fetch(uri);
+  const res = await fetch(uri, { signal: AbortSignal.timeout(20000) });
   if (!res.ok) throw new Error(`Fotoğraf okunamadı (${res.status}): ${uri.slice(-40)}`);
   const blob = await res.blob();
   return new Promise((resolve, reject) => {
@@ -47,7 +47,6 @@ function mimeType(uri: string): string {
 export type TryOnCategory = 'auto' | 'tops' | 'bottoms' | 'one-pieces';
 
 async function gorselParam(uri: string): Promise<string> {
-  // Fashn.ai CDN URL'lerini tekrar encode etme, doğrudan geç
   if (uri.startsWith('http')) return uri;
   const b64 = await uriToBase64(uri);
   return `data:${mimeType(uri)};base64,${b64}`;
@@ -66,11 +65,8 @@ export async function tryOnBaslat(
   const res = await fetch(`${API_URL}/api/fashn`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model_image:   modelParam,
-      garment_image: garmentParam,
-      category,
-    }),
+    body: JSON.stringify({ model_image: modelParam, garment_image: garmentParam, category }),
+    signal: AbortSignal.timeout(40000),
   });
 
   const data = await safeJson(res);
@@ -84,6 +80,7 @@ export async function kiyafetGorseliUret(garmentName: string): Promise<string> {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ garmentName }),
+    signal: AbortSignal.timeout(30000),
   });
   const data = await safeJson(res);
   if (!res.ok || data.error) throw new Error(errMsg(data.error) || `DALL-E hatası: ${res.status}`);
@@ -96,24 +93,37 @@ export async function tryOnDurumuKontrol(id: string): Promise<{
   output?: string[];
   error?: string;
 }> {
-  const res = await fetch(`${API_URL}/api/fashn?id=${encodeURIComponent(id)}`);
+  const res = await fetch(`${API_URL}/api/fashn?id=${encodeURIComponent(id)}`, {
+    signal: AbortSignal.timeout(10000),
+  });
   return safeJson(res);
 }
 
-export async function tryOnBekle(id: string, onProgress?: () => void): Promise<string> {
-  for (let i = 0; i < 50; i++) {
-    await new Promise(r => setTimeout(r, 3000));
-    const durum = await tryOnDurumuKontrol(id);
+export async function tryOnBekle(
+  id: string,
+  onProgress?: (adim: number, toplam: number) => void,
+): Promise<string> {
+  const MAKS = 40; // 40 × 5s = 200 saniye max
+  for (let i = 0; i < MAKS; i++) {
+    await new Promise(r => setTimeout(r, 5000));
+    onProgress?.(i + 1, MAKS);
+
+    let durum: Awaited<ReturnType<typeof tryOnDurumuKontrol>>;
+    try {
+      durum = await tryOnDurumuKontrol(id);
+    } catch {
+      // Tek bir poll hatası kritik değil, devam et
+      continue;
+    }
+
     if (durum.status === 'completed') {
       if (!durum.output?.[0]) throw new Error('Sonuç görseli gelmedi');
-      // CDN URL'ini telefona indir — Android Image bileşeni bazı CDN'leri direkt yükleyemiyor
       const localPath = `${FileSystem.cacheDirectory}tryon_${Date.now()}.jpg`;
       const { status } = await FileSystem.downloadAsync(durum.output[0], localPath);
-      if (status !== 200) throw new Error(`Görsel indirilemedi (${status}): ${durum.output[0].slice(0, 80)}`);
+      if (status !== 200) throw new Error(`Görsel indirilemedi (${status})`);
       return localPath;
     }
     if (durum.status === 'failed') throw new Error(errMsg(durum.error) || 'Try-on başarısız');
-    onProgress?.();
   }
-  throw new Error('Zaman aşımı: 150 saniyede sonuç gelmedi');
+  throw new Error('Zaman aşımı: 200 saniyede sonuç gelmedi');
 }
