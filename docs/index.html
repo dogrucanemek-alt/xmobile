@@ -1264,9 +1264,9 @@
   <div class="waitlist-counter reveal reveal-d2">
     <div class="counter-pill">
       <span class="counter-dot"></span>
-      <span data-tr="437 kişi kayıtlı" data-en="437 people joined">437 kişi kayıtlı</span>
+      <span id="counterJoined" data-tr="437 kişi kayıtlı" data-en="437 people joined">437 kişi kayıtlı</span>
     </div>
-    <span class="counter-slots" data-tr="— 63 yer kaldı" data-en="— 63 spots left">— 63 yer kaldı</span>
+    <span id="counterSlots" class="counter-slots" data-tr="— 63 yer kaldı" data-en="— 63 spots left">— 63 yer kaldı</span>
   </div>
   <form class="waitlist-form reveal reveal-d3" id="waitlistForm" onsubmit="handleWaitlist(event)">
     <input type="email" class="waitlist-input" id="waitlistEmail" placeholder="E-posta adresin" required autocomplete="email"/>
@@ -1536,6 +1536,44 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
 // ── WAITLIST ──
 var SB_URL  = 'https://hhzcfculfxzaammvfbwn.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoemNmY3VsZnh6YWFtbXZmYnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNjY3NDYsImV4cCI6MjA5Mzg0Mjc0Nn0.Td69oOO8MCapyIvtpN5lwmUxnX9kjgdc4P9p_3n2zYs';
+var TOTAL_SPOTS = 500;
+var currentWaitlistCount = 0;
+
+function updateCounter(count) {
+  currentWaitlistCount = count;
+  var joined = document.getElementById('counterJoined');
+  var slots  = document.getElementById('counterSlots');
+  if (!joined || !slots) return;
+  var remaining = Math.max(TOTAL_SPOTS - count, 0);
+  var trJoined = count + ' kişi kayıtlı';
+  var enJoined = count + ' people joined';
+  var trSlots  = '— ' + remaining + ' yer kaldı';
+  var enSlots  = '— ' + remaining + ' spots left';
+  joined.dataset.tr = trJoined;
+  joined.dataset.en = enJoined;
+  slots.dataset.tr  = trSlots;
+  slots.dataset.en  = enSlots;
+  joined.textContent = lang === 'en' ? enJoined : trJoined;
+  slots.textContent  = lang === 'en' ? enSlots  : trSlots;
+}
+
+function fetchWaitlistCount() {
+  fetch(SB_URL + '/rest/v1/aifurniture_waitlist?select=id&limit=0', {
+    headers: {
+      'apikey': SB_ANON,
+      'Authorization': 'Bearer ' + SB_ANON,
+      'Prefer': 'count=exact'
+    }
+  })
+  .then(function(res) {
+    var cr = res.headers.get('Content-Range') || '';
+    var count = parseInt(cr.split('/')[1], 10);
+    if (!isNaN(count)) updateCounter(count);
+  })
+  .catch(function() {});
+}
+
+fetchWaitlistCount();
 
 function handleWaitlist(e) {
   e.preventDefault();
@@ -1564,6 +1602,7 @@ function handleWaitlist(e) {
       if (title) title.textContent = lang === 'tr' ? '✓ Listeye Alındın' : '✓ You\'re on the List';
       if (body)  body.textContent  = lang === 'tr' ? 'Harika! Beta davet maili en kısa sürede e-postana gelecek. Ürün geliştirme sürecinde görüşlerine başvuracağız.' : "Great! Your beta invite will arrive soon. We'll reach out for your input during product development.";
       gtag('event', 'waitlist_signup', { event_category: 'engagement', email: email });
+      updateCounter(currentWaitlistCount + 1);
     } else if (res.status === 409) {
       if (title) title.textContent = lang === 'tr' ? '✓ Zaten Kayıtlısın' : '✓ Already Registered';
       if (body)  body.textContent  = lang === 'tr' ? 'Bu e-posta zaten bekleme listesinde. Beta davetini beklemeye devam et.' : 'This email is already on the waitlist. Keep an eye on your inbox for the beta invite.';
