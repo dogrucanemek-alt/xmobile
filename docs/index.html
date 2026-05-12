@@ -555,7 +555,22 @@
       display: inline-block;
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-      color: #000; background: #fff; padding: 5px 14px; border-radius: 2px; margin-bottom: 22px;
+      color: var(--gold); background: rgba(202,138,4,0.08);
+      border: 1px solid rgba(202,138,4,0.35);
+      padding: 5px 14px; border-radius: 2px; margin-bottom: 22px;
+    }
+    .cs-features {
+      display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 32px;
+    }
+    .cs-feature {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 2px; padding: 5px 12px;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .coming-soon-content:hover .cs-feature {
+      border-color: rgba(202,138,4,0.2); color: rgba(255,255,255,0.65);
     }
 
     /* ── WAITLIST ── */
@@ -1659,7 +1674,12 @@
   <div class="coming-soon-content reveal-left">
     <div class="badge" data-tr="Yakında" data-en="Coming Soon">Yakında</div>
     <h2 class="section-title" data-tr="Yaşam Alanlarının<br>Geleceği." data-en="The Future of<br>Living Spaces.">Yaşam Alanlarının<br>Geleceği.</h2>
-    <p class="hero-sub" style="margin-bottom:36px" data-tr="Yapay zeka destekli mobilya koleksiyonu. Her parça, sizi tanıyan ve yaşamınıza uyum sağlayan bir deneyim sunar." data-en="AI-powered furniture collection. Every piece offers an experience that knows you and adapts to your life.">Yapay zeka destekli mobilya koleksiyonu. Her parça, sizi tanıyan ve yaşamınıza uyum sağlayan bir deneyim sunar.</p>
+    <p class="hero-sub" data-tr="Yapay zeka destekli mobilya koleksiyonu. Her parça, sizi tanıyan ve yaşamınıza uyum sağlayan bir deneyim sunar." data-en="AI-powered furniture collection. Every piece offers an experience that knows you and adapts to your life.">Yapay zeka destekli mobilya koleksiyonu. Her parça, sizi tanıyan ve yaşamınıza uyum sağlayan bir deneyim sunar.</p>
+    <div class="cs-features">
+      <span class="cs-feature" data-tr="AI Yerleşim Planlama" data-en="AI Space Planning">AI Yerleşim Planlama</span>
+      <span class="cs-feature" data-tr="Hareket Sensörü" data-en="Motion Sensing">Hareket Sensörü</span>
+      <span class="cs-feature" data-tr="Enerji Optimizasyonu" data-en="Energy Optimization">Enerji Optimizasyonu</span>
+    </div>
     <a href="#waitlist" class="btn" data-tr="Erken Erişim İçin Kaydol →" data-en="Register for Early Access →">Erken Erişim İçin Kaydol →</a>
   </div>
 </section>
@@ -1671,7 +1691,12 @@
   <div class="coming-soon-content reveal-left">
     <div class="badge" data-tr="Yakında" data-en="Coming Soon">Yakında</div>
     <h2 class="section-title" data-tr="Akıllı Yatak Odası.<br>Her Sabah Mükemmel." data-en="The Intelligent Bedroom.<br>Perfect Every Morning.">Akıllı Yatak Odası.<br>Her Sabah Mükemmel.</h2>
-    <p class="hero-sub" style="margin-bottom:36px" data-tr="Uyku analizinden sabah rutinine, AI Bedroom Assistant yatak odanızı sizin için çalışan bir ortama dönüştürür." data-en="From sleep analysis to morning routine, AI Bedroom Assistant transforms your bedroom into a space that works for you.">Uyku analizinden sabah rutinine, AI Bedroom Assistant yatak odanızı sizin için çalışan bir ortama dönüştürür.</p>
+    <p class="hero-sub" data-tr="Uyku analizinden sabah rutinine, AI Bedroom Assistant yatak odanızı sizin için çalışan bir ortama dönüştürür." data-en="From sleep analysis to morning routine, AI Bedroom Assistant transforms your bedroom into a space that works for you.">Uyku analizinden sabah rutinine, AI Bedroom Assistant yatak odanızı sizin için çalışan bir ortama dönüştürür.</p>
+    <div class="cs-features">
+      <span class="cs-feature" data-tr="Uyku Kalitesi Analizi" data-en="Sleep Quality Analysis">Uyku Kalitesi Analizi</span>
+      <span class="cs-feature" data-tr="Akıllı Çalar Saat" data-en="Smart Wake-Up">Akıllı Çalar Saat</span>
+      <span class="cs-feature" data-tr="Sıcaklık Kontrolü" data-en="Temperature Control">Sıcaklık Kontrolü</span>
+    </div>
     <a href="#waitlist" class="btn" data-tr="Erken Erişim İçin Kaydol →" data-en="Register for Early Access →">Erken Erişim İçin Kaydol →</a>
   </div>
 </section>
@@ -1683,7 +1708,12 @@
   <div class="coming-soon-content reveal-left">
     <div class="badge" data-tr="Yakında" data-en="Coming Soon">Yakında</div>
     <h2 class="section-title" data-tr="Akıllı Oturma Odası.<br>Eviniz Sizi Tanısın." data-en="The Intelligent Living Room.<br>Your Home Knows You.">Akıllı Oturma Odası.<br>Eviniz Sizi Tanısın.</h2>
-    <p class="hero-sub" style="margin-bottom:36px" data-tr="AI Living Assistant ile aydınlatmadan sıcaklığa, eğlenceden enerjiye — her şey sizin alışkanlıklarınıza göre öğrenir ve uyum sağlar." data-en="With AI Living Assistant, from lighting to temperature, entertainment to energy — everything learns and adapts to your habits.">AI Living Assistant ile aydınlatmadan sıcaklığa, eğlenceden enerjiye — her şey sizin alışkanlıklarınıza göre öğrenir ve uyum sağlar.</p>
+    <p class="hero-sub" data-tr="AI Living Assistant ile aydınlatmadan sıcaklığa, eğlenceden enerjiye — her şey sizin alışkanlıklarınıza göre öğrenir ve uyum sağlar." data-en="With AI Living Assistant, from lighting to temperature, entertainment to energy — everything learns and adapts to your habits.">AI Living Assistant ile aydınlatmadan sıcaklığa, eğlenceden enerjiye — her şey sizin alışkanlıklarınıza göre öğrenir ve uyum sağlar.</p>
+    <div class="cs-features">
+      <span class="cs-feature" data-tr="Adaptif Aydınlatma" data-en="Adaptive Lighting">Adaptif Aydınlatma</span>
+      <span class="cs-feature" data-tr="Ses Sistemi Entegrasyonu" data-en="Audio Integration">Ses Sistemi Entegrasyonu</span>
+      <span class="cs-feature" data-tr="Enerji Takibi" data-en="Energy Tracking">Enerji Takibi</span>
+    </div>
     <a href="#waitlist" class="btn" data-tr="Erken Erişim İçin Kaydol →" data-en="Register for Early Access →">Erken Erişim İçin Kaydol →</a>
   </div>
 </section>
