@@ -288,6 +288,16 @@
     }
     .pro-inner { background: linear-gradient(145deg, #100d16, var(--bg-card)); border-radius: calc(var(--r-lg) - 2px); padding: 36px; }
 
+    /* ===== VIRAL WAITLIST ===== */
+    .ref-card { margin-top:16px;padding:18px 22px;background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.22);border-radius:var(--r-md);text-align:left; }
+    .ref-link-row { display:flex;align-items:center;gap:8px;margin-top:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:var(--r-full);padding:11px 16px; }
+    .ref-link-text { flex:1;font-size:12px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .ref-copy-btn { flex-shrink:0;font-size:11px;font-weight:800;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;font-family:var(--font);letter-spacing:0.08em;transition:opacity 0.15s; }
+    .ref-copy-btn:hover { opacity:0.75; }
+    .ref-share-row { display:flex;gap:8px;margin-top:10px; }
+    .ref-share-btn { flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--r-md);font-size:12px;font-weight:600;color:var(--text-secondary);text-decoration:none;cursor:pointer;transition:background 0.2s,color 0.2s; }
+    .ref-share-btn:hover { background:rgba(255,255,255,0.08);color:var(--text-primary); }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 900px) {
       .hero-grid, .wow-grid, .feature-row, .style-grid, .social-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
@@ -1692,8 +1702,33 @@
         </span>
       </label>
     </form>
-    <div id="waitlist-success" style="display:none;background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.22);border-radius:var(--r-md);padding:22px 36px;color:#4ade80;font-size:15px;font-weight:600;max-width:480px;margin:0 auto;">
-      ✓ Listeye eklendin! Beta açıldığında haber vereceğiz.
+    <div id="waitlist-success" style="display:none;max-width:480px;margin:0 auto;text-align:left;">
+      <div style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.22);border-radius:var(--r-md);padding:18px 24px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:22px;">✓</span>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#4ade80;">Listeye eklendin!</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:2px;">Beta açıldığında sana haber vereceğiz.</div>
+        </div>
+      </div>
+      <div class="ref-card">
+        <div style="font-size:10px;font-weight:800;color:var(--accent);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">Sırayı Atla</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text-primary);line-height:1.45;margin-bottom:6px;">3 arkadaşını davet et → Pro'ya ilk sen geç</div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.65;">Kendi referral linkini paylaş. Her 3 yeni üye için sıranda öncelik kazanırsın.</div>
+        <div class="ref-link-row">
+          <span class="ref-link-text" id="ref-link-text">trueai-inky.vercel.app</span>
+          <button class="ref-copy-btn" id="ref-copy-btn" onclick="copyRefLink()">KOPYALA</button>
+        </div>
+        <div class="ref-share-row">
+          <a id="ref-share-tw" href="#" target="_blank" rel="noopener" class="ref-share-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Twitter
+          </a>
+          <a id="ref-share-wa" href="#" target="_blank" rel="noopener" class="ref-share-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M20.52 3.449A11.817 11.817 0 0 0 12.047.006C5.495.006.16 5.341.157 11.893c0 2.096.547 4.142 1.588 5.945L.057 24l6.304-1.654a11.882 11.882 0 0 0 5.682 1.448h.005c6.554 0 11.89-5.335 11.893-11.887a11.821 11.821 0 0 0-3.421-8.458z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+      </div>
     </div>
     <p style="font-size:11px;color:var(--text-muted);margin-top:14px;">Spam yok · İstediğinde çıkabilirsin</p>
     <div style="display:inline-flex;align-items:center;gap:10px;margin-top:36px;background:var(--bg-card);border:1px solid rgba(255,255,255,0.05);padding:10px 24px;border-radius:var(--r-full);font-size:13px;color:var(--text-secondary);">
@@ -1770,33 +1805,73 @@
   window.addEventListener('resize', resize); resize(); animate();
 })();
 
+// Detect incoming referral on page load
+(function() {
+  try {
+    var ref = new URLSearchParams(window.location.search).get('ref');
+    if (ref && /^[A-Z0-9]{6,12}$/.test(ref)) localStorage.setItem('trueai_ref_by', ref);
+  } catch(e) {}
+})();
+
+function genRefCode(email) {
+  var s = email.toLowerCase(), h = 0;
+  for (var i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  var c = Math.abs(h).toString(36).toUpperCase();
+  while (c.length < 8) c = '0' + c;
+  return c.substring(0, 8);
+}
+
+function copyRefLink() {
+  var link = document.getElementById('ref-link-text').textContent;
+  var btn = document.getElementById('ref-copy-btn');
+  (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject())
+    .catch(function() {
+      var ta = document.createElement('textarea');
+      ta.value = link; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+    })
+    .then(function() {
+      btn.textContent = 'KOPYALANDI ✓';
+      setTimeout(function() { btn.textContent = 'KOPYALA'; }, 2200);
+    });
+}
+
 function submitWaitlist(e) {
   e.preventDefault();
   var email = document.getElementById('email-input').value.trim();
   if (!email) return;
+  var refCode = genRefCode(email);
+  var refBy = localStorage.getItem('trueai_ref_by') || '';
   var list = JSON.parse(localStorage.getItem('trueai_waitlist') || '[]');
   if (!list.find(function(i) { return i.email === email; })) {
-    list.push({ email: email, date: new Date().toISOString() });
+    list.push({ email: email, date: new Date().toISOString(), ref: refCode });
     localStorage.setItem('trueai_waitlist', JSON.stringify(list));
   }
+  localStorage.setItem('trueai_ref_code', refCode);
   document.getElementById('waitlist-form').style.display = 'none';
   document.getElementById('waitlist-success').style.display = 'block';
+
+  // Populate referral UI
+  var refLink = 'https://trueai-inky.vercel.app/?ref=' + refCode;
+  var linkEl = document.getElementById('ref-link-text');
+  if (linkEl) linkEl.textContent = refLink;
+  var twEl = document.getElementById('ref-share-tw');
+  if (twEl) twEl.href = 'https://x.com/intent/tweet?text=' + encodeURIComponent('Zara ve H%26M ürünlerini üstünde dene, AI sana kombin önersin 👗 True AI waitlist\'e katıl → ' + refLink);
+  var waEl = document.getElementById('ref-share-wa');
+  if (waEl) waEl.href = 'https://wa.me/?text=' + encodeURIComponent('Yapay zeka destekli gardırop uygulaması True AI\'ya erken erişim kazan: ' + refLink);
+
   incrementCounter();
-  // Primary: Brevo via serverless function
+  // Primary: Brevo
   fetch('/api/waitlist', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email })
+    body: JSON.stringify({ email: email, refCode: refCode, refBy: refBy })
   }).catch(function() {});
-  // Fallback: FormSubmit.co (email notification)
+  // Fallback notification
   fetch('https://formsubmit.co/ajax/dogrucanemek@gmail.com', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
-      email: email,
-      _subject: 'True AI Waitlist — Yeni Kayıt',
-      _captcha: 'false'
-    })
+    body: JSON.stringify({ email: email, ref_code: refCode, referred_by: refBy, _subject: 'True AI Waitlist — Yeni Kayıt', _captcha: 'false' })
   }).catch(function() {});
 }
 
