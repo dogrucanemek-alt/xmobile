@@ -294,6 +294,16 @@
       nav .btn-primary { padding: 9px 18px; font-size: 13px; }
     }
 
+    /* ===== KVKK MODAL ===== */
+    #kvkk-overlay { display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:20px; }
+    #kvkk-overlay.open { display:flex; }
+    @keyframes modalIn { from{opacity:0;transform:translateY(22px) scale(0.97)} to{opacity:1;transform:none} }
+    #kvkk-box { background:var(--bg-raised);border:1px solid rgba(255,255,255,0.09);border-radius:var(--r-xl);max-width:640px;width:100%;max-height:85vh;display:flex;flex-direction:column;animation:modalIn 0.32s cubic-bezier(0.16,1,0.3,1);box-shadow:0 40px 120px rgba(0,0,0,0.7); }
+    #kvkk-body { overflow-y:auto;padding:32px 40px;flex:1; }
+    #kvkk-body::-webkit-scrollbar { width:4px; }
+    #kvkk-body::-webkit-scrollbar-thumb { background:var(--text-muted);border-radius:2px; }
+    @media(max-width:540px) { #kvkk-body { padding:24px 20px; } #kvkk-box header, #kvkk-box footer { padding-left:20px !important; padding-right:20px !important; } }
+
     /* ===== SCROLL PROGRESS ===== */
     #scroll-progress { position:fixed;top:0;left:0;z-index:9999;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-light));width:0%;pointer-events:none; }
 
@@ -344,6 +354,85 @@
 
 <!-- Scroll progress -->
 <div id="scroll-progress"></div>
+
+<!-- ═══ KVKK MODAL ═══ -->
+<div id="kvkk-overlay" onclick="if(event.target===this)closeKvkk()">
+  <div id="kvkk-box">
+    <header style="display:flex;align-items:center;justify-content:space-between;padding:22px 40px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
+      <div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.18em;color:var(--accent);text-transform:uppercase;margin-bottom:4px;">KİŞİSEL VERİLERİN KORUNMASI</div>
+        <div style="font-size:16px;font-weight:700;color:var(--text-primary);">KVKK Aydınlatma Metni</div>
+      </div>
+      <button onclick="closeKvkk()" aria-label="Kapat"
+        style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);cursor:pointer;color:var(--text-muted);padding:0;width:36px;height:36px;border-radius:10px;font-size:16px;line-height:1;transition:background 0.2s,color 0.2s;flex-shrink:0;"
+        onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='var(--text-primary)'"
+        onmouseout="this.style.background='rgba(255,255,255,0.04)';this.style.color='var(--text-muted)'">✕</button>
+    </header>
+
+    <div id="kvkk-body">
+      <div style="font-size:13px;color:var(--text-secondary);line-height:1.85;display:flex;flex-direction:column;gap:22px;">
+
+        <p>6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında veri sorumlusu sıfatıyla kişisel verilerinizin nasıl işlendiğini aşağıda açıklıyoruz.</p>
+
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);">1. Veri Sorumlusu</div>
+          <p><strong style="color:var(--text-primary);">XMOBILE / True AI</strong><br />
+          E-posta: <a href="mailto:dogrucanemek@gmail.com" style="color:var(--accent);">dogrucanemek@gmail.com</a></p>
+        </div>
+
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);">2. İşlenen Kişisel Veri</div>
+          <p>Yalnızca <strong style="color:var(--text-primary);">e-posta adresiniz</strong> işlenmektedir.</p>
+        </div>
+
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);">3. İşlenme Amacı</div>
+          <ul style="padding-left:16px;display:flex;flex-direction:column;gap:6px;list-style:disc;">
+            <li>Beta erişimi açıldığında bildirim göndermek</li>
+            <li>Erken erişim avantajlarını iletmek (ilk 500 kişi Pro planı ücretsiz)</li>
+            <li>Ürün geliştirmeleri ve lansman duyuruları hakkında bilgi vermek</li>
+          </ul>
+        </div>
+
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);">4. Hukuki Dayanak</div>
+          <p>KVKK m.5/2-f kapsamında <strong style="color:var(--text-primary);">meşru menfaat</strong> ve açık rızanıza istinaden işlenmektedir.</p>
+        </div>
+
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);">5. Kişisel Verilerin Aktarımı</div>
+          <p>E-posta adresiniz yalnızca form iletimi amacıyla <strong style="color:var(--text-primary);">FormSubmit.co</strong> altyapısına aktarılmaktadır. Bu hizmet verileri üçüncü kişilerle paylaşmamaktadır. Başka hiçbir üçüncü tarafa aktarım yapılmamaktadır.</p>
+        </div>
+
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);">6. Saklama Süresi</div>
+          <p>Verileriniz; bekleme listesi kapatılana, silme talebinize veya pazarlama iletişiminden çıkma talebinize kadar saklanır.</p>
+        </div>
+
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);">7. KVKK Madde 11 Kapsamında Haklarınız</div>
+          <ul style="padding-left:16px;display:flex;flex-direction:column;gap:6px;list-style:disc;">
+            <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme</li>
+            <li>İşlenmişse buna ilişkin bilgi talep etme</li>
+            <li>İşlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme</li>
+            <li>Yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri bilme</li>
+            <li>Eksik veya yanlış işlenmişse düzeltilmesini isteme</li>
+            <li>KVKK m.7 kapsamında silinmesini veya yok edilmesini isteme</li>
+            <li>Kanuna aykırı işlenmesi nedeniyle zarara uğramanız hâlinde giderilmesini talep etme</li>
+          </ul>
+          <p style="margin-top:10px;">Haklarınızı kullanmak için <a href="mailto:dogrucanemek@gmail.com" style="color:var(--accent);">dogrucanemek@gmail.com</a> adresine başvurabilirsiniz.</p>
+        </div>
+
+        <p style="font-size:11px;color:var(--text-muted);border-top:1px solid rgba(255,255,255,0.05);padding-top:14px;margin-top:4px;">Son güncelleme: Mayıs 2026</p>
+      </div>
+    </div>
+
+    <footer style="padding:18px 40px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0;display:flex;justify-content:flex-end;gap:10px;">
+      <button onclick="closeKvkk()" class="btn-secondary" style="padding:11px 24px;">Kapat</button>
+      <button onclick="acceptKvkk()" class="btn-primary" style="padding:11px 28px;">Anladım, Onaylıyorum →</button>
+    </footer>
+  </div>
+</div>
 
 <!-- Mobile sticky CTA -->
 <div id="mobile-cta">
@@ -1372,12 +1461,22 @@
       Beta açıldığında sana haber verelim.<br />
       İlk 500 kişi Pro planı 3 ay ücretsiz kullanır.
     </p>
-    <form id="waitlist-form" onsubmit="submitWaitlist(event)" style="display:flex;gap:10px;max-width:480px;margin:0 auto 14px;" class="waitlist-row">
-      <input id="email-input" type="email" placeholder="email@ornek.com" required autocomplete="email"
-        style="flex:1;padding:17px 22px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:var(--r-full);color:var(--text-primary);font-family:var(--font);font-size:15px;outline:none;transition:border-color 0.2s;"
-        onfocus="this.style.borderColor='var(--accent)'"
-        onblur="this.style.borderColor='rgba(255,255,255,0.09)'" />
-      <button type="submit" class="btn-primary">Listeme Ekle →</button>
+    <form id="waitlist-form" onsubmit="submitWaitlist(event)" style="max-width:480px;margin:0 auto 14px;">
+      <div style="display:flex;gap:10px;margin-bottom:14px;" class="waitlist-row">
+        <input id="email-input" type="email" placeholder="email@ornek.com" required autocomplete="email"
+          style="flex:1;padding:17px 22px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:var(--r-full);color:var(--text-primary);font-family:var(--font);font-size:15px;outline:none;transition:border-color 0.2s;"
+          onfocus="this.style.borderColor='var(--accent)'"
+          onblur="this.style.borderColor='rgba(255,255,255,0.09)'" />
+        <button type="submit" class="btn-primary">Listeme Ekle →</button>
+      </div>
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;text-align:left;max-width:480px;margin:0 auto;">
+        <input id="kvkk-check" type="checkbox" required
+          style="margin-top:3px;accent-color:var(--accent);flex-shrink:0;width:15px;height:15px;cursor:pointer;" />
+        <span style="font-size:12px;color:var(--text-muted);line-height:1.65;">
+          <button type="button" onclick="openKvkk()"
+            style="background:none;border:none;padding:0;color:var(--accent);font-size:12px;font-family:var(--font);cursor:pointer;text-decoration:underline;text-decoration-color:rgba(201,169,110,0.4);text-underline-offset:2px;">KVKK Aydınlatma Metni</button>'ni okudum, kişisel verilerimin belirtilen amaçlarla işlenmesine onay veriyorum.
+        </span>
+      </label>
     </form>
     <div id="waitlist-success" style="display:none;background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.22);border-radius:var(--r-md);padding:22px 36px;color:#4ade80;font-size:15px;font-weight:600;max-width:480px;margin:0 auto;">
       ✓ Listeye eklendin! Beta açıldığında haber vereceğiz.
@@ -1410,6 +1509,7 @@
         <a href="#pricing" style="font-size:13px;color:var(--text-muted);transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-muted)'">Fiyatlar</a>
         <a href="#social" style="font-size:13px;color:var(--text-muted);transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-muted)'">Topluluk</a>
         <a href="mailto:dogrucanemek@gmail.com" style="font-size:13px;color:var(--text-muted);transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-muted)'">İletişim</a>
+        <button onclick="openKvkk()" style="background:none;border:none;padding:0;font-size:13px;color:var(--text-muted);cursor:pointer;font-family:var(--font);transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-muted)'">KVKK</button>
       </div>
       <div style="font-size:12px;color:var(--text-muted);">© 2026 True AI — XMOBILE</div>
     </div>
@@ -1500,6 +1600,26 @@ document.querySelectorAll('.card, .feature-row, .steps-grid > div, .wow-grid > d
   el.style.opacity = '0'; el.style.transform = 'translateY(24px)';
   el.style.transition = 'opacity 0.65s ease, transform 0.65s ease';
   obs.observe(el);
+});
+
+// KVKK modal
+function openKvkk() {
+  var o = document.getElementById('kvkk-overlay');
+  o.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeKvkk() {
+  var o = document.getElementById('kvkk-overlay');
+  o.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function acceptKvkk() {
+  var cb = document.getElementById('kvkk-check');
+  if (cb) cb.checked = true;
+  closeKvkk();
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeKvkk();
 });
 
 // Scroll progress bar
