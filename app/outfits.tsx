@@ -1316,7 +1316,7 @@ ${jsonFormat}`;
             </TouchableOpacity>
           </View>
 
-          {tryOn.adim === 'sec' && seciliKombin && (
+          {tryOn.adim === 'sec' && (seciliKombin || tryOn.secilenParcalar.length > 0) && (
             <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.tryOnIcPadding}>
               {/* Model photo picker */}
               <View style={[styles.tryOnModelBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
@@ -1361,7 +1361,14 @@ ${jsonFormat}`;
                   ? 'Select one or more garments to try on:'
                   : 'Denemek istediğin parçaları seç:'}
               </Text>
-              {seciliKombin.parcalar.map((p, i) => {
+              {(() => {
+                // Custom builder'dan gelince seçili parçaları göster; yoksa mevcut kombinin parçalarını
+                const kaynak = tryOn.secilenParcalar.length > 0 &&
+                  tryOn.secilenParcalar.some(p => !seciliKombin?.parcalar.includes(p))
+                    ? tryOn.secilenParcalar
+                    : (seciliKombin?.parcalar ?? []);
+                return kaynak;
+              })().map((p, i) => {
                 const aranan = p.toLowerCase();
                 const eslesme = kiyafetler.find(k => {
                   const kAd = k.ad?.toLowerCase() ?? '';
