@@ -3,529 +3,560 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- SEO -->
   <title>True AI — Yapay Zeka Destekli Akıllı Gardırop | XMOBILE</title>
   <meta name="description" content="Her sabah doğru kombini giy. True AI gardırobunu öğrenir, hava durumuna ve stiline göre öneri üretir. Sanal deneme ile giymeden gör." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://trueai-inky.vercel.app/" />
-  <meta name="language" content="tr" />
-  <meta http-equiv="content-language" content="tr" />
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="True AI — Yapay Zeka Destekli Akıllı Gardırop" />
-  <meta property="og:description" content="Her sabah doğru kombini giy. Hava durumuna göre, tarzına özel AI kombin önerisi. Sanal deneme ile giymeden gör." />
-  <meta property="og:image" content="https://trueai-inky.vercel.app/assets/screenshots/outfits.jpeg" />
+  <meta property="og:description" content="Her sabah doğru kombini giy. AI gardırobunu öğrenir, sanal deneme ile giymeden gör." />
+  <meta property="og:image" content="https://trueai-inky.vercel.app/assets/og-image.jpeg" />
   <meta property="og:url" content="https://trueai-inky.vercel.app/" />
   <meta property="og:locale" content="tr_TR" />
-  <meta property="og:site_name" content="True AI — XMOBILE" />
-
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="True AI — Yapay Zeka Destekli Akıllı Gardırop" />
-  <meta name="twitter:description" content="Sanal deneme ile kıyafeti giymeden gör. AI kombin önerisi." />
-  <meta name="twitter:image" content="https://trueai-inky.vercel.app/assets/screenshots/outfits.jpeg" />
+  <meta name="twitter:image" content="https://trueai-inky.vercel.app/assets/og-image.jpeg" />
 
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- JSON-LD: SoftwareApplication -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "True AI — XMOBILE",
-    "applicationCategory": "LifestyleApplication",
-    "operatingSystem": "iOS, Android",
-    "description": "Yapay zeka destekli akıllı gardırop uygulaması. Hava durumu ve stiline göre günlük kombin önerisi. Sanal deneme ile kıyafeti giymeden gör.",
-    "url": "https://trueai-inky.vercel.app",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "TRY",
-      "description": "Freemium — ayda 5 ücretsiz kombin önerisi"
-    },
-    "author": {
-      "@type": "Organization",
-      "name": "XMOBILE",
-      "email": "dogrucanemek@gmail.com"
-    }
-  }
-  </script>
-
-  <!-- JSON-LD: FAQPage -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Kamera gizliliğim ne olacak?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Veriler cihazınızda işlenir. Buluta fotoğraf gönderilmez. Kıyafet görselleri yalnızca kombin önerisi için kullanılır."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Kıyafetlerimi tanıyamaz mı?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "İlk kurulumda kıyafetleri kendiniz etiketliyorsunuz (renk, kategori). Zamanla AI tercihlerinizi öğrenir ve önerileri kişiselleştirir."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Ücretsiz plan ne kadar kapsamlı?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Sınırsız gardırop ekleme ve ayda 5 AI kombin önerisi tamamen ücretsiz. Sanal deneme ve sınırsız öneri Pro planında."
-        }
-      }
-    ]
-  }
-  </script>
-
-  <!-- JSON-LD: Organization -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "XMOBILE",
-    "url": "https://trueai-inky.vercel.app",
-    "email": "dogrucanemek@gmail.com",
-    "description": "True AI — Yapay zeka destekli akıllı gardırop uygulaması geliştiricisi."
-  }
-  </script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"True AI — XMOBILE","applicationCategory":"LifestyleApplication","operatingSystem":"iOS, Android","description":"Yapay zeka destekli akıllı gardırop uygulaması.","offers":{"@type":"Offer","price":"0","priceCurrency":"TRY"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Kamera gizliliğim ne olacak?","acceptedAnswer":{"@type":"Answer","text":"Veriler cihazınızda işlenir. Buluta fotoğraf gönderilmez."}},{"@type":"Question","name":"Kıyafetlerimi tanıyamaz mı?","acceptedAnswer":{"@type":"Answer","text":"İlk kurulumda etiketliyorsunuz, zamanla AI öğrenir."}},{"@type":"Question","name":"Ücretsiz plan ne kadar kapsamlı?","acceptedAnswer":{"@type":"Answer","text":"Sınırsız gardırop + ayda 5 AI kombin önerisi ücretsiz."}}]}</script>
 
   <style>
-    /* ===== DESIGN TOKENS ===== */
     :root {
       --bg: #00040F;
-      --bg-card: #111111;
-      --bg-card-hover: #161616;
+      --bg-card: #0d0d0d;
       --accent: #00D4FF;
-      --accent-dim: rgba(0, 212, 255, 0.12);
-      --accent-border: rgba(0, 212, 255, 0.25);
+      --accent-dim: rgba(0,212,255,0.1);
+      --accent-border: rgba(0,212,255,0.22);
       --text-primary: #FFFFFF;
-      --text-secondary: #888888;
-      --text-muted: #555555;
-      --success: #27AE60;
-      --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 20px;
-      --radius-full: 9999px;
+      --text-secondary: #7a7a8a;
+      --text-muted: #444455;
+      --success: #22c55e;
       --font: 'Space Grotesk', system-ui, sans-serif;
       --max-w: 1200px;
-      --section-pad: 100px 24px;
+      --r-sm: 10px; --r-md: 16px; --r-lg: 24px; --r-xl: 32px; --r-full: 9999px;
     }
 
-    /* ===== RESET ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text-primary);
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
+    body { font-family: var(--font); background: var(--bg); color: var(--text-primary); overflow-x: hidden; line-height: 1.6; }
     img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
 
-    /* ===== LAYOUT ===== */
-    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
-    .section { padding: var(--section-pad); }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 28px; }
+    .section { padding: 110px 28px; }
     .section--dark { background: #000; }
 
-    /* ===== BUTTON ===== */
+    /* EYEBROW */
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 18px;
+    }
+    .eyebrow::before {
+      content: ''; display: block; width: 20px; height: 1px; background: var(--accent);
+    }
+
+    /* BUTTONS */
     .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 16px 32px;
-      background: var(--accent);
-      color: #000;
-      font-family: var(--font);
-      font-weight: 700;
-      font-size: 16px;
-      border: none;
-      border-radius: var(--radius-full);
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.15s;
-      white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 15px 30px; background: var(--accent); color: #000;
+      font-family: var(--font); font-weight: 700; font-size: 15px;
+      border: none; border-radius: var(--r-full); cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s; white-space: nowrap;
     }
     .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
-    .btn-primary:active { transform: translateY(0); }
-
     .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      background: transparent;
-      color: var(--text-primary);
-      font-family: var(--font);
-      font-weight: 500;
-      font-size: 15px;
-      border: 1px solid var(--accent-border);
-      border-radius: var(--radius-full);
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 26px; background: transparent; color: var(--text-primary);
+      font-family: var(--font); font-weight: 500; font-size: 14px;
+      border: 1px solid rgba(255,255,255,0.12); border-radius: var(--r-full);
+      cursor: pointer; transition: border-color 0.2s, background 0.2s;
     }
     .btn-secondary:hover { border-color: var(--accent); background: var(--accent-dim); }
 
-    /* ===== BADGE ===== */
-    .badge {
-      display: inline-block;
-      padding: 4px 12px;
-      background: var(--accent-dim);
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 600;
-      border-radius: var(--radius-full);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      border: 1px solid var(--accent-border);
-    }
-
-    /* ===== CARD ===== */
+    /* CARD */
     .card {
-      background: var(--bg-card);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: var(--radius-lg);
-      padding: 32px;
-      transition: border-color 0.2s;
+      background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: var(--r-lg); padding: 32px; transition: border-color 0.3s;
     }
     .card:hover { border-color: var(--accent-border); }
 
-    /* ===== EYEBROW ===== */
-    .eyebrow {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 16px;
+    /* BADGE */
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px; background: var(--accent-dim); color: var(--accent);
+      font-size: 11px; font-weight: 700; border-radius: var(--r-full);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      border: 1px solid var(--accent-border);
     }
 
-    /* ===== DIVIDER ===== */
-    .divider {
-      height: 1px;
-      background: rgba(255,255,255,0.06);
-      margin: 0;
+    /* DIVIDER */
+    .divider { height: 1px; background: rgba(255,255,255,0.05); }
+
+    /* ===== PHONE MOCKUP ===== */
+    .phone-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .phone-glow {
+      position: absolute; inset: -40px;
+      background: radial-gradient(ellipse at center, rgba(0,212,255,0.18) 0%, transparent 65%);
+      pointer-events: none; z-index: 0;
+    }
+    .phone-body {
+      position: relative; z-index: 1;
+      background: linear-gradient(145deg, #282828 0%, #181818 50%, #222 100%);
+      border-radius: 46px;
+      padding: 14px 9px 10px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.13),
+        0 0 0 2.5px rgba(0,0,0,0.95),
+        0 0 0 3.5px rgba(255,255,255,0.04),
+        0 60px 120px rgba(0,0,0,0.9),
+        inset 0 1px 0 rgba(255,255,255,0.07);
+    }
+    /* Shine overlay */
+    .phone-body::after {
+      content: ''; position: absolute; inset: 0; border-radius: 46px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 50%);
+      pointer-events: none; z-index: 3;
+    }
+    .phone-island {
+      width: 92px; height: 28px; background: #000; border-radius: 50px;
+      margin: 0 auto 10px; display: flex; align-items: center;
+      justify-content: flex-end; padding-right: 8px; gap: 5px;
+    }
+    .phone-island::before {
+      content: ''; width: 10px; height: 10px;
+      background: radial-gradient(circle at 35% 35%, #2a2a2a, #111);
+      border-radius: 50%; border: 1px solid rgba(255,255,255,0.07);
+    }
+    .phone-island::after {
+      content: ''; width: 5px; height: 5px;
+      background: #1a1a1a; border-radius: 50%;
+    }
+    .phone-screen { border-radius: 34px; overflow: hidden; background: #000; position: relative; z-index: 2; }
+    .phone-screen img { width: 100%; display: block; }
+    /* Side buttons */
+    .phone-vol {
+      position: absolute; left: -2.5px; top: 100px; z-index: 2;
+      width: 2.5px; height: 34px; background: #2a2a2a; border-radius: 2px 0 0 2px;
+      box-shadow: 0 44px 0 #2a2a2a;
+    }
+    .phone-pwr {
+      position: absolute; right: -2.5px; top: 120px; z-index: 2;
+      width: 2.5px; height: 60px; background: #2a2a2a; border-radius: 0 2px 2px 0;
     }
 
-    /* ===== HERO RESPONSIVE ===== */
-    @media (max-width: 768px) {
-      :root { --section-pad: 64px 20px; }
-      .hero-grid {
-        grid-template-columns: 1fr !important;
-        gap: 40px !important;
-        text-align: center;
-      }
-      .hero-grid > div:first-child {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-      }
-      .hero-grid > div:first-child p { text-align: center; }
-      .hero-grid > div:first-child > div:last-child { align-items: center; }
-      .steps-grid { grid-template-columns: 1fr !important; }
-      .feature-grid {
-        grid-template-columns: 1fr !important;
-        gap: 40px !important;
-        text-align: center;
-      }
-      .feature-grid > div:has(img) { order: -1; }
-      .faq-grid { grid-template-columns: 1fr !important; }
-      .pricing-grid {
-        grid-template-columns: 1fr !important;
-        max-width: 400px !important;
-      }
-      .pricing-grid > div:nth-child(2) { transform: none !important; }
+    /* ===== FLOATING CARDS ===== */
+    .float-card {
+      position: absolute;
+      background: rgba(13,13,20,0.88);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,212,255,0.18);
+      border-radius: var(--r-md); padding: 12px 16px;
+      white-space: nowrap; z-index: 20;
+    }
+    @keyframes floatA { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+    @keyframes floatB { 0%,100%{transform:translateY(-5px)} 50%{transform:translateY(3px)} }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    @keyframes gradAnim { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes scanline { 0%{top:-20%} 100%{top:110%} }
+
+    /* ===== HERO ===== */
+    #hero { position: relative; padding: 80px 28px 100px; overflow: hidden; }
+    #hero canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
+    }
+    .hero-content { position: relative; z-index: 2; }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: center;
+    }
+    .hero-stage {
+      position: relative; border-radius: 28px; overflow: hidden;
+      background: #060812; padding: 48px 32px;
+      border: 1px solid rgba(255,255,255,0.06);
+      display: flex; justify-content: center;
+    }
+    .hero-stage-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: url('assets/hero-bg.jpeg') center/cover no-repeat;
+      opacity: 0.25;
+    }
+    .hero-stage-fade {
+      position: absolute; inset: 0; z-index: 1;
+      background: radial-gradient(ellipse at 70% 50%, rgba(0,212,255,0.06) 0%, transparent 60%),
+                  linear-gradient(to bottom, rgba(6,8,18,0.3) 0%, rgba(6,8,18,0.6) 100%);
+    }
+    .hero-phone-wrap { position: relative; z-index: 2; }
+
+    /* ===== WOW SECTION ===== */
+    .wow-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+    }
+    .wow-visual {
+      position: relative; border-radius: var(--r-xl); overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    }
+    .wow-visual img { width: 100%; display: block; }
+    .wow-label {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,212,255,0.92); color: #000;
+      padding: 10px 22px; border-radius: var(--r-full);
+      font-size: 13px; font-weight: 800; white-space: nowrap; z-index: 2;
+    }
+    /* scan line effect */
+    .wow-visual::after {
+      content: ''; position: absolute; left: 0; width: 100%; height: 40%;
+      background: linear-gradient(to bottom, transparent, rgba(0,212,255,0.04), transparent);
+      animation: scanline 3s linear infinite; pointer-events: none; z-index: 1;
     }
 
+    /* ===== STEPS ===== */
+    .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+
+    /* ===== FEATURES ===== */
+    .feature-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+    }
+    .feature-phone { display: flex; justify-content: center; }
+    .feature-metric {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 18px; border-radius: var(--r-full);
+      font-size: 13px; font-weight: 600;
+      background: var(--bg-card); margin-top: 20px;
+    }
+
+    /* ===== FAQ ===== */
+    .faq-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+
+    /* ===== PRICING ===== */
+    .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; max-width: 900px; margin: 0 auto; align-items: start; }
+    .pro-wrap {
+      position: relative; border-radius: var(--r-lg); padding: 2px;
+      background: linear-gradient(135deg, var(--accent), rgba(0,212,255,0.15) 50%, var(--accent));
+      background-size: 200% 200%;
+      animation: gradAnim 3s ease infinite;
+      transform: scale(1.04);
+    }
+    .pro-inner {
+      background: linear-gradient(145deg, #0d1520, var(--bg-card));
+      border-radius: calc(var(--r-lg) - 2px); padding: 32px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .hero-grid, .wow-grid, .feature-row { grid-template-columns: 1fr !important; gap: 48px !important; }
+      .hero-grid .hero-copy { text-align: center; align-items: center !important; }
+      .steps-grid, .faq-grid { grid-template-columns: 1fr !important; }
+      .pricing-grid { grid-template-columns: 1fr !important; max-width: 440px !important; }
+      .pro-wrap { transform: none !important; }
+      .feature-row .feature-phone { order: -1; }
+    }
     @media (max-width: 540px) {
-      .waitlist-form-row { flex-direction: column !important; }
-      .waitlist-form-row .btn-primary { width: 100%; justify-content: center; }
+      .waitlist-row { flex-direction: column !important; }
+      .waitlist-row .btn-primary { width: 100%; justify-content: center; }
+      .section { padding: 72px 20px; }
     }
-
-    @media (max-width: 400px) {
-      nav .btn-primary { padding: 8px 16px; font-size: 13px; }
-    }
-
-    /* ===== ANIMATIONS ===== */
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+    @media (max-width: 420px) {
+      nav .btn-primary { padding: 9px 18px; font-size: 13px; }
     }
   </style>
 </head>
 <body>
 
-<!-- BANNER -->
+<!-- ═══ BANNER ═══ -->
 <div id="banner" style="
-  position: sticky; top: 0; z-index: 100;
-  background: var(--accent); color: #000;
-  text-align: center; padding: 10px 20px;
-  font-size: 14px; font-weight: 600;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
+  position:sticky;top:0;z-index:200;
+  background:var(--accent);color:#000;
+  text-align:center;padding:10px 20px;
+  font-size:13px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:8px;
 ">
   🔥 Beta erişimi sınırlı —
-  <span id="waitlist-count">347</span> kişi bekleniyor
+  <span id="waitlist-count" style="font-weight:900;">347</span> kişi bekleniyor
   <button onclick="document.getElementById('banner').style.display='none'"
-    style="margin-left:12px;background:none;border:none;cursor:pointer;font-size:16px;color:#000;line-height:1;"
-    aria-label="Bannerı kapat">✕</button>
+    style="margin-left:14px;background:none;border:none;cursor:pointer;font-size:17px;color:#000;line-height:1;opacity:0.6;"
+    aria-label="Kapat">✕</button>
 </div>
 
-<!-- NAV -->
+<!-- ═══ NAV ═══ -->
 <nav style="
-  position: sticky; top: 44px; z-index: 99;
-  background: rgba(0,4,15,0.85); backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  padding: 16px 24px;
+  position:sticky;top:40px;z-index:199;
+  background:rgba(0,4,15,0.8);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,0.05);padding:14px 28px;
 ">
   <div class="container" style="display:flex;align-items:center;justify-content:space-between;">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <div style="
-        width:36px;height:36px;background:#fff;border-radius:8px;
-        display:flex;align-items:center;justify-content:center;
-        font-size:11px;font-weight:800;color:#000;
-      ">True</div>
+    <a href="#hero" style="display:flex;align-items:center;gap:12px;">
+      <!-- SVG Logo mark -->
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="36" height="36" rx="10" fill="white"/>
+        <path d="M10 10h5v16h-5zM21 10h5v16h-5z" fill="#00040F"/>
+        <path d="M15 18h6" stroke="#00D4FF" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
       <div>
-        <div style="font-size:13px;font-weight:700;letter-spacing:0.12em;">XMOBILE</div>
-        <div style="font-size:9px;color:var(--text-secondary);letter-spacing:0.15em;">WARDROBE INTELLIGENCE</div>
+        <div style="font-size:13px;font-weight:700;letter-spacing:0.12em;line-height:1.1;">XMOBILE</div>
+        <div style="font-size:8px;color:var(--text-secondary);letter-spacing:0.18em;text-transform:uppercase;">WARDROBE INTELLIGENCE</div>
       </div>
-    </div>
-    <a href="#waitlist" class="btn-primary" style="padding:10px 24px;font-size:14px;">
-      Erken Erişim →
     </a>
+    <div style="display:flex;align-items:center;gap:20px;">
+      <a href="#how-it-works" style="font-size:13px;color:var(--text-secondary);display:none;" class="nav-link-md">Nasıl Çalışır</a>
+      <a href="#pricing" style="font-size:13px;color:var(--text-secondary);display:none;" class="nav-link-md">Fiyatlar</a>
+      <a href="#waitlist" class="btn-primary" style="padding:10px 22px;font-size:13px;">Erken Erişim →</a>
+    </div>
   </div>
 </nav>
+<style>@media(min-width:768px){.nav-link-md{display:block !important;transition:color 0.2s;}.nav-link-md:hover{color:#fff !important;}}</style>
 
-<!-- HERO -->
-<section class="section" id="hero" style="padding: 80px 24px 100px;">
-  <div class="container">
-    <div style="
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-      align-items: center;
-    " class="hero-grid">
-      <!-- Sol: Metin -->
-      <div>
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="container hero-content">
+    <div class="hero-grid">
+
+      <!-- Left: Copy -->
+      <div class="hero-copy" style="display:flex;flex-direction:column;align-items:flex-start;">
         <div class="eyebrow">WARDROBE INTELLIGENCE</div>
         <h1 style="
-          font-size: clamp(32px, 5vw, 56px);
-          font-weight: 700;
-          line-height: 1.1;
-          margin-bottom: 20px;
-          letter-spacing: -0.02em;
+          font-size:clamp(34px,4.5vw,58px);
+          font-weight:700; line-height:1.08;
+          letter-spacing:-0.025em; margin-bottom:22px;
         ">
           Dolu dolaba bakıp<br />
-          <span style="color: var(--accent);">ne giyeceğini</span><br />
+          <span style="color:var(--accent);">ne giyeceğini</span><br />
           bilemiyor musun?
         </h1>
-        <p style="
-          font-size: 18px;
-          color: var(--text-secondary);
-          line-height: 1.6;
-          margin-bottom: 36px;
-          max-width: 440px;
-        ">
-          True AI gardırobunu öğrenir — hava durumu, takvim ve tarzına göre
-          her sabahı senin için hazırlar.
+        <p style="font-size:17px;color:var(--text-secondary);line-height:1.7;margin-bottom:36px;max-width:420px;">
+          True AI gardırobunu öğrenir — hava durumu, takvim
+          ve tarzına göre her sabahı senin için hazırlar.
         </p>
-        <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start;">
-          <a href="#waitlist" class="btn-primary">
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start;">
+          <a href="#waitlist" class="btn-primary" style="font-size:16px;padding:16px 34px;">
             Ücretsiz Erken Erişim Kazan →
           </a>
-          <p style="font-size:13px;color:var(--text-muted);">
+          <p style="font-size:12px;color:var(--text-muted);">
             Kredi kartı gerekmez &nbsp;·&nbsp; İlk 500 kişi Pro ücretsiz
           </p>
         </div>
         <!-- Stats -->
         <div style="
-          display:flex;gap:32px;margin-top:48px;
-          padding-top:32px;border-top:1px solid rgba(255,255,255,0.07);
+          display:flex;gap:28px;margin-top:52px;
+          padding-top:28px;border-top:1px solid rgba(255,255,255,0.06);
           flex-wrap:wrap;
         ">
           <div>
-            <div style="font-size:24px;font-weight:700;color:var(--accent);">15 dk</div>
-            <div style="font-size:13px;color:var(--text-secondary);">sabah tasarrufu</div>
+            <div style="font-size:26px;font-weight:800;color:var(--accent);letter-spacing:-0.02em;">15 dk</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">sabah tasarrufu</div>
           </div>
+          <div style="width:1px;background:rgba(255,255,255,0.06);"></div>
           <div>
-            <div style="font-size:24px;font-weight:700;color:var(--accent);">30–60 sn</div>
-            <div style="font-size:13px;color:var(--text-secondary);">sanal deneme</div>
+            <div style="font-size:26px;font-weight:800;color:var(--accent);letter-spacing:-0.02em;">42 sn</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">sanal deneme süresi</div>
           </div>
+          <div style="width:1px;background:rgba(255,255,255,0.06);"></div>
           <div>
-            <div style="font-size:24px;font-weight:700;color:var(--accent);">%100</div>
-            <div style="font-size:13px;color:var(--text-secondary);">kişiselleştirilmiş</div>
+            <div style="font-size:26px;font-weight:800;color:var(--accent);letter-spacing:-0.02em;">%100</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">kişiselleştirilmiş</div>
           </div>
         </div>
       </div>
-      <!-- Sağ: Screenshot -->
-      <div style="display:flex;justify-content:center;">
-        <div style="position:relative;width:280px;">
-          <div style="
-            position:absolute;inset:-20px;
-            background:radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%);
-            border-radius:50%;
-          "></div>
-          <img
-            src="assets/screenshots/outfits.jpeg"
-            alt="True AI AI kombin önerisi ekranı"
-            style="
-              width:100%;border-radius:32px;
-              box-shadow:0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
-              position:relative;z-index:1;
-            "
-          />
+
+      <!-- Right: Visual stage with phone -->
+      <div>
+        <div class="hero-stage">
+          <div class="hero-stage-bg"></div>
+          <div class="hero-stage-fade"></div>
+          <div class="hero-phone-wrap">
+            <div class="phone-wrap" style="width:230px;">
+              <div class="phone-glow"></div>
+              <div class="phone-body">
+                <div class="phone-island"></div>
+                <div class="phone-screen">
+                  <img src="assets/screenshots/outfits.jpeg" alt="True AI kombin önerisi ekranı" />
+                </div>
+                <div class="phone-vol"></div>
+                <div class="phone-pwr"></div>
+              </div>
+            </div>
+
+            <!-- Floating: Weather card -->
+            <div class="float-card" style="
+              bottom: 16px; left: -40px;
+              animation: floatA 4s ease-in-out infinite;
+            ">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="4" fill="#00D4FF" opacity="0.9"/>
+                  <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <div>
+                  <div style="font-size:14px;font-weight:700;color:#fff;">24°C · Açık</div>
+                  <div style="font-size:11px;color:var(--text-secondary);">İzmir · Nem %53</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating: AI Score badge -->
+            <div class="float-card" style="
+              top: 20px; right: -48px;
+              animation: floatB 3.5s ease-in-out infinite;
+              text-align: center; min-width: 80px;
+            ">
+              <div style="font-size:10px;color:var(--text-secondary);margin-bottom:3px;letter-spacing:0.05em;">RENK UYUMU</div>
+              <div style="font-size:26px;font-weight:900;color:#22c55e;letter-spacing:-0.02em;line-height:1;">88</div>
+              <div style="font-size:11px;font-weight:700;color:#22c55e;">Harika</div>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- WOW: SANAL DENEME -->
-<section class="section section--dark" style="padding: 100px 24px; text-align:center;">
+<!-- ═══ WOW: SANAL DENEME ═══ -->
+<section class="section section--dark" id="wow">
   <div class="container">
-    <div class="eyebrow" style="margin-bottom:20px;">SANAL DENEME</div>
-    <h2 style="
-      font-size: clamp(36px, 6vw, 72px);
-      font-weight: 700;
-      line-height: 1.05;
-      letter-spacing: -0.02em;
-      margin-bottom: 20px;
-    ">
-      Giymeden önce gör.
-    </h2>
-    <p style="
-      font-size: 18px;
-      color: var(--text-secondary);
-      max-width: 480px;
-      margin: 0 auto 56px;
-      line-height: 1.6;
-    ">
-      AI kıyafeti saniyeler içinde sana giydiriyor.
-      Fotoğrafından, gerçek sonuç.
-    </p>
+    <div class="wow-grid">
 
-    <div style="
-      position:relative;
-      display:inline-block;
-      max-width:340px;
-      width:100%;
-    ">
-      <div style="
-        position:absolute;inset:-40px;
-        background:radial-gradient(ellipse, rgba(0,212,255,0.12) 0%, transparent 65%);
-      "></div>
-      <img
-        src="assets/screenshots/tryon-result.jpeg"
-        alt="True AI sanal deneme sonucu"
-        style="
-          width:100%;border-radius:32px;
-          box-shadow:0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08);
-          position:relative;z-index:1;
-        "
-        loading="lazy"
-      />
-      <div style="
-        position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
-        background:rgba(0,212,255,0.9);color:#000;
-        padding:10px 20px;border-radius:var(--radius-full);
-        font-size:13px;font-weight:700;white-space:nowrap;
-        z-index:2;
-      ">
-        ✓ AI kıyafeti giydirdi — 42 saniye
+      <!-- Left: AI-generated visual -->
+      <div style="animation: fadeUp 0.8s ease both;">
+        <div class="wow-visual">
+          <img src="assets/tryon-visual.jpeg" alt="True AI sanal deneme — holografik kıyafet" loading="lazy" />
+          <div class="wow-label">✓ AI kıyafeti giydirdi — 42 saniye</div>
+        </div>
       </div>
+
+      <!-- Right: Text -->
+      <div>
+        <div class="eyebrow">SANAL DENEME</div>
+        <h2 style="
+          font-size:clamp(38px,5.5vw,72px);
+          font-weight:700; line-height:1.03;
+          letter-spacing:-0.025em; margin-bottom:20px;
+        ">
+          Giymeden<br />önce gör.
+        </h2>
+        <p style="font-size:17px;color:var(--text-secondary);line-height:1.7;margin-bottom:36px;max-width:440px;">
+          AI kıyafeti saniyeler içinde sana giydiriyor.
+          Fotoğrafından gerçek sonuç — satın almadan karar ver,
+          giyeceğinden emin ol.
+        </p>
+        <!-- App screenshot small preview -->
+        <div style="
+          display:flex;align-items:center;gap:16px;
+          padding:16px 20px;background:rgba(255,255,255,0.03);
+          border:1px solid rgba(255,255,255,0.07);border-radius:var(--r-md);
+          max-width:360px;
+        ">
+          <img src="assets/screenshots/tryon-result.jpeg"
+            style="width:52px;height:auto;border-radius:10px;flex-shrink:0;"
+            alt="Uygulamada sanal deneme sonucu" loading="lazy" />
+          <div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:3px;">Uygulamada gerçek sonuç</div>
+            <div style="font-size:12px;color:var(--text-secondary);">
+              Kendi kıyafetlerin, kendi fotoğrafın.
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:28px;">
+          <a href="#waitlist" class="btn-primary">Erken Erişim Kazan →</a>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- HOW IT WORKS -->
+<!-- ═══ HOW IT WORKS ═══ -->
 <section class="section" id="how-it-works">
   <div class="container">
-    <div style="text-align:center;margin-bottom:64px;">
-      <div class="eyebrow">NASIL ÇALIŞIR</div>
-      <h2 style="font-size:clamp(28px,4vw,44px);font-weight:700;margin-top:12px;letter-spacing:-0.02em;">
+    <div style="text-align:center;margin-bottom:72px;">
+      <div class="eyebrow" style="justify-content:center;">NASIL ÇALIŞIR</div>
+      <h2 style="font-size:clamp(28px,4vw,46px);font-weight:700;letter-spacing:-0.02em;">
         3 adımda hazır.
       </h2>
     </div>
 
-    <div style="
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:24px;
-    " class="steps-grid">
+    <div class="steps-grid">
 
-      <div class="card" style="text-align:center;padding:40px 28px;">
+      <!-- Adım 1 -->
+      <div class="card" style="text-align:center;padding:44px 28px;">
         <div style="
-          width:56px;height:56px;background:var(--accent-dim);
-          border:1px solid var(--accent-border);border-radius:var(--radius-md);
+          width:60px;height:60px;background:var(--accent-dim);
+          border:1px solid var(--accent-border);border-radius:18px;
           display:flex;align-items:center;justify-content:center;
-          margin:0 auto 20px;font-size:24px;
-        ">👗</div>
-        <div style="
-          font-size:11px;font-weight:700;letter-spacing:0.1em;
-          color:var(--accent);margin-bottom:12px;text-transform:uppercase;
-        ">ADIM 1</div>
-        <h3 style="font-size:20px;font-weight:700;margin-bottom:10px;">Gardırobunu ekle</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;">
-          Kıyafetlerini fotoğrafla veya manuel ekle.
-          Uygulama her parçayı tanır, kategorize eder.
+          margin:0 auto 20px;
+        ">
+          <!-- Hanger SVG -->
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.38 18H3.62a1 1 0 0 1-.7-1.71L12 8"/>
+            <path d="M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+            <path d="M12 8v0"/>
+          </svg>
+        </div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.12em;color:var(--accent);margin-bottom:12px;text-transform:uppercase;">ADIM 01</div>
+        <h3 style="font-size:19px;font-weight:700;margin-bottom:10px;">Gardırobunu ekle</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">
+          Kıyafetlerini fotoğrafla. Uygulama her parçayı tanır, renk ve kategoriyle etiketler.
         </p>
       </div>
 
+      <!-- Adım 2 -->
       <div class="card" style="
-        text-align:center;padding:40px 28px;
+        text-align:center;padding:44px 28px;
         border-color:var(--accent-border);
-        background:linear-gradient(135deg,rgba(0,212,255,0.05) 0%,var(--bg-card) 100%);
+        background:linear-gradient(145deg, rgba(0,212,255,0.04) 0%, var(--bg-card) 100%);
       ">
         <div style="
-          width:56px;height:56px;background:var(--accent-dim);
-          border:1px solid var(--accent-border);border-radius:var(--radius-md);
+          width:60px;height:60px;background:var(--accent-dim);
+          border:1px solid var(--accent-border);border-radius:18px;
           display:flex;align-items:center;justify-content:center;
-          margin:0 auto 20px;font-size:24px;
-        ">✦</div>
-        <div style="
-          font-size:11px;font-weight:700;letter-spacing:0.1em;
-          color:var(--accent);margin-bottom:12px;text-transform:uppercase;
-        ">ADIM 2</div>
-        <h3 style="font-size:20px;font-weight:700;margin-bottom:10px;">AI kombini hazırlar</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;">
-          Hava durumu, takvimindeki etkinlikler ve
-          stiline göre 3 farklı kombin seçeneği üretir.
+          margin:0 auto 20px;
+        ">
+          <!-- Sparkles / AI SVG -->
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2l2.09 6.43L20.18 9l-4.73 4.17 1.64 6.38L12 16.27l-5.09 3.28 1.64-6.38L3.82 9l6.09-.57z"/>
+          </svg>
+        </div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.12em;color:var(--accent);margin-bottom:12px;text-transform:uppercase;">ADIM 02</div>
+        <h3 style="font-size:19px;font-weight:700;margin-bottom:10px;">AI kombini hazırlar</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">
+          Hava durumu, takvimindeki etkinlikler ve stiline göre 3 farklı kombin seçeneği üretir.
         </p>
       </div>
 
-      <div class="card" style="text-align:center;padding:40px 28px;">
+      <!-- Adım 3 -->
+      <div class="card" style="text-align:center;padding:44px 28px;">
         <div style="
-          width:56px;height:56px;background:var(--accent-dim);
-          border:1px solid var(--accent-border);border-radius:var(--radius-md);
+          width:60px;height:60px;background:var(--accent-dim);
+          border:1px solid var(--accent-border);border-radius:18px;
           display:flex;align-items:center;justify-content:center;
-          margin:0 auto 20px;font-size:24px;
-        ">🪞</div>
-        <div style="
-          font-size:11px;font-weight:700;letter-spacing:0.1em;
-          color:var(--accent);margin-bottom:12px;text-transform:uppercase;
-        ">ADIM 3</div>
-        <h3 style="font-size:20px;font-weight:700;margin-bottom:10px;">Giymeden önce dene</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;">
-          Sanal deneme ile kombini üstünde gör.
-          Beğendiysen seç — sabah hazır.
+          margin:0 auto 20px;
+        ">
+          <!-- Eye / Try-on SVG -->
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.12em;color:var(--accent);margin-bottom:12px;text-transform:uppercase;">ADIM 03</div>
+        <h3 style="font-size:19px;font-weight:700;margin-bottom:10px;">Giymeden önce dene</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">
+          Sanal deneme ile kombini üstünde gör. Beğendiysen seç — sabah tamamen hazır.
         </p>
       </div>
 
@@ -535,102 +566,118 @@
 
 <div class="divider"></div>
 
-<!-- FEATURES -->
+<!-- ═══ FEATURES ═══ -->
 <section class="section" id="features">
   <div class="container">
-    <div style="text-align:center;margin-bottom:80px;">
-      <div class="eyebrow">ÖZELLİKLER</div>
-      <h2 style="font-size:clamp(28px,4vw,44px);font-weight:700;margin-top:12px;letter-spacing:-0.02em;">
-        Gardırobunun tüm zekası burada.
-      </h2>
+
+    <!-- Section header with AI core visual -->
+    <div style="
+      display:flex;align-items:center;gap:48px;margin-bottom:96px;
+      padding:40px;background:var(--bg-card);
+      border:1px solid rgba(255,255,255,0.05);border-radius:var(--r-xl);
+      flex-wrap:wrap;
+    ">
+      <img src="assets/ai-core.jpeg" alt="True AI — yapay zeka kıyafet analizi"
+        style="width:200px;height:200px;object-fit:cover;border-radius:var(--r-lg);flex-shrink:0;"
+        loading="lazy" />
+      <div style="flex:1;min-width:240px;">
+        <div class="eyebrow">ÖZELLİKLER</div>
+        <h2 style="font-size:clamp(26px,3.5vw,42px);font-weight:700;letter-spacing:-0.02em;margin-bottom:14px;">
+          Gardırobunun<br />tüm zekası burada.
+        </h2>
+        <p style="font-size:16px;color:var(--text-secondary);line-height:1.7;max-width:480px;">
+          True AI sadece öneri vermez — gardırobunu tanır, stilini öğrenir,
+          her sabah seninle birlikte en iyi kararı verir.
+        </p>
+      </div>
     </div>
 
     <!-- Feature 1: AI Kombin -->
-    <div style="
-      display:grid;grid-template-columns:1fr 1fr;
-      gap:80px;align-items:center;margin-bottom:100px;
-    " class="feature-grid">
-      <div style="display:flex;justify-content:center;">
-        <img src="assets/screenshots/outfits.jpeg" alt="AI kombin önerisi"
-          style="width:260px;border-radius:28px;box-shadow:0 24px 60px rgba(0,0,0,0.5);"
-          loading="lazy" />
+    <div class="feature-row" style="margin-bottom:100px;">
+      <div class="feature-phone">
+        <div class="phone-wrap" style="width:220px;">
+          <div class="phone-glow"></div>
+          <div class="phone-body">
+            <div class="phone-island"></div>
+            <div class="phone-screen">
+              <img src="assets/screenshots/outfits.jpeg" alt="AI kombin önerisi" loading="lazy" />
+            </div>
+            <div class="phone-vol"></div><div class="phone-pwr"></div>
+          </div>
+        </div>
       </div>
       <div>
         <div class="badge">AI KOMBİN</div>
-        <h3 style="font-size:clamp(24px,3vw,36px);font-weight:700;margin:16px 0 12px;letter-spacing:-0.01em;">
-          Hava durumuna göre,<br/>her gün farklı öneri.
+        <h3 style="font-size:clamp(22px,3vw,36px);font-weight:700;margin:18px 0 14px;letter-spacing:-0.015em;">
+          Hava durumuna göre,<br />her gün farklı öneri.
         </h3>
-        <p style="font-size:16px;color:var(--text-secondary);line-height:1.7;margin-bottom:20px;">
-          Konumunuzdan anlık hava bilgisini çeker. O gün iş toplantısı mı var,
-          casual çıkış mı? Takviminize bakarak uygun kombini seçer.
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.75;margin-bottom:8px;">
+          Konumunuzdan anlık hava bilgisini çeker. O gün iş toplantısı mı,
+          casual çıkış mı? Takviminize bakarak uygun kombini üretir.
         </p>
-        <div style="
-          display:inline-flex;align-items:center;gap:8px;
-          background:var(--bg-card);border:1px solid rgba(39,174,96,0.3);
-          padding:10px 18px;border-radius:var(--radius-full);
-          font-size:14px;color:#27AE60;font-weight:600;
-        ">
-          ✓ Sabahı 15 dakika kısalt
+        <div class="feature-metric" style="border:1px solid rgba(34,197,94,0.25);color:#22c55e;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Sabahı 15 dakika kısalt
         </div>
       </div>
     </div>
 
     <!-- Feature 2: Gardırop -->
-    <div style="
-      display:grid;grid-template-columns:1fr 1fr;
-      gap:80px;align-items:center;margin-bottom:100px;
-    " class="feature-grid">
+    <div class="feature-row" style="margin-bottom:100px;">
       <div>
         <div class="badge">GARDIROB</div>
-        <h3 style="font-size:clamp(24px,3vw,36px);font-weight:700;margin:16px 0 12px;letter-spacing:-0.01em;">
-          Tüm kıyafetlerin<br/>tek yerde.
+        <h3 style="font-size:clamp(22px,3vw,36px);font-weight:700;margin:18px 0 14px;letter-spacing:-0.015em;">
+          Tüm kıyafetlerin<br />tek yerde.
         </h3>
-        <p style="font-size:16px;color:var(--text-secondary);line-height:1.7;margin-bottom:20px;">
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.75;margin-bottom:8px;">
           Her parçayı fotoğrafla ekle. Renk, kategori, sezon otomatik
-          etiketlenir. 30 kıyafete kadar tamamen ücretsiz.
+          etiketlenir. Arama, filtrele, dilediğin zaman bul.
         </p>
-        <div style="
-          display:inline-flex;align-items:center;gap:8px;
-          background:var(--bg-card);border:1px solid rgba(0,212,255,0.3);
-          padding:10px 18px;border-radius:var(--radius-full);
-          font-size:14px;color:var(--accent);font-weight:600;
-        ">
-          ✓ 30 kıyafete kadar ücretsiz
+        <div class="feature-metric" style="border:1px solid var(--accent-border);color:var(--accent);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          30 kıyafete kadar ücretsiz
         </div>
       </div>
-      <div style="display:flex;justify-content:center;">
-        <img src="assets/screenshots/wardrobe.jpeg" alt="Gardırop yönetimi"
-          style="width:260px;border-radius:28px;box-shadow:0 24px 60px rgba(0,0,0,0.5);"
-          loading="lazy" />
+      <div class="feature-phone">
+        <div class="phone-wrap" style="width:220px;">
+          <div class="phone-glow"></div>
+          <div class="phone-body">
+            <div class="phone-island"></div>
+            <div class="phone-screen">
+              <img src="assets/screenshots/wardrobe.jpeg" alt="Gardırop yönetimi" loading="lazy" />
+            </div>
+            <div class="phone-vol"></div><div class="phone-pwr"></div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Feature 3: Geçmiş -->
-    <div style="
-      display:grid;grid-template-columns:1fr 1fr;
-      gap:80px;align-items:center;
-    " class="feature-grid">
-      <div style="display:flex;justify-content:center;">
-        <img src="assets/screenshots/history.jpeg" alt="Kombin geçmişi"
-          style="width:260px;border-radius:28px;box-shadow:0 24px 60px rgba(0,0,0,0.5);"
-          loading="lazy" />
+    <div class="feature-row">
+      <div class="feature-phone">
+        <div class="phone-wrap" style="width:220px;">
+          <div class="phone-glow"></div>
+          <div class="phone-body">
+            <div class="phone-island"></div>
+            <div class="phone-screen">
+              <img src="assets/screenshots/history.jpeg" alt="Kombin geçmişi" loading="lazy" />
+            </div>
+            <div class="phone-vol"></div><div class="phone-pwr"></div>
+          </div>
+        </div>
       </div>
       <div>
         <div class="badge">GEÇMİŞ</div>
-        <h3 style="font-size:clamp(24px,3vw,36px);font-weight:700;margin:16px 0 12px;letter-spacing:-0.01em;">
-          Geçmiş kombinlerin<br/>hep yanında.
+        <h3 style="font-size:clamp(22px,3vw,36px);font-weight:700;margin:18px 0 14px;letter-spacing:-0.015em;">
+          Geçmiş kombinlerin<br />hep yanında.
         </h3>
-        <p style="font-size:16px;color:var(--text-secondary);line-height:1.7;margin-bottom:20px;">
-          Hangi gün ne giydini, o gün hava nasıldı — hepsi kaydedilir.
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.75;margin-bottom:8px;">
+          Hangi gün ne giydini, hava nasıldı — hepsi kaydedilir.
           Favori kombinleri işaretle, tekrar kullan.
         </p>
-        <div style="
-          display:inline-flex;align-items:center;gap:8px;
-          background:var(--bg-card);border:1px solid rgba(39,174,96,0.3);
-          padding:10px 18px;border-radius:var(--radius-full);
-          font-size:14px;color:#27AE60;font-weight:600;
-        ">
-          ✓ Son 10 kombin ücretsiz
+        <div class="feature-metric" style="border:1px solid rgba(34,197,94,0.25);color:#22c55e;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Son 10 kombin ücretsiz
         </div>
       </div>
     </div>
@@ -640,175 +687,127 @@
 
 <div class="divider"></div>
 
-<!-- FAQ / OBJECTION HANDLING -->
+<!-- ═══ FAQ ═══ -->
 <section class="section section--dark" id="faq">
   <div class="container">
     <div style="text-align:center;margin-bottom:64px;">
-      <div class="eyebrow">SIKÇA SORULANLAR</div>
-      <h2 style="font-size:clamp(28px,4vw,44px);font-weight:700;margin-top:12px;letter-spacing:-0.02em;">
-        Aklındaki sorular.
-      </h2>
+      <div class="eyebrow" style="justify-content:center;">SIKÇA SORULANLAR</div>
+      <h2 style="font-size:clamp(26px,4vw,44px);font-weight:700;letter-spacing:-0.02em;">Aklındaki sorular.</h2>
     </div>
-
-    <div style="
-      display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
-      max-width:900px;margin:0 auto;
-    " class="faq-grid">
-
+    <div class="faq-grid" style="max-width:900px;margin:0 auto;">
       <div class="card">
-        <div style="font-size:28px;margin-bottom:16px;">🔒</div>
-        <h3 style="font-size:16px;font-weight:700;margin-bottom:10px;">
-          Kamera gizliliğim ne olacak?
-        </h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;">
-          Veriler cihazınızda işlenir. Buluta fotoğraf gönderilmez.
-          Kıyafet görselleri yalnızca kombin önerisi üretmek için kullanılır.
+        <div style="
+          width:44px;height:44px;background:var(--accent-dim);border:1px solid var(--accent-border);
+          border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+        ">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:10px;">Kamera gizliliğim ne olacak?</h3>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+          Veriler cihazınızda işlenir. Buluta fotoğraf gönderilmez. Görseller yalnızca kombin önerisi üretmek için kullanılır.
         </p>
       </div>
-
       <div class="card">
-        <div style="font-size:28px;margin-bottom:16px;">🤔</div>
-        <h3 style="font-size:16px;font-weight:700;margin-bottom:10px;">
-          Kıyafetlerimi tanıyamaz mı?
-        </h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;">
-          İlk kurulumda kıyafetleri kendiniz etiketliyorsunuz (renk, kategori).
-          Zamanla AI tercihlerinizi öğrenir, öneriler kişiselleşir.
+        <div style="
+          width:44px;height:44px;background:var(--accent-dim);border:1px solid var(--accent-border);
+          border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+        ">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+        </div>
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:10px;">Kıyafetlerimi tanıyamaz mı?</h3>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+          İlk kurulumda kendiniz etiketliyorsunuz (renk, kategori). Zamanla AI tercihlerinizi öğrenir ve öneriler kişiselleşir.
         </p>
       </div>
-
       <div class="card">
-        <div style="font-size:28px;margin-bottom:16px;">🎁</div>
-        <h3 style="font-size:16px;font-weight:700;margin-bottom:10px;">
-          Ücretsiz plan ne kadar kapsamlı?
-        </h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;">
-          Sınırsız gardırop ekleme + ayda 5 AI kombin önerisi tamamen ücretsiz.
-          Sanal deneme ve sınırsız öneri Pro planında.
+        <div style="
+          width:44px;height:44px;background:var(--accent-dim);border:1px solid var(--accent-border);
+          border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+        ">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+        </div>
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:10px;">Ücretsiz plan ne kadar kapsamlı?</h3>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+          Sınırsız gardırop + ayda 5 AI kombin önerisi tamamen ücretsiz. Sanal deneme ve sınırsız öneri Pro planında.
         </p>
       </div>
-
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- PRICING -->
+<!-- ═══ PRICING ═══ -->
 <section class="section" id="pricing">
   <div class="container">
     <div style="text-align:center;margin-bottom:64px;">
-      <div class="eyebrow">FİYATLANDIRMA</div>
-      <h2 style="font-size:clamp(28px,4vw,44px);font-weight:700;margin-top:12px;letter-spacing:-0.02em;">
+      <div class="eyebrow" style="justify-content:center;">FİYATLANDIRMA</div>
+      <h2 style="font-size:clamp(26px,4vw,44px);font-weight:700;letter-spacing:-0.02em;margin-bottom:10px;">
         Sabah rutinini dönüştür.
       </h2>
-      <p style="font-size:16px;color:var(--text-secondary);margin-top:12px;">
-        Yıllık planla günde sadece 2.7 TL — bir çay parası.
-      </p>
+      <p style="font-size:15px;color:var(--text-secondary);">Yıllık planla günde 2.7 TL — bir çay parası.</p>
     </div>
 
-    <div style="
-      display:grid;grid-template-columns:repeat(3,1fr);
-      gap:20px;max-width:900px;margin:0 auto;
-      align-items:start;
-    " class="pricing-grid">
+    <div class="pricing-grid">
 
       <!-- Ücretsiz -->
       <div class="card">
-        <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">ÜCRETSİZ</div>
-        <div style="font-size:36px;font-weight:800;margin-bottom:4px;">₺0</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">ÜCRETSİZ</div>
+        <div style="font-size:38px;font-weight:900;margin-bottom:4px;letter-spacing:-0.02em;">₺0</div>
         <div style="font-size:13px;color:var(--text-muted);margin-bottom:28px;">Sonsuza kadar</div>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px;">
-          <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--success);">✓</span> Sınırsız gardırop ekleme
-          </li>
-          <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--success);">✓</span> Ayda 5 AI kombin önerisi
-          </li>
-          <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--success);">✓</span> Son 10 kombin geçmişi
-          </li>
-          <li style="font-size:14px;color:var(--text-muted);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--text-muted);">—</span> Sanal deneme
-          </li>
-          <li style="font-size:14px;color:var(--text-muted);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--text-muted);">—</span> 3D avatar overlay
-          </li>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:32px;">
+          <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:10px;align-items:center;"><span style="color:var(--success);font-weight:700;">✓</span> Sınırsız gardırop ekleme</li>
+          <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:10px;align-items:center;"><span style="color:var(--success);font-weight:700;">✓</span> Ayda 5 AI kombin önerisi</li>
+          <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:10px;align-items:center;"><span style="color:var(--success);font-weight:700;">✓</span> Son 10 kombin geçmişi</li>
+          <li style="font-size:14px;color:var(--text-muted);display:flex;gap:10px;align-items:center;"><span style="color:var(--text-muted);">—</span> Sanal deneme</li>
+          <li style="font-size:14px;color:var(--text-muted);display:flex;gap:10px;align-items:center;"><span style="color:var(--text-muted);">—</span> 3D avatar overlay</li>
         </ul>
-        <a href="#waitlist" class="btn-secondary" style="width:100%;justify-content:center;">
-          Ücretsiz Başla
-        </a>
+        <a href="#waitlist" class="btn-secondary" style="width:100%;justify-content:center;">Ücretsiz Başla</a>
       </div>
 
-      <!-- Pro (öne çıkan) -->
-      <div style="
-        background:linear-gradient(135deg,rgba(0,212,255,0.08) 0%,var(--bg-card) 100%);
-        border:1px solid var(--accent-border);border-radius:var(--radius-lg);
-        padding:32px;position:relative;transform:scale(1.03);
-      ">
-        <div style="
-          position:absolute;top:-12px;left:50%;transform:translateX(-50%);
-          background:var(--accent);color:#000;
-          font-size:11px;font-weight:800;letter-spacing:0.08em;
-          padding:4px 16px;border-radius:var(--radius-full);
-          text-transform:uppercase;white-space:nowrap;
-        ">⭐ EN POPÜLER</div>
-        <div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">PRO</div>
-        <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px;">
-          <span style="font-size:36px;font-weight:800;">₺83</span>
-          <span style="font-size:14px;color:var(--text-secondary);">/ay</span>
+      <!-- Pro -->
+      <div class="pro-wrap">
+        <div class="pro-inner" style="position:relative;">
+          <div style="
+            position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+            background:var(--accent);color:#000;
+            font-size:10px;font-weight:900;letter-spacing:0.1em;
+            padding:5px 18px;border-radius:var(--r-full);
+            text-transform:uppercase;white-space:nowrap;
+          ">⭐ EN POPÜLER</div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">PRO</div>
+          <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px;">
+            <span style="font-size:38px;font-weight:900;letter-spacing:-0.02em;">₺83</span>
+            <span style="font-size:14px;color:var(--text-secondary);">/ay</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:28px;">
+            ₺999/yıl faturalandırılır
+            <span style="color:var(--accent);font-weight:700;margin-left:6px;">%44 indirim</span>
+          </div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:32px;">
+            <li style="font-size:14px;color:#fff;display:flex;gap:10px;align-items:center;"><span style="color:var(--accent);font-weight:700;">✓</span> Sınırsız AI kombin önerisi</li>
+            <li style="font-size:14px;color:#fff;display:flex;gap:10px;align-items:center;"><span style="color:var(--accent);font-weight:700;">✓</span> Sanal deneme (try-on)</li>
+            <li style="font-size:14px;color:#fff;display:flex;gap:10px;align-items:center;"><span style="color:var(--accent);font-weight:700;">✓</span> 3D avatar kıyafet overlay</li>
+            <li style="font-size:14px;color:#fff;display:flex;gap:10px;align-items:center;"><span style="color:var(--accent);font-weight:700;">✓</span> Sınırsız kombin geçmişi</li>
+            <li style="font-size:14px;color:#fff;display:flex;gap:10px;align-items:center;"><span style="color:var(--accent);font-weight:700;">✓</span> Instagram Story export</li>
+            <li style="font-size:14px;color:#fff;display:flex;gap:10px;align-items:center;"><span style="color:var(--accent);font-weight:700;">✓</span> Takvim + hava entegrasyonu</li>
+          </ul>
+          <a href="#waitlist" class="btn-primary" style="width:100%;justify-content:center;">Erken Erişim Kazan →</a>
+          <p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:10px;">Kredi kartı gerekmez</p>
         </div>
-        <div style="font-size:13px;color:var(--text-muted);margin-bottom:28px;">
-          ₺999/yıl olarak faturalandırılır
-          <span style="color:var(--accent);font-weight:600;margin-left:6px;">%44 indirim</span>
-        </div>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px;">
-          <li style="font-size:14px;color:var(--text-primary);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--accent);">✓</span> Sınırsız AI kombin önerisi
-          </li>
-          <li style="font-size:14px;color:var(--text-primary);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--accent);">✓</span> Sanal deneme (try-on)
-          </li>
-          <li style="font-size:14px;color:var(--text-primary);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--accent);">✓</span> 3D avatar kıyafet overlay
-          </li>
-          <li style="font-size:14px;color:var(--text-primary);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--accent);">✓</span> Sınırsız kombin geçmişi
-          </li>
-          <li style="font-size:14px;color:var(--text-primary);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--accent);">✓</span> Instagram Story export
-          </li>
-          <li style="font-size:14px;color:var(--text-primary);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--accent);">✓</span> Hava durumu entegrasyonu
-          </li>
-        </ul>
-        <a href="#waitlist" class="btn-primary" style="width:100%;justify-content:center;">
-          Erken Erişim Kazan →
-        </a>
-        <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:10px;">
-          Kredi kartı gerekmez
-        </p>
       </div>
 
       <!-- Ömürlük -->
       <div class="card">
-        <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">ÖMÜRLÜK</div>
-        <div style="font-size:36px;font-weight:800;margin-bottom:4px;">₺2.499</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">ÖMÜRLÜK</div>
+        <div style="font-size:38px;font-weight:900;margin-bottom:4px;letter-spacing:-0.02em;">₺2.499</div>
         <div style="font-size:13px;color:var(--text-muted);margin-bottom:28px;">Tek seferlik ödeme</div>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px;">
-          <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--success);">✓</span> Pro'nun her şeyi
-          </li>
-          <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--success);">✓</span> Sonsuza kadar ücretsiz güncelleme
-          </li>
-          <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:8px;align-items:center;">
-            <span style="color:var(--success);">✓</span> Aylık ücret yok
-          </li>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:32px;">
+          <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:10px;align-items:center;"><span style="color:var(--success);font-weight:700;">✓</span> Pro'nun her şeyi</li>
+          <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:10px;align-items:center;"><span style="color:var(--success);font-weight:700;">✓</span> Sonsuza kadar güncellemeler</li>
+          <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:10px;align-items:center;"><span style="color:var(--success);font-weight:700;">✓</span> Aylık ücret yok, asla</li>
         </ul>
-        <a href="#waitlist" class="btn-secondary" style="width:100%;justify-content:center;">
-          Erken Erişim Kazan
-        </a>
+        <a href="#waitlist" class="btn-secondary" style="width:100%;justify-content:center;">Erken Erişim Kazan</a>
       </div>
 
     </div>
@@ -817,74 +816,52 @@
 
 <div class="divider"></div>
 
-<!-- WAITLIST -->
+<!-- ═══ WAITLIST ═══ -->
 <section class="section" id="waitlist">
-  <div class="container" style="text-align:center;max-width:600px;">
-    <div class="eyebrow">ERKEN ERİŞİM</div>
-    <h2 style="font-size:clamp(28px,4vw,44px);font-weight:700;margin:16px 0 12px;letter-spacing:-0.02em;">
+  <div class="container" style="text-align:center;max-width:580px;">
+    <div class="eyebrow" style="justify-content:center;">ERKEN ERİŞİM</div>
+    <h2 style="font-size:clamp(28px,4vw,46px);font-weight:700;letter-spacing:-0.025em;margin-bottom:14px;">
       İlk kullananlardan ol.
     </h2>
-    <p style="font-size:16px;color:var(--text-secondary);margin-bottom:40px;line-height:1.6;">
-      Beta erişimi açıldığında sana haber verelim.
-      İlk 500 kişi Pro planını 3 ay ücretsiz kullanır.
+    <p style="font-size:15px;color:var(--text-secondary);margin-bottom:40px;line-height:1.7;">
+      Beta açıldığında sana haber verelim.<br />
+      İlk 500 kişi Pro planı 3 ay ücretsiz kullanır.
     </p>
 
-    <form id="waitlist-form" onsubmit="submitWaitlist(event)" style="
-      display:flex;gap:12px;max-width:480px;margin:0 auto 12px;
-    " class="waitlist-form-row">
-      <input
-        id="email-input"
-        type="email"
-        placeholder="email@ornek.com"
-        required
-        autocomplete="email"
+    <form id="waitlist-form" onsubmit="submitWaitlist(event)"
+      style="display:flex;gap:10px;max-width:460px;margin:0 auto 12px;"
+      class="waitlist-row">
+      <input id="email-input" type="email" placeholder="email@ornek.com" required autocomplete="email"
         style="
           flex:1;padding:16px 20px;
-          background:var(--bg-card);
-          border:1px solid rgba(255,255,255,0.12);
-          border-radius:var(--radius-full);
-          color:var(--text-primary);
-          font-family:var(--font);font-size:15px;
+          background:rgba(255,255,255,0.04);
+          border:1px solid rgba(255,255,255,0.1);
+          border-radius:var(--r-full);
+          color:#fff;font-family:var(--font);font-size:15px;
           outline:none;transition:border-color 0.2s;
         "
         onfocus="this.style.borderColor='var(--accent)'"
-        onblur="this.style.borderColor='rgba(255,255,255,0.12)'"
+        onblur="this.style.borderColor='rgba(255,255,255,0.1)'"
       />
-      <button type="submit" class="btn-primary">
-        Kazan →
-      </button>
+      <button type="submit" class="btn-primary">Kazan →</button>
     </form>
 
     <div id="waitlist-success" style="
       display:none;
-      background:rgba(39,174,96,0.1);
-      border:1px solid rgba(39,174,96,0.3);
-      border-radius:var(--radius-md);
-      padding:20px 32px;
-      color:#27AE60;
-      font-size:16px;
-      font-weight:600;
-      max-width:480px;
-      margin:0 auto;
-    ">
-      ✓ Listeye eklendin! Beta açıldığında sana haber vereceğiz.
-    </div>
+      background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);
+      border-radius:var(--r-md);padding:20px 32px;
+      color:#22c55e;font-size:15px;font-weight:600;
+      max-width:460px;margin:0 auto;
+    ">✓ Listeye eklendin! Beta açıldığında haber vereceğiz.</div>
 
-    <p style="font-size:12px;color:var(--text-muted);margin-top:12px;">
-      Spam yok. İstediğin zaman çıkabilirsin.
-    </p>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:12px;">Spam yok · İstediğinde çıkabilirsin</p>
 
     <div style="
-      display:inline-flex;align-items:center;gap:8px;margin-top:28px;
-      background:var(--bg-card);border:1px solid rgba(255,255,255,0.07);
-      padding:10px 20px;border-radius:var(--radius-full);
-      font-size:13px;color:var(--text-secondary);
+      display:inline-flex;align-items:center;gap:10px;margin-top:32px;
+      background:var(--bg-card);border:1px solid rgba(255,255,255,0.06);
+      padding:10px 22px;border-radius:var(--r-full);font-size:13px;color:var(--text-secondary);
     ">
-      <span style="
-        width:8px;height:8px;background:var(--accent);
-        border-radius:50%;display:inline-block;
-        animation:pulse 2s infinite;
-      "></span>
+      <span style="width:8px;height:8px;background:var(--accent);border-radius:50%;display:inline-block;animation:pulse 2s infinite;"></span>
       <span id="bottom-count">347</span> kişi bekleme listesinde
     </div>
   </div>
@@ -892,30 +869,25 @@
 
 <div class="divider"></div>
 
-<!-- FOOTER -->
-<footer style="padding:48px 24px;">
+<!-- ═══ FOOTER ═══ -->
+<footer style="padding:52px 28px;">
   <div class="container">
-    <div style="
-      display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;
-    ">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="
-          width:32px;height:32px;background:#fff;border-radius:6px;
-          display:flex;align-items:center;justify-content:center;
-          font-size:11px;font-weight:800;color:#000;
-        ">True</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;">
+      <a href="#hero" style="display:flex;align-items:center;gap:12px;">
+        <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="10" fill="white"/>
+          <path d="M10 10h5v16h-5zM21 10h5v16h-5z" fill="#00040F"/>
+          <path d="M15 18h6" stroke="#00D4FF" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
         <div>
           <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;">XMOBILE</div>
-          <div style="font-size:9px;color:var(--text-muted);letter-spacing:0.12em;">WARDROBE INTELLIGENCE</div>
+          <div style="font-size:8px;color:var(--text-muted);letter-spacing:0.14em;text-transform:uppercase;">WARDROBE INTELLIGENCE</div>
         </div>
-      </div>
-      <div style="display:flex;gap:24px;flex-wrap:wrap;">
-        <a href="#faq" style="font-size:13px;color:var(--text-muted);transition:color 0.2s;"
-          onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">SSS</a>
-        <a href="#pricing" style="font-size:13px;color:var(--text-muted);transition:color 0.2s;"
-          onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Fiyatlandırma</a>
-        <a href="mailto:dogrucanemek@gmail.com" style="font-size:13px;color:var(--text-muted);transition:color 0.2s;"
-          onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">İletişim</a>
+      </a>
+      <div style="display:flex;gap:28px;flex-wrap:wrap;">
+        <a href="#faq" style="font-size:13px;color:var(--text-muted);transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">SSS</a>
+        <a href="#pricing" style="font-size:13px;color:var(--text-muted);transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Fiyatlar</a>
+        <a href="mailto:dogrucanemek@gmail.com" style="font-size:13px;color:var(--text-muted);transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">İletişim</a>
       </div>
       <div style="font-size:12px;color:var(--text-muted);">© 2026 True AI — XMOBILE</div>
     </div>
@@ -923,61 +895,109 @@
 </footer>
 
 <script>
-// ===== WAITLIST FORM =====
-function submitWaitlist(e) {
-  e.preventDefault();
-  const email = document.getElementById('email-input').value.trim();
-  if (!email) return;
+// ===== CANVAS PARTICLE ANIMATION (hero background) =====
+(function() {
+  var canvas = document.getElementById('hero-canvas');
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var N = 55;
+  var MAX_DIST = 140;
 
-  const existing = JSON.parse(localStorage.getItem('trueai_waitlist') || '[]');
-  if (!existing.find(item => item.email === email)) {
-    existing.push({ email: email, date: new Date().toISOString() });
-    localStorage.setItem('trueai_waitlist', JSON.stringify(existing));
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
   }
 
+  function Particle() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.35;
+    this.vy = (Math.random() - 0.5) * 0.35;
+    this.r = Math.random() * 1.8 + 0.8;
+  }
+  Particle.prototype.update = function() {
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+  };
+  Particle.prototype.draw = function() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,212,255,0.55)';
+    ctx.fill();
+  };
+
+  for (var i = 0; i < N; i++) particles.push(new Particle());
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var a = 0; a < particles.length; a++) {
+      for (var b = a + 1; b < particles.length; b++) {
+        var dx = particles[a].x - particles[b].x;
+        var dy = particles[a].y - particles[b].y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d < MAX_DIST) {
+          ctx.beginPath();
+          ctx.moveTo(particles[a].x, particles[a].y);
+          ctx.lineTo(particles[b].x, particles[b].y);
+          ctx.strokeStyle = 'rgba(0,212,255,' + (0.12 * (1 - d / MAX_DIST)) + ')';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+    particles.forEach(function(p) { p.update(); p.draw(); });
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  animate();
+})();
+
+// ===== WAITLIST =====
+function submitWaitlist(e) {
+  e.preventDefault();
+  var email = document.getElementById('email-input').value.trim();
+  if (!email) return;
+  var list = JSON.parse(localStorage.getItem('trueai_waitlist') || '[]');
+  if (!list.find(function(i) { return i.email === email; })) {
+    list.push({ email: email, date: new Date().toISOString() });
+    localStorage.setItem('trueai_waitlist', JSON.stringify(list));
+  }
   document.getElementById('waitlist-form').style.display = 'none';
   document.getElementById('waitlist-success').style.display = 'block';
   incrementCounter();
 }
 
-// ===== WAITLIST COUNTER =====
+// ===== COUNTER =====
 function incrementCounter() {
   ['waitlist-count', 'bottom-count'].forEach(function(id) {
     var el = document.getElementById(id);
-    if (el) {
-      var current = parseInt(el.textContent.replace(/\D/g, '')) || 347;
-      el.textContent = current + 1;
-    }
+    if (el) el.textContent = (parseInt(el.textContent.replace(/\D/g,'')) || 347) + 1;
   });
 }
-
-function startCounterAnimation() {
-  var randomDelay = function() { return Math.floor(Math.random() * 22000) + 8000; };
-  setTimeout(function tick() {
-    incrementCounter();
-    setTimeout(tick, randomDelay());
-  }, randomDelay());
-}
-startCounterAnimation();
+(function tick() {
+  setTimeout(function() { incrementCounter(); tick(); }, Math.floor(Math.random() * 22000) + 8000);
+})();
 
 // ===== SCROLL FADE-IN =====
-var observer = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry) {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
-      observer.unobserve(entry.target);
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+      obs.unobserve(e.target);
     }
   });
-}, { threshold: 0.1 });
+}, { threshold: 0.08 });
 
-document.querySelectorAll('.card, .feature-grid, .steps-grid > div').forEach(function(el) {
+document.querySelectorAll('.card, .feature-row, .steps-grid > div, .wow-grid > div, .hero-stage').forEach(function(el) {
   el.style.opacity = '0';
-  el.style.transform = 'translateY(20px)';
-  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-  observer.observe(el);
+  el.style.transform = 'translateY(22px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  obs.observe(el);
 });
 </script>
-
 </body>
 </html>
