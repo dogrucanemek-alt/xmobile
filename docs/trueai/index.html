@@ -92,24 +92,25 @@
     /* ===== PHONE MOCKUP ===== */
     .phone-wrap { position: relative; flex-shrink: 0; }
     .phone-glow {
-      position: absolute; inset: -40px;
-      background: radial-gradient(ellipse at center, rgba(0,212,255,0.18) 0%, transparent 65%);
+      position: absolute; inset: -50px;
+      background: radial-gradient(ellipse at center, rgba(0,212,255,0.22) 0%, rgba(0,212,255,0.05) 45%, transparent 70%);
       pointer-events: none; z-index: 0;
     }
     .phone-body {
       position: relative; z-index: 1;
-      background: linear-gradient(145deg, #282828 0%, #181818 50%, #222 100%);
+      background: linear-gradient(160deg, #2e2e2e 0%, #181818 45%, #1e1e1e 100%);
       border-radius: 46px; padding: 14px 9px 10px;
       box-shadow:
-        0 0 0 1px rgba(255,255,255,0.13),
-        0 0 0 2.5px rgba(0,0,0,0.95),
-        0 0 0 3.5px rgba(255,255,255,0.04),
-        0 60px 120px rgba(0,0,0,0.9),
-        inset 0 1px 0 rgba(255,255,255,0.07);
+        0 0 0 1px rgba(255,255,255,0.16),
+        0 0 0 2.5px rgba(0,0,0,0.98),
+        0 0 0 3.5px rgba(255,255,255,0.05),
+        0 40px 80px rgba(0,0,0,0.85),
+        0 80px 140px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.09);
     }
     .phone-body::after {
       content: ''; position: absolute; inset: 0; border-radius: 46px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 50%);
+      background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 45%);
       pointer-events: none; z-index: 3;
     }
     .phone-island {
@@ -133,6 +134,21 @@
     .phone-pwr {
       position: absolute; right: -2.5px; top: 120px; z-index: 2;
       width: 2.5px; height: 60px; background: #2a2a2a; border-radius: 0 2px 2px 0;
+    }
+
+    /* 3D perspective variants */
+    .phone-tilt-left  { transform: perspective(900px) rotateY(10deg) rotateX(2deg) translateZ(0); }
+    .phone-tilt-right { transform: perspective(900px) rotateY(-10deg) rotateX(2deg) translateZ(0); }
+
+    /* Reflection beneath phone */
+    .phone-has-reflection { position: relative; }
+    .phone-has-reflection::after {
+      content: '';
+      position: absolute; left: 8%; right: 8%; bottom: -48px; height: 48px;
+      background: linear-gradient(to bottom, rgba(0,212,255,0.08) 0%, transparent 100%);
+      filter: blur(10px);
+      border-radius: 0 0 50% 50%;
+      pointer-events: none;
     }
 
     /* ===== FLOATING CARDS ===== */
@@ -160,20 +176,23 @@
 
     .hero-stage {
       position: relative; border-radius: 28px; overflow: visible;
-      background: #060812; padding: 52px 40px 48px;
-      border: 1px solid rgba(255,255,255,0.06);
+      background: linear-gradient(160deg, #080d1a 0%, #060812 60%, #04060f 100%);
+      padding: 52px 40px 48px;
+      border: 1px solid rgba(255,255,255,0.07);
       display: flex; justify-content: center; align-items: center;
       min-height: 580px;
+      box-shadow: 0 0 0 1px rgba(0,212,255,0.04), 0 60px 120px rgba(0,0,0,0.6);
     }
     .hero-stage-bg {
       position: absolute; inset: 0; z-index: 0; border-radius: 28px; overflow: hidden;
       background:
-        radial-gradient(ellipse at 25% 40%, rgba(0,212,255,0.09) 0%, transparent 55%),
-        radial-gradient(ellipse at 80% 70%, rgba(0,212,255,0.05) 0%, transparent 45%);
+        radial-gradient(ellipse at 20% 35%, rgba(0,212,255,0.11) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 75%, rgba(0,212,255,0.06) 0%, transparent 45%),
+        radial-gradient(ellipse at 60% 10%, rgba(0,212,255,0.04) 0%, transparent 35%);
     }
     .hero-stage-fade {
       position: absolute; inset: 0; z-index: 1; border-radius: 28px;
-      background: linear-gradient(to bottom, transparent 0%, rgba(6,8,18,0.45) 100%);
+      background: linear-gradient(to bottom, transparent 0%, rgba(4,6,15,0.5) 100%);
     }
 
     /* Hero: two phones */
@@ -364,9 +383,9 @@
             </div>
 
             <!-- Front phone: outfits -->
-            <div class="hero-phone-front">
+            <div class="hero-phone-front" style="transform:perspective(1200px) rotateY(-4deg) rotateX(1deg);">
               <div class="phone-wrap" style="width:305px;">
-                <div class="phone-glow"></div>
+                <div class="phone-glow" style="inset:-60px;background:radial-gradient(ellipse at center, rgba(0,212,255,0.26) 0%, rgba(0,212,255,0.06) 50%, transparent 70%);"></div>
                 <div class="phone-body">
                   <div class="phone-island"></div>
                   <div class="phone-screen">
@@ -421,51 +440,50 @@
   <div class="container">
     <div class="wow-grid">
 
-      <!-- Left: Loading → Result phones -->
-      <div class="tryon-comparison" style="animation:none;">
+      <!-- Left: Premium product scene -->
+      <div style="position:relative;display:flex;justify-content:center;align-items:center;">
+        <!-- AI-rendered product photo — phone in studio lighting showing try-on result -->
+        <div style="
+          position:relative;
+          border-radius:var(--r-xl);
+          overflow:hidden;
+          box-shadow: 0 60px 140px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.04);
+          max-width:380px;
+          width:100%;
+        ">
+          <img src="assets/tryon-scene.jpeg" width="380" height="570"
+            alt="True AI sanal deneme — AI kıyafeti giydirdi"
+            loading="lazy"
+            style="width:100%;display:block;" />
 
-        <!-- Phone 1: Loading screen -->
-        <div>
-          <div class="phone-wrap" style="width:180px;opacity:0.65;filter:blur(0.4px);">
-            <div class="phone-body">
-              <div class="phone-island"></div>
-              <div class="phone-screen">
-                <img src="assets/screenshots/tryon-loading.jpeg" width="180" height="390" alt="Sanal deneme — AI işleniyor" loading="lazy" />
-              </div>
-              <div class="phone-vol"></div>
-              <div class="phone-pwr"></div>
-            </div>
-          </div>
-          <div class="tryon-label" style="color:var(--text-muted);">İşleniyor...</div>
-        </div>
+          <!-- Gradient vignette bottom -->
+          <div style="
+            position:absolute;inset:0;
+            background:linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 45%);
+            pointer-events:none;
+          "></div>
 
-        <!-- Arrow -->
-        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0;">
-          <div style="background:var(--accent);color:#000;font-size:10px;font-weight:900;letter-spacing:0.06em;padding:5px 13px;border-radius:var(--r-full);white-space:nowrap;">42 sn</div>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-            <path d="M5 12h14M13 6l6 6-6 6" stroke="#00D4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-
-        <!-- Phone 2: Real try-on result -->
-        <div>
-          <div class="phone-wrap" style="width:218px;">
-            <div class="phone-glow"></div>
-            <div class="phone-body">
-              <div class="phone-island"></div>
-              <div class="phone-screen">
-                <img src="assets/screenshots/tryon-result.jpeg" width="218" height="472" alt="True AI sanal deneme sonucu — gerçek kişi üzerinde kıyafet" loading="lazy" />
-              </div>
-              <div class="phone-vol"></div>
-              <div class="phone-pwr"></div>
-            </div>
-          </div>
-          <div class="tryon-label" style="color:var(--success);font-weight:700;">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="display:inline;vertical-align:middle;margin-right:3px;"><polyline points="20 6 9 17 4 12"/></svg>
-            Tamamlandı
+          <!-- Result badge -->
+          <div style="
+            position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+            display:flex;align-items:center;gap:8px;
+            background:rgba(0,0,0,0.72);backdrop-filter:blur(16px);
+            border:1px solid rgba(0,212,255,0.3);
+            padding:10px 22px;border-radius:var(--r-full);
+            white-space:nowrap;
+          ">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span style="font-size:13px;font-weight:700;color:#fff;">AI kıyafeti giydirdi</span>
+            <span style="font-size:11px;color:var(--accent);font-weight:700;">42 sn</span>
           </div>
         </div>
 
+        <!-- Ambient glow behind -->
+        <div style="
+          position:absolute;inset:-40px;z-index:-1;
+          background:radial-gradient(ellipse at 50% 60%, rgba(0,212,255,0.1) 0%, transparent 65%);
+          pointer-events:none;
+        "></div>
       </div>
 
       <!-- Right: Text -->
@@ -578,14 +596,16 @@
     <!-- Feature 1: AI Kombin — combo-detail (no duplicate!) -->
     <div class="feature-row" style="margin-bottom:100px;">
       <div class="feature-phone">
-        <div class="phone-wrap" style="width:220px;">
-          <div class="phone-glow"></div>
-          <div class="phone-body">
-            <div class="phone-island"></div>
-            <div class="phone-screen">
-              <img src="assets/screenshots/combo-detail.jpeg" width="220" height="477" alt="AI kombin detayı — kıyafet seçimi ve 3D deneme" loading="lazy" />
+        <div class="phone-has-reflection phone-tilt-left" style="padding-bottom:48px;">
+          <div class="phone-wrap" style="width:230px;">
+            <div class="phone-glow"></div>
+            <div class="phone-body">
+              <div class="phone-island"></div>
+              <div class="phone-screen">
+                <img src="assets/screenshots/combo-detail.jpeg" width="230" height="498" alt="AI kombin detayı — kıyafet seçimi ve 3D deneme" loading="lazy" />
+              </div>
+              <div class="phone-vol"></div><div class="phone-pwr"></div>
             </div>
-            <div class="phone-vol"></div><div class="phone-pwr"></div>
           </div>
         </div>
       </div>
@@ -622,14 +642,16 @@
         </div>
       </div>
       <div class="feature-phone">
-        <div class="phone-wrap" style="width:220px;">
-          <div class="phone-glow"></div>
-          <div class="phone-body">
-            <div class="phone-island"></div>
-            <div class="phone-screen">
-              <img src="assets/screenshots/wardrobe.jpeg" width="220" height="477" alt="Gardırop yönetimi" loading="lazy" />
+        <div class="phone-has-reflection phone-tilt-right" style="padding-bottom:48px;">
+          <div class="phone-wrap" style="width:230px;">
+            <div class="phone-glow"></div>
+            <div class="phone-body">
+              <div class="phone-island"></div>
+              <div class="phone-screen">
+                <img src="assets/screenshots/wardrobe.jpeg" width="230" height="498" alt="Gardırop yönetimi" loading="lazy" />
+              </div>
+              <div class="phone-vol"></div><div class="phone-pwr"></div>
             </div>
-            <div class="phone-vol"></div><div class="phone-pwr"></div>
           </div>
         </div>
       </div>
@@ -638,14 +660,16 @@
     <!-- Feature 3: Geçmiş -->
     <div class="feature-row">
       <div class="feature-phone">
-        <div class="phone-wrap" style="width:220px;">
-          <div class="phone-glow"></div>
-          <div class="phone-body">
-            <div class="phone-island"></div>
-            <div class="phone-screen">
-              <img src="assets/screenshots/history.jpeg" width="220" height="477" alt="Kombin geçmişi" loading="lazy" />
+        <div class="phone-has-reflection phone-tilt-left" style="padding-bottom:48px;">
+          <div class="phone-wrap" style="width:230px;">
+            <div class="phone-glow"></div>
+            <div class="phone-body">
+              <div class="phone-island"></div>
+              <div class="phone-screen">
+                <img src="assets/screenshots/history.jpeg" width="230" height="498" alt="Kombin geçmişi" loading="lazy" />
+              </div>
+              <div class="phone-vol"></div><div class="phone-pwr"></div>
             </div>
-            <div class="phone-vol"></div><div class="phone-pwr"></div>
           </div>
         </div>
       </div>
