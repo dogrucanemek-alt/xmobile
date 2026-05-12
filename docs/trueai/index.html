@@ -19,6 +19,8 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://trueai-inky.vercel.app/assets/og-image-v2.jpeg" />
 
+  <script defer data-domain="trueai-inky.vercel.app" src="https://plausible.io/js/script.js"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet" />
@@ -922,6 +924,54 @@
       </div>
     </div>
 
+    <!-- 4th feature row: 3D Avatar -->
+    <div class="feature-row" style="margin-top:100px;">
+      <div>
+        <div class="badge" style="background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3);color:#a78bfa;">3D AVATAR</div>
+        <h3 style="font-size:clamp(28px,3.5vw,44px);font-weight:700;margin:18px 0 14px;letter-spacing:-0.025em;">
+          Dijital ikizin<br />
+          <em style="font-family:var(--font-display);font-style:italic;color:var(--accent);">seni giydiriyor.</em>
+        </h3>
+        <p style="font-size:16px;color:var(--text-secondary);line-height:1.75;margin-bottom:28px;max-width:440px;">
+          Vücut ölçülerine göre oluşturulan 3D avatar, kıyafetlerin gerçek bedeninde nasıl durduğunu gösterir. Kumaş düşüşü, fit analizi, orantı — aynadan daha doğru.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:36px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span style="font-size:14px;color:var(--text-secondary);">360° giyinme önizlemesi</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span style="font-size:14px;color:var(--text-secondary);">Gerçek beden ölçüsüne göre fit analizi</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span style="font-size:14px;color:var(--text-secondary);">Pro özellik — kıyafet almadan beden tahmini</span>
+          </div>
+        </div>
+        <a href="#waitlist" class="btn-primary">3D Denemeyi Keşfet →</a>
+      </div>
+      <div class="feature-phone">
+        <div style="position:relative;display:flex;justify-content:center;">
+          <div style="position:relative;border-radius:var(--r-xl);overflow:hidden;max-width:360px;width:100%;box-shadow:0 60px 140px rgba(0,0,0,0.85),0 0 0 1px rgba(139,92,246,0.15);">
+            <img src="assets/avatar-3d.jpeg" width="360" height="540"
+              alt="True AI 3D avatar kıyafet overlay — dijital gardırop"
+              loading="lazy" style="width:100%;display:block;" />
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(6,4,8,0.6) 0%, transparent 55%);pointer-events:none;"></div>
+            <div style="position:absolute;top:16px;right:16px;background:rgba(139,92,246,0.18);backdrop-filter:blur(12px);border:1px solid rgba(139,92,246,0.3);border-radius:var(--r-md);padding:8px 14px;">
+              <div style="font-size:10px;font-weight:700;color:#a78bfa;letter-spacing:0.1em;text-transform:uppercase;">3D FIT SKORU</div>
+              <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.02em;">94</div>
+            </div>
+            <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(6,4,8,0.85);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.1);padding:9px 18px;border-radius:var(--r-full);white-space:nowrap;display:flex;align-items:center;gap:8px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span style="font-size:12px;font-weight:700;color:#fff;">360° önizleme hazır</span>
+            </div>
+          </div>
+          <div style="position:absolute;inset:-40px;z-index:-1;background:radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.07) 0%, transparent 65%);pointer-events:none;"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -1116,6 +1166,30 @@
   </div>
 </section>
 
+<!-- ═══ PULL QUOTE ═══ -->
+<section style="padding:80px 28px;background:var(--bg);">
+  <div class="container" style="max-width:860px;text-align:center;">
+    <svg width="36" height="24" viewBox="0 0 36 24" fill="none" style="margin:0 auto 28px;opacity:0.3;">
+      <path d="M0 24V14.4C0 6.4 4.8 1.6 14.4 0l2.4 3.6C11.2 5.2 8 8.4 8 12H14.4V24H0ZM21.6 24V14.4C21.6 6.4 26.4 1.6 36 0l2.4 3.6C32.8 5.2 29.6 8.4 29.6 12H36V24H21.6Z" fill="var(--accent)"/>
+    </svg>
+    <p style="font-family:var(--font-display);font-size:clamp(22px,3.5vw,36px);font-style:italic;font-weight:600;line-height:1.45;color:var(--text-primary);letter-spacing:-0.01em;margin-bottom:32px;">
+      "Sabah ne giyeceğime karar vermek için harcadığım 20 dakikayı tamamen sıfırladı. İlk defa dolabım düzenli geliyor ve her sabah emin hissediyorum."
+    </p>
+    <div style="display:flex;align-items:center;justify-content:center;gap:14px;">
+      <div style="width:40px;height:40px;background:var(--accent-dim);border:1px solid var(--accent-border);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div style="text-align:left;">
+        <div style="font-size:14px;font-weight:700;color:var(--text-primary);">Zeynep A.</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Beta kullanıcısı · İstanbul</div>
+      </div>
+      <div style="display:flex;gap:3px;margin-left:8px;">
+        <span style="color:var(--accent);font-size:14px;">★★★★★</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ═══ FAQ ═══ -->
 <section class="section section--dark" id="faq">
   <div class="container">
@@ -1183,7 +1257,7 @@
       <!-- Free -->
       <div class="card">
         <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px;">ÜCRETSİZ</div>
-        <div style="font-size:42px;font-weight:900;margin-bottom:4px;letter-spacing:-0.03em;">₺0</div>
+        <div style="font-size:52px;font-weight:900;margin-bottom:4px;letter-spacing:-0.04em;">₺0</div>
         <div style="font-size:13px;color:var(--text-muted);margin-bottom:32px;">Sonsuza kadar</div>
         <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:36px;">
           <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:10px;align-items:center;"><span style="color:var(--success);font-weight:700;">✓</span> Sınırsız gardırop ekleme</li>
@@ -1223,7 +1297,7 @@
       <!-- Lifetime -->
       <div class="card">
         <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px;">ÖMÜRLÜK</div>
-        <div style="font-size:42px;font-weight:900;margin-bottom:4px;letter-spacing:-0.03em;">₺2.499</div>
+        <div style="font-size:52px;font-weight:900;margin-bottom:4px;letter-spacing:-0.04em;">₺2.499</div>
         <div style="font-size:13px;color:var(--text-muted);margin-bottom:32px;">Tek seferlik ödeme</div>
         <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:36px;">
           <li style="font-size:14px;color:var(--text-secondary);display:flex;gap:10px;align-items:center;"><span style="color:var(--success);font-weight:700;">✓</span> Pro'nun her şeyi</li>
@@ -1237,6 +1311,55 @@
     </div>
   </div>
 </section>
+
+<!-- ═══ TECH STACK ═══ -->
+<div style="padding:48px 28px;background:var(--bg-card);border-top:1px solid rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.04);">
+  <div class="container" style="text-align:center;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--text-muted);margin-bottom:32px;">GÜÇLÜ ALTYAPI</div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px 24px;">
+      <!-- Claude AI -->
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 22px;background:var(--bg-raised);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r-full);">
+        <div style="width:28px;height:28px;background:#cc785c;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="6"/></svg>
+        </div>
+        <div style="text-align:left;">
+          <div style="font-size:12px;font-weight:700;color:var(--text-primary);letter-spacing:0.01em;">Claude AI</div>
+          <div style="font-size:10px;color:var(--text-muted);">Kombin önerisi motoru</div>
+        </div>
+      </div>
+      <!-- Fashn.ai -->
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 22px;background:var(--bg-raised);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r-full);">
+        <div style="width:28px;height:28px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M12 2l3 9h9l-7 5 3 9-8-6-8 6 3-9-7-5h9z"/></svg>
+        </div>
+        <div style="text-align:left;">
+          <div style="font-size:12px;font-weight:700;color:var(--text-primary);letter-spacing:0.01em;">Fashn.ai</div>
+          <div style="font-size:10px;color:var(--text-muted);">Sanal deneme teknolojisi</div>
+        </div>
+      </div>
+      <!-- OpenWeatherMap -->
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 22px;background:var(--bg-raised);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r-full);">
+        <div style="width:28px;height:28px;background:linear-gradient(135deg,#0ea5e9,#38bdf8);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div style="text-align:left;">
+          <div style="font-size:12px;font-weight:700;color:var(--text-primary);letter-spacing:0.01em;">OpenWeatherMap</div>
+          <div style="font-size:10px;color:var(--text-muted);">Anlık hava verisi</div>
+        </div>
+      </div>
+      <!-- React Native / Expo -->
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 22px;background:var(--bg-raised);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r-full);">
+        <div style="width:28px;height:28px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:8px;border:1px solid rgba(20,184,166,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M12 10c-4.4 0-8 .9-8 2s3.6 2 8 2 8-.9 8-2-3.6-2-8-2"/><path d="M6.3 11c-2.2 3.7-2.9 7.2-1 8.3 1.9 1.1 5.1-1 7.7-4.7"/><path d="M17.7 11c2.2 3.7 2.9 7.2 1 8.3-1.9 1.1-5.1-1-7.7-4.7"/></svg>
+        </div>
+        <div style="text-align:left;">
+          <div style="font-size:12px;font-weight:700;color:var(--text-primary);letter-spacing:0.01em;">React Native</div>
+          <div style="font-size:10px;color:var(--text-muted);">iOS &amp; Android altyapısı</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ WAITLIST ═══ -->
 <section class="section" id="waitlist" style="background:var(--bg-raised);">
@@ -1345,6 +1468,15 @@ function submitWaitlist(e) {
   document.getElementById('waitlist-form').style.display = 'none';
   document.getElementById('waitlist-success').style.display = 'block';
   incrementCounter();
+  fetch('https://formsubmit.co/ajax/dogrucanemek@gmail.com', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      email: email,
+      _subject: 'True AI Waitlist — Yeni Kayıt',
+      _captcha: 'false'
+    })
+  }).catch(function() {});
 }
 
 function incrementCounter() {
