@@ -21,11 +21,15 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://trueai-inky.vercel.app/assets/og-image-v2.webp" />
 
-  <script defer data-domain="trueai-inky.vercel.app" src="https://plausible.io/js/script.js"></script>
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet" /></noscript>
+
+  <link rel="preload" as="image" href="assets/screenshots/home.webp" />
+  <link rel="preload" as="image" href="assets/screenshots/outfits.webp" />
+  <link rel="preload" as="image" href="assets/hero-editorial-v2.webp" />
 
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"True AI — XMOBILE","applicationCategory":"LifestyleApplication","operatingSystem":"iOS, Android","description":"Yapay zeka destekli akıllı gardırop uygulaması — marka ürün denemesi, kombin paylaşımı ve kişisel stil analizi.","offers":[{"@type":"Offer","price":"0","priceCurrency":"TRY","name":"Ücretsiz"},{"@type":"Offer","price":"149","priceCurrency":"TRY","name":"Pro Aylık"},{"@type":"Offer","price":"999","priceCurrency":"TRY","name":"Pro Yıllık"},{"@type":"Offer","price":"2499","priceCurrency":"TRY","name":"Ömürlük"}]}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Kamera gizliliğim ne olacak?","acceptedAnswer":{"@type":"Answer","text":"Veriler cihazınızda işlenir. Buluta fotoğraf gönderilmez."}},{"@type":"Question","name":"Kıyafetlerimi tanıyamaz mı?","acceptedAnswer":{"@type":"Answer","text":"İlk kurulumda etiketliyorsunuz, zamanla AI öğrenir."}},{"@type":"Question","name":"Ücretsiz plan ne kadar kapsamlı?","acceptedAnswer":{"@type":"Answer","text":"Sınırsız gardırop + ayda 5 AI kombin önerisi ücretsiz."}}]}</script>
@@ -41,7 +45,7 @@
       --accent-border: rgba(201,169,110,0.18);
       --text-primary: #F5F0E8;
       --text-secondary: #7a7484;
-      --text-muted: #3e3b43;
+      --text-muted: #625e69;
       --success: #4ade80;
       --font: 'Space Grotesk', system-ui, sans-serif;
       --font-display: 'Cormorant Garamond', Georgia, serif;
@@ -638,7 +642,7 @@
                 <div class="phone-body">
                   <div class="phone-island"></div>
                   <div class="phone-screen">
-                    <img src="assets/screenshots/home.webp" width="235" height="509" alt="True AI ana ekran" loading="eager" />
+                    <img src="assets/screenshots/home.webp" width="235" height="509" alt="True AI ana ekran" loading="eager" fetchpriority="high" />
                   </div>
                   <div class="phone-vol"></div><div class="phone-pwr"></div>
                 </div>
@@ -650,7 +654,7 @@
                 <div class="phone-body">
                   <div class="phone-island"></div>
                   <div class="phone-screen">
-                    <img src="assets/screenshots/outfits.webp" width="305" height="661" alt="True AI kombin önerisi" loading="eager" />
+                    <img src="assets/screenshots/outfits.webp" width="305" height="661" alt="True AI kombin önerisi" loading="eager" fetchpriority="high" />
                   </div>
                   <div class="phone-vol"></div><div class="phone-pwr"></div>
                 </div>
@@ -693,7 +697,7 @@
 <div id="editorial" style="position:relative;height:500px;overflow:hidden;">
   <img src="assets/hero-editorial-v2.webp" width="1536" height="1024"
     alt="True AI — premium fashion technology editorial"
-    loading="eager"
+    loading="eager" fetchpriority="high"
     style="width:100%;height:100%;object-fit:cover;object-position:center 40%;" />
   <div style="position:absolute;inset:0;background:linear-gradient(105deg, rgba(6,4,8,0.92) 0%, rgba(6,4,8,0.55) 55%, rgba(6,4,8,0.08) 100%);display:flex;align-items:center;">
     <div class="container">
