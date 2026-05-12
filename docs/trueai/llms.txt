@@ -1,0 +1,38 @@
+# True AI — XMOBILE WARDROBE INTELLIGENCE
+
+## Product
+True AI (XMOBILE) is a Turkish AI-powered wardrobe assistant mobile app for iOS and Android.
+
+## What it does
+- Analyzes the user's wardrobe (photos of clothes)
+- Generates daily outfit suggestions based on weather, calendar events, and personal style
+- Virtual try-on: AI renders the user wearing selected clothes (30-60 seconds)
+- 3D avatar with clothing overlay
+- Outfit history tracking with favorites
+
+## Target audience
+Turkish-speaking users, age 25-45, urban, fashion-conscious, tech-savvy.
+Also available in English.
+
+## Business model
+Freemium mobile app:
+- Free: unlimited wardrobe + 5 AI outfit suggestions/month + last 10 outfit history
+- Pro: ₺149/month or ₺999/year (unlimited suggestions, virtual try-on, 3D avatar, Instagram Story export)
+- Lifetime: ₺2,499 one-time payment
+
+## Status
+Pre-launch. Building waitlist at this website. Expected App Store launch: 2026.
+
+## Tech stack
+React Native (Expo), Claude API for outfit generation, Fashn.ai for virtual try-on, OpenWeatherMap for weather data.
+
+## Key differentiators
+1. AI outfit suggestion based on real-time weather + calendar context
+2. Virtual try-on (AI renders outfit on user's photo in 30-60s)
+3. On-device processing — photos don't leave the device
+4. Turkish market focus with full Turkish language support
+
+## Links
+- Waitlist: https://trueai-xmobile.vercel.app
+- Contact: dogrucanemek@gmail.com
+- Pricing: https://trueai-xmobile.vercel.app/pricing.md
