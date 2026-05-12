@@ -835,35 +835,39 @@
     .demo-text { }
     .demo-text .section-title { margin-bottom: 20px; }
     .demo-text .section-body { margin-bottom: 48px; }
-    .demo-steps { display: flex; flex-direction: column; gap: 20px; }
+    .demo-steps { display: flex; flex-direction: column; gap: 28px; }
     .demo-step {
-      display: flex; align-items: center; gap: 20px;
-      opacity: 0; transform: translateX(-12px);
+      display: flex; align-items: flex-start; gap: 20px;
       transition: opacity 0.5s, transform 0.5s;
     }
-    .demo-step.visible { opacity: 1; transform: none; }
     .demo-step-num {
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 11px; font-weight: 700; letter-spacing: 3px;
-      color: rgba(255,255,255,0.2); min-width: 28px;
+      color: rgba(255,255,255,0.22); min-width: 28px;
+      padding-top: 2px; transition: color 0.4s;
     }
     .demo-step-line {
       flex: 1; height: 1px; background: rgba(255,255,255,0.08);
-      position: relative; overflow: hidden;
+      position: relative; overflow: hidden; margin-top: 9px;
     }
     .demo-step-line::after {
       content: ''; position: absolute; top: 0; left: -100%; height: 100%;
-      width: 100%; background: rgba(255,255,255,0.5);
+      width: 100%; background: linear-gradient(90deg, var(--gold), #f59e0b);
       transition: left 0.8s ease;
     }
     .demo-step.active .demo-step-line::after { left: 0; }
+    .demo-step-body { display: flex; flex-direction: column; gap: 5px; min-width: 160px; }
     .demo-step-label {
-      font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.5);
+      font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.4);
       letter-spacing: 0.3px; transition: color 0.4s;
-      min-width: 160px;
     }
-    .demo-step.active .demo-step-label { color: #fff; }
-    .demo-step.active .demo-step-num { color: rgba(255,255,255,0.6); }
+    .demo-step-desc {
+      font-size: 11px; color: rgba(255,255,255,0.22);
+      line-height: 1.5; transition: color 0.4s;
+    }
+    .demo-step.active .demo-step-num { color: var(--gold); }
+    .demo-step.active .demo-step-label { color: #fff; font-weight: 600; }
+    .demo-step.active .demo-step-desc { color: rgba(255,255,255,0.5); }
 
     /* Phone mockup */
     .demo-phone { display: flex; justify-content: center; }
@@ -877,10 +881,10 @@
       display: flex; flex-direction: column;
     }
     .phone-notch {
-      width: 80px; height: 20px;
-      background: #0d0d0d;
-      border-radius: 0 0 14px 14px;
-      margin: 0 auto; position: relative; z-index: 2;
+      width: 88px; height: 26px;
+      background: #000;
+      border-radius: 20px;
+      margin: 12px auto 0; position: relative; z-index: 2;
     }
     .phone-screen-area {
       flex: 1; position: relative; overflow: hidden;
@@ -1341,20 +1345,29 @@
       <h2 class="section-title reveal reveal-d1" data-tr="Sabah rutininiz<br>artık farklı." data-en="Your morning routine,<br>reimagined.">Sabah rutininiz<br>artık farklı.</h2>
       <p class="section-body reveal reveal-d2" data-tr="AI Furniture gardırobunuzu tarar, hava durumunu kontrol eder ve size en uygun kombini saniyeler içinde önerir." data-en="AI Furniture scans your wardrobe, checks the weather, and suggests your perfect outfit in seconds.">AI Furniture gardırobunuzu tarar, hava durumunu kontrol eder ve size en uygun kombini saniyeler içinde önerir.</p>
       <div class="demo-steps reveal reveal-d3">
-        <div class="demo-step" id="demoStep1">
+        <div class="demo-step active" id="demoStep1">
           <span class="demo-step-num">01</span>
           <span class="demo-step-line"></span>
-          <span class="demo-step-label" data-tr="Gardırobunu tara" data-en="Scan your wardrobe">Gardırobunu tara</span>
+          <div class="demo-step-body">
+            <span class="demo-step-label" data-tr="Gardırobunu tara" data-en="Scan your wardrobe">Gardırobunu tara</span>
+            <span class="demo-step-desc" data-tr="Kıyafetlerini fotoğrafla, yapay zeka kataloğu otomatik oluşturur" data-en="Photograph your clothes, AI builds your catalog automatically">Kıyafetlerini fotoğrafla, yapay zeka kataloğu otomatik oluşturur</span>
+          </div>
         </div>
         <div class="demo-step" id="demoStep2">
           <span class="demo-step-num">02</span>
           <span class="demo-step-line"></span>
-          <span class="demo-step-label" data-tr="Yapay zeka analiz eder" data-en="AI analyzes & matches">Yapay zeka analiz eder</span>
+          <div class="demo-step-body">
+            <span class="demo-step-label" data-tr="Yapay zeka analiz eder" data-en="AI analyzes & matches">Yapay zeka analiz eder</span>
+            <span class="demo-step-desc" data-tr="Hava durumu, renk uyumu ve tarzını gerçek zamanlı hesaplar" data-en="Checks weather, color harmony and your style in real time">Hava durumu, renk uyumu ve tarzını gerçek zamanlı hesaplar</span>
+          </div>
         </div>
         <div class="demo-step" id="demoStep3">
           <span class="demo-step-num">03</span>
           <span class="demo-step-line"></span>
-          <span class="demo-step-label" data-tr="Mükemmel kombin hazır" data-en="Perfect outfit, ready">Mükemmel kombin hazır</span>
+          <div class="demo-step-body">
+            <span class="demo-step-label" data-tr="Mükemmel kombin hazır" data-en="Perfect outfit, ready">Mükemmel kombin hazır</span>
+            <span class="demo-step-desc" data-tr="97/100 uyum puanıyla günün kombinini tek dokunuşta onayla" data-en="Approve your outfit with a 97/100 harmony score in one tap">97/100 uyum puanıyla günün kombinini tek dokunuşla onayla</span>
+          </div>
         </div>
       </div>
     </div>
