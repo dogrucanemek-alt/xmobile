@@ -265,7 +265,18 @@
     .ig-inner { background: var(--bg-card); border-radius: 16px; padding: 16px 10px; text-align: center; }
 
     /* ===== FAQ ===== */
-    .faq-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .faq-list { max-width:720px; margin:0 auto; }
+    .faq-item { border-bottom:1px solid rgba(255,255,255,0.06); }
+    .faq-item:first-child { border-top:1px solid rgba(255,255,255,0.06); }
+    .faq-btn { width:100%; background:none; border:none; padding:20px 4px; display:flex; align-items:center; gap:16px; cursor:pointer; text-align:left; font-family:var(--font); }
+    .faq-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+    .faq-icon-wrap { width:36px; height:36px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .faq-q { flex:1; font-size:15px; font-weight:700; color:var(--text-primary); letter-spacing:-0.01em; line-height:1.4; }
+    .faq-chevron { color:var(--text-muted); transition:transform 0.25s; flex-shrink:0; }
+    .faq-btn[aria-expanded="true"] .faq-chevron { transform:rotate(180deg); color:var(--accent); }
+    .faq-answer { max-height:0; overflow:hidden; transition:max-height 0.32s ease; }
+    .faq-answer p { padding:0 4px 20px 52px; font-size:13px; color:var(--text-secondary); line-height:1.75; margin:0; }
+    @media(max-width:540px) { .faq-answer p { padding-left:4px; } }
 
     /* ===== PRICING ===== */
     .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; max-width: 920px; margin: 0 auto; align-items: start; }
@@ -281,7 +292,7 @@
     @media (max-width: 900px) {
       .hero-grid, .wow-grid, .feature-row, .style-grid, .social-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
       .hero-grid .hero-copy { text-align: center; align-items: center !important; }
-      .steps-grid, .faq-grid { grid-template-columns: 1fr !important; }
+      .steps-grid { grid-template-columns: 1fr !important; }
       .pricing-grid { grid-template-columns: 1fr !important; max-width: 440px !important; }
       .pro-wrap { transform: none !important; }
       .feature-row .feature-phone { order: -1; }
@@ -1483,48 +1494,54 @@
       <div class="eyebrow" style="justify-content:center;">SIKÇA SORULANLAR</div>
       <h2 style="font-size:clamp(34px,4.5vw,54px);font-weight:700;letter-spacing:-0.03em;">Aklındaki sorular.</h2>
     </div>
-    <div class="faq-grid" style="max-width:960px;margin:0 auto;">
-      <div class="card">
-        <div style="width:44px;height:44px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        </div>
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:10px;letter-spacing:-0.01em;">Kamera gizliliğim ne olacak?</h3>
-        <p style="font-size:13px;color:var(--text-secondary);line-height:1.75;">Veriler cihazınızda işlenir. Buluta fotoğraf gönderilmez. Görseller yalnızca kombin önerisi üretmek için kullanılır.</p>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="true" aria-controls="faq-a-1">
+          <div class="faq-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <span class="faq-q">Kamera gizliliğim ne olacak?</span>
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-a-1"><p>Veriler cihazınızda işlenir. Buluta fotoğraf gönderilmez. Görseller yalnızca kombin önerisi üretmek için kullanılır.</p></div>
       </div>
-      <div class="card">
-        <div style="width:44px;height:44px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
-        </div>
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:10px;letter-spacing:-0.01em;">Kıyafetlerimi tanıyamaz mı?</h3>
-        <p style="font-size:13px;color:var(--text-secondary);line-height:1.75;">İlk kurulumda kendiniz etiketliyorsunuz (renk, kategori). Zamanla AI tercihlerinizi öğrenir ve öneriler kişiselleşir.</p>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false" aria-controls="faq-a-2">
+          <div class="faq-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></div>
+          <span class="faq-q">Kıyafetlerimi tanıyamaz mı?</span>
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-a-2"><p>İlk kurulumda kendiniz etiketliyorsunuz (renk, kategori). Zamanla AI tercihlerinizi öğrenir ve öneriler kişiselleşir.</p></div>
       </div>
-      <div class="card">
-        <div style="width:44px;height:44px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.5" stroke-linecap="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-        </div>
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:10px;letter-spacing:-0.01em;">Ücretsiz plan ne kadar kapsamlı?</h3>
-        <p style="font-size:13px;color:var(--text-secondary);line-height:1.75;">Sınırsız gardırop + ayda 5 AI kombin önerisi tamamen ücretsiz. Sanal deneme, marka denemesi ve sınırsız öneri Pro planında.</p>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false" aria-controls="faq-a-3">
+          <div class="faq-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.5" stroke-linecap="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
+          <span class="faq-q">Ücretsiz plan ne kadar kapsamlı?</span>
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-a-3"><p>Sınırsız gardırop + ayda 5 AI kombin önerisi tamamen ücretsiz. Sanal deneme, marka denemesi ve sınırsız öneri Pro planında.</p></div>
       </div>
-      <div class="card">
-        <div style="width:44px;height:44px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.5" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        </div>
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:10px;letter-spacing:-0.01em;">Hangi markalar var?</h3>
-        <p style="font-size:13px;color:var(--text-secondary);line-height:1.75;">Zara, H&M, Mango, LC Waikiki, Koton ve daha fazlası. Launch sürecinde marka portföyü genişletilecek. Talep ettiğin markayı önerebilirsin.</p>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false" aria-controls="faq-a-4">
+          <div class="faq-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.5" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+          <span class="faq-q">Hangi markalar var?</span>
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-a-4"><p>Zara, H&amp;M, Mango, LC Waikiki, Koton ve daha fazlası. Launch sürecinde marka portföyü genişletilecek. Talep ettiğin markayı önerebilirsin.</p></div>
       </div>
-      <div class="card">
-        <div style="width:44px;height:44px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:10px;letter-spacing:-0.01em;">Topluluk herkese açık mı?</h3>
-        <p style="font-size:13px;color:var(--text-secondary);line-height:1.75;">Temel topluluk özelliği ücretsiz. Kombini kamuya veya sadece takipçilere gösterebilirsin. Sosyal özellikler beta sürecinde geliştirilecek.</p>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false" aria-controls="faq-a-5">
+          <div class="faq-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <span class="faq-q">Topluluk herkese açık mı?</span>
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-a-5"><p>Temel topluluk özelliği ücretsiz. Kombini kamuya veya sadece takipçilere gösterebilirsin. Sosyal özellikler beta sürecinde geliştirilecek.</p></div>
       </div>
-      <div class="card">
-        <div style="width:44px;height:44px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </div>
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:10px;letter-spacing:-0.01em;">iOS ve Android'de çalışıyor mu?</h3>
-        <p style="font-size:13px;color:var(--text-secondary);line-height:1.75;">Her iki platform için de geliştiriliyor. iOS ve Android için eş zamanlı launch planlanıyor — 2026'da App Store ve Google Play'de.</p>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false" aria-controls="faq-a-6">
+          <div class="faq-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <span class="faq-q">iOS ve Android'de çalışıyor mu?</span>
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-a-6"><p>Her iki platform için de geliştiriliyor. iOS ve Android için eş zamanlı launch planlanıyor — 2026'da App Store ve Google Play'de.</p></div>
       </div>
     </div>
   </div>
@@ -1562,7 +1579,7 @@
           <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--accent);color:#060408;font-size:10px;font-weight:900;letter-spacing:0.12em;padding:5px 18px;border-radius:var(--r-full);text-transform:uppercase;white-space:nowrap;">EN POPÜLER</div>
           <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px;">PRO</div>
           <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px;">
-            <span style="font-size:42px;font-weight:900;letter-spacing:-0.03em;">₺83</span>
+            <span style="font-size:52px;font-weight:900;letter-spacing:-0.03em;">₺83</span>
             <span style="font-size:14px;color:var(--text-secondary);">/ay</span>
           </div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:32px;">₺999/yıl faturalandırılır <span style="color:var(--accent);font-weight:700;margin-left:6px;">%44 indirim</span></div>
@@ -1972,6 +1989,32 @@ document.addEventListener('keydown', function(e) {
     bar.setAttribute('data-pct', pcts[i] || '0%');
     bar.setAttribute('data-delay', i * 180);
   });
+// FAQ accordion
+(function() {
+  var btns = document.querySelectorAll('.faq-btn');
+  function openItem(btn) {
+    var answer = document.getElementById(btn.getAttribute('aria-controls'));
+    btn.setAttribute('aria-expanded', 'true');
+    answer.style.maxHeight = answer.scrollHeight + 'px';
+  }
+  function closeItem(btn) {
+    var answer = document.getElementById(btn.getAttribute('aria-controls'));
+    btn.setAttribute('aria-expanded', 'false');
+    answer.style.maxHeight = null;
+  }
+  btns.forEach(function(btn) {
+    if (btn.getAttribute('aria-expanded') === 'true') {
+      var a = document.getElementById(btn.getAttribute('aria-controls'));
+      if (a) a.style.maxHeight = a.scrollHeight + 'px';
+    }
+    btn.addEventListener('click', function() {
+      var isOpen = this.getAttribute('aria-expanded') === 'true';
+      btns.forEach(closeItem);
+      if (!isOpen) openItem(this);
+    });
+  });
+})();
+
   var styleObs = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) {
