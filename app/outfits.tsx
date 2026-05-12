@@ -349,6 +349,9 @@ export default function Outfits() {
     adimMetni: string;
   }>({ visible: false, adim: 'sec', sonucUri: null, hata: null, modelFoto: null, secilenParcalar: [], adimMetni: '' });
   const [tryOnImgLoading, setTryOnImgLoading] = useState(false);
+  const [swapModal, setSwapModal]   = useState<{ parcaIndex: number } | null>(null);
+  const [customAcik, setCustomAcik] = useState(false);
+  const [customSecili, setCustomSecili] = useState<string[]>([]);
   const viewShotRef = useRef<ViewShot>(null);
   const kombinlerRef = useRef<Kombin[]>([]);
   const indexRef     = useRef(0);
@@ -465,6 +468,16 @@ export default function Outfits() {
       const kAd = k.ad?.toLowerCase() ?? '';
       return kAd === aranan || aranan.includes(kAd) || kAd.includes(aranan);
     });
+  };
+
+  const parcaDegistir = (parcaIndex: number, yeniParca: string) => {
+    setKombinler(prev => prev.map((k, ki) => {
+      if (ki !== seciliIndex) return k;
+      const yeni = [...k.parcalar];
+      yeni[parcaIndex] = yeniParca;
+      return { ...k, parcalar: yeni };
+    }));
+    setSwapModal(null);
   };
 
   const tryOnZincir = async (parcalar: string[], modelUri: string | null) => {
@@ -1021,7 +1034,13 @@ ${jsonFormat}`;
                         ? <Image source={{ uri: foto }} style={styles.parcaChipFoto} />
                         : <View style={[styles.parcaChipFotoYok, { backgroundColor: renkler.sinir }]} />
                       }
-                      <Text style={[styles.parcaText, { color: renkler.metin }]}>{p}</Text>
+                      <Text style={[styles.parcaText, { color: renkler.metin }]} numberOfLines={1}>{p}</Text>
+                      <TouchableOpacity
+                        style={styles.swapBtn}
+                        onPress={() => setSwapModal({ parcaIndex: i })}
+                      >
+                        <Text style={styles.swapBtnText}>↻</Text>
+                      </TouchableOpacity>
                       <TouchableOpacity
                         style={[styles.ucBoyutBtn, yukleniyor && styles.ucBoyutBtnYukleniyor]}
                         onPress={() => parcayi3DGoster(p)}
@@ -1093,9 +1112,192 @@ ${jsonFormat}`;
             </View>
           )}
 
+          {/* Kombin Oluştur butonu */}
+          <TouchableOpacity
+            style={[styles.customBuilderBtn, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}
+            onPress={() => { setCustomSecili([]); setCustomAcik(true); }}
+          >
+            <Text style={[styles.customBuilderBtnText, { color: renkler.metin }]}>
+              ✦ {dil === 'en' ? 'Build Your Own Outfit' : 'Kendi Kombinini Oluştur'}
+            </Text>
+            <Text style={[styles.customBuilderBtnAlt, { color: renkler.metin2 }]}>
+              {dil === 'en' ? 'Mix any items, try on virtually' : 'İstediğin parçaları seç, sanal dene'}
+            </Text>
+          </TouchableOpacity>
+
           <View style={{ height: 40 }} />
         </ScrollView>
       )}
+
+      {/* ── PARÇA DEĞİŞTİR MODAL ── */}
+      <Modal
+        visible={!!swapModal}
+        animationType="slide"
+        presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen'}
+        onRequestClose={() => setSwapModal(null)}
+      >
+        <View style={[styles.tryOnModal, { backgroundColor: renkler.bg }]}>
+          <View style={styles.tryOnHeader}>
+            <Text style={[styles.tryOnBaslik, { color: renkler.metin }]}>
+              {dil === 'en' ? '↻ Replace Piece' : '↻ Parçayı Değiştir'}
+            </Text>
+            <TouchableOpacity onPress={() => setSwapModal(null)}>
+              <Text style={[styles.tryOnKapat, { color: renkler.metin2 }]}>✕</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={[{ color: renkler.metin2, fontSize: 13, paddingHorizontal: 20, marginBottom: 12 }]}>
+            {dil === 'en'
+              ? `Replacing: "${swapModal !== null ? seciliKombin?.parcalar[swapModal.parcaIndex] : ''}" — pick a replacement`
+              : `"${swapModal !== null ? seciliKombin?.parcalar[swapModal.parcaIndex] : ''}" yerine seç`}
+          </Text>
+          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 16, gap: 10, paddingBottom: 32 }}>
+            {kiyafetler.map(k => (
+              <TouchableOpacity
+                key={k.id}
+                style={[styles.swapKiyafetSatir, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}
+                onPress={() => swapModal !== null && parcaDegistir(swapModal.parcaIndex, k.ad)}
+              >
+                {k.foto
+                  ? <Image source={{ uri: k.foto }} style={styles.swapKiyafetFoto} />
+                  : <View style={[styles.swapKiyafetFotoYok, { backgroundColor: renkler.chip }]}>
+                      <Text style={{ fontSize: 18 }}>{k.ad.charAt(0)}</Text>
+                    </View>
+                }
+                <View style={{ flex: 1 }}>
+                  <Text style={[{ color: renkler.metin, fontWeight: '600', fontSize: 14 }]}>{k.ad}</Text>
+                  <Text style={[{ color: renkler.metin2, fontSize: 12 }]}>{k.tur} · {k.sezon}</Text>
+                </View>
+                <Text style={{ color: '#00D4FF', fontSize: 20 }}>→</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      </Modal>
+
+      {/* ── KOMBİN OLUŞTUR MODAL ── */}
+      <Modal
+        visible={customAcik}
+        animationType="slide"
+        presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen'}
+        onRequestClose={() => setCustomAcik(false)}
+      >
+        <View style={[styles.tryOnModal, { backgroundColor: renkler.bg }]}>
+          <View style={styles.tryOnHeader}>
+            <Text style={[styles.tryOnBaslik, { color: renkler.metin }]}>
+              {dil === 'en' ? '✦ Build Outfit' : '✦ Kombin Oluştur'}
+            </Text>
+            <TouchableOpacity onPress={() => setCustomAcik(false)}>
+              <Text style={[styles.tryOnKapat, { color: renkler.metin2 }]}>✕</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Seçilen parçalar şeridi */}
+          {customSecili.length > 0 && (
+            <View style={[styles.customSeciliSerit, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 12 }}>
+                {customSecili.map((ad, i) => {
+                  const k = kiyafetler.find(x => x.ad === ad);
+                  return (
+                    <TouchableOpacity
+                      key={i}
+                      style={[styles.customSeciliChip, { backgroundColor: renkler.chip }]}
+                      onPress={() => setCustomSecili(s => s.filter((_, si) => si !== i))}
+                    >
+                      {k?.foto
+                        ? <Image source={{ uri: k.foto }} style={{ width: 36, height: 36, borderRadius: 8 }} />
+                        : <View style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: renkler.sinir, alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 16 }}>{ad.charAt(0)}</Text>
+                          </View>
+                      }
+                      <Text style={{ color: renkler.metin, fontSize: 11, maxWidth: 60 }} numberOfLines={2}>{ad}</Text>
+                      <Text style={{ color: '#E74C3C', fontSize: 11, fontWeight: '700' }}>✕</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* Gardırop listesi */}
+          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 16, gap: 8, paddingTop: 12, paddingBottom: 120 }}>
+            <Text style={[{ color: renkler.metin2, fontSize: 12, marginBottom: 4 }]}>
+              {dil === 'en' ? 'Tap to add / tap again to remove' : 'Eklemek için dokun, çıkarmak için tekrar dokun'}
+            </Text>
+            {kiyafetler.map(k => {
+              const secili = customSecili.includes(k.ad);
+              return (
+                <TouchableOpacity
+                  key={k.id}
+                  style={[styles.swapKiyafetSatir, {
+                    backgroundColor: secili ? 'rgba(0,212,255,0.12)' : renkler.kart,
+                    borderColor: secili ? '#00D4FF' : renkler.sinir,
+                    borderWidth: secili ? 1.5 : 1,
+                  }]}
+                  onPress={() => setCustomSecili(s =>
+                    s.includes(k.ad) ? s.filter(x => x !== k.ad) : [...s, k.ad]
+                  )}
+                >
+                  {k.foto
+                    ? <Image source={{ uri: k.foto }} style={styles.swapKiyafetFoto} />
+                    : <View style={[styles.swapKiyafetFotoYok, { backgroundColor: renkler.chip }]}>
+                        <Text style={{ fontSize: 18 }}>{k.ad.charAt(0)}</Text>
+                      </View>
+                  }
+                  <View style={{ flex: 1 }}>
+                    <Text style={[{ color: renkler.metin, fontWeight: '600', fontSize: 14 }]}>{k.ad}</Text>
+                    <Text style={[{ color: renkler.metin2, fontSize: 12 }]}>{k.tur} · {k.sezon}</Text>
+                  </View>
+                  <Text style={{ fontSize: 22 }}>{secili ? '✓' : '+'}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+
+          {/* Alt butonlar */}
+          {customSecili.length > 0 && (
+            <View style={[styles.customAltButonlar, { backgroundColor: renkler.bg, borderTopColor: renkler.sinir }]}>
+              <Text style={[{ color: renkler.metin2, fontSize: 12, textAlign: 'center', marginBottom: 10 }]}>
+                {customSecili.length} {dil === 'en' ? 'items selected' : 'parça seçildi'}
+              </Text>
+              <View style={{ flexDirection: 'row', gap: 10 }}>
+                <TouchableOpacity
+                  style={[styles.customDeneBtn, { borderColor: '#00D4FF', borderWidth: 1.5, flex: 1 }]}
+                  onPress={() => {
+                    setCustomAcik(false);
+                    setTryOn({
+                      visible: true, adim: 'sec', sonucUri: null, hata: null,
+                      modelFoto: profil?.profilFoto ?? null,
+                      secilenParcalar: customSecili, adimMetni: '',
+                    });
+                  }}
+                >
+                  <Text style={{ color: '#00D4FF', fontWeight: '700', fontSize: 15 }}>
+                    👗 {dil === 'en' ? 'Virtual Try-On' : 'Sanal Dene'}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.customDeneBtn, { backgroundColor: renkler.btnPrimary, flex: 1 }]}
+                  onPress={async () => {
+                    const yeniKombin: Kombin = {
+                      baslik: dil === 'en' ? 'My Outfit' : 'Benim Kombinim',
+                      tur: dil === 'en' ? 'Custom' : 'Özel',
+                      parcalar: customSecili,
+                      neden: dil === 'en' ? 'Curated by you' : 'Senin seçimin',
+                    };
+                    setKombinler(prev => [yeniKombin, ...prev]);
+                    setSeciliIndex(0);
+                    setCustomAcik(false);
+                  }}
+                >
+                  <Text style={{ color: renkler.btnPrimaryMetin, fontWeight: '700', fontSize: 15 }}>
+                    ✓ {dil === 'en' ? 'Add to Outfits' : 'Kombinlere Ekle'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        </View>
+      </Modal>
 
       {/* ── VIRTUAL TRY-ON MODAL ── */}
       <Modal
@@ -1422,6 +1624,18 @@ const styles = StyleSheet.create({
   tryOnTekrar:        { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 50, marginTop: 8 },
   tryOnSonucGorsel:   { flex: 1, width: '100%' },
   tryOnTekrarBtn:     { margin: 16, padding: 14, borderRadius: 50, alignItems: 'center', borderWidth: 1 },
+  swapBtn:            { backgroundColor: 'rgba(255,165,0,0.15)', borderRadius: 8, paddingHorizontal: 7, paddingVertical: 4, marginRight: 4 },
+  swapBtnText:        { fontSize: 14, color: '#FFA500', fontWeight: '700' },
+  swapKiyafetSatir:   { flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 14, borderWidth: 1, gap: 12 },
+  swapKiyafetFoto:    { width: 52, height: 52, borderRadius: 10 },
+  swapKiyafetFotoYok: { width: 52, height: 52, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  customBuilderBtn:   { margin: 16, marginTop: 8, padding: 18, borderRadius: 16, borderWidth: 1, alignItems: 'center', gap: 4 },
+  customBuilderBtnText: { fontSize: 16, fontWeight: '700' },
+  customBuilderBtnAlt:  { fontSize: 12 },
+  customSeciliSerit:  { paddingVertical: 10, borderTopWidth: 1, borderBottomWidth: 1 },
+  customSeciliChip:   { alignItems: 'center', gap: 4, padding: 6, borderRadius: 10, width: 76 },
+  customAltButonlar:  { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, paddingBottom: 32, borderTopWidth: 1 },
+  customDeneBtn:      { paddingVertical: 14, borderRadius: 50, alignItems: 'center' },
   tryOnCheckbox: {
     width: 22, height: 22, borderRadius: 6, borderWidth: 1.5,
     alignItems: 'center', justifyContent: 'center',
