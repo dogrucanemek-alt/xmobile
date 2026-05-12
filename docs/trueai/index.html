@@ -304,6 +304,18 @@
     #kvkk-body::-webkit-scrollbar-thumb { background:var(--text-muted);border-radius:2px; }
     @media(max-width:540px) { #kvkk-body { padding:24px 20px; } #kvkk-box header, #kvkk-box footer { padding-left:20px !important; padding-right:20px !important; } }
 
+    /* ===== BEFORE/AFTER SLIDER ===== */
+    .ba-wrap { position:relative;border-radius:var(--r-xl);overflow:hidden;user-select:none;touch-action:pan-y;box-shadow:0 60px 140px rgba(0,0,0,0.85),0 0 0 1px rgba(255,255,255,0.06);cursor:col-resize; }
+    .ba-before { width:100%;display:block;filter:grayscale(0.85) brightness(0.5); }
+    .ba-after-layer { position:absolute;top:0;left:0;bottom:0;overflow:hidden;width:50%; }
+    .ba-after-layer img { position:absolute;top:0;left:0;width:var(--ba-full-w,380px);max-width:none;display:block; }
+    .ba-handle { position:absolute;top:0;bottom:0;width:3px;background:rgba(255,255,255,0.9);transform:translateX(-50%);z-index:10;left:50%;pointer-events:none; }
+    .ba-btn { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;background:#fff;border-radius:50%;box-shadow:0 2px 20px rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;pointer-events:all;cursor:col-resize; }
+    .ba-label { position:absolute;bottom:18px;padding:5px 14px;border-radius:var(--r-full);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);pointer-events:none;white-space:nowrap; }
+    .ba-label-b { left:12px;background:rgba(0,0,0,0.72);color:rgba(255,255,255,0.65);border:1px solid rgba(255,255,255,0.1); }
+    .ba-label-a { right:12px;background:rgba(201,169,110,0.92);color:#060408; }
+    .ba-drag-hint { position:absolute;top:16px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.5);text-transform:uppercase;pointer-events:none;white-space:nowrap;transition:opacity 0.4s; }
+
     /* ===== SCROLL PROGRESS ===== */
     #scroll-progress { position:fixed;top:0;left:0;z-index:9999;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-light));width:0%;pointer-events:none; }
 
@@ -648,18 +660,36 @@
   <div class="container">
     <div class="wow-grid">
       <div style="position:relative;display:flex;justify-content:center;align-items:center;">
-        <div style="position:relative;border-radius:var(--r-xl);overflow:hidden;box-shadow:0 60px 140px rgba(0,0,0,0.85),0 0 0 1px rgba(255,255,255,0.04);max-width:380px;width:100%;">
-          <img src="assets/tryon-scene.jpeg" width="380" height="570"
-            alt="True AI sanal deneme — AI kıyafeti giydirdi"
-            loading="lazy" style="width:100%;display:block;" />
-          <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 45%);pointer-events:none;"></div>
-          <div style="position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.76);backdrop-filter:blur(16px);border:1px solid rgba(201,169,110,0.28);padding:10px 22px;border-radius:var(--r-full);white-space:nowrap;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span style="font-size:13px;font-weight:700;color:#fff;">AI kıyafeti giydirdi</span>
-            <span style="font-size:11px;color:var(--accent);font-weight:700;">42 sn</span>
+        <!-- Before / After Slider -->
+        <div class="ba-wrap" id="ba-wow" style="max-width:380px;width:100%;">
+          <!-- Before: grayscale -->
+          <img class="ba-before" src="assets/tryon-scene.jpeg" width="380" height="570"
+            alt="Sanal deneme öncesi" loading="lazy" />
+          <!-- After: full colour + badge -->
+          <div class="ba-after-layer" id="ba-after">
+            <img src="assets/tryon-scene.jpeg" width="380" height="570"
+              alt="True AI sanal deneme sonucu" loading="lazy"
+              style="position:absolute;top:0;left:0;width:380px;max-width:none;display:block;" />
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,transparent 45%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.78);backdrop-filter:blur(16px);border:1px solid rgba(201,169,110,0.3);padding:10px 22px;border-radius:var(--r-full);white-space:nowrap;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span style="font-size:12px;font-weight:700;color:#fff;">AI kıyafeti giydirdi</span>
+              <span style="font-size:11px;color:var(--accent);font-weight:700;">42 sn</span>
+            </div>
           </div>
+          <!-- Handle -->
+          <div class="ba-handle" id="ba-handle">
+            <div class="ba-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l-6-6 6-6M15 6l6 6-6 6"/></svg>
+            </div>
+          </div>
+          <!-- Labels -->
+          <div class="ba-label ba-label-b">Önce</div>
+          <div class="ba-label ba-label-a">AI Sonrası ✦</div>
+          <!-- Drag hint -->
+          <div class="ba-drag-hint" id="ba-hint">← sürükle →</div>
         </div>
-        <div style="position:absolute;inset:-40px;z-index:-1;background:radial-gradient(ellipse at 50% 60%, rgba(201,169,110,0.08) 0%, transparent 65%);pointer-events:none;"></div>
+        <div style="position:absolute;inset:-40px;z-index:-1;background:radial-gradient(ellipse at 50% 60%, rgba(201,169,110,0.1) 0%, transparent 65%);pointer-events:none;"></div>
       </div>
       <div>
         <div class="eyebrow">SANAL DENEME</div>
@@ -1601,6 +1631,49 @@ document.querySelectorAll('.card, .feature-row, .steps-grid > div, .wow-grid > d
   el.style.transition = 'opacity 0.65s ease, transform 0.65s ease';
   obs.observe(el);
 });
+
+// Before / After slider
+(function() {
+  var wrap = document.getElementById('ba-wow');
+  var after = document.getElementById('ba-after');
+  var handle = document.getElementById('ba-handle');
+  var hint = document.getElementById('ba-hint');
+  if (!wrap || !after || !handle) return;
+
+  var dragging = false;
+
+  function setPos(p) {
+    p = Math.max(4, Math.min(96, p));
+    after.style.width = p + '%';
+    handle.style.left = p + '%';
+  }
+
+  function pctFrom(clientX) {
+    var r = wrap.getBoundingClientRect();
+    return (clientX - r.left) / r.width * 100;
+  }
+
+  wrap.addEventListener('mousedown', function(e) { dragging = true; setPos(pctFrom(e.clientX)); e.preventDefault(); });
+  document.addEventListener('mousemove', function(e) { if (dragging) { setPos(pctFrom(e.clientX)); if (hint) hint.style.opacity = '0'; } });
+  document.addEventListener('mouseup', function() { dragging = false; });
+
+  wrap.addEventListener('touchstart', function(e) { dragging = true; setPos(pctFrom(e.touches[0].clientX)); }, { passive: true });
+  document.addEventListener('touchmove', function(e) { if (dragging) { setPos(pctFrom(e.touches[0].clientX)); if (hint) hint.style.opacity = '0'; } }, { passive: true });
+  document.addEventListener('touchend', function() { dragging = false; });
+
+  // Auto-hint when section enters viewport
+  var hinted = false;
+  var hintObs = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting && !hinted) {
+      hinted = true;
+      setTimeout(function() {
+        setPos(28); setTimeout(function() { setPos(72); }, 550);
+        setTimeout(function() { setPos(50); setTimeout(function() { if (hint) hint.style.opacity = '0'; }, 800); }, 1150);
+      }, 700);
+    }
+  }, { threshold: 0.55 });
+  hintObs.observe(wrap);
+})();
 
 // KVKK modal
 function openKvkk() {
