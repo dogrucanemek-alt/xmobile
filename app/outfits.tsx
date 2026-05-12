@@ -1247,9 +1247,9 @@ ${jsonFormat}`;
                       resizeMode="contain"
                       onLoadStart={() => setTryOnImgLoading(true)}
                       onLoadEnd={() => setTryOnImgLoading(false)}
-                      onError={(e) => {
+                      onError={() => {
                         setTryOnImgLoading(false);
-                        setTryOn(s => ({ ...s, hata: `Görsel yüklenemedi. Hata: ${e.nativeEvent.error ?? 'bilinmiyor'}. URL: ${s.sonucUri?.slice(0, 100)}` }));
+                        setTryOn(s => ({ ...s, hata: `Görsel yüklenemedi. URL: ${s.sonucUri?.slice(0, 100)}` }));
                       }}
                     />
                     {tryOnImgLoading && (
