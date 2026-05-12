@@ -1324,7 +1324,13 @@ document.querySelectorAll('.nav-lang button').forEach(function(btn) {
     document.documentElement.lang = lang;
     document.querySelectorAll('[data-tr]').forEach(function(el) {
       var txt = el.dataset[lang];
-      if (txt) el.innerHTML = txt;
+      if (!txt) return;
+      var parts = txt.split(/<br\s*\/?>/i);
+      while (el.firstChild) el.removeChild(el.firstChild);
+      parts.forEach(function(p, i) {
+        el.appendChild(document.createTextNode(p));
+        if (i < parts.length - 1) el.appendChild(document.createElement('br'));
+      });
     });
     var ph = document.getElementById('waitlistEmail');
     if (ph) ph.placeholder = lang === 'tr' ? 'E-posta adresin' : 'Your email address';
