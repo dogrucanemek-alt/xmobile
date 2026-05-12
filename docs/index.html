@@ -80,12 +80,13 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500;600&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;1,6..96,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { background: #000; color: #fff; font-family: 'Barlow', sans-serif; font-weight: 300; overflow-x: hidden; }
+    :root { --gold: #CA8A04; --gold-light: #D4A017; --gold-dim: rgba(202,138,4,0.18); }
+    body { background: #000; color: #fff; font-family: 'Jost', 'Barlow', sans-serif; font-weight: 300; overflow-x: hidden; }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -128,11 +129,12 @@
     .nav-lang button.active { color: #fff; }
     .nav-cta {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-      color: #fff; text-decoration: none; border: 1px solid rgba(255,255,255,0.45);
-      padding: 8px 20px; border-radius: 2px; transition: all 0.2s; cursor: pointer;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      color: #000; text-decoration: none; border: 1px solid var(--gold);
+      background: var(--gold);
+      padding: 8px 20px; border-radius: 2px; transition: all 0.22s; cursor: pointer;
     }
-    .nav-cta:hover { background: rgba(255,255,255,0.12); border-color: #fff; }
+    .nav-cta:hover { background: var(--gold-light); border-color: var(--gold-light); }
 
     /* ── BUTTONS ── */
     .btn {
@@ -144,8 +146,8 @@
       backdrop-filter: blur(8px);
     }
     .btn:hover { background: rgba(255,255,255,0.16); border-color: #fff; }
-    .btn-solid { background: #fff; color: #000; border-color: #fff; backdrop-filter: none; }
-    .btn-solid:hover { background: rgba(255,255,255,0.88); }
+    .btn-solid { background: var(--gold); color: #000; border-color: var(--gold); backdrop-filter: none; font-weight: 700; letter-spacing: 2.5px; }
+    .btn-solid:hover { background: var(--gold-light); border-color: var(--gold-light); }
     .btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
     /* ── HERO ── */
@@ -173,20 +175,23 @@
     }
     .eyebrow {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 11px; font-weight: 500; letter-spacing: 4px;
-      text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 18px;
+      font-size: 10px; font-weight: 600; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 18px;
+      opacity: 0.85;
     }
     .hero-title {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: clamp(54px, 7.5vw, 104px);
-      font-weight: 800; line-height: 0.93; text-transform: uppercase;
+      font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
+      font-size: clamp(52px, 7vw, 100px);
+      font-weight: 700; line-height: 1.0;
       color: #fff; margin-bottom: 22px;
       letter-spacing: -1px;
+      text-shadow: 0 2px 40px rgba(0,0,0,0.5);
     }
     .hero-sub {
-      font-size: 15px; font-weight: 300;
-      color: rgba(255,255,255,0.65); line-height: 1.7;
-      margin-bottom: 38px; max-width: 440px;
+      font-family: 'Jost', sans-serif;
+      font-size: 16px; font-weight: 300;
+      color: rgba(255,255,255,0.72); line-height: 1.75;
+      margin-bottom: 38px; max-width: 460px;
     }
     .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
     .scroll-hint {
@@ -215,15 +220,16 @@
       gap: 100px; align-items: center; max-width: 1360px; margin: 0 auto;
     }
     .section-title {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: clamp(38px, 5.5vw, 72px);
-      font-weight: 700; text-transform: uppercase;
-      line-height: 0.97; margin-bottom: 24px; letter-spacing: -0.5px;
+      font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
+      font-size: clamp(36px, 5vw, 68px);
+      font-weight: 700;
+      line-height: 1.05; margin-bottom: 24px; letter-spacing: -0.5px;
     }
     .section-body {
-      font-size: 14px; font-weight: 300;
-      color: rgba(255,255,255,0.55); line-height: 1.8;
-      margin-bottom: 44px; max-width: 440px;
+      font-family: 'Jost', sans-serif;
+      font-size: 15px; font-weight: 300;
+      color: rgba(255,255,255,0.6); line-height: 1.85;
+      margin-bottom: 44px; max-width: 460px;
     }
     .stats-grid {
       display: grid; grid-template-columns: 1fr 1fr;
@@ -232,8 +238,8 @@
     }
     .stat-item { background: #000; padding: 36px 28px; }
     .stat-number {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 52px; font-weight: 700; color: #fff;
+      font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
+      font-size: 52px; font-weight: 700; color: var(--gold);
       display: block; line-height: 1; margin-bottom: 8px;
     }
     .stat-label {
@@ -338,19 +344,22 @@
     .feature-card:hover { background: #0c0c0c; }
     .feature-icon {
       width: 42px; height: 42px;
-      border: 1px solid rgba(255,255,255,0.18); border-radius: 4px;
+      border: 1px solid rgba(202,138,4,0.35); border-radius: 4px;
       display: flex; align-items: center; justify-content: center; margin-bottom: 30px;
+      background: rgba(202,138,4,0.06);
+      transition: border-color 0.25s, background 0.25s;
     }
+    .feature-card:hover .feature-icon { border-color: var(--gold); background: var(--gold-dim); }
     .feature-icon svg {
-      width: 20px; height: 20px; stroke: #fff; fill: none;
+      width: 20px; height: 20px; stroke: var(--gold); fill: none;
       stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
     }
     .feature-card h3 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 18px; font-weight: 600; letter-spacing: 1.5px;
-      text-transform: uppercase; margin-bottom: 12px; color: #fff;
+      font-family: 'Bodoni Moda', serif;
+      font-size: 19px; font-weight: 600; letter-spacing: 0.3px;
+      margin-bottom: 12px; color: #fff;
     }
-    .feature-card p { font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.45); line-height: 1.8; }
+    .feature-card p { font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.5); line-height: 1.85; }
 
     /* ── PRİCİNG ── */
     .pricing-section { background: #000; padding: 128px 60px; border-top: 1px solid rgba(255,255,255,0.07); }
@@ -369,9 +378,10 @@
       display: inline-block;
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
-      color: #000; background: #fff; padding: 4px 12px; border-radius: 2px;
+      color: #000; background: var(--gold); padding: 4px 12px; border-radius: 2px;
       margin-bottom: 28px;
     }
+    .pricing-card.featured { background: #070707; border-top: 1px solid var(--gold); }
     .pricing-name {
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
@@ -390,8 +400,8 @@
       display: flex; align-items: center; gap: 10px;
     }
     .pricing-features li::before { content: '—'; color: rgba(255,255,255,0.2); font-size: 11px; flex-shrink: 0; }
-    .pricing-features li.active { color: rgba(255,255,255,0.85); }
-    .pricing-features li.active::before { content: '✓'; color: #fff; }
+    .pricing-features li.active { color: rgba(255,255,255,0.9); }
+    .pricing-features li.active::before { content: '✓'; color: var(--gold); }
     .pricing-note { font-size: 11px; color: rgba(255,255,255,0.18); letter-spacing: 0.5px; margin-top: 16px; }
     @media (max-width: 1024px) { .pricing-grid { grid-template-columns: 1fr; } }
     @media (max-width: 768px) { .pricing-section { padding: 80px 24px; } .pricing-card { padding: 40px 28px; } }
@@ -449,11 +459,11 @@
     .waitlist-btn {
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      background: #fff; color: #000; border: none;
+      background: var(--gold); color: #000; border: none;
       padding: 13px 26px; cursor: pointer; border-radius: 0 2px 2px 0;
       transition: background 0.2s; white-space: nowrap;
     }
-    .waitlist-btn:hover { background: rgba(255,255,255,0.87); }
+    .waitlist-btn:hover { background: var(--gold-light); }
     .waitlist-note { margin-top: 18px; font-size: 11px; color: rgba(255,255,255,0.18); letter-spacing: 0.5px; }
     .waitlist-success {
       display: none;
@@ -506,7 +516,7 @@
     /* Scroll progress bar */
     .scroll-bar {
       position: fixed; top: 0; left: 0; height: 1.5px; width: 0%;
-      background: linear-gradient(to right, rgba(255,255,255,0.3), rgba(255,255,255,0.85));
+      background: linear-gradient(to right, rgba(202,138,4,0.5), #CA8A04, #D4A017);
       z-index: 1002; pointer-events: none;
       transition: width 60ms linear;
     }
