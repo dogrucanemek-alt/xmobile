@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from '../lib/fileSystem';
+import * as Sharing from 'expo-sharing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from '../lib/context';
 import type { Kiyafet } from '../lib/types';
@@ -218,6 +219,25 @@ export default function Wardrobe() {
                 <View style={styles.bilgi}>
                   <Text style={[styles.kiyafetAd, { color: renkler.metin }]}>{k.ad}</Text>
                   <Text style={[styles.kiyafetDetay, { color: renkler.metin2 }]}>{k.tur} · {k.sezon}</Text>
+                  <View style={styles.kartButonlar}>
+                    <TouchableOpacity
+                      style={[styles.kartBtn, { borderColor: '#00D4FF' }]}
+                      onPress={() => router.push({ pathname: '/outfits', params: { tryOnKiyafetId: k.id } } as any)}
+                    >
+                      <Text style={[styles.kartBtnText, { color: '#00D4FF' }]}>👗 Dene</Text>
+                    </TouchableOpacity>
+                    {k.foto ? (
+                      <TouchableOpacity
+                        style={[styles.kartBtn, { borderColor: renkler.sinir }]}
+                        onPress={async () => {
+                          const available = await Sharing.isAvailableAsync();
+                          if (available) await Sharing.shareAsync(k.foto!);
+                        }}
+                      >
+                        <Text style={[styles.kartBtnText, { color: renkler.metin2 }]}>↑ Paylaş</Text>
+                      </TouchableOpacity>
+                    ) : null}
+                  </View>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => sil(k.id)} style={styles.silBtn}>
@@ -361,7 +381,10 @@ const styles = StyleSheet.create({
   kiyafetFoto: { width: 48, height: 60, borderRadius: 12, marginRight: 14 },
   bilgi:       { flex: 1 },
   kiyafetAd:   { fontSize: 15, fontWeight: '500', marginBottom: 3 },
-  kiyafetDetay:{ fontSize: 13 },
+  kiyafetDetay:{ fontSize: 13, marginBottom: 8 },
+  kartButonlar:{ flexDirection: 'row', gap: 8 },
+  kartBtn:     { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 20, borderWidth: 1 },
+  kartBtnText: { fontSize: 12, fontWeight: '600' },
   arrow:       { fontSize: 22 },
   bosHal:         { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 80, paddingHorizontal: 32, gap: 12 },
   bosHalIkon:     { fontSize: 52, marginBottom: 8 },

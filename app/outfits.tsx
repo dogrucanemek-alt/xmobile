@@ -4,7 +4,7 @@ import {
   ScrollView, ActivityIndicator, Alert, Image,
   PanResponder, Animated, Modal, Platform, Linking,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import Svg, {
@@ -318,6 +318,7 @@ export default function Outfits() {
   const { can3D, kullanim3DArtir, tier, aylikKullanim } = useSubscription();
   const { user } = useAuth();
   const router = useRouter();
+  const { tryOnKiyafetId } = useLocalSearchParams<{ tryOnKiyafetId?: string }>();
   const [hava, setHava]               = useState<HavaDurumu | null>(null);
   const [kombinler, setKombinler]     = useState<Kombin[]>([]);
   const [yukleniyor, setYukleniyor]   = useState(true);
@@ -553,6 +554,22 @@ export default function Outfits() {
   };
 
   useEffect(() => { baslat(); }, []);
+
+  // Wardrobe'dan "Dene" butonuyla gelinince try-on otomatik aç
+  useEffect(() => {
+    if (!tryOnKiyafetId || kiyafetler.length === 0) return;
+    const hedef = kiyafetler.find(k => k.id === Number(tryOnKiyafetId));
+    if (!hedef) return;
+    setTryOn({
+      visible: true,
+      adim: 'sec',
+      sonucUri: null,
+      hata: null,
+      modelFoto: profil?.profilFoto ?? null,
+      secilenParcalar: [hedef.ad],
+      adimMetni: '',
+    });
+  }, [tryOnKiyafetId, kiyafetler.length]);
 
   const parcayi3DGoster = async (parcaAdi: string) => {
     if (!can3D()) {
