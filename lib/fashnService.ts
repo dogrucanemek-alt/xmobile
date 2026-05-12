@@ -104,7 +104,8 @@ export async function tryOnBekle(id: string, onProgress?: () => void): Promise<s
     const durum = await tryOnDurumuKontrol(id);
     if (durum.status === 'completed') {
       if (!durum.output?.[0]) throw new Error('Sonuç görseli gelmedi');
-      return durum.output[0];
+      // Fashn CDN URL'ini kendi proxy'mizden serve et — Android Image bileşeni CDN'i direkt yükleyemiyor
+      return `${API_URL}/api/fashn?url=${encodeURIComponent(durum.output[0])}`;
     }
     if (durum.status === 'failed') throw new Error(errMsg(durum.error) || 'Try-on başarısız');
     onProgress?.();
