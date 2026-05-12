@@ -360,6 +360,41 @@
     /* ===== STYLE BARS (animated on scroll) ===== */
     .style-bar-fill { transition:width 1s cubic-bezier(0.25,1,0.5,1); }
     .style-bar-fill.animated { animation:shimmer 3s ease-in-out infinite; }
+
+    /* ===== DECORATIVE SECTION NUMBERS ===== */
+    .section { position:relative; overflow:hidden; }
+    .sec-num {
+      position:absolute;top:-0.12em;right:3%;
+      font-size:clamp(160px,20vw,280px);font-weight:900;letter-spacing:-0.06em;
+      color:rgba(255,255,255,0.025);pointer-events:none;user-select:none;
+      line-height:1;z-index:0;font-family:var(--font-body);
+    }
+
+    /* ===== VIDEO PLACEHOLDER ===== */
+    .video-section { padding:100px 28px;background:var(--bg);text-align:center; }
+    .video-placeholder {
+      position:relative;max-width:760px;margin:0 auto;
+      border-radius:var(--r-xl);overflow:hidden;cursor:pointer;
+      background:#0b0910;border:1px solid rgba(255,255,255,0.07);
+      box-shadow:0 40px 100px rgba(0,0,0,0.7);
+    }
+    .video-placeholder::before {
+      content:'';display:block;padding-top:56.25%;
+      background:linear-gradient(135deg,rgba(201,169,110,0.06) 0%,rgba(6,4,8,0.9) 100%);
+    }
+    .video-ph-inner {
+      position:absolute;inset:0;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:20px;
+    }
+    .video-play-btn {
+      width:72px;height:72px;border-radius:50%;
+      background:rgba(201,169,110,0.15);border:2px solid rgba(201,169,110,0.45);
+      display:flex;align-items:center;justify-content:center;
+      transition:transform 0.2s,background 0.2s;
+    }
+    .video-placeholder:hover .video-play-btn { transform:scale(1.12);background:rgba(201,169,110,0.28); }
+    .video-duration { font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(201,169,110,0.7);font-weight:700; }
+    @media(max-width:767px) { .video-section { padding:70px 20px; } }
   </style>
 </head>
 <body>
@@ -558,7 +593,7 @@
                 <div class="phone-body">
                   <div class="phone-island"></div>
                   <div class="phone-screen">
-                    <img src="assets/screenshots/home.jpeg" width="235" height="509" alt="True AI ana ekran" loading="eager" />
+                    <img src="assets/screenshots/home.webp" width="235" height="509" alt="True AI ana ekran" loading="eager" />
                   </div>
                   <div class="phone-vol"></div><div class="phone-pwr"></div>
                 </div>
@@ -570,7 +605,7 @@
                 <div class="phone-body">
                   <div class="phone-island"></div>
                   <div class="phone-screen">
-                    <img src="assets/screenshots/outfits.jpeg" width="305" height="661" alt="True AI kombin önerisi" loading="eager" />
+                    <img src="assets/screenshots/outfits.webp" width="305" height="661" alt="True AI kombin önerisi" loading="eager" />
                   </div>
                   <div class="phone-vol"></div><div class="phone-pwr"></div>
                 </div>
@@ -611,7 +646,7 @@
 
 <!-- ═══ EDITORIAL BANNER ═══ -->
 <div style="position:relative;height:500px;overflow:hidden;">
-  <img src="assets/hero-editorial-v2.jpeg" width="1536" height="1024"
+  <img src="assets/hero-editorial-v2.webp" width="1536" height="1024"
     alt="True AI — premium fashion technology editorial"
     loading="eager"
     style="width:100%;height:100%;object-fit:cover;object-position:center 40%;" />
@@ -657,17 +692,18 @@
 
 <!-- ═══ WOW: SANAL DENEME ═══ -->
 <section class="section section--dark" id="wow">
+  <span class="sec-num">01</span>
   <div class="container">
     <div class="wow-grid">
       <div style="position:relative;display:flex;justify-content:center;align-items:center;">
         <!-- Before / After Slider -->
         <div class="ba-wrap" id="ba-wow" style="max-width:380px;width:100%;">
           <!-- Before: grayscale -->
-          <img class="ba-before" src="assets/tryon-scene.jpeg" width="380" height="570"
+          <img class="ba-before" src="assets/tryon-scene.webp" width="380" height="570"
             alt="Sanal deneme öncesi" loading="lazy" />
           <!-- After: full colour + badge -->
           <div class="ba-after-layer" id="ba-after">
-            <img src="assets/tryon-scene.jpeg" width="380" height="570"
+            <img src="assets/tryon-scene.webp" width="380" height="570"
               alt="True AI sanal deneme sonucu" loading="lazy"
               style="position:absolute;top:0;left:0;width:380px;max-width:none;display:block;" />
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,transparent 45%);pointer-events:none;"></div>
@@ -728,6 +764,7 @@
 
 <!-- ═══ MARKA DEMESİ (BRAND TRY-ON) ═══ -->
 <section class="section" id="brand-tryon">
+  <span class="sec-num">02</span>
   <div class="container">
     <div class="feature-row">
 
@@ -779,7 +816,7 @@
         <div style="position:relative;display:flex;justify-content:center;">
           <!-- Main try-on image -->
           <div style="position:relative;border-radius:var(--r-xl);overflow:hidden;max-width:360px;width:100%;box-shadow:0 60px 140px rgba(0,0,0,0.8),0 0 0 1px rgba(255,255,255,0.04);">
-            <img src="assets/brand-shopping.jpeg" width="360" height="640"
+            <img src="assets/brand-shopping.webp" width="360" height="640"
               alt="Marka ürünü sanal deneme — AI kıyafet giydirme"
               loading="lazy" style="width:100%;display:block;" />
             <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(6,4,8,0.65) 0%, transparent 50%);pointer-events:none;"></div>
@@ -879,7 +916,7 @@
       <!-- Scenario image -->
       <div style="display:flex;justify-content:center;">
         <div style="position:relative;border-radius:var(--r-xl);overflow:hidden;max-width:420px;width:100%;box-shadow:0 60px 140px rgba(0,0,0,0.85),0 0 0 1px rgba(255,255,255,0.04);">
-          <img src="assets/morning-routine.jpeg" width="420" height="560" alt="Sabah rutini — True AI ile kıyafet seçimi" loading="lazy" style="width:100%;display:block;" />
+          <img src="assets/morning-routine.webp" width="420" height="560" alt="Sabah rutini — True AI ile kıyafet seçimi" loading="lazy" style="width:100%;display:block;" />
           <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(6,4,8,0.65) 0%, transparent 50%);pointer-events:none;"></div>
           <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(6,4,8,0.85);backdrop-filter:blur(16px);border:1px solid rgba(74,222,128,0.35);padding:10px 22px;border-radius:var(--r-full);white-space:nowrap;display:flex;align-items:center;gap:8px;">
             <span style="width:7px;height:7px;background:#4ade80;border-radius:50%;display:inline-block;animation:pulse 2s infinite;"></span>
@@ -894,6 +931,7 @@
 
 <!-- ═══ HOW IT WORKS ═══ -->
 <section class="section" id="how-it-works">
+  <span class="sec-num">03</span>
   <div class="container">
     <div style="text-align:center;margin-bottom:80px;">
       <div class="eyebrow" style="justify-content:center;">NASIL ÇALIŞIR</div>
@@ -936,10 +974,11 @@
 
 <!-- ═══ FEATURES ═══ -->
 <section class="section section--dark" id="features">
+  <span class="sec-num">04</span>
   <div class="container">
 
     <div class="feature-banner">
-      <img src="assets/wardrobe-hero.jpeg" width="1200" height="360" alt="True AI — yapay zeka kıyafet analizi ve gardırop yönetimi" loading="lazy" />
+      <img src="assets/wardrobe-hero.webp" width="1200" height="360" alt="True AI — yapay zeka kıyafet analizi ve gardırop yönetimi" loading="lazy" />
       <div class="feature-banner-overlay">
         <div>
           <div class="eyebrow">ÖZELLİKLER</div>
@@ -961,7 +1000,7 @@
             <div class="phone-body">
               <div class="phone-island"></div>
               <div class="phone-screen">
-                <img src="assets/screenshots/combo-detail.jpeg" width="230" height="498" alt="AI kombin detayı" loading="lazy" />
+                <img src="assets/screenshots/combo-detail.webp" width="230" height="498" alt="AI kombin detayı" loading="lazy" />
               </div>
               <div class="phone-vol"></div><div class="phone-pwr"></div>
             </div>
@@ -1004,7 +1043,7 @@
             <div class="phone-body">
               <div class="phone-island"></div>
               <div class="phone-screen">
-                <img src="assets/screenshots/wardrobe.jpeg" width="230" height="498" alt="Gardırop yönetimi" loading="lazy" />
+                <img src="assets/screenshots/wardrobe.webp" width="230" height="498" alt="Gardırop yönetimi" loading="lazy" />
               </div>
               <div class="phone-vol"></div><div class="phone-pwr"></div>
             </div>
@@ -1021,7 +1060,7 @@
             <div class="phone-body">
               <div class="phone-island"></div>
               <div class="phone-screen">
-                <img src="assets/screenshots/history.jpeg" width="230" height="498" alt="Kombin geçmişi" loading="lazy" />
+                <img src="assets/screenshots/history.webp" width="230" height="498" alt="Kombin geçmişi" loading="lazy" />
               </div>
               <div class="phone-vol"></div><div class="phone-pwr"></div>
             </div>
@@ -1073,7 +1112,7 @@
       <div class="feature-phone">
         <div style="position:relative;display:flex;justify-content:center;">
           <div style="position:relative;border-radius:var(--r-xl);overflow:hidden;max-width:360px;width:100%;box-shadow:0 60px 140px rgba(0,0,0,0.85),0 0 0 1px rgba(139,92,246,0.15);">
-            <img src="assets/avatar-3d.jpeg" width="360" height="540"
+            <img src="assets/avatar-3d.webp" width="360" height="540"
               alt="True AI 3D avatar kıyafet overlay — dijital gardırop"
               loading="lazy" style="width:100%;display:block;" />
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(6,4,8,0.6) 0%, transparent 55%);pointer-events:none;"></div>
@@ -1210,7 +1249,7 @@
               <div class="phone-body">
                 <div class="phone-island"></div>
                 <div class="phone-screen">
-                  <img src="assets/screenshots/outfits.jpeg" width="240" height="520" alt="Kombinleri paylaş — True AI sosyal" loading="lazy" />
+                  <img src="assets/screenshots/outfits.webp" width="240" height="520" alt="Kombinleri paylaş — True AI sosyal" loading="lazy" />
                 </div>
                 <div class="phone-vol"></div><div class="phone-pwr"></div>
               </div>
@@ -1232,7 +1271,7 @@
 
           <!-- Community grid preview -->
           <div style="position:absolute;bottom:-16px;left:-64px;z-index:15;border-radius:var(--r-md);overflow:hidden;width:120px;height:120px;box-shadow:0 20px 56px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.07);animation:floatA 5s ease-in-out infinite;">
-            <img src="assets/community-grid.jpeg" width="120" height="120" alt="Topluluk kombinleri" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" />
+            <img src="assets/community-grid.webp" width="120" height="120" alt="Topluluk kombinleri" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" />
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(6,4,8,0.6) 0%,transparent 50%);pointer-events:none;"></div>
             <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:#fff;white-space:nowrap;letter-spacing:0.05em;">12.4K kombin</div>
           </div>
@@ -1304,6 +1343,37 @@
       </div>
       <div style="display:flex;gap:3px;margin-left:8px;">
         <span style="color:var(--accent);font-size:14px;">★★★★★</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ VIDEO PLACEHOLDER ═══ -->
+<section class="video-section">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:52px;">
+      <div class="eyebrow" style="justify-content:center;">UYGULAMAYI TANI</div>
+      <h2 style="font-size:clamp(30px,4vw,52px);font-weight:700;letter-spacing:-0.03em;margin-bottom:14px;">30 saniyede her şeyi gör.</h2>
+      <p style="font-size:17px;color:var(--text-secondary);max-width:480px;margin:0 auto;line-height:1.7;">Gardırop kurmadan kombinlere, sanal denemeden stil profiline — gerçek kullanım.</p>
+    </div>
+    <div class="video-placeholder" onclick="this.style.opacity='0.7'" title="Demo yakında yayında">
+      <div class="video-ph-inner">
+        <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,169,110,0.04) 0%,transparent 60%);"></div>
+        <!-- Fake timeline bar (decorative) -->
+        <div style="position:absolute;bottom:32px;left:10%;right:10%;height:3px;background:rgba(255,255,255,0.08);border-radius:99px;">
+          <div style="width:0%;height:100%;background:var(--accent);border-radius:99px;"></div>
+        </div>
+        <!-- Play button -->
+        <div class="video-play-btn">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="var(--accent)"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div class="video-duration">30 saniyelik demo</div>
+        <!-- Coming soon badge -->
+        <div style="position:absolute;top:20px;right:20px;background:rgba(201,169,110,0.12);border:1px solid rgba(201,169,110,0.3);border-radius:99px;padding:6px 14px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);">Yakında</div>
+        <!-- Fake chapter markers (decorative) -->
+        <div style="position:absolute;top:20px;left:20px;display:flex;gap:8px;">
+          <div style="background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;color:var(--text-secondary);">00:00 Gardırop kurma</div>
+        </div>
       </div>
     </div>
   </div>
