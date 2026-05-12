@@ -350,6 +350,8 @@
     .wardrobe-img-wrap {
       position: relative; width: 100%;
       border-radius: 4px; overflow: hidden;
+      transform-origin: center center;
+      will-change: transform;
     }
     .wardrobe-img-wrap::before {
       content: ''; position: absolute; inset: 0; z-index: 2;
@@ -1615,7 +1617,8 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
       if (!bg) return;
       var progress = (vh - rect.top) / (vh + rect.height);
       var shift = (progress - 0.5) * 90;
-      bg.style.transform = 'translateY(' + shift + 'px)';
+      var sc = 1.0 + (1 - Math.abs(progress * 2 - 1)) * 0.06;
+      bg.style.transform = 'translateY(' + shift + 'px) scale(' + sc + ')';
     });
   }
 
@@ -1998,6 +2001,72 @@ function handleWaitlist(e) {
     alert(lang === 'tr' ? 'Bağlantı hatası. İnternet bağlantını kontrol et.' : 'Connection error. Check your internet.');
   });
 }
+
+/* ── 3D IMAGE ANIMATIONS ── */
+(function() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var isMobile = window.innerWidth < 768;
+
+  /* 1. WARDROBE SHOWCASE — mouse tilt + perpetual float */
+  var wWrap    = document.querySelector('.wardrobe-img-wrap');
+  var wSection = document.querySelector('.wardrobe-showcase');
+  if (wWrap && wSection) {
+    var wtx = 0, wty = 0, wcx = 0, wcy = 0, wft = 0;
+    if (!isMobile) {
+      wSection.addEventListener('mousemove', function(e) {
+        var r = wSection.getBoundingClientRect();
+        wtx = ((e.clientX - r.left) / r.width  - 0.5) * 6;
+        wty = -((e.clientY - r.top)  / r.height - 0.5) * 3.5;
+      }, { passive: true });
+      wSection.addEventListener('mouseleave', function() { wtx = 0; wty = 0; });
+    }
+    var wVis = false;
+    new IntersectionObserver(function(e) { wVis = e[0].isIntersecting; }, { threshold: 0.05 }).observe(wSection);
+    (function wTick() {
+      requestAnimationFrame(wTick);
+      if (!wVis) return;
+      wft += 0.006;
+      wcx += (wtx - wcx) * 0.07;
+      wcy += (wty - wcy) * 0.07;
+      var fy = Math.sin(wft) * 3.5 + Math.sin(wft * 0.43) * 1.5;
+      wWrap.style.transform = 'perspective(1400px) rotateY(' + wcx.toFixed(3) + 'deg) rotateX(' + wcy.toFixed(3) + 'deg) translateY(' + fy.toFixed(2) + 'px)';
+    })();
+  }
+
+  /* 2. APP SCREENS — float + mouse depth tilt */
+  var appSection = document.querySelector('.app-section');
+  var appImg     = appSection ? appSection.querySelector('img') : null;
+  if (appSection && appImg) {
+    appImg.style.willChange = 'transform';
+    var atx = 0, aty = 0, acx = 0, acy = 0, aft = 0;
+    if (!isMobile) {
+      appSection.addEventListener('mousemove', function(e) {
+        var r = appSection.getBoundingClientRect();
+        atx = ((e.clientX - r.left) / r.width  - 0.5) * 10;
+        aty = -((e.clientY - r.top)  / r.height - 0.5) * 6;
+      }, { passive: true });
+      appSection.addEventListener('mouseleave', function() { atx = 0; aty = 0; });
+    }
+    var aStarted = false;
+    new IntersectionObserver(function(e) {
+      if (e[0].isIntersecting && !aStarted) {
+        aStarted = true;
+        (function aLoop() {
+          requestAnimationFrame(aLoop);
+          acx += (atx - acx) * 0.065;
+          acy += (aty - acy) * 0.065;
+          aft += 0.0065;
+          var fy   = Math.sin(aft) * 9 + Math.sin(aft * 0.47) * 4;
+          var sx   = -acx * 2.5;
+          var sy   = 42 + Math.abs(acy) * 4;
+          var sblur = 80 + Math.abs(acx) * 3;
+          appImg.style.transform = 'perspective(1400px) rotateY(' + acx.toFixed(3) + 'deg) rotateX(' + acy.toFixed(3) + 'deg) translateY(' + fy.toFixed(2) + 'px)';
+          appImg.style.boxShadow = sx.toFixed(1) + 'px ' + sy.toFixed(1) + 'px ' + sblur.toFixed(0) + 'px rgba(0,0,0,0.75)';
+        })();
+      }
+    }, { threshold: 0.2 }).observe(appSection);
+  }
+})();
 
 /* ── DEMO SLIDESHOW ── */
 (function() {
