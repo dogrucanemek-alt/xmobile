@@ -33,6 +33,6 @@ React Native (Expo), Claude API for outfit generation, Fashn.ai for virtual try-
 4. Turkish market focus with full Turkish language support
 
 ## Links
-- Waitlist: https://trueai-xmobile.vercel.app
+- Waitlist: https://trueai-inky.vercel.app
 - Contact: dogrucanemek@gmail.com
-- Pricing: https://trueai-xmobile.vercel.app/pricing.md
+- Pricing: https://trueai-inky.vercel.app/pricing.md

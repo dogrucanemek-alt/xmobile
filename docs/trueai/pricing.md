@@ -18,4 +18,4 @@
 
 ## Early Access
 - First 500 waitlist members get 3 months of Pro free
-- Join waitlist: https://trueai-xmobile.vercel.app/#waitlist
+- Join waitlist: https://trueai-inky.vercel.app/#waitlist

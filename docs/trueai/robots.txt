@@ -22,4 +22,4 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-Sitemap: https://trueai-xmobile.vercel.app/sitemap.xml
+Sitemap: https://trueai-inky.vercel.app/sitemap.xml
