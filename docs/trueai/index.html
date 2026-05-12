@@ -284,14 +284,42 @@
       .feature-banner > img { height: 220px; }
       .feature-banner-overlay { padding: 28px; background: linear-gradient(to bottom, rgba(6,4,8,0.9) 0%, rgba(6,4,8,0.75) 100%); }
       .ig-frame { right: -20px; }
+      /* Scenario grid gap wasn't overridden */
+      .scenario-grid { gap: 48px !important; }
+      /* Scenario section inline padding */
+      #scenario { padding: 80px 20px !important; }
+    }
+    @media (max-width: 767px) {
+      /* Hero */
+      #hero { padding: 72px 20px 90px !important; }
+      .hero-stage { min-height: 360px !important; padding: 32px 20px 28px !important; }
+      /* Float cards go off-screen on mobile */
+      .float-card { display: none !important; }
+      /* Editorial banner too tall */
+      #editorial { height: 280px !important; }
+      /* Hero stats: reduce gap, hide vertical separators */
+      .hero-stats { gap: 20px !important; }
+      .hero-stats > div[style*="width:1px"] { display: none !important; }
+      /* Community float overflows left */
+      .community-float { display: none !important; }
+      /* Social section: give phone wrapper breathing room */
+      #social .phone-has-reflection { margin-bottom: 0 !important; }
+      /* Waitlist row */
+      .waitlist-row { flex-direction: column !important; gap: 10px !important; }
+      .waitlist-row .btn-primary { width: 100%; justify-content: center; }
+      /* Section numbers too large on mobile */
+      .sec-num { font-size: clamp(100px,22vw,160px); opacity: 0.018; }
     }
     @media (max-width: 540px) {
       .waitlist-row { flex-direction: column !important; }
       .waitlist-row .btn-primary { width: 100%; justify-content: center; }
-      .section { padding: 80px 20px; }
+      .section { padding: 72px 18px; }
+      /* Hero stage even smaller on very small screens */
+      .hero-stage { min-height: 300px !important; padding: 24px 16px 20px !important; }
     }
     @media (max-width: 420px) {
       nav .btn-primary { padding: 9px 18px; font-size: 13px; }
+      .hero-stats { justify-content: center; }
     }
 
     /* ===== KVKK MODAL ===== */
@@ -561,7 +589,7 @@
             Kredi kartı gerekmez &nbsp;·&nbsp; İlk 500 kişi Pro ücretsiz
           </p>
         </div>
-        <div style="display:flex;gap:36px;margin-top:52px;padding-top:28px;border-top:1px solid rgba(255,255,255,0.05);flex-wrap:wrap;">
+        <div class="hero-stats" style="display:flex;gap:36px;margin-top:52px;padding-top:28px;border-top:1px solid rgba(255,255,255,0.05);flex-wrap:wrap;">
           <div>
             <div style="font-size:40px;font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1;">15 dk</div>
             <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;letter-spacing:0.02em;">sabah tasarrufu</div>
@@ -645,7 +673,7 @@
 </section>
 
 <!-- ═══ EDITORIAL BANNER ═══ -->
-<div style="position:relative;height:500px;overflow:hidden;">
+<div id="editorial" style="position:relative;height:500px;overflow:hidden;">
   <img src="assets/hero-editorial-v2.webp" width="1536" height="1024"
     alt="True AI — premium fashion technology editorial"
     loading="eager"
@@ -1270,7 +1298,7 @@
           </div>
 
           <!-- Community grid preview -->
-          <div style="position:absolute;bottom:-16px;left:-64px;z-index:15;border-radius:var(--r-md);overflow:hidden;width:120px;height:120px;box-shadow:0 20px 56px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.07);animation:floatA 5s ease-in-out infinite;">
+          <div class="community-float" style="position:absolute;bottom:-16px;left:-64px;z-index:15;border-radius:var(--r-md);overflow:hidden;width:120px;height:120px;box-shadow:0 20px 56px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.07);animation:floatA 5s ease-in-out infinite;">
             <img src="assets/community-grid.webp" width="120" height="120" alt="Topluluk kombinleri" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" />
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(6,4,8,0.6) 0%,transparent 50%);pointer-events:none;"></div>
             <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:#fff;white-space:nowrap;letter-spacing:0.05em;">12.4K kombin</div>
@@ -1711,6 +1739,12 @@ document.querySelectorAll('.card, .feature-row, .steps-grid > div, .wow-grid > d
   if (!wrap || !after || !handle) return;
 
   var dragging = false;
+
+  function updateWidth() {
+    wrap.style.setProperty('--ba-full-w', wrap.getBoundingClientRect().width + 'px');
+  }
+  updateWidth();
+  window.addEventListener('resize', updateWidth, { passive: true });
 
   function setPos(p) {
     p = Math.max(4, Math.min(96, p));
