@@ -13,11 +13,11 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="True AI — Yapay Zeka Destekli Akıllı Gardırop" />
   <meta property="og:description" content="Kendi gardırobunu yönet, markaların ürünlerini üstünde dene, kombinlerini paylaş." />
-  <meta property="og:image" content="https://trueai-inky.vercel.app/assets/og-image.jpeg" />
+  <meta property="og:image" content="https://trueai-inky.vercel.app/assets/og-image-v2.jpeg" />
   <meta property="og:url" content="https://trueai-inky.vercel.app/" />
   <meta property="og:locale" content="tr_TR" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://trueai-inky.vercel.app/assets/og-image.jpeg" />
+  <meta name="twitter:image" content="https://trueai-inky.vercel.app/assets/og-image-v2.jpeg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -291,9 +291,74 @@
     @media (max-width: 420px) {
       nav .btn-primary { padding: 9px 18px; font-size: 13px; }
     }
+
+    /* ===== SCROLL PROGRESS ===== */
+    #scroll-progress { position:fixed;top:0;left:0;z-index:9999;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-light));width:0%;pointer-events:none; }
+
+    /* ===== AURORA ORBS (hero stage) ===== */
+    @keyframes auroraA { 0%,100%{transform:translate(0,0) scale(1);opacity:0.18} 50%{transform:translate(25px,-18px) scale(1.1);opacity:0.24} }
+    @keyframes auroraB { 0%,100%{transform:translate(0,0) scale(1);opacity:0.11} 50%{transform:translate(-22px,14px) scale(0.9);opacity:0.16} }
+    .aurora-orb1 { position:absolute;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,0.55) 0%,transparent 70%);filter:blur(72px);animation:auroraA 9s ease-in-out infinite;top:-130px;right:-90px;pointer-events:none; }
+    .aurora-orb2 { position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(180,148,88,0.4) 0%,transparent 70%);filter:blur(60px);animation:auroraB 13s ease-in-out infinite;bottom:-70px;left:-60px;pointer-events:none; }
+
+    /* ===== BRAND MARQUEE ===== */
+    @keyframes marqueeL { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    .marquee-wrap { overflow:hidden;position:relative;padding:18px 0; }
+    .marquee-wrap::before,.marquee-wrap::after { content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none; }
+    .marquee-wrap::before { left:0;background:linear-gradient(to right,var(--bg),transparent); }
+    .marquee-wrap::after { right:0;background:linear-gradient(to left,var(--bg),transparent); }
+    .marquee-inner { display:flex;align-items:center;animation:marqueeL 30s linear infinite;width:max-content; }
+    .m-item { padding:0 28px;font-size:13px;font-weight:600;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap;transition:color 0.2s; }
+    .m-dot { width:4px;height:4px;border-radius:50%;background:rgba(201,169,110,0.25);flex-shrink:0; }
+
+    /* ===== BUTTON SHIMMER ===== */
+    .btn-primary { position:relative;overflow:hidden; }
+    .btn-primary::after { content:'';position:absolute;top:0;left:-130%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);transform:skewX(-15deg);pointer-events:none; }
+    .btn-primary:hover::after { transition:left 0.52s ease;left:150%; }
+
+    /* ===== CARD HOVER LIFT ===== */
+    .card { transition:border-color 0.3s,transform 0.25s,box-shadow 0.25s; }
+    .card:hover { transform:translateY(-5px);box-shadow:0 24px 64px rgba(0,0,0,0.5),0 0 0 1px rgba(201,169,110,0.18),0 0 36px rgba(201,169,110,0.06); }
+
+    /* ===== MOBILE STICKY CTA ===== */
+    #mobile-cta { display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;padding:12px 16px 20px;background:rgba(6,4,8,0.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(201,169,110,0.22);transform:translateY(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1); }
+    #mobile-cta.visible { transform:translateY(0); }
+    @media(max-width:767px) { #mobile-cta { display:block; } }
+
+    /* ===== SOCIAL PROOF TOAST ===== */
+    #sp-toast { position:fixed;bottom:86px;left:16px;z-index:500;background:rgba(14,11,18,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(201,169,110,0.2);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;transform:translateX(-160%);transition:transform 0.5s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;max-width:220px; }
+    #sp-toast.show { transform:translateX(0); }
+    @media(max-width:767px) { #sp-toast { bottom:80px; } }
+
+    /* ===== SCENARIO SECTION ===== */
+    @media(max-width:900px) { .scenario-grid { grid-template-columns:1fr !important; } }
+
+    /* ===== STYLE BARS (animated on scroll) ===== */
+    .style-bar-fill { transition:width 1s cubic-bezier(0.25,1,0.5,1); }
+    .style-bar-fill.animated { animation:shimmer 3s ease-in-out infinite; }
   </style>
 </head>
 <body>
+
+<!-- Scroll progress -->
+<div id="scroll-progress"></div>
+
+<!-- Mobile sticky CTA -->
+<div id="mobile-cta">
+  <a href="#waitlist" class="btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:15px 24px;">Erken Erişim Kazan →</a>
+  <p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">Kredi kartı gerekmez · İlk 500 kişi Pro ücretsiz</p>
+</div>
+
+<!-- Social proof toast -->
+<div id="sp-toast">
+  <div style="width:32px;height:32px;background:rgba(201,169,110,0.1);border:1px solid var(--accent-border);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  </div>
+  <div>
+    <div id="sp-name" style="font-size:12px;font-weight:700;color:var(--text-primary);">Selin B. listeye eklendi</div>
+    <div style="font-size:10px;color:var(--text-muted);">az önce</div>
+  </div>
+</div>
 
 <!-- ═══ BANNER ═══ -->
 <div id="banner" style="position:sticky;top:0;z-index:200;background:var(--accent);color:#060408;text-align:center;padding:10px 20px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;">
@@ -379,7 +444,10 @@
       <!-- Right: Stage -->
       <div>
         <div class="hero-stage">
-          <div class="hero-stage-bg"></div>
+          <div class="hero-stage-bg">
+            <div class="aurora-orb1"></div>
+            <div class="aurora-orb2"></div>
+          </div>
           <div class="hero-stage-fade"></div>
           <div class="hero-phones">
             <div class="hero-phone-back">
@@ -440,7 +508,7 @@
 
 <!-- ═══ EDITORIAL BANNER ═══ -->
 <div style="position:relative;height:500px;overflow:hidden;">
-  <img src="assets/hero-editorial.jpeg" width="1536" height="1024"
+  <img src="assets/hero-editorial-v2.jpeg" width="1536" height="1024"
     alt="True AI — premium fashion technology editorial"
     loading="eager"
     style="width:100%;height:100%;object-fit:cover;object-position:center 40%;" />
@@ -451,6 +519,37 @@
     </div>
   </div>
   <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(6,4,8,0.75) 0%, transparent 28%);pointer-events:none;"></div>
+</div>
+
+<!-- ═══ BRAND MARQUEE ═══ -->
+<div style="background:var(--bg);border-top:1px solid rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.04);">
+  <div style="text-align:center;padding:16px 0 4px;">
+    <span style="font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);">ENTEGRALİ MARKALAR</span>
+  </div>
+  <div class="marquee-wrap">
+    <div class="marquee-inner">
+      <span class="m-item">Zara</span><span class="m-dot"></span>
+      <span class="m-item">H&amp;M</span><span class="m-dot"></span>
+      <span class="m-item">Mango</span><span class="m-dot"></span>
+      <span class="m-item">LC Waikiki</span><span class="m-dot"></span>
+      <span class="m-item">Koton</span><span class="m-dot"></span>
+      <span class="m-item">Bershka</span><span class="m-dot"></span>
+      <span class="m-item">Pull &amp; Bear</span><span class="m-dot"></span>
+      <span class="m-item">Stradivarius</span><span class="m-dot"></span>
+      <span class="m-item">DeFacto</span><span class="m-dot"></span>
+      <span class="m-item">Marks &amp; Spencer</span><span class="m-dot"></span>
+      <span class="m-item">Zara</span><span class="m-dot"></span>
+      <span class="m-item">H&amp;M</span><span class="m-dot"></span>
+      <span class="m-item">Mango</span><span class="m-dot"></span>
+      <span class="m-item">LC Waikiki</span><span class="m-dot"></span>
+      <span class="m-item">Koton</span><span class="m-dot"></span>
+      <span class="m-item">Bershka</span><span class="m-dot"></span>
+      <span class="m-item">Pull &amp; Bear</span><span class="m-dot"></span>
+      <span class="m-item">Stradivarius</span><span class="m-dot"></span>
+      <span class="m-item">DeFacto</span><span class="m-dot"></span>
+      <span class="m-item">Marks &amp; Spencer</span><span class="m-dot"></span>
+    </div>
+  </div>
 </div>
 
 <!-- ═══ WOW: SANAL DENEME ═══ -->
@@ -559,7 +658,7 @@
         <div style="position:relative;display:flex;justify-content:center;">
           <!-- Main try-on image -->
           <div style="position:relative;border-radius:var(--r-xl);overflow:hidden;max-width:360px;width:100%;box-shadow:0 60px 140px rgba(0,0,0,0.8),0 0 0 1px rgba(255,255,255,0.04);">
-            <img src="assets/screenshots/tryon-result.jpeg" width="360" height="640"
+            <img src="assets/brand-shopping.jpeg" width="360" height="640"
               alt="Marka ürünü sanal deneme — AI kıyafet giydirme"
               loading="lazy" style="width:100%;display:block;" />
             <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(6,4,8,0.65) 0%, transparent 50%);pointer-events:none;"></div>
@@ -580,6 +679,91 @@
           </div>
           <!-- Ambient glow -->
           <div style="position:absolute;inset:-40px;z-index:-1;background:radial-gradient(ellipse at 50% 60%, rgba(201,169,110,0.08) 0%, transparent 65%);pointer-events:none;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SABAH SENARYOSU ═══ -->
+<section style="padding:100px 28px;background:var(--bg-raised);position:relative;overflow:hidden;" id="scenario">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 15% 50%, rgba(201,169,110,0.06) 0%, transparent 50%),radial-gradient(ellipse at 85% 20%, rgba(201,169,110,0.04) 0%, transparent 45%);pointer-events:none;"></div>
+  <div class="container">
+    <div style="text-align:center;margin-bottom:72px;">
+      <div class="eyebrow" style="justify-content:center;">GÜNDELİK SENARYO</div>
+      <h2 style="font-size:clamp(36px,4.5vw,58px);font-weight:700;letter-spacing:-0.03em;margin-bottom:14px;">
+        Sabah 07:30.<br />
+        <em style="font-family:var(--font-display);font-style:italic;color:var(--accent);font-size:1.06em;">İş görüşmen var.</em>
+      </h2>
+      <p style="font-size:16px;color:var(--text-secondary);max-width:460px;margin:0 auto;line-height:1.75;">Panik yok. True AI sabah uyumadan önce zaten hazırladı.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;" class="scenario-grid">
+
+      <!-- Timeline steps -->
+      <div style="display:flex;flex-direction:column;gap:0;position:relative;z-index:1;">
+        <div style="display:flex;gap:20px;padding-bottom:40px;">
+          <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+            <div style="width:44px;height:44px;background:var(--accent-dim);border:1px solid var(--accent-border);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div style="width:1px;flex:1;min-height:28px;background:linear-gradient(to bottom,rgba(201,169,110,0.3),rgba(201,169,110,0.05));margin-top:8px;"></div>
+          </div>
+          <div style="padding-top:8px;">
+            <div style="font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:6px;">07:15</div>
+            <div style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">Telefonu eline aldın</div>
+            <div style="font-size:14px;color:var(--text-secondary);line-height:1.65;">True AI hava durumunu ve takvindeki iş görüşmesini zaten biliyor.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:20px;padding-bottom:40px;">
+          <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+            <div style="width:44px;height:44px;background:var(--accent-dim);border:1px solid var(--accent-border);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+            </div>
+            <div style="width:1px;flex:1;min-height:28px;background:linear-gradient(to bottom,rgba(201,169,110,0.3),rgba(201,169,110,0.05));margin-top:8px;"></div>
+          </div>
+          <div style="padding-top:8px;">
+            <div style="font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:6px;">07:16</div>
+            <div style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">AI 3 kombin hazırladı</div>
+            <div style="font-size:14px;color:var(--text-secondary);line-height:1.65;">Gardırobundaki parçalardan: Formal, smart casual ve minimal seçenek.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:20px;padding-bottom:40px;">
+          <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+            <div style="width:44px;height:44px;background:var(--accent-dim);border:1px solid var(--accent-border);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div style="width:1px;flex:1;min-height:28px;background:linear-gradient(to bottom,rgba(201,169,110,0.2),transparent);margin-top:8px;"></div>
+          </div>
+          <div style="padding-top:8px;">
+            <div style="font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:6px;">07:18</div>
+            <div style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">Sanal denemeyle emin oldun</div>
+            <div style="font-size:14px;color:var(--text-secondary);line-height:1.65;">42 saniyede kendi üstünde gördün. Ayna önünde vakit kaybı yok.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:20px;">
+          <div style="flex-shrink:0;">
+            <div style="width:44px;height:44px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);border-radius:12px;display:flex;align-items:center;justify-content:center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div style="padding-top:8px;">
+            <div style="font-size:10px;font-weight:700;color:#4ade80;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:6px;">07:30</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:6px;">Hazırsın. 15 dakika erken.</div>
+            <div style="font-size:14px;color:var(--text-secondary);line-height:1.65;">En iyi görünümün seçimini yaptın — ve bunun için hiçbir stres yaşamadın.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scenario image -->
+      <div style="display:flex;justify-content:center;">
+        <div style="position:relative;border-radius:var(--r-xl);overflow:hidden;max-width:420px;width:100%;box-shadow:0 60px 140px rgba(0,0,0,0.85),0 0 0 1px rgba(255,255,255,0.04);">
+          <img src="assets/morning-routine.jpeg" width="420" height="560" alt="Sabah rutini — True AI ile kıyafet seçimi" loading="lazy" style="width:100%;display:block;" />
+          <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(6,4,8,0.65) 0%, transparent 50%);pointer-events:none;"></div>
+          <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(6,4,8,0.85);backdrop-filter:blur(16px);border:1px solid rgba(74,222,128,0.35);padding:10px 22px;border-radius:var(--r-full);white-space:nowrap;display:flex;align-items:center;gap:8px;">
+            <span style="width:7px;height:7px;background:#4ade80;border-radius:50%;display:inline-block;animation:pulse 2s infinite;"></span>
+            <span style="font-size:13px;font-weight:700;color:#fff;">Sabah tasarrufu: 15 dk</span>
+          </div>
         </div>
       </div>
 
@@ -877,10 +1061,11 @@
             </div>
           </div>
 
-          <!-- Community count card -->
-          <div class="float-card" style="bottom:24px;left:-48px;animation:floatA 4.5s ease-in-out infinite;">
-            <div style="font-size:13px;font-weight:800;color:var(--text-primary);">12.4K kombin</div>
-            <div style="font-size:11px;color:var(--text-secondary);">topluluğumuzda paylaşıldı</div>
+          <!-- Community grid preview -->
+          <div style="position:absolute;bottom:-16px;left:-64px;z-index:15;border-radius:var(--r-md);overflow:hidden;width:120px;height:120px;box-shadow:0 20px 56px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.07);animation:floatA 5s ease-in-out infinite;">
+            <img src="assets/community-grid.jpeg" width="120" height="120" alt="Topluluk kombinleri" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" />
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(6,4,8,0.6) 0%,transparent 50%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:#fff;white-space:nowrap;letter-spacing:0.05em;">12.4K kombin</div>
           </div>
         </div>
       </div>
@@ -1179,11 +1364,77 @@ var obs = new IntersectionObserver(function(entries) {
     }
   });
 }, { threshold: 0.07 });
-document.querySelectorAll('.card, .feature-row, .steps-grid > div, .wow-grid > div, .hero-stage, .feature-banner, .style-grid > div, .social-grid > div').forEach(function(el) {
+document.querySelectorAll('.card, .feature-row, .steps-grid > div, .wow-grid > div, .hero-stage, .feature-banner, .style-grid > div, .social-grid > div, .scenario-grid > div').forEach(function(el) {
   el.style.opacity = '0'; el.style.transform = 'translateY(24px)';
   el.style.transition = 'opacity 0.65s ease, transform 0.65s ease';
   obs.observe(el);
 });
+
+// Scroll progress bar
+(function() {
+  var bar = document.getElementById('scroll-progress');
+  if (!bar) return;
+  window.addEventListener('scroll', function() {
+    var s = document.documentElement.scrollTop || document.body.scrollTop;
+    var h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    bar.style.width = (h > 0 ? (s / h * 100) : 0) + '%';
+  }, { passive: true });
+})();
+
+// Mobile sticky CTA — show after scrolling past hero
+(function() {
+  var cta = document.getElementById('mobile-cta');
+  if (!cta) return;
+  var hero = document.getElementById('hero');
+  var shown = false;
+  window.addEventListener('scroll', function() {
+    var threshold = hero ? hero.offsetHeight * 0.7 : 400;
+    if (!shown && window.scrollY > threshold) { cta.classList.add('visible'); shown = true; }
+  }, { passive: true });
+})();
+
+// Social proof toast
+(function() {
+  var toast = document.getElementById('sp-toast');
+  var nameEl = document.getElementById('sp-name');
+  if (!toast || !nameEl) return;
+  var names = ['Selin B.','Emre K.','Ayşe T.','Mert D.','Zeynep A.','Can Ö.','Defne S.','Burak Y.','Elif N.','Kaan M.'];
+  var idx = 0;
+  function showToast() {
+    var name = names[idx % names.length]; idx++;
+    nameEl.textContent = name + ' listeye eklendi';
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 3200);
+    setTimeout(showToast, Math.floor(Math.random() * 14000) + 9000);
+  }
+  setTimeout(showToast, 5000);
+})();
+
+// Style bar scroll animation
+(function() {
+  var pcts = ['68%','22%','10%'];
+  var bars = document.querySelectorAll('.style-bar-fill');
+  bars.forEach(function(bar, i) {
+    bar.style.width = '0%';
+    bar.setAttribute('data-pct', pcts[i] || '0%');
+    bar.setAttribute('data-delay', i * 180);
+  });
+  var styleObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        var bar = e.target;
+        var pct = bar.getAttribute('data-pct') || '0%';
+        var delay = parseInt(bar.getAttribute('data-delay') || '0');
+        setTimeout(function() {
+          bar.style.width = pct;
+          setTimeout(function() { bar.classList.add('animated'); }, 1050);
+        }, delay);
+        styleObs.unobserve(bar);
+      }
+    });
+  }, { threshold: 0.3 });
+  bars.forEach(function(bar) { styleObs.observe(bar); });
+})();
 </script>
 </body>
 </html>
