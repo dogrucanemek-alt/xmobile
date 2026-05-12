@@ -2047,6 +2047,8 @@ function handleWaitlist(e) {
     (function wTick() {
       requestAnimationFrame(wTick);
       if (!wVis) return;
+      // Wait for GSAP reveal to finish before overriding transform
+      if (parseFloat(getComputedStyle(wWrap).opacity) < 0.95) return;
       wft += 0.006;
       wcx += (wtx - wcx) * 0.06;
       wcy += (wty - wcy) * 0.06;
@@ -2070,11 +2072,14 @@ function handleWaitlist(e) {
       appSection.addEventListener('mouseleave', function() { atx = 0; aty = 0; });
     }
     var aStarted = false;
+    var appWrap  = appImg.closest('.reveal-scale') || appImg.parentElement;
     new IntersectionObserver(function(e) {
       if (e[0].isIntersecting && !aStarted) {
         aStarted = true;
         (function aLoop() {
           requestAnimationFrame(aLoop);
+          // Wait for reveal-scale transition to finish
+          if (parseFloat(getComputedStyle(appWrap).opacity) < 0.95) return;
           acx += (atx - acx) * 0.055;
           acy += (aty - acy) * 0.055;
           aft += 0.007;
