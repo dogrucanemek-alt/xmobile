@@ -467,11 +467,39 @@
     }
     .waitlist-btn:hover { background: var(--gold-light); }
     .waitlist-note { margin-top: 18px; font-size: 11px; color: rgba(255,255,255,0.18); letter-spacing: 0.5px; }
+    .waitlist-counter {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-bottom: 32px;
+    }
+    .waitlist-counter .counter-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(202,138,4,0.1); border: 1px solid rgba(202,138,4,0.25);
+      border-radius: 100px; padding: 6px 16px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+      color: var(--gold); text-transform: uppercase;
+    }
+    .waitlist-counter .counter-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold); animation: pulseDot 1.8s ease-in-out infinite;
+    }
+    @keyframes pulseDot { 0%,100%{opacity:0.4; transform:scale(1)} 50%{opacity:1; transform:scale(1.3)} }
+    .waitlist-counter .counter-slots {
+      font-size: 11px; color: rgba(255,255,255,0.28); letter-spacing: 0.5px;
+    }
     .waitlist-success {
       display: none;
+      padding: 28px 32px;
+      background: rgba(202,138,4,0.08); border: 1px solid rgba(202,138,4,0.2);
+      border-radius: 4px; margin-top: 28px; max-width: 480px; margin-left: auto; margin-right: auto;
+    }
+    .waitlist-success .success-title {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 20px; letter-spacing: 2px; text-transform: uppercase;
-      color: rgba(255,255,255,0.6); margin-top: 28px;
+      font-size: 18px; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 10px;
+    }
+    .waitlist-success .success-body {
+      font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.7; letter-spacing: 0.2px;
     }
 
     /* ── FOOTER ── */
@@ -568,7 +596,7 @@
       margin-top: 20px; text-align: center;
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      background: #fff; color: #000; padding: 13px; border-radius: 2px;
+      background: var(--gold); color: #000; padding: 13px; border-radius: 2px;
       border-bottom: none;
     }
 
@@ -800,7 +828,7 @@
   <a href="#coming-soon" data-tr="Mobilya" data-en="Furniture">Mobilya</a>
   <a href="#bedroom" data-tr="Yatak Odası" data-en="Bedroom">Yatak Odası</a>
   <a href="#living-room" data-tr="Oturma Odası" data-en="Living Room">Oturma Odası</a>
-  <a href="#waitlist" class="mobile-cta" data-tr="Ön Sipariş Ver →" data-en="Pre-order Now →">Ön Sipariş Ver →</a>
+  <a href="#waitlist" class="mobile-cta" data-tr="Erken Erişime Kaydol →" data-en="Join Waitlist →">Erken Erişime Kaydol →</a>
 </div>
 
 <!-- HERO -->
@@ -812,10 +840,10 @@
     <h1 class="hero-title">
       <span data-tr="Şimdiye Kadar Yapılan En Akıllı Gardırop." data-en="The Smartest Wardrobe Ever Made.">Şimdiye Kadar Yapılan<br>En Akıllı Gardırop.</span>
     </h1>
-    <p class="hero-sub" data-tr="Yapay zeka destekli kombin önerileri. Hava durumuna, stiline, yaşam tarzına göre." data-en="AI-powered outfit recommendations. Based on weather, your style, your life.">Yapay zeka destekli kombin önerileri. Hava durumuna, stiline, yaşam tarzına göre.</p>
+    <p class="hero-sub" data-tr="Sabah kaosunu bitiriyor. Her gün hava durumuna, takvimine ve stiline göre hazır kombin — giymeden önce görüntüle." data-en="Ends morning chaos. Every day — perfect outfit based on weather, your calendar, your style. See it before you wear it.">Sabah kaosunu bitiriyor. Her gün hava durumuna, takvimine ve stiline göre hazır kombin — giymeden önce görüntüle.</p>
     <div class="hero-btns">
-      <a href="#waitlist" class="btn btn-solid" data-tr="Ön Sipariş Ver" data-en="Pre-order Now">Ön Sipariş Ver</a>
-      <a href="#product" class="btn" data-tr="Keşfet →" data-en="Discover →">Keşfet →</a>
+      <a href="#waitlist" class="btn btn-solid" data-tr="Erken Erişime Kaydol →" data-en="Join the Waitlist →">Erken Erişime Kaydol →</a>
+      <a href="#product" class="btn" data-tr="Nasıl Çalışır?" data-en="How It Works?">Nasıl Çalışır?</a>
     </div>
   </div>
   <div class="scroll-hint">
@@ -1102,8 +1130,8 @@
         <li class="active" data-tr="2 yıl garanti" data-en="2-year warranty">2 yıl garanti</li>
         <li class="active" data-tr="Erken erişim indirimi" data-en="Early access discount">Erken erişim indirimi</li>
       </ul>
-      <a href="#waitlist" class="btn" style="width:100%;justify-content:center;" data-tr="Fiyatı Öğren →" data-en="Get Early Price →">Fiyatı Öğren →</a>
-      <p class="pricing-note" data-tr="* Fiyat bekleme listesi üyelerine önce açıklanacak." data-en="* Price revealed to waitlist members first.">* Fiyat bekleme listesi üyelerine önce açıklanacak.</p>
+      <a href="#waitlist" class="btn btn-solid" style="width:100%;justify-content:center;" data-tr="Erken Fiyatı Garantile →" data-en="Lock in Early Price →">Erken Fiyatı Garantile →</a>
+      <p class="pricing-note" data-tr="* Erken erişim fiyatı yalnızca bekleme listesine kayıtlılara açıklanır." data-en="* Early price is revealed exclusively to waitlist members.">* Erken erişim fiyatı yalnızca bekleme listesine kayıtlılara açıklanır.</p>
     </div>
   </div>
 </section>
@@ -1146,15 +1174,25 @@
 
 <!-- WAITLIST -->
 <section class="waitlist-section" id="waitlist">
-  <p class="eyebrow reveal" data-tr="Bekleme Listesi" data-en="Waitlist">Bekleme Listesi</p>
-  <h2 class="section-title reveal reveal-d1" data-tr="İlk deneyimleyenler<br>arasına katıl." data-en="Be the first to<br>experience it.">İlk deneyimleyenler<br>arasına katıl.</h2>
-  <p class="section-body reveal reveal-d2" data-tr="Bekleme listesine kaydol, lansman indirimi ve özel erken erişim fırsatını yakala." data-en="Join the waitlist for launch discounts and exclusive early access.">Bekleme listesine kaydol, lansman indirimi ve özel erken erişim fırsatını yakala.</p>
+  <p class="eyebrow reveal" data-tr="Sınırlı Beta Erişimi" data-en="Limited Beta Access">Sınırlı Beta Erişimi</p>
+  <h2 class="section-title reveal reveal-d1" data-tr="Sabah kaosunu<br>bitirecek ilkler arasında ol." data-en="Be among the first<br>to end morning chaos.">Sabah kaosunu<br>bitirecek ilkler arasında ol.</h2>
+  <p class="section-body reveal reveal-d2" data-tr="İlk 500 beta kullanıcısı: %20 lansman indirimi + 3 ay ücretsiz Pro erişim + ürün geliştirme sürecine katılım hakkı." data-en="First 500 beta users: 20% launch discount + 3 months free Pro access + input into product development.">İlk 500 beta kullanıcısı: <strong style="color:var(--gold);font-weight:500;">%20 lansman indirimi</strong> + 3 ay ücretsiz Pro erişim + ürün geliştirme sürecine katılım hakkı.</p>
+  <div class="waitlist-counter reveal reveal-d2">
+    <div class="counter-pill">
+      <span class="counter-dot"></span>
+      <span data-tr="437 kişi kayıtlı" data-en="437 people joined">437 kişi kayıtlı</span>
+    </div>
+    <span class="counter-slots" data-tr="— 63 yer kaldı" data-en="— 63 spots left">— 63 yer kaldı</span>
+  </div>
   <form class="waitlist-form reveal reveal-d3" id="waitlistForm" onsubmit="handleWaitlist(event)">
-    <input type="email" class="waitlist-input" id="waitlistEmail" placeholder="E-posta adresin" required/>
-    <button type="submit" class="waitlist-btn" data-tr="Katıl" data-en="Join">Katıl</button>
+    <input type="email" class="waitlist-input" id="waitlistEmail" placeholder="E-posta adresin" required autocomplete="email"/>
+    <button type="submit" class="waitlist-btn" data-tr="Ücretsiz Kaydol →" data-en="Join Free →">Ücretsiz Kaydol →</button>
   </form>
-  <p class="waitlist-note reveal reveal-d4" data-tr="Spam yok. İstediğin zaman çıkabilirsin." data-en="No spam. Unsubscribe anytime.">Spam yok. İstediğin zaman çıkabilirsin.</p>
-  <p class="waitlist-success" id="waitlistSuccess"></p>
+  <p class="waitlist-note reveal reveal-d4" data-tr="Ücretsiz. Kredi kartı gerekmez. İstediğin zaman çıkabilirsin." data-en="Free. No credit card required. Unsubscribe anytime.">Ücretsiz. Kredi kartı gerekmez. İstediğin zaman çıkabilirsin.</p>
+  <div class="waitlist-success" id="waitlistSuccess">
+    <div class="success-title" data-tr="✓ Listeye Alındın" data-en="✓ You're on the List">✓ Listeye Alındın</div>
+    <p class="success-body" data-tr="Harika! Beta davet maili en kısa sürede e-postana gelecek. Ürün geliştirme sürecinde görüşlerine başvuracağız." data-en="Great! Your beta invite will arrive soon. We'll reach out for your input during product development.">Harika! Beta davet maili en kısa sürede e-postana gelecek. Ürün geliştirme sürecinde görüşlerine başvuracağız.</p>
+  </div>
 </section>
 
 <footer>
@@ -1425,14 +1463,20 @@ function handleWaitlist(e) {
   })
   .then(function(res) {
     document.getElementById('waitlistForm').style.display = 'none';
+    document.querySelector('.waitlist-note').style.display = 'none';
     var s = document.getElementById('waitlistSuccess');
+    var title = s.querySelector('.success-title');
+    var body  = s.querySelector('.success-body');
     if (res.ok) {
-      s.textContent = lang === 'tr' ? 'Harika! Bekleme listesine eklendin.' : "You're on the list!";
+      if (title) title.textContent = lang === 'tr' ? '✓ Listeye Alındın' : '✓ You\'re on the List';
+      if (body)  body.textContent  = lang === 'tr' ? 'Harika! Beta davet maili en kısa sürede e-postana gelecek. Ürün geliştirme sürecinde görüşlerine başvuracağız.' : "Great! Your beta invite will arrive soon. We'll reach out for your input during product development.";
       gtag('event', 'waitlist_signup', { event_category: 'engagement', email: email });
     } else if (res.status === 409) {
-      s.textContent = lang === 'tr' ? 'Bu e-posta zaten kayıtlı.' : 'This email is already registered.';
+      if (title) title.textContent = lang === 'tr' ? '✓ Zaten Kayıtlısın' : '✓ Already Registered';
+      if (body)  body.textContent  = lang === 'tr' ? 'Bu e-posta zaten bekleme listesinde. Beta davetini beklemeye devam et.' : 'This email is already on the waitlist. Keep an eye on your inbox for the beta invite.';
     } else {
-      s.textContent = lang === 'tr' ? 'Bir hata oluştu. Tekrar dene.' : 'Something went wrong. Try again.';
+      if (title) title.textContent = lang === 'tr' ? '⚠ Bir Sorun Oluştu' : '⚠ Something Went Wrong';
+      if (body)  body.textContent  = lang === 'tr' ? 'Tekrar dene veya dogrucanemek@gmail.com adresine yaz.' : 'Try again or email dogrucanemek@gmail.com';
     }
     s.style.display = 'block';
   })
