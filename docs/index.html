@@ -298,8 +298,11 @@
     }
     @keyframes bounce-arrow { 0%,100%{transform:rotate(45deg) translateY(0)} 50%{transform:rotate(45deg) translateY(7px)} }
 
-    /* ── DIVIDER ── */
-    .divider { height: 1px; background: rgba(255,255,255,0.08); }
+    /* ── WAVE DIVIDER ── */
+    .wave-div { width:100%; overflow:hidden; line-height:0; height:56px; display:flex; align-items:center; background:transparent; }
+    .wave-div svg { display:block; width:200%; height:56px; animation: waveDrift 12s linear infinite; }
+    @keyframes waveDrift { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    .divider { display: none; }
 
     /* ── PRODUCT SECTION ── */
     .product-section {
@@ -644,6 +647,47 @@
     /* Phone hover already handled — reinforce */
     .phone-wrap { will-change: transform; }
 
+    /* ── HORIZONTAL FEATURE SCROLL (desktop) ── */
+    @media (min-width: 900px) {
+      .features-section { overflow: hidden; padding: 128px 0; }
+      .features-header { padding: 0 60px; }
+      #featuresGrid {
+        display: flex !important; flex-wrap: nowrap !important;
+        grid-template-columns: unset !important;
+        width: max-content !important; max-width: unset !important;
+        margin: 0; will-change: transform;
+        padding-left: 60px;
+      }
+      #featuresGrid .feature-card { flex: 0 0 380px; width: 380px; }
+    }
+
+    /* ── AIRPORT BOARD FLIP (stat numbers) ── */
+    .stat-number { display: inline-block; transform-origin: center bottom; perspective: 400px; }
+    @keyframes boardFlip {
+      0%   { transform: rotateX(-90deg) translateY(12px); opacity: 0; }
+      60%  { transform: rotateX(8deg) translateY(-2px); opacity: 1; }
+      100% { transform: rotateX(0deg) translateY(0); opacity: 1; }
+    }
+    .stat-number.board-anim { animation: boardFlip 0.55s cubic-bezier(0.22,1,0.36,1) both; }
+
+    /* ── PRODUCT 3D WARDROBE CANVAS ── */
+    #wardrobeScene {
+      width: 100%; height: 280px; display: block;
+      margin-top: 28px; border-radius: 2px;
+      opacity: 0.9;
+    }
+
+    /* ── WAITLIST SHADER BG ── */
+    .waitlist-section { position: relative; overflow: hidden; isolation: isolate; }
+    #waitlistBg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; opacity: 0.65;
+    }
+    .waitlist-section > * { position: relative; z-index: 1; }
+
+    /* ── HERO PARALLAX PREP ── */
+    .hero-title, .hero-sub, .hero-btns, .hero .eyebrow { will-change: transform, opacity; }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 1024px) {
       .product-section { grid-template-columns: 1fr; gap: 56px; }
@@ -948,6 +992,7 @@
       <a href="#waitlist" class="btn reveal-left reveal-d3" data-tr="Ön Sipariş Ver →" data-en="Pre-order Now →">Ön Sipariş Ver →</a>
     </div>
     <div class="product-right reveal-right reveal-d1">
+      <canvas id="wardrobeScene"></canvas>
       <div class="stats-grid">
         <div class="stat-item">
           <span class="stat-number" data-target="3" data-suffix="s">3s</span>
@@ -989,7 +1034,7 @@
   </div>
 </section>
 
-<div class="divider"></div>
+<div class="wave-div" aria-hidden="true"><svg viewBox="0 0 2880 56" preserveAspectRatio="none" fill="none"><path d="M0,28 Q180,0 360,28 Q540,56 720,28 Q900,0 1080,28 Q1260,56 1440,28 Q1620,0 1800,28 Q1980,56 2160,28 Q2340,0 2520,28 Q2700,56 2880,28" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></svg></div>
 
 <!-- APP -->
 <section class="app-section" id="app">
@@ -1002,7 +1047,7 @@
   </div>
 </section>
 
-<div class="divider"></div>
+<div class="wave-div" aria-hidden="true"><svg viewBox="0 0 2880 56" preserveAspectRatio="none" fill="none"><path d="M0,28 Q180,0 360,28 Q540,56 720,28 Q900,0 1080,28 Q1260,56 1440,28 Q1620,0 1800,28 Q1980,56 2160,28 Q2340,0 2520,28 Q2700,56 2880,28" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></svg></div>
 
 <!-- DEMO -->
 <section class="demo-section" id="demo">
@@ -1109,7 +1154,7 @@
   </div>
 </section>
 
-<div class="divider"></div>
+<div class="wave-div" aria-hidden="true"><svg viewBox="0 0 2880 56" preserveAspectRatio="none" fill="none"><path d="M0,28 Q180,0 360,28 Q540,56 720,28 Q900,0 1080,28 Q1260,56 1440,28 Q1620,0 1800,28 Q1980,56 2160,28 Q2340,0 2520,28 Q2700,56 2880,28" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></svg></div>
 
 <!-- FEATURES -->
 <section class="features-section" id="features">
@@ -1118,7 +1163,7 @@
     <h2 class="section-title reveal reveal-d1" data-tr="Giyinme şekliniz için<br>tasarlandı." data-en="Built for the<br>way you dress.">Giyinme şekliniz için<br>tasarlandı.</h2>
     <p class="section-body reveal reveal-d2" data-tr="Her gün harika görünmek için ihtiyacınız olan her şey." data-en="Everything you need to look great, every single day.">Her gün harika görünmek için ihtiyacınız olan her şey.</p>
   </div>
-  <div class="features-grid">
+  <div class="features-grid" id="featuresGrid">
     <div class="feature-card reveal-scale reveal-d1">
       <div class="feature-icon">
         <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
@@ -1260,6 +1305,7 @@
 
 <!-- WAITLIST -->
 <section class="waitlist-section" id="waitlist">
+  <canvas id="waitlistBg"></canvas>
   <p class="eyebrow reveal" data-tr="Sınırlı Beta Erişimi" data-en="Limited Beta Access">Sınırlı Beta Erişimi</p>
   <h2 class="section-title reveal reveal-d1" data-tr="Sabah kaosunu<br>bitirecek ilkler arasında ol." data-en="Be among the first<br>to end morning chaos.">Sabah kaosunu<br>bitirecek ilkler arasında ol.</h2>
   <p class="section-body reveal reveal-d2" data-tr="İlk 500 beta kullanıcısı: %20 lansman indirimi + 3 ay ücretsiz Pro erişim + ürün geliştirme sürecine katılım hakkı." data-en="First 500 beta users: 20% launch discount + 3 months free Pro access + input into product development.">İlk 500 beta kullanıcısı: <strong style="color:var(--gold);font-weight:500;">%20 lansman indirimi</strong> + 3 ay ücretsiz Pro erişim + ürün geliştirme sürecine katılım hakkı.</p>
@@ -1297,6 +1343,8 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.45/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script>
 // ── MOBİL MENÜ ──
 var hamburgerBtn = document.getElementById('hamburgerBtn');
@@ -1409,18 +1457,116 @@ var cObs = new IntersectionObserver(function(entries) {
 }, { threshold: 0.5 });
 document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cObs.observe(el); });
 
-// ── LENIS SMOOTH SCROLL ──
+// ── LENIS + GSAP SCROLL SYSTEM ──
 (function() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var lenis = new (window.Lenis || function(){})({
-    duration: 1.25,
-    easing: function(t) { return 1 - Math.pow(1 - t, 4); },
-    smooth: true,
-    smoothTouch: false
-  });
-  if (!lenis || !lenis.raf) return;
-  function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-  requestAnimationFrame(raf);
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isMobile = window.innerWidth < 900;
+
+  // Lenis init
+  var lenis = null;
+  if (!reduced && window.Lenis) {
+    lenis = new window.Lenis({
+      duration: 1.25,
+      easing: function(t) { return 1 - Math.pow(1 - t, 4); },
+      smoothTouch: false
+    });
+  }
+
+  // GSAP ScrollTrigger integration
+  if (!reduced && window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    if (lenis) {
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
+      gsap.ticker.lagSmoothing(0);
+    } else {
+      (function raf(t) { requestAnimationFrame(raf); })();
+    }
+
+    // ── HERO PARALLAX ──
+    var hero = document.querySelector('.hero');
+    if (hero) {
+      gsap.to('.hero-title', {
+        scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 0.8 },
+        y: -90, opacity: 0, scale: 0.93, ease: 'none'
+      });
+      gsap.to('.hero-sub', {
+        scrollTrigger: { trigger: hero, start: 'top top', end: '65% top', scrub: 0.8 },
+        y: -55, opacity: 0, ease: 'none'
+      });
+      gsap.to('.hero-btns', {
+        scrollTrigger: { trigger: hero, start: 'top top', end: '50% top', scrub: 0.8 },
+        y: -35, opacity: 0, ease: 'none'
+      });
+      gsap.to('.hero .eyebrow', {
+        scrollTrigger: { trigger: hero, start: 'top top', end: '40% top', scrub: 0.8 },
+        y: -20, opacity: 0, ease: 'none'
+      });
+      gsap.to('.scroll-hint', {
+        scrollTrigger: { trigger: hero, start: 'top top', end: '30% top', scrub: 0.8 },
+        opacity: 0, ease: 'none'
+      });
+    }
+
+    // ── HORIZONTAL FEATURE SCROLL (desktop) ──
+    if (!isMobile) {
+      var fGrid = document.getElementById('featuresGrid');
+      var fSection = document.querySelector('.features-section');
+      if (fGrid && fSection) {
+        var getMaxX = function() { return -(fGrid.scrollWidth - window.innerWidth + 60); };
+        ScrollTrigger.create({
+          trigger: fSection,
+          start: 'top top',
+          end: function() { return '+=' + (fGrid.scrollWidth - window.innerWidth + 60); },
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: function(self) {
+            gsap.set(fGrid, { x: getMaxX() * self.progress });
+          }
+        });
+      }
+    }
+
+    // ── SECTION ENTRANCE (GSAP enhanced) ──
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(function(el) {
+      var fromX = el.classList.contains('reveal-left') ? -40 : el.classList.contains('reveal-right') ? 40 : 0;
+      var fromY = (el.classList.contains('reveal-left') || el.classList.contains('reveal-right')) ? 0 : 28;
+      var fromS  = el.classList.contains('reveal-scale') ? 0.88 : 0.97;
+      gsap.from(el, {
+        scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
+        x: fromX, y: el.classList.contains('reveal-scale') ? 20 : fromY,
+        scale: fromS, opacity: 0,
+        duration: 0.9, ease: 'power3.out',
+        delay: (parseFloat(getComputedStyle(el).transitionDelay) || 0)
+      });
+    });
+
+  } else if (lenis) {
+    // Lenis only, no GSAP
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+  }
+
+  // ── AIRPORT BOARD FLIP (stat numbers) ──
+  var boardObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (!e.isIntersecting) return;
+      var el = e.target;
+      boardObs.unobserve(el);
+      var delay = 0;
+      [].forEach.call(el.closest('.stats-grid').querySelectorAll('.stat-number'), function(sn, i) {
+        setTimeout(function() {
+          sn.classList.add('board-anim');
+        }, i * 120);
+      });
+    });
+  }, { threshold: 0.6 });
+  var firstStat = document.querySelector('.stat-number');
+  if (firstStat) boardObs.observe(firstStat);
+
 })();
 
 // ── 3D CARD TILT ──
@@ -1480,6 +1626,169 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
 // ── HERO 3D SCENE ──
 </script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
+<script>
+// ── WARDROBE 3D SCENE (product section) ──
+(function() {
+  var canvas = document.getElementById('wardrobeScene');
+  if (!canvas || !window.THREE) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { canvas.style.display='none'; return; }
+
+  var W = canvas.offsetWidth || 400, H = 280;
+  canvas.width = W * Math.min(devicePixelRatio, 2);
+  canvas.height = H * Math.min(devicePixelRatio, 2);
+
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  renderer.setClearColor(0x000000, 0);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(W, H);
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 100);
+  camera.position.set(0, 0.5, 6.5);
+
+  // ── WARDROBE WIREFRAME ──
+  var bodyGeo  = new THREE.BoxGeometry(2.4, 3.4, 1.0);
+  var bodyEdge = new THREE.EdgesGeometry(bodyGeo);
+  var goldMat  = new THREE.LineBasicMaterial({ color: 0xCA8A04 });
+  var wardrobeBody = new THREE.LineSegments(bodyEdge, goldMat);
+  scene.add(wardrobeBody);
+
+  // Door lines (left & right halves)
+  var doorGeo  = new THREE.PlaneGeometry(1.15, 3.3);
+  var doorEdge = new THREE.EdgesGeometry(doorGeo);
+  var dimMat   = new THREE.LineBasicMaterial({ color: 0x666644, transparent: true, opacity: 0.7 });
+  var doorL = new THREE.LineSegments(doorEdge, dimMat);
+  doorL.position.set(-0.6, 0, 0.51);
+  var doorR = new THREE.LineSegments(doorEdge, dimMat);
+  doorR.position.set(0.6, 0, 0.51);
+  scene.add(doorL); scene.add(doorR);
+
+  // Screen glow plane inside
+  var scrGeo = new THREE.PlaneGeometry(2.1, 3.1);
+  var scrMat = new THREE.MeshBasicMaterial({ color: 0x0a0804, transparent: true, opacity: 0.6 });
+  var screen = new THREE.Mesh(scrGeo, scrMat);
+  screen.position.z = -0.49;
+  var scrEdgeMat = new THREE.LineBasicMaterial({ color: 0xCA8A04, transparent: true, opacity: 0.35 });
+  var scrEdge = new THREE.LineSegments(new THREE.EdgesGeometry(scrGeo), scrEdgeMat);
+  scrEdge.position.z = -0.48;
+  scene.add(screen); scene.add(scrEdge);
+
+  // Horizontal shelf lines (3 shelves)
+  [-0.8, 0.4, 1.5].forEach(function(y) {
+    var shelfGeo  = new THREE.PlaneGeometry(2.2, 0.01);
+    var shelfEdge = new THREE.EdgesGeometry(shelfGeo);
+    var shelfLine = new THREE.LineSegments(shelfEdge, new THREE.LineBasicMaterial({ color: 0x444433, transparent: true, opacity: 0.5 }));
+    shelfLine.position.set(0, y - 1.7, -0.48);
+    scene.add(shelfLine);
+  });
+
+  // Floating particles
+  var pGeo = new THREE.BufferGeometry();
+  var pCount = 80, pPos = new Float32Array(pCount * 3);
+  for (var i = 0; i < pCount * 3; i++) pPos[i] = (Math.random() - 0.5) * 10;
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+  var particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xCA8A04, size: 0.035, transparent: true, opacity: 0.4 }));
+  scene.add(particles);
+
+  // Grid floor
+  var grid = new THREE.GridHelper(7, 14, 0x1a1a0a, 0x0d0d05);
+  grid.position.y = -1.7;
+  scene.add(grid);
+
+  // Mouse tracking
+  var mx = 0, my = 0;
+  document.addEventListener('mousemove', function(e) {
+    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
+    my = (e.clientY / window.innerHeight - 0.5) * 2;
+  }, { passive: true });
+
+  // Intersection observer — only animate when visible
+  var visible = false;
+  var io = new IntersectionObserver(function(e) { visible = e[0].isIntersecting; }, { threshold: 0.1 });
+  io.observe(canvas);
+
+  var t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!visible) return;
+    t += 0.006;
+    var ry = Math.sin(t * 0.4) * 0.25 + mx * 0.12;
+    var rx = my * 0.06;
+    [wardrobeBody, doorL, doorR, screen, scrEdge].forEach(function(o) {
+      o.rotation.y = ry; o.rotation.x = rx;
+    });
+    scene.children.forEach(function(o) {
+      if (o.isLineSegments && o !== wardrobeBody && o !== doorL && o !== doorR && o !== scrEdge) {
+        o.rotation.y = ry; o.rotation.x = rx;
+      }
+    });
+    particles.rotation.y += 0.0008;
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ── WAITLIST WEBGL SHADER ──
+(function() {
+  var canvas = document.getElementById('waitlistBg');
+  if (!canvas || !window.THREE) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var rect = canvas.parentElement.getBoundingClientRect();
+  var W = canvas.parentElement.offsetWidth || 1200;
+  var H = canvas.parentElement.offsetHeight || 600;
+
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false });
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(1);
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+  var mat = new THREE.ShaderMaterial({
+    uniforms: { u_time: { value: 0.0 } },
+    vertexShader: [
+      'varying vec2 vUv;',
+      'void main() { vUv = uv; gl_Position = vec4(position, 1.0); }'
+    ].join('\n'),
+    fragmentShader: [
+      'uniform float u_time;',
+      'varying vec2 vUv;',
+      'float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }',
+      'float noise(vec2 p){',
+      '  vec2 i=floor(p), f=fract(p);',
+      '  f=f*f*(3.0-2.0*f);',
+      '  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);',
+      '}',
+      'void main(){',
+      '  vec2 uv = vUv;',
+      '  float n = noise(uv*3.5 + u_time*0.12) + noise(uv*7.0 - u_time*0.07)*0.5 + noise(uv*14.0 + u_time*0.04)*0.25;',
+      '  n /= 1.75;',
+      '  vec3 dark = vec3(0.01,0.01,0.015);',
+      '  vec3 gold = vec3(0.15,0.10,0.01);',
+      '  vec3 col = mix(dark, gold, n*n*0.85);',
+      '  gl_FragColor = vec4(col, 1.0);',
+      '}'
+    ].join('\n')
+  });
+
+  var plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
+  scene.add(plane);
+
+  var t0 = Date.now();
+  var visible = false;
+  var io = new IntersectionObserver(function(e) { visible = e[0].isIntersecting; }, { threshold: 0.05 });
+  io.observe(canvas);
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!visible) return;
+    mat.uniforms.u_time.value = (Date.now() - t0) * 0.001;
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+</script>
 <script>
 (function() {
   if (!window.THREE || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
