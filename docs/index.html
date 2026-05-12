@@ -505,9 +505,25 @@
     }
     .coming-soon-bg {
       position: absolute; inset: -15%; width: calc(100% + 0px); height: calc(100% + 30%);
-      background: center center / cover no-repeat;
+      background: 52% 52% / cover no-repeat;
       transform: translateY(0);
+      animation: kenBurnsPan 22s ease-in-out infinite;
     }
+    @keyframes kenBurnsPan {
+      0%   { background-position: 52% 52%; }
+      25%  { background-position: 46% 48%; }
+      50%  { background-position: 54% 52%; }
+      75%  { background-position: 49% 55%; }
+      100% { background-position: 52% 52%; }
+    }
+    @media (prefers-reduced-motion: reduce) { .coming-soon-bg { animation: none; } }
+    .wardrobe-glare {
+      position: absolute; inset: 0; z-index: 4; pointer-events: none;
+      background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 60%);
+      opacity: 0; transition: opacity 0.4s ease;
+      mix-blend-mode: screen;
+    }
+    .wardrobe-img-wrap:hover .wardrobe-glare { opacity: 1; }
     .coming-soon-overlay {
       position: absolute; inset: 0;
       background: linear-gradient(to bottom,
@@ -1024,6 +1040,7 @@
       <img src="img/wardrobe-concept.png"
            alt="AI Furniture akıllı gardırop — yapay zeka destekli dokunmatik ekran"
            loading="lazy" width="1360" height="620"/>
+      <div class="wardrobe-glare" id="wardrobeGlare"></div>
       <div class="wardrobe-img-caption">
         <p class="eyebrow" data-tr="Dünyanın İlki" data-en="World's First">Dünyanın İlki</p>
         <p data-tr="Yapay Zeka Destekli<br>Dokunmatik Gardırop" data-en="AI-Powered<br>Touchscreen Wardrobe">Yapay Zeka Destekli<br>Dokunmatik Gardırop</p>
@@ -1617,8 +1634,7 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
       if (!bg) return;
       var progress = (vh - rect.top) / (vh + rect.height);
       var shift = (progress - 0.5) * 90;
-      var sc = 1.0 + (1 - Math.abs(progress * 2 - 1)) * 0.06;
-      bg.style.transform = 'translateY(' + shift + 'px) scale(' + sc + ')';
+      bg.style.transform = 'translateY(' + shift + 'px)';
     });
   }
 
@@ -2007,16 +2023,22 @@ function handleWaitlist(e) {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var isMobile = window.innerWidth < 768;
 
-  /* 1. WARDROBE SHOWCASE — mouse tilt + perpetual float */
+  /* 1. WARDROBE SHOWCASE — dramatic 3D tilt + glare */
   var wWrap    = document.querySelector('.wardrobe-img-wrap');
   var wSection = document.querySelector('.wardrobe-showcase');
+  var wGlare   = document.getElementById('wardrobeGlare');
   if (wWrap && wSection) {
     var wtx = 0, wty = 0, wcx = 0, wcy = 0, wft = 0;
     if (!isMobile) {
       wSection.addEventListener('mousemove', function(e) {
         var r = wSection.getBoundingClientRect();
-        wtx = ((e.clientX - r.left) / r.width  - 0.5) * 6;
-        wty = -((e.clientY - r.top)  / r.height - 0.5) * 3.5;
+        var nx = (e.clientX - r.left) / r.width;
+        var ny = (e.clientY - r.top)  / r.height;
+        wtx = (nx - 0.5) * 18;
+        wty = -(ny - 0.5) * 10;
+        if (wGlare) {
+          wGlare.style.background = 'radial-gradient(circle at ' + (nx * 100).toFixed(0) + '% ' + (ny * 100).toFixed(0) + '%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 55%)';
+        }
       }, { passive: true });
       wSection.addEventListener('mouseleave', function() { wtx = 0; wty = 0; });
     }
@@ -2026,24 +2048,24 @@ function handleWaitlist(e) {
       requestAnimationFrame(wTick);
       if (!wVis) return;
       wft += 0.006;
-      wcx += (wtx - wcx) * 0.07;
-      wcy += (wty - wcy) * 0.07;
-      var fy = Math.sin(wft) * 3.5 + Math.sin(wft * 0.43) * 1.5;
-      wWrap.style.transform = 'perspective(1400px) rotateY(' + wcx.toFixed(3) + 'deg) rotateX(' + wcy.toFixed(3) + 'deg) translateY(' + fy.toFixed(2) + 'px)';
+      wcx += (wtx - wcx) * 0.06;
+      wcy += (wty - wcy) * 0.06;
+      var fy = Math.sin(wft) * 5 + Math.sin(wft * 0.41) * 2.5;
+      wWrap.style.transform = 'perspective(900px) rotateY(' + wcx.toFixed(3) + 'deg) rotateX(' + wcy.toFixed(3) + 'deg) translateY(' + fy.toFixed(2) + 'px)';
     })();
   }
 
-  /* 2. APP SCREENS — float + mouse depth tilt */
+  /* 2. APP SCREENS — big float + dramatic 3D tilt + live shadow */
   var appSection = document.querySelector('.app-section');
   var appImg     = appSection ? appSection.querySelector('img') : null;
   if (appSection && appImg) {
-    appImg.style.willChange = 'transform';
+    appImg.style.willChange = 'transform, box-shadow';
     var atx = 0, aty = 0, acx = 0, acy = 0, aft = 0;
     if (!isMobile) {
       appSection.addEventListener('mousemove', function(e) {
         var r = appSection.getBoundingClientRect();
-        atx = ((e.clientX - r.left) / r.width  - 0.5) * 10;
-        aty = -((e.clientY - r.top)  / r.height - 0.5) * 6;
+        atx = ((e.clientX - r.left) / r.width  - 0.5) * 20;
+        aty = -((e.clientY - r.top)  / r.height - 0.5) * 12;
       }, { passive: true });
       appSection.addEventListener('mouseleave', function() { atx = 0; aty = 0; });
     }
@@ -2053,15 +2075,15 @@ function handleWaitlist(e) {
         aStarted = true;
         (function aLoop() {
           requestAnimationFrame(aLoop);
-          acx += (atx - acx) * 0.065;
-          acy += (aty - acy) * 0.065;
-          aft += 0.0065;
-          var fy   = Math.sin(aft) * 9 + Math.sin(aft * 0.47) * 4;
-          var sx   = -acx * 2.5;
-          var sy   = 42 + Math.abs(acy) * 4;
-          var sblur = 80 + Math.abs(acx) * 3;
-          appImg.style.transform = 'perspective(1400px) rotateY(' + acx.toFixed(3) + 'deg) rotateX(' + acy.toFixed(3) + 'deg) translateY(' + fy.toFixed(2) + 'px)';
-          appImg.style.boxShadow = sx.toFixed(1) + 'px ' + sy.toFixed(1) + 'px ' + sblur.toFixed(0) + 'px rgba(0,0,0,0.75)';
+          acx += (atx - acx) * 0.055;
+          acy += (aty - acy) * 0.055;
+          aft += 0.007;
+          var fy    = Math.sin(aft) * 16 + Math.sin(aft * 0.45) * 7;
+          var sx    = (-acx * 3).toFixed(1);
+          var sy    = (50 + Math.abs(acy) * 5).toFixed(1);
+          var sblur = (90 + Math.abs(acx) * 2).toFixed(0);
+          appImg.style.transform = 'perspective(900px) rotateY(' + acx.toFixed(3) + 'deg) rotateX(' + acy.toFixed(3) + 'deg) translateY(' + fy.toFixed(2) + 'px)';
+          appImg.style.boxShadow = sx + 'px ' + sy + 'px ' + sblur + 'px rgba(0,0,0,0.8)';
         })();
       }
     }, { threshold: 0.2 }).observe(appSection);
