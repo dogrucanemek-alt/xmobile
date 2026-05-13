@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../lib/context';
 import { chatJarvis } from '../lib/aiService';
 import type { KombinKayit, Kiyafet, Profil } from '../lib/types';
+import { streakOku, type StreakData } from '../lib/streak';
 
 const CYAN = '#00D4FF';
 const GECMIS_KEY  = 'xmobile_gecmis';
@@ -58,12 +59,17 @@ export default function HaftalikRapor() {
   const router = useRouter();
   const { renkler, dil } = useApp();
 
-  const [yukleniyor, setYukleniyor] = useState(false);
-  const [rapor, setRapor]           = useState('');
-  const [istat, setIstat]           = useState<HaftaIstats | null>(null);
-  const [hafta, setHafta]           = useState(sonYediGun());
+  const [yukleniyor, setYukleniyor]   = useState(false);
+  const [rapor, setRapor]             = useState('');
+  const [istat, setIstat]             = useState<HaftaIstats | null>(null);
+  const [hafta, setHafta]             = useState(sonYediGun());
+  const [streak, setStreak]           = useState<StreakData>({ current: 0, best: 0, lastActive: '' });
+  const [renkPaleti, setRenkPaleti]   = useState<{renk: string; ad: string; sayi: number}[]>([]);
 
-  useEffect(() => { yukleVeRaporla(); }, []);
+  useEffect(() => {
+    yukleVeRaporla();
+    streakOku().then(setStreak);
+  }, []);
 
   const yukleVeRaporla = async () => {
     setYukleniyor(true);
@@ -85,6 +91,25 @@ export default function HaftalikRapor() {
 
       setIstat(istatHesapla(haftaKayitlari));
       setHafta(sonYediGun());
+
+      // Renk paleti — gardırobtaki renkleri say
+      const renkSayim: Record<string, number> = {};
+      const RENK_ADLARI: Record<string, string> = {
+        '#1A1A1A': 'Siyah', '#FFFFFF': 'Beyaz', '#EEEEEE': 'Krem',
+        '#2C3E50': 'Lacivert', '#4A90D9': 'Mavi', '#2ED573': 'Yeşil',
+        '#E74C3C': 'Kırmızı', '#C68642': 'Kahve', '#F39C12': 'Sarı',
+        '#9B59B6': 'Mor', '#808080': 'Gri', '#FFA07A': 'Somon',
+      };
+      for (const k of kiyafetler) {
+        if (k.renk) {
+          renkSayim[k.renk] = (renkSayim[k.renk] ?? 0) + 1;
+        }
+      }
+      const palette = Object.entries(renkSayim)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6)
+        .map(([renk, sayi]) => ({ renk, sayi, ad: RENK_ADLARI[renk] ?? renk }));
+      setRenkPaleti(palette);
 
       const kombinListesi = haftaKayitlari.length > 0
         ? haftaKayitlari.map(k => `- ${k.kombin.baslik} (${k.kombin.parcalar.join(', ')})`).join('\n')
@@ -241,6 +266,58 @@ Use a concise, genuine, motivating tone. Max 250 words.`;
                 </View>
               );
             })}
+          </View>
+        )}
+
+        {/* Streak */}
+        {streak.current > 0 && (
+          <View style={[s.kategoriKart, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+            <Text style={[s.altBaslik, { color: renkler.metin }]}>
+              {dil === 'tr' ? '🔥 Günlük Seri' : '🔥 Daily Streak'}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+              <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 36, fontWeight: '900', color: '#FF6B35' }}>{streak.current}</Text>
+                <Text style={[{ fontSize: 11, color: renkler.metin2 }]}>{dil === 'tr' ? 'günlük' : 'day streak'}</Text>
+              </View>
+              <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 36, fontWeight: '900', color: CYAN }}>{streak.best}</Text>
+                <Text style={[{ fontSize: 11, color: renkler.metin2 }]}>{dil === 'tr' ? 'en iyi' : 'best'}</Text>
+              </View>
+              <Text style={{ flex: 1, fontSize: 13, color: renkler.metin2, lineHeight: 19 }}>
+                {streak.current >= streak.best
+                  ? (dil === 'tr' ? '🏆 Yeni rekor kırıyorsun!' : '🏆 New record!')
+                  : (dil === 'tr' ? `Rekoru kırmak için ${streak.best - streak.current + 1} gün daha!` : `${streak.best - streak.current + 1} more days to beat your record!`)}
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {/* Renk Paleti */}
+        {renkPaleti.length > 0 && (
+          <View style={[s.kategoriKart, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+            <Text style={[s.altBaslik, { color: renkler.metin }]}>
+              {dil === 'tr' ? '🎨 Gardırop Renk Paleti' : '🎨 Wardrobe Color Palette'}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 10, flexWrap: 'wrap' }}>
+              {renkPaleti.map((r, i) => (
+                <View key={i} style={{ alignItems: 'center', gap: 4 }}>
+                  <View style={{
+                    width: 44, height: 44, borderRadius: 22,
+                    backgroundColor: r.renk,
+                    borderWidth: 2, borderColor: 'rgba(255,255,255,0.15)',
+                    alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff', textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}>
+                      {r.sayi}
+                    </Text>
+                  </View>
+                  <Text style={{ fontSize: 9, color: renkler.metin2, textAlign: 'center', maxWidth: 44 }} numberOfLines={1}>
+                    {r.ad}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
         )}
 

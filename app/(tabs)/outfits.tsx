@@ -32,6 +32,8 @@ import { takipEt, Olaylar } from '../../lib/analytics';
 import * as ImagePicker from 'expo-image-picker';
 import ShareKarti from '../../components/ShareKarti';
 import StoryKarti from '../../components/StoryKarti';
+import { streakGuncelle, streakOku, type StreakData } from '../../lib/streak';
+import { stilPuaniHesapla, type StyleScore } from '../../lib/styleScore';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 
@@ -353,6 +355,8 @@ export default function Outfits() {
   const [tryOnImgLoading, setTryOnImgLoading] = useState(false);
   const [swapModal, setSwapModal]   = useState<{ parcaIndex: number } | null>(null);
   const [customAcik, setCustomAcik] = useState(false);
+  const [streak, setStreak]         = useState<StreakData>({ current: 0, best: 0, lastActive: '' });
+  const [stilSkor, setStilSkor]     = useState<StyleScore | null>(null);
   const [customSecili, setCustomSecili] = useState<string[]>([]);
   const viewShotRef = useRef<ViewShot>(null);
   const shareKartiRef = useRef<View>(null);
@@ -587,7 +591,10 @@ export default function Outfits() {
     });
   };
 
-  useEffect(() => { baslat(); }, []);
+  useEffect(() => {
+    baslat();
+    streakOku().then(setStreak);
+  }, []);
 
   // Wardrobe'dan "Dene" butonuyla gelinince try-on otomatik aç
   useEffect(() => {
@@ -787,6 +794,7 @@ ${jsonFormat}`;
           return;
         }
         setKombinler(parsed.kombinler);
+        streakGuncelle().then(setStreak);
         takipEt(Olaylar.KOMBIN_OLUSTURULDU, { kombin_sayisi: parsed.kombinler.length });
         await kombinKullan();
         const isPro2 = await proMuKontrol();
@@ -827,6 +835,13 @@ ${jsonFormat}`;
   };
 
   const seciliKombin = kombinler[seciliIndex];
+
+  // Stil skoru — seciliKombin burada tanımlı olduğu için useEffect buraya taşındı
+  useEffect(() => {
+    if (!seciliKombin) { setStilSkor(null); return; }
+    setStilSkor(stilPuaniHesapla(seciliKombin, kiyafetler, hava));
+  }, [seciliKombin, kiyafetler, hava]);
+
   const skor      = seciliKombin ? renkUyumSkoru(seciliKombin.parcalar) : 0;
   const skorRenk  = skor >= 80 ? '#27AE60' : skor >= 60 ? '#F39C12' : '#E74C3C';
   const skorEtiket = dil === 'en'
@@ -867,6 +882,44 @@ ${jsonFormat}`;
             </Text>
           )}
         </TouchableOpacity>
+      )}
+
+      {/* Streak + Stil Skoru */}
+      {(streak.current > 0 || stilSkor) && (
+        <View style={[styles.streakBar, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+          {streak.current > 0 && (
+            <View style={styles.streakItem}>
+              <Text style={styles.streakAtes}>🔥</Text>
+              <View>
+                <Text style={[styles.streakSayi, { color: renkler.metin }]}>{streak.current}</Text>
+                <Text style={[styles.streakLabel, { color: renkler.metin2 }]}>
+                  {dil === 'en' ? 'day streak' : 'günlük seri'}
+                </Text>
+              </View>
+            </View>
+          )}
+          {streak.current > 0 && stilSkor && (
+            <View style={[styles.streakDivider, { backgroundColor: renkler.sinir }]} />
+          )}
+          {stilSkor && (
+            <View style={styles.streakItem}>
+              <Text style={{ fontSize: 22 }}>✨</Text>
+              <View>
+                <Text style={[styles.streakSayi, { color: '#00D4FF' }]}>{stilSkor.puan}</Text>
+                <Text style={[styles.streakLabel, { color: renkler.metin2 }]}>{stilSkor.seviye}</Text>
+              </View>
+            </View>
+          )}
+          {stilSkor && stilSkor.rozetler.length > 0 && (
+            <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 4, justifyContent: 'flex-end' }}>
+              {stilSkor.rozetler.slice(0, 2).map((r, i) => (
+                <View key={i} style={[styles.rozetChip, { backgroundColor: 'rgba(0,212,255,0.08)', borderColor: 'rgba(0,212,255,0.2)' }]}>
+                  <Text style={{ fontSize: 10, color: '#00D4FF' }}>{r}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
       )}
 
       <View style={[styles.havaDurumu, { backgroundColor: renkler.kart }]}>
@@ -1626,6 +1679,19 @@ ${jsonFormat}`;
             </TouchableOpacity>
 
             <TouchableOpacity
+              style={[shareS.btn, { backgroundColor: 'rgba(37,211,102,0.12)', borderWidth: 0.5, borderColor: 'rgba(37,211,102,0.4)' }]}
+              onPress={() => {
+                if (!seciliKombin) return;
+                const metin = `${seciliKombin.baslik}\n\n${seciliKombin.parcalar.join(', ')}\n\nxmobile ile stilini keşfet 👗`;
+                Linking.openURL(`whatsapp://send?text=${encodeURIComponent(metin)}`);
+              }}
+            >
+              <Text style={[shareS.btnMetin, { color: '#25D366' }]}>
+                {dil === 'tr' ? '💬 WhatsApp\'ta Paylaş' : '💬 Share on WhatsApp'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
               style={[shareS.btn, { backgroundColor: 'rgba(39,174,96,0.15)', borderWidth: 0.5, borderColor: '#27AE60' }]}
               onPress={() => { setShareMenuAcik(false); feedePaylash(); }}
               disabled={feedPaylasiyor}
@@ -1784,6 +1850,18 @@ const styles = StyleSheet.create({
   tryOnModelBaslik:  { fontSize: 14, fontWeight: '600' },
   tryOnModelAciklama:{ fontSize: 11, lineHeight: 16 },
   tryOnModelDegistirBtn: { alignSelf: 'flex-start', borderWidth: 1, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5, marginTop: 4 },
+  streakBar: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    marginHorizontal: 16, marginTop: 8, marginBottom: 4,
+    borderRadius: 16, borderWidth: 0.5, paddingHorizontal: 16, paddingVertical: 10,
+  },
+  streakItem:    { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  streakAtes:    { fontSize: 24 },
+  streakSayi:    { fontSize: 18, fontWeight: '800' },
+  streakLabel:   { fontSize: 10, marginTop: 1 },
+  streakDivider: { width: 0.5, height: 32, marginHorizontal: 4 },
+  rozetChip:     { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10, borderWidth: 0.5 },
+
   freemiumBant: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     marginHorizontal: 16, marginTop: 8, marginBottom: 4,

@@ -4,8 +4,9 @@ export interface Kiyafet {
   tur: string;
   sezon: string;
   foto: string | null;
-  fiyat?: number;        // TL cinsinden satın alma fiyatı
-  satinamlaTarihi?: string; // ISO date string
+  renk?: string;
+  fiyat?: number;
+  satinamlaTarihi?: string;
 }
 
 export interface Profil {
@@ -27,6 +28,7 @@ export interface Kombin {
   tur: string;
   parcalar: string[];
   neden: string;
+  favori?: boolean;
 }
 
 export interface HavaDurumu {

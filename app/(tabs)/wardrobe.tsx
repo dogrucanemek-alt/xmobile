@@ -32,6 +32,7 @@ export default function Wardrobe() {
   const { t, renkler, aksanRenk, dil } = useApp();
 
   const [kiyafetler, setKiyafetler]       = useState<Kiyafet[]>([]);
+  const [aramaMetni, setAramaMetni]       = useState('');
   const [modalAcik, setModalAcik]         = useState(false);
   const [seciliKiyafet, setSeciliKiyafet] = useState<Kiyafet | null>(null);
   const [duzenAd, setDuzenAd]             = useState('');
@@ -210,6 +211,26 @@ export default function Wardrobe() {
         </View>
       </View>
 
+      {/* Arama */}
+      {kiyafetler.length > 0 && (
+        <View style={[styles.aramaKutu, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+          <Text style={{ fontSize: 15, color: renkler.metin2 }}>🔍</Text>
+          <TextInput
+            style={[styles.aramaInput, { color: renkler.metin }]}
+            value={aramaMetni}
+            onChangeText={setAramaMetni}
+            placeholder={dil === 'en' ? 'Search wardrobe...' : 'Gardıropda ara...'}
+            placeholderTextColor={renkler.metin2}
+            autoCorrect={false}
+          />
+          {aramaMetni.length > 0 && (
+            <TouchableOpacity onPress={() => setAramaMetni('')}>
+              <Text style={{ fontSize: 16, color: renkler.metin2 }}>✕</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+
       <Text style={[styles.sayi, { color: renkler.metin2 }]}>
         {kiyafetler.length} {t.kiyafet} · {t.duzenlemekIcin}
       </Text>
@@ -253,7 +274,13 @@ export default function Wardrobe() {
             </TouchableOpacity>
           </View>
         ) : (
-          kiyafetler.map((k) => (
+          kiyafetler
+          .filter(k => aramaMetni.length === 0 ||
+            k.ad.toLowerCase().includes(aramaMetni.toLowerCase()) ||
+            k.tur.toLowerCase().includes(aramaMetni.toLowerCase()) ||
+            (k.renk ?? '').toLowerCase().includes(aramaMetni.toLowerCase())
+          )
+          .map((k) => (
             <View
               key={k.id}
               style={[styles.kiyafetKart, { backgroundColor: renkler.kart }]}
@@ -464,6 +491,13 @@ const styles = StyleSheet.create({
   kartBtn:     { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 20, borderWidth: 1 },
   kartBtnText: { fontSize: 12, fontWeight: '600' },
   arrow:       { fontSize: 22 },
+  aramaKutu: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    marginHorizontal: 16, marginBottom: 4, marginTop: 4,
+    paddingHorizontal: 14, paddingVertical: 10,
+    borderRadius: 14, borderWidth: 0.5,
+  },
+  aramaInput: { flex: 1, fontSize: 15 },
   bosHal:         { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 80, paddingHorizontal: 32, gap: 12 },
   bosHalIkon:     { fontSize: 52, marginBottom: 8 },
   bosHalBaslik:   { fontSize: 18, fontWeight: '600', textAlign: 'center' },

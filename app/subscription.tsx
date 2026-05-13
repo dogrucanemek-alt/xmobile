@@ -138,6 +138,11 @@ export default function Subscription() {
           <Text style={[styles.baslik, { color: renkler.metin }]}>
             {tr ? 'xmobile Pro' : 'xmobile Pro'}
           </Text>
+          <View style={styles.trialBadge}>
+            <Text style={styles.trialText}>
+              {tr ? '🎁 7 Gün Ücretsiz Dene' : '🎁 Try Free for 7 Days'}
+            </Text>
+          </View>
           <Text style={[styles.altBaslik, { color: renkler.metin2 }]}>
             {tr
               ? 'Gardırobunu tam anlamıyla akıllı hale getir.'
@@ -242,6 +247,14 @@ const styles = StyleSheet.create({
 
   icerik:         { paddingHorizontal: 24, paddingBottom: 16 },
   logoBlok:       { alignItems: 'center', marginBottom: 28, marginTop: 8 },
+  trialBadge: {
+    backgroundColor: 'rgba(46,213,115,0.15)',
+    borderWidth: 1, borderColor: 'rgba(46,213,115,0.5)',
+    borderRadius: 20, paddingHorizontal: 16, paddingVertical: 6,
+    marginTop: 8, marginBottom: 4,
+  },
+  trialText: { fontSize: 14, fontWeight: '700', color: '#2ED573' },
+
   proRozet: {
     backgroundColor: CYAN, color: '#000',
     fontSize: 11, fontWeight: '800', letterSpacing: 2,
