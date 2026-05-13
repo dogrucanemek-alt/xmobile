@@ -482,16 +482,42 @@
       border: 1px solid rgba(255,255,255,0.07);
       max-width: 1200px; margin: 0 auto;
     }
-    .feature-card { background: #000; padding: 52px 40px; transition: background 0.22s, transform 0.12s ease, box-shadow 0.12s ease; cursor: default; transform-style: preserve-3d; will-change: transform; }
-    .feature-card:hover { background: #0c0c0c; }
+    .feature-card {
+      background: #000; padding: 52px 40px; cursor: default;
+      transform-style: preserve-3d; will-change: transform;
+      position: relative; overflow: hidden;
+      border: 1px solid rgba(202,138,4,0.09);
+      transition: background 0.22s, transform 0.12s ease, box-shadow 0.12s ease, border-color 0.25s;
+    }
+    .feature-card:hover { background: #080808; border-color: rgba(202,138,4,0.30); }
+    /* 3D perspective entrance — overrides generic reveal-scale for cards */
+    .feature-card.reveal-scale {
+      opacity: 0;
+      transform: perspective(700px) rotateY(-24deg) translateZ(-28px) scale(0.95);
+      transition: opacity 0.85s ease, transform 0.85s cubic-bezier(.22,1,.36,1), border-color 0.25s, box-shadow 0.12s;
+    }
+    .feature-card.reveal-scale.visible {
+      opacity: 1;
+      transform: perspective(700px) rotateY(0deg) translateZ(0px) scale(1);
+    }
+    /* Glare overlay */
+    .fc-glare {
+      position: absolute; inset: 0; pointer-events: none; z-index: 1;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    /* Icon 3D float */
     .feature-icon {
       width: 42px; height: 42px;
       border: 1px solid rgba(202,138,4,0.35); border-radius: 4px;
       display: flex; align-items: center; justify-content: center; margin-bottom: 30px;
       background: rgba(202,138,4,0.06);
-      transition: border-color 0.25s, background 0.25s;
+      transition: border-color 0.25s, background 0.25s, transform 0.25s cubic-bezier(.22,1,.36,1);
+      transform: translateZ(0px);
     }
-    .feature-card:hover .feature-icon { border-color: var(--gold); background: var(--gold-dim); }
+    .feature-card:hover .feature-icon {
+      border-color: var(--gold); background: var(--gold-dim);
+      transform: translateZ(18px);
+    }
     .feature-icon svg {
       width: 20px; height: 20px; stroke: var(--gold); fill: none;
       stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
@@ -500,7 +526,9 @@
       font-family: 'Bodoni Moda', serif;
       font-size: 19px; font-weight: 600; letter-spacing: 0.3px;
       margin-bottom: 12px; color: #fff;
+      transform: translateZ(0); transition: transform 0.25s cubic-bezier(.22,1,.36,1);
     }
+    .feature-card:hover h3 { transform: translateZ(10px); }
     .feature-card p { font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.5); line-height: 1.85; }
 
     /* ── PRİCİNG ── */
@@ -2403,36 +2431,53 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
 
 })();
 
-// ── 3D CARD TILT ──
+// ── 3D CARD TILT + GLARE ──
 (function() {
   var isMobile = window.matchMedia('(max-width: 768px)').matches;
   if (isMobile) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  function applyTilt(cards, maxAngle, liftZ) {
+  function applyTilt(cards, maxAngle, liftZ, hasGlare) {
     cards.forEach(function(card) {
+      var glare = null;
+      if (hasGlare) {
+        glare = document.createElement('div');
+        glare.className = 'fc-glare';
+        card.appendChild(glare);
+      }
+
       card.addEventListener('mouseenter', function() {
-        card.style.transition = 'transform 0.12s ease, box-shadow 0.12s ease';
+        card.style.transition = 'transform 0.10s ease, box-shadow 0.10s ease, border-color 0.10s';
+        if (glare) glare.style.opacity = '1';
       });
+
       card.addEventListener('mousemove', function(e) {
         var rect = card.getBoundingClientRect();
-        var cx = (e.clientX - rect.left) / rect.width  - 0.5;
-        var cy = (e.clientY - rect.top)  / rect.height - 0.5;
+        var pctX = (e.clientX - rect.left) / rect.width;
+        var pctY = (e.clientY - rect.top)  / rect.height;
+        var cx = pctX - 0.5;
+        var cy = pctY - 0.5;
         var rx = -cy * maxAngle;
         var ry =  cx * maxAngle;
+        var tiltIntensity = Math.sqrt(cx * cx + cy * cy); // 0..~0.7
         card.style.transform = 'perspective(700px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateZ(' + liftZ + 'px)';
-        card.style.boxShadow = '0 ' + (liftZ * 1.5) + 'px ' + (liftZ * 4) + 'px rgba(0,0,0,0.55)';
+        card.style.boxShadow = '0 ' + (liftZ * 1.5) + 'px ' + (liftZ * 4) + 'px rgba(0,0,0,0.65), 0 0 ' + (liftZ * 3) + 'px rgba(202,138,4,' + (tiltIntensity * 0.18).toFixed(3) + ')';
+        if (glare) {
+          glare.style.background = 'radial-gradient(ellipse at ' + (pctX * 100).toFixed(1) + '% ' + (pctY * 100).toFixed(1) + '%, rgba(255,255,255,0.11) 0%, rgba(202,138,4,0.05) 30%, transparent 65%)';
+        }
       });
+
       card.addEventListener('mouseleave', function() {
-        card.style.transition = 'transform 0.45s cubic-bezier(.22,1,.36,1), box-shadow 0.45s cubic-bezier(.22,1,.36,1)';
+        card.style.transition = 'transform 0.55s cubic-bezier(.22,1,.36,1), box-shadow 0.55s cubic-bezier(.22,1,.36,1), border-color 0.3s';
         card.style.transform = '';
         card.style.boxShadow = '';
+        if (glare) glare.style.opacity = '0';
       });
     });
   }
 
-  applyTilt(document.querySelectorAll('.feature-card'), 10, 14);
-  applyTilt(document.querySelectorAll('.pricing-card'), 7, 18);
+  applyTilt(document.querySelectorAll('.feature-card'), 15, 22, true);
+  applyTilt(document.querySelectorAll('.pricing-card'), 7, 18, false);
 })();
 
 // ── PARALLAX COMING-SOON SECTIONS ──
