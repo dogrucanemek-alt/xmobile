@@ -36,7 +36,7 @@ const GOZ_RENKLERI = [
 
 export default function Profile() {
   const router = useRouter();
-  const { t, renkler, aksanRenk, dil, clearAvatarGlb, loadAvatarGlb, avatarGlbUri } = useApp();
+  const { t, renkler, aksanRenk, dil, clearAvatarGlb, loadAvatarGlb, avatarGlbUri, temaToggle, karanlik } = useApp();
   const { session, cikisYap } = useAuth();
 
   const [tenRengi,    setTenRengi]    = useState('#FDDBB4');
@@ -416,6 +416,19 @@ export default function Profile() {
           </TouchableOpacity>
           <View style={[styles.hesapSatir, { borderBottomColor: renkler.sinir, borderBottomWidth: 0.5 }]}>
             <Text style={[styles.hesapSatirText, { color: renkler.metin }]}>
+              {karanlik
+                ? (dil === 'en' ? '🌙 Dark Mode' : '🌙 Karanlık Mod')
+                : (dil === 'en' ? '☀️ Light Mode' : '☀️ Açık Mod')}
+            </Text>
+            <Switch
+              value={karanlik}
+              onValueChange={temaToggle}
+              trackColor={{ false: renkler.sinir, true: 'rgba(0,212,255,0.4)' }}
+              thumbColor={karanlik ? '#00D4FF' : renkler.metin2}
+            />
+          </View>
+          <View style={[styles.hesapSatir, { borderBottomColor: renkler.sinir, borderBottomWidth: 0.5 }]}>
+            <Text style={[styles.hesapSatirText, { color: renkler.metin }]}>
               {dil === 'en' ? '🔔 Morning Notification' : '🔔 Sabah Bildirimi'}
             </Text>
             <Switch
@@ -457,6 +470,16 @@ export default function Profile() {
               </View>
             </View>
           )}
+          <TouchableOpacity
+            style={[styles.hesapSatir, { borderBottomColor: renkler.sinir, borderBottomWidth: 0.5 }]}
+            onPress={() => router.push('/haftalik-rapor' as any)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.hesapSatirText, { color: renkler.metin }]}>
+              {dil === 'en' ? '📊 Weekly Style Report' : '📊 Haftalık Stil Raporu'}
+            </Text>
+            <Text style={[styles.hesapSatirOk, { color: renkler.metin2 }]}>›</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={[styles.hesapSatir, { borderBottomColor: renkler.sinir, borderBottomWidth: 0.5 }]}
             onPress={() => router.push('/privacy' as any)}

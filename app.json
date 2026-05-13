@@ -1,9 +1,10 @@
 {
   "expo": {
-    "name": "xmobile",
+    "name": "xmobile — AI Moda Asistanı",
     "slug": "xmobile",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "orientation": "portrait",
+    "description": "Kişisel AI moda asistanın. Gardırobunu yönet, her sabah kombin önerisi al, hava durumuna göre stil tavsiyesi al.",
     "icon": "./assets/images/icon.png",
     "scheme": "xmobile",
     "userInterfaceStyle": "automatic",
@@ -11,14 +12,21 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.xmobile.app",
-      "buildNumber": "1",
+      "buildNumber": "12",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSMicrophoneUsageDescription": "Sesli AI özelliği için mikrofon izni gerekiyor.",
+        "NSSpeechRecognitionUsageDescription": "Sesli komut tanımak için konuşma tanıma izni gerekiyor."
       }
     },
     "android": {
       "package": "com.xmobile.app",
-      "versionCode": 1,
+      "versionCode": 12,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

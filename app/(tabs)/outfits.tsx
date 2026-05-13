@@ -30,6 +30,7 @@ import { postOlustur } from '../../lib/socialService';
 import { useAuth } from '../../lib/authContext';
 import { takipEt, Olaylar } from '../../lib/analytics';
 import * as ImagePicker from 'expo-image-picker';
+import ShareKarti from '../../components/ShareKarti';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 
@@ -353,6 +354,8 @@ export default function Outfits() {
   const [customAcik, setCustomAcik] = useState(false);
   const [customSecili, setCustomSecili] = useState<string[]>([]);
   const viewShotRef = useRef<ViewShot>(null);
+  const shareKartiRef = useRef<View>(null);
+  const [shareMenuAcik, setShareMenuAcik] = useState(false);
   const kombinlerRef = useRef<Kombin[]>([]);
   const indexRef     = useRef(0);
   const slideAnim    = useRef(new Animated.Value(0)).current;
@@ -378,11 +381,16 @@ export default function Outfits() {
     })
   ).current;
 
-  const paylas = async () => {
-    if (!viewShotRef.current || !seciliKombin) return;
+  const paylas = () => {
+    if (!seciliKombin) return;
+    setShareMenuAcik(true);
+  };
+
+  const paylasResim = async (ref: React.RefObject<any>) => {
+    if (!seciliKombin) return;
     try {
       setPaylasiyor(true);
-      const uri = await captureRef(viewShotRef, { format: 'png', quality: 0.95 });
+      const uri = await captureRef(ref, { format: 'png', quality: 0.95 });
       const available = await Sharing.isAvailableAsync();
       if (available) {
         await Sharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: seciliKombin.baslik });
@@ -393,7 +401,18 @@ export default function Outfits() {
       Alert.alert(dil === 'en' ? 'Could not share' : 'Paylaşılamadı');
     } finally {
       setPaylasiyor(false);
+      setShareMenuAcik(false);
     }
+  };
+
+  const paylasMetin = async () => {
+    if (!seciliKombin) return;
+    const metin = dil === 'tr'
+      ? `👗 ${seciliKombin.baslik}\n\n${seciliKombin.parcalar.join(', ')}\n\n${seciliKombin.neden ?? ''}\n\nxmobile ile hazırlandı`
+      : `👗 ${seciliKombin.baslik}\n\n${seciliKombin.parcalar.join(', ')}\n\n${seciliKombin.neden ?? ''}\n\nStyled with xmobile`;
+    setShareMenuAcik(false);
+    const { Share } = require('react-native');
+    await Share.share({ message: metin });
   };
 
   const feedePaylash = async () => {
@@ -658,7 +677,7 @@ export default function Outfits() {
         kiyafetleriAl(),
       ]);
       if (profilStr) {
-        const parsedProfil = JSON.parse(profilStr) as import('../lib/types').Profil;
+        const parsedProfil = JSON.parse(profilStr) as import('../../lib/types').Profil;
         setProfil(parsedProfil);
         if (parsedProfil.avatarGlbPath) {
           loadAvatarGlb(parsedProfil.avatarGlbPath);
@@ -1533,9 +1552,88 @@ ${jsonFormat}`;
         limit={tier === 'basic' ? 10 : undefined}
         dil={dil}
       />
+
+      {/* Share Menu Modal */}
+      <Modal visible={shareMenuAcik} transparent animationType="slide" onRequestClose={() => setShareMenuAcik(false)}>
+        <TouchableOpacity style={shareS.overlay} activeOpacity={1} onPress={() => setShareMenuAcik(false)}>
+          <TouchableOpacity activeOpacity={1} style={shareS.sheet}>
+            <View style={shareS.handle} />
+            <Text style={shareS.baslik}>{dil === 'tr' ? 'Kombini Paylaş' : 'Share Outfit'}</Text>
+
+            {/* Share Card Preview */}
+            {seciliKombin && (
+              <View ref={shareKartiRef} collapsable={false} style={{ alignSelf: 'center', marginBottom: 20 }}>
+                <ShareKarti
+                  kombin={seciliKombin}
+                  havaDerece={hava?.derece}
+                  havaDurum={hava?.durum}
+                  dil={dil}
+                />
+              </View>
+            )}
+
+            <TouchableOpacity
+              style={[shareS.btn, { backgroundColor: '#00D4FF' }]}
+              onPress={() => paylasResim(shareKartiRef as any)}
+              disabled={paylasiyor}
+            >
+              <Text style={[shareS.btnMetin, { color: '#000' }]}>
+                {paylasiyor ? '...' : (dil === 'tr' ? '📤 Kart Olarak Paylaş' : '📤 Share as Card')}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[shareS.btn, { backgroundColor: 'rgba(255,255,255,0.08)', borderWidth: 0.5, borderColor: 'rgba(255,255,255,0.15)' }]}
+              onPress={() => paylasResim(viewShotRef as any)}
+              disabled={paylasiyor}
+            >
+              <Text style={shareS.btnMetin}>
+                {dil === 'tr' ? '🖼 Tam Görünüm Paylaş' : '🖼 Share Full View'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[shareS.btn, { backgroundColor: 'rgba(255,255,255,0.08)', borderWidth: 0.5, borderColor: 'rgba(255,255,255,0.15)' }]}
+              onPress={paylasMetin}
+            >
+              <Text style={shareS.btnMetin}>
+                {dil === 'tr' ? '📋 Metni Kopyala' : '📋 Copy Text'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[shareS.btn, { backgroundColor: 'rgba(39,174,96,0.15)', borderWidth: 0.5, borderColor: '#27AE60' }]}
+              onPress={() => { setShareMenuAcik(false); feedePaylash(); }}
+              disabled={feedPaylasiyor}
+            >
+              <Text style={[shareS.btnMetin, { color: '#2ED573' }]}>
+                {feedPaylasiyor ? '...' : (dil === 'tr' ? '🌍 Keşfete Paylaş' : '🌍 Share to Discover')}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={shareS.iptal} onPress={() => setShareMenuAcik(false)}>
+              <Text style={shareS.iptalMetin}>{dil === 'tr' ? 'İptal' : 'Cancel'}</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
+
+const shareS = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
+  sheet: {
+    backgroundColor: '#0D0D0D', borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    padding: 20, paddingBottom: 40,
+  },
+  handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.2)', alignSelf: 'center', marginBottom: 16 },
+  baslik: { fontSize: 17, fontWeight: '700', color: '#fff', textAlign: 'center', marginBottom: 20 },
+  btn: { borderRadius: 14, paddingVertical: 14, paddingHorizontal: 16, marginBottom: 10, alignItems: 'center' },
+  btnMetin: { fontSize: 15, fontWeight: '600', color: '#fff' },
+  iptal: { paddingVertical: 14, alignItems: 'center', marginTop: 4 },
+  iptalMetin: { fontSize: 15, color: 'rgba(255,255,255,0.45)' },
+});
 
 const styles = StyleSheet.create({
   container:      { flex: 1 },

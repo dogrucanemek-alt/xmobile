@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { AppProvider } from '../lib/context';
+import { Animated, StyleSheet } from 'react-native';
+import { AppProvider, useApp } from '../lib/context';
 import { ErrorBoundary } from '../lib/error-boundary';
 import { SubscriptionProvider } from '../lib/subscriptionContext';
 import { AuthProvider } from '../lib/authContext';
@@ -17,6 +18,17 @@ analyticsBaslat();
 
 // expo-notifications push support removed from Expo Go in SDK 53+
 const isExpoGo = Constants.appOwnership === 'expo';
+
+function ThemeFlashOverlay() {
+  const { temaGecisAnimValue, karanlik } = useApp();
+  const bgColor = karanlik ? '#fff' : '#000';
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[StyleSheet.absoluteFillObject, { backgroundColor: bgColor, opacity: temaGecisAnimValue, zIndex: 9999 }]}
+    />
+  );
+}
 
 function NotificationHandler() {
   const router = useRouter();
@@ -47,6 +59,7 @@ export default function RootLayout() {
         <AuthProvider>
           <SubscriptionProvider>
             <NotificationHandler />
+            <ThemeFlashOverlay />
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="index"       options={{ headerShown: false }} />
               <Stack.Screen name="login"       options={{ headerShown: false, gestureEnabled: false }} />
@@ -54,6 +67,8 @@ export default function RootLayout() {
               <Stack.Screen name="history"     options={{ headerShown: false }} />
               <Stack.Screen name="takvim"      options={{ headerShown: false }} />
               <Stack.Screen name="analiz"      options={{ headerShown: false }} />
+              <Stack.Screen name="urun-sorgula"   options={{ headerShown: false }} />
+              <Stack.Screen name="haftalik-rapor" options={{ headerShown: false }} />
               <Stack.Screen name="avatar"      options={{ headerShown: false }} />
               <Stack.Screen name="import-model" options={{ headerShown: false }} />
               <Stack.Screen name="privacy"     options={{ headerShown: false }} />

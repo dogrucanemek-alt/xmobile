@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Animated } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from './fileSystem';
 
@@ -119,6 +120,7 @@ interface AppContextValue {
   renkler: Renkler;
   aksanRenk: string;
   temaToggle: () => void;
+  temaGecisAnimValue: Animated.Value;
   dil: 'tr' | 'en';
   dilDegistir: (d: 'tr' | 'en') => void;
   karanlik: boolean;
@@ -133,6 +135,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [karanlik, setKaranlik] = useState(true);
   const [dil, setDil] = useState<'tr' | 'en'>('tr');
   const [avatarGlbUri, setAvatarGlbUri] = useState<string | null>(null);
+  const temaGecisAnimValue = useRef(new Animated.Value(0)).current;
   // Hangi path'in yüklendiğini tutar — aynı path için tekrar diskten okumayı önler
   const loadedPathRef = useRef<string | null>(null);
 
@@ -146,12 +149,18 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const temaToggle = useCallback(() => {
-    setKaranlik(prev => {
-      const next = !prev;
-      AsyncStorage.setItem(TEMA_KEY, String(next));
-      return next;
-    });
-  }, []);
+    Animated.sequence([
+      Animated.timing(temaGecisAnimValue, { toValue: 1, duration: 150, useNativeDriver: true }),
+      Animated.timing(temaGecisAnimValue, { toValue: 0, duration: 250, useNativeDriver: true }),
+    ]).start();
+    setTimeout(() => {
+      setKaranlik(prev => {
+        const next = !prev;
+        AsyncStorage.setItem(TEMA_KEY, String(next));
+        return next;
+      });
+    }, 150);
+  }, [temaGecisAnimValue]);
 
   const dilDegistir = useCallback((yeniDil: 'tr' | 'en') => {
     AsyncStorage.setItem(DIL_KEY, yeniDil);
@@ -183,8 +192,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const aksanRenk = karanlik ? '#2997ff' : '#2997ff';
 
   const value = useMemo(
-    () => ({ t, renkler, aksanRenk, temaToggle, dil, dilDegistir, karanlik, avatarGlbUri, loadAvatarGlb, clearAvatarGlb }),
-    [t, renkler, temaToggle, dil, dilDegistir, karanlik, avatarGlbUri, loadAvatarGlb, clearAvatarGlb],
+    () => ({ t, renkler, aksanRenk, temaToggle, temaGecisAnimValue, dil, dilDegistir, karanlik, avatarGlbUri, loadAvatarGlb, clearAvatarGlb }),
+    [t, renkler, temaToggle, temaGecisAnimValue, dil, dilDegistir, karanlik, avatarGlbUri, loadAvatarGlb, clearAvatarGlb],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

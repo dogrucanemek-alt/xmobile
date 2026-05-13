@@ -8,6 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, { Circle, Rect, Path, Ellipse, Line } from 'react-native-svg';
 import { useApp } from '../lib/context';
 
+const DIL_KEY = 'xmobile_dil';
+
 export const ONBOARDING_KEY = 'xmobile_onboarding_done';
 
 const CYAN = '#00D4FF';
@@ -65,6 +67,29 @@ function IllustrationCamera() {
   );
 }
 
+function IllustrationChat() {
+  return (
+    <Svg width={200} height={200} viewBox="0 0 200 200">
+      {/* Sparkle orb */}
+      <Circle cx={100} cy={80} r={40} fill="rgba(0,212,255,0.08)" stroke={CYAN} strokeWidth={1.5} />
+      <Circle cx={100} cy={80} r={26} fill="rgba(0,212,255,0.14)" stroke={CYAN} strokeWidth={1} strokeOpacity={0.5} />
+      <Path d="M 88 72 L 112 72 M 88 80 L 106 80 M 88 88 L 100 88" stroke={CYAN} strokeWidth={2} strokeLinecap="round" />
+      {/* Chat bubble sol */}
+      <Rect x={20} y={135} width={90} height={32} rx={16} fill="rgba(0,212,255,0.12)" stroke={CYAN} strokeWidth={1} />
+      <Path d="M 36 167 L 28 178 L 52 167" fill="rgba(0,212,255,0.12)" stroke={CYAN} strokeWidth={1} />
+      <Rect x={30} y={144} width={60} height={6} rx={3} fill={CYAN} opacity={0.5} />
+      <Rect x={30} y={153} width={42} height={6} rx={3} fill={CYAN} opacity={0.3} />
+      {/* Chat bubble sağ */}
+      <Rect x={96} y={128} width={84} height={28} rx={14} fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)" strokeWidth={1} />
+      <Path d="M 164 156 L 174 164 L 148 156" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)" strokeWidth={1} />
+      <Rect x={106} y={137} width={54} height={5} rx={2.5} fill="rgba(255,255,255,0.25)" />
+      <Rect x={106} y={145} width={38} height={5} rx={2.5} fill="rgba(255,255,255,0.15)" />
+      {/* Bağlantı */}
+      <Path d="M 100 120 L 100 108" stroke={CYAN} strokeWidth={1} strokeDasharray="3,3" strokeOpacity={0.5} />
+    </Svg>
+  );
+}
+
 function IllustrationAI() {
   return (
     <Svg width={200} height={200} viewBox="0 0 200 200">
@@ -112,6 +137,11 @@ const SLIDES = {
       subtitle: 'Her gün dışarıdaki havayı analiz eder, tarzına uygun kombini önerir.',
       Illustration: IllustrationAI,
     },
+    {
+      title: 'Kişisel\nModa AI\'ın',
+      subtitle: 'Gardırobunu bilen AI stilistin her an hazır. Sor, dinle, kombini hazırla.',
+      Illustration: IllustrationChat,
+    },
   ],
   en: [
     {
@@ -129,12 +159,18 @@ const SLIDES = {
       subtitle: 'Analyzes daily weather and suggests outfits that match your style.',
       Illustration: IllustrationAI,
     },
+    {
+      title: 'Your Personal\nStyle AI',
+      subtitle: 'An AI stylist that knows your wardrobe is always ready. Ask, listen, get dressed.',
+      Illustration: IllustrationChat,
+    },
   ],
 };
 
 export default function Onboarding() {
   const router = useRouter();
-  const { dil } = useApp();
+  const { dil, dilDegistir } = useApp();
+  const [dilSecildi, setDilSecildi] = useState(false);
   const slides = SLIDES[dil];
   const [aktif, setAktif] = useState(0);
   const flatRef = useRef<FlatList>(null);
@@ -154,6 +190,38 @@ export default function Onboarding() {
     await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
     router.replace('/login' as any);
   };
+
+  const dilSec = async (d: 'tr' | 'en') => {
+    await AsyncStorage.setItem(DIL_KEY, d);
+    dilDegistir(d);
+    setDilSecildi(true);
+  };
+
+  // ── Dil seçim ekranı ──────────────────────────────────────────────────────
+  if (!dilSecildi) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#000" />
+        <View style={styles.dilEkran}>
+          <View style={styles.logoDaire}>
+            <Text style={styles.logoHarf}>x</Text>
+          </View>
+          <Text style={styles.dilBaslik}>xmobile</Text>
+          <Text style={styles.dilAlt}>Choose your language / Dil seç</Text>
+          <View style={styles.dilButonlar}>
+            <TouchableOpacity style={styles.dilBtn} onPress={() => dilSec('tr')}>
+              <Text style={styles.dilBayrак}>🇹🇷</Text>
+              <Text style={styles.dilAd}>Türkçe</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.dilBtn} onPress={() => dilSec('en')}>
+              <Text style={styles.dilBayrак}>🇺🇸</Text>
+              <Text style={styles.dilAd}>English</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -233,6 +301,28 @@ export default function Onboarding() {
 
 const styles = StyleSheet.create({
   container:    { flex: 1, backgroundColor: '#000' },
+
+  // Dil seçim ekranı
+  dilEkran: {
+    flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40, gap: 12,
+  },
+  logoDaire: {
+    width: 80, height: 80, borderRadius: 40,
+    backgroundColor: 'rgba(0,212,255,0.1)', borderWidth: 1.5,
+    borderColor: CYAN, alignItems: 'center', justifyContent: 'center', marginBottom: 8,
+  },
+  logoHarf:  { fontSize: 36, fontWeight: '800', color: CYAN, letterSpacing: -1 },
+  dilBaslik: { fontSize: 28, fontWeight: '800', color: '#fff', letterSpacing: -0.5 },
+  dilAlt:    { fontSize: 14, color: 'rgba(255,255,255,0.45)', textAlign: 'center', marginBottom: 16 },
+  dilButonlar: { flexDirection: 'row', gap: 16, marginTop: 8 },
+  dilBtn: {
+    flex: 1, alignItems: 'center', gap: 10, paddingVertical: 24, paddingHorizontal: 20,
+    borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
+  },
+  dilBayrак: { fontSize: 40 },
+  dilAd:     { fontSize: 16, fontWeight: '700', color: '#fff' },
+
   atlaBtn:      { position: 'absolute', top: 60, right: 28, zIndex: 10 },
   atlaText:     { color: 'rgba(255,255,255,0.45)', fontSize: 15 },
 

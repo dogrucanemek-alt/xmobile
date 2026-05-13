@@ -6,10 +6,11 @@ import * as FileSystem from '../../lib/fileSystem';
 import * as Sharing from 'expo-sharing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from '../../lib/context';
-import type { Kiyafet } from '../../lib/types';
+import type { Kiyafet, KombinKayit } from '../../lib/types';
 import { kiyafetTani } from '../../lib/vision';
 
 const STORAGE_KEY  = 'xmobile_kiyafetler';
+const GECMIS_KEY   = 'xmobile_gecmis';
 const VERI_VERSIYON = 2;
 const FOTO_DIR = `${FileSystem.documentDirectory}kiyafet_fotolari/`;
 
@@ -36,9 +37,11 @@ export default function Wardrobe() {
   const [duzenAd, setDuzenAd]             = useState('');
   const [duzenTur, setDuzenTur]           = useState('');
   const [duzenSezon, setDuzenSezon]       = useState('');
+  const [duzenFiyat, setDuzenFiyat]       = useState('');
+  const [kiyafetKullanim, setKiyafetKullanim] = useState<Record<number, number>>({});
   const [cokluProgress, setCokluProgress] = useState<{simdiki: number; toplam: number} | null>(null);
 
-  useEffect(() => { yukle(); }, []);
+  useEffect(() => { yukle(); yukleKullanim(); }, []);
 
   const yukle = async () => {
     try {
@@ -54,6 +57,27 @@ export default function Wardrobe() {
     } catch (e) {
       setKiyafetler(BASLANGIC);
     }
+  };
+
+  const yukleKullanim = async () => {
+    try {
+      const gv = await AsyncStorage.getItem(GECMIS_KEY);
+      if (!gv) return;
+      const gecmis: KombinKayit[] = JSON.parse(gv);
+      const sayim: Record<number, number> = {};
+      for (const kayit of gecmis) {
+        for (const parca of kayit.kombin.parcalar) {
+          // Match parca name against kiyafet names (case-insensitive substring)
+          const lower = parca.toLowerCase();
+          for (const k of kiyafetler) {
+            if (lower.includes(k.ad.toLowerCase()) || k.ad.toLowerCase().includes(lower)) {
+              sayim[k.id] = (sayim[k.id] ?? 0) + 1;
+            }
+          }
+        }
+      }
+      setKiyafetKullanim(sayim);
+    } catch {}
   };
 
   const kaydet = async (yeniListe: Kiyafet[]) => {
@@ -126,14 +150,16 @@ export default function Wardrobe() {
     setDuzenAd(k.ad);
     setDuzenTur(k.tur);
     setDuzenSezon(k.sezon);
+    setDuzenFiyat(k.fiyat ? String(k.fiyat) : '');
     setModalAcik(true);
   };
 
   const duzenKaydet = async () => {
     if (!seciliKiyafet) return;
+    const fiyatSayi = duzenFiyat ? parseFloat(duzenFiyat.replace(',', '.')) : undefined;
     const yeniListe = kiyafetler.map(k =>
       k.id === seciliKiyafet.id
-        ? { ...k, ad: duzenAd, tur: duzenTur, sezon: duzenSezon }
+        ? { ...k, ad: duzenAd, tur: duzenTur, sezon: duzenSezon, fiyat: fiyatSayi && !isNaN(fiyatSayi) ? fiyatSayi : undefined }
         : k
     );
     await kaydet(yeniListe);
@@ -223,7 +249,21 @@ export default function Wardrobe() {
                 )}
                 <View style={styles.bilgi}>
                   <Text style={[styles.kiyafetAd, { color: renkler.metin }]}>{k.ad}</Text>
-                  <Text style={[styles.kiyafetDetay, { color: renkler.metin2 }]}>{k.tur} · {k.sezon}</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                    <Text style={[styles.kiyafetDetay, { color: renkler.metin2 }]}>{k.tur} · {k.sezon}</Text>
+                    {k.fiyat ? (
+                      <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
+                        <Text style={[styles.kiyafetDetay, { color: 'rgba(0,212,255,0.7)' }]}>
+                          {k.fiyat}₺
+                        </Text>
+                        {(kiyafetKullanim[k.id] ?? 0) > 0 && (
+                          <Text style={[styles.kiyafetDetay, { color: '#2ED573' }]}>
+                            · {(k.fiyat / (kiyafetKullanim[k.id] ?? 1)).toFixed(0)}₺/giyim
+                          </Text>
+                        )}
+                      </View>
+                    ) : null}
+                  </View>
                   <View style={styles.kartButonlar}>
                     <TouchableOpacity
                       style={[styles.kartBtn, { borderColor: '#00D4FF' }]}
@@ -351,6 +391,20 @@ export default function Wardrobe() {
                 </TouchableOpacity>
               ))}
             </View>
+          </View>
+
+          <View style={[styles.inputGrup, { backgroundColor: renkler.kart }]}>
+            <Text style={[styles.inputLabel, { color: renkler.metin2 }]}>
+              {t.tur === 'Type' ? 'Purchase Price (₺)' : 'Satın Alma Fiyatı (₺)'}
+            </Text>
+            <TextInput
+              style={[styles.input, { color: renkler.metin, borderBottomColor: renkler.sinir }]}
+              value={duzenFiyat}
+              onChangeText={setDuzenFiyat}
+              placeholder="örn. 299"
+              placeholderTextColor={renkler.metin2}
+              keyboardType="numeric"
+            />
           </View>
 
           <TouchableOpacity style={styles.silButon} onPress={() => seciliKiyafet && sil(seciliKiyafet.id)}>

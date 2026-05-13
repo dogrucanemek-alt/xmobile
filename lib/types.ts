@@ -4,6 +4,8 @@ export interface Kiyafet {
   tur: string;
   sezon: string;
   foto: string | null;
+  fiyat?: number;        // TL cinsinden satın alma fiyatı
+  satinamlaTarihi?: string; // ISO date string
 }
 
 export interface Profil {

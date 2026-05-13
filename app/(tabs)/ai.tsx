@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
-  FlatList, KeyboardAvoidingView, Platform, StatusBar, Animated,
+  FlatList, KeyboardAvoidingView, Platform, StatusBar, Animated, Modal, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import { useApp } from '../../lib/context';
 import { chatJarvis, type ChatMessage } from '../../lib/aiService';
 import type { Kiyafet, Profil } from '../../lib/types';
@@ -59,6 +60,9 @@ export default function AITab() {
   const [kiyafetler, setKiyafetler] = useState<Kiyafet[]>([]);
   const [profil, setProfil]         = useState<Profil | null>(null);
   const [hazir, setHazir]           = useState(false);
+  const [sesliAcik, setSesliAcik]   = useState(false);
+  const [dinliyor, setDinliyor]     = useState(false);
+  const sesAnim = useRef(new Animated.Value(1)).current;
   const listRef   = useRef<FlatList>(null);
   const dot1 = useRef(new Animated.Value(0.3)).current;
   const dot2 = useRef(new Animated.Value(0.3)).current;
@@ -84,6 +88,36 @@ export default function AITab() {
     a.start();
     return () => a.stop();
   }, [yukleniyor]);
+
+  const sesliBaslat = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setSesliAcik(true);
+    setDinliyor(false);
+  };
+
+  const sesliDinlemeBaslat = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setDinliyor(true);
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(sesAnim, { toValue: 1.3, duration: 600, useNativeDriver: true }),
+        Animated.timing(sesAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
+      ])
+    ).start();
+    // expo-av needed for real recording — shows UI for future native build
+    setTimeout(() => {
+      sesAnim.stopAnimation();
+      sesAnim.setValue(1);
+      setDinliyor(false);
+      setSesliAcik(false);
+      Alert.alert(
+        dil === 'tr' ? '🎙️ Sesli AI Yakında' : '🎙️ Voice AI Coming Soon',
+        dil === 'tr'
+          ? 'Sesli giriş için expo-av paketiyle native build gerekiyor. Metin kutusundan yazmaya devam et!'
+          : 'Voice input requires a native build with expo-av. Use text input for now!',
+      );
+    }, 2000);
+  };
 
   const gonder = useCallback(async (metin?: string) => {
     const soru = (metin ?? girdi).trim();
@@ -186,6 +220,22 @@ export default function AITab() {
                   {dil === 'en' ? '🧠 Wardrobe Analysis' : '🧠 Gardırop Analizi'}
                 </Text>
               </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.chip, { backgroundColor: 'rgba(0,212,255,0.08)', borderColor: CYAN }]}
+                onPress={() => router.push('/urun-sorgula' as any)}
+              >
+                <Text style={[styles.chipMetin, { color: CYAN }]}>
+                  {dil === 'en' ? '📸 Try Before You Buy' : '📸 Almadan Önce Sor'}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.chip, { backgroundColor: 'rgba(0,212,255,0.08)', borderColor: CYAN }]}
+                onPress={() => router.push('/haftalik-rapor' as any)}
+              >
+                <Text style={[styles.chipMetin, { color: CYAN }]}>
+                  {dil === 'en' ? '📊 Weekly Report' : '📊 Haftalık Rapor'}
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         ) : (
@@ -223,6 +273,11 @@ export default function AITab() {
               returnKeyType="send"
               multiline
             />
+            {!girdi.trim() && (
+              <TouchableOpacity onPress={sesliBaslat} style={{ marginRight: 4 }}>
+                <Ionicons name="mic" size={26} color={renkler.metin2} />
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               onPress={() => gonder()}
               disabled={!girdi.trim() || yukleniyor}
@@ -233,6 +288,40 @@ export default function AITab() {
           </View>
         </View>
       </KeyboardAvoidingView>
+
+      {/* Sesli AI Modal */}
+      <Modal visible={sesliAcik} transparent animationType="fade" onRequestClose={() => setSesliAcik(false)}>
+        <View style={styles.sesOverlay}>
+          <View style={[styles.sesKart, { backgroundColor: renkler.kart }]}>
+            <TouchableOpacity
+              style={{ position: 'absolute', top: 16, right: 16 }}
+              onPress={() => { setSesliAcik(false); setDinliyor(false); sesAnim.stopAnimation(); sesAnim.setValue(1); }}
+            >
+              <Ionicons name="close" size={22} color={renkler.metin2} />
+            </TouchableOpacity>
+
+            <Text style={[styles.sesBaslik, { color: renkler.metin }]}>
+              {dil === 'tr' ? '🎙️ Sesli AI' : '🎙️ Voice AI'}
+            </Text>
+
+            <Animated.View style={[styles.sesMikDis, { transform: [{ scale: sesAnim }] }]}>
+              <TouchableOpacity
+                style={[styles.sesMikIc, { backgroundColor: dinliyor ? '#FF4757' : CYAN }]}
+                onPress={sesliDinlemeBaslat}
+                disabled={dinliyor}
+              >
+                <Ionicons name={dinliyor ? 'square' : 'mic'} size={36} color="#000" />
+              </TouchableOpacity>
+            </Animated.View>
+
+            <Text style={[styles.sesAlt, { color: renkler.metin2 }]}>
+              {dinliyor
+                ? (dil === 'tr' ? 'Dinliyorum...' : 'Listening...')
+                : (dil === 'tr' ? 'Mikrofona dokunup konuş' : 'Tap mic and speak')}
+            </Text>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -288,4 +377,22 @@ const styles = StyleSheet.create({
     borderRadius: 26, borderWidth: 0.5, paddingLeft: 16, paddingRight: 8, paddingVertical: 8,
   },
   input: { flex: 1, fontSize: 15, maxHeight: 100, paddingVertical: 2 },
+
+  sesOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 120 },
+  sesKart: {
+    width: 280, borderRadius: 28, padding: 28,
+    alignItems: 'center', gap: 20,
+  },
+  sesBaslik: { fontSize: 18, fontWeight: '700' },
+  sesMikDis: {
+    width: 100, height: 100, borderRadius: 50,
+    backgroundColor: 'rgba(0,212,255,0.12)',
+    borderWidth: 1.5, borderColor: 'rgba(0,212,255,0.3)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  sesMikIc: {
+    width: 72, height: 72, borderRadius: 36,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  sesAlt: { fontSize: 14, textAlign: 'center' },
 });
