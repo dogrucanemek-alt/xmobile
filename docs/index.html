@@ -542,7 +542,22 @@
       border: 1px solid rgba(255,255,255,0.08);
       max-width: 1100px; margin: 0 auto;
     }
-    .pricing-card { background: #000; padding: 52px 40px; position: relative; transition: transform 0.12s ease, box-shadow 0.12s ease; transform-style: preserve-3d; will-change: transform; }
+    .pricing-card {
+      background: #000; padding: 52px 40px; position: relative;
+      overflow: hidden; border: 1px solid rgba(202,138,4,0.09);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.25s;
+      transform-style: preserve-3d; will-change: transform;
+    }
+    .pricing-card:hover { border-color: rgba(202,138,4,0.30); }
+    .pricing-card.reveal {
+      opacity: 0;
+      transform: perspective(700px) rotateY(-22deg) translateZ(-24px) scale(0.95);
+      transition: opacity 0.85s ease, transform 0.85s cubic-bezier(.22,1,.36,1), border-color 0.25s, box-shadow 0.12s;
+    }
+    .pricing-card.reveal.visible {
+      opacity: 1;
+      transform: perspective(700px) rotateY(0deg) translateZ(0px) scale(1);
+    }
     .pricing-badge {
       display: inline-block;
       font-family: 'Barlow Condensed', sans-serif;
@@ -1975,9 +1990,9 @@
     <h2 class="section-title reveal reveal-d1" data-tr="Sabahlarınıza<br>değer katın." data-en="Invest in your<br>mornings.">Sabahlarınıza<br>değer katın.</h2>
     <p class="section-body reveal reveal-d2" data-tr="Uygulama ücretsiz başlar. Akıllı gardırop için erken erişim fiyatı bekleme listesinde." data-en="The app starts free. Early access pricing for the smart wardrobe on the waitlist.">Uygulama ücretsiz başlar. Akıllı gardırop için erken erişim fiyatı bekleme listesinde.</p>
   </div>
-  <div class="pricing-grid reveal">
+  <div class="pricing-grid">
     <!-- FREE -->
-    <div class="pricing-card">
+    <div class="pricing-card reveal reveal-d1">
       <p class="pricing-name" data-tr="Ücretsiz" data-en="Free">Ücretsiz</p>
       <div class="pricing-price">₺0</div>
       <p class="pricing-period" data-tr="sonsuza dek ücretsiz" data-en="free forever">sonsuza dek ücretsiz</p>
@@ -1992,7 +2007,7 @@
       <a href="#waitlist" class="btn" style="width:100%;justify-content:center;" data-tr="Ücretsiz Başla" data-en="Start Free">Ücretsiz Başla</a>
     </div>
     <!-- PRO -->
-    <div class="pricing-card featured">
+    <div class="pricing-card featured reveal reveal-d2">
       <div class="pricing-badge" data-tr="En Popüler" data-en="Most Popular">En Popüler</div>
       <p class="pricing-name" data-tr="Pro" data-en="Pro">Pro</p>
       <div class="pricing-price">₺149</div>
@@ -2008,7 +2023,7 @@
       <a href="#waitlist" class="btn btn-solid" style="width:100%;justify-content:center;" data-tr="Pro'ya Geç →" data-en="Go Pro →">Pro'ya Geç →</a>
     </div>
     <!-- WARDROBE -->
-    <div class="pricing-card">
+    <div class="pricing-card reveal reveal-d3">
       <p class="pricing-name" data-tr="Akıllı Gardırop" data-en="Smart Wardrobe">Akıllı Gardırop</p>
       <div class="pricing-price" style="font-size:clamp(28px,3.5vw,44px);line-height:1.2;" data-tr="Erken Erişim" data-en="Early Access">Erken Erişim</div>
       <p class="pricing-period" data-tr="fiyat bekleme listesinde açıklanacak" data-en="price revealed on waitlist">fiyat bekleme listesinde açıklanacak</p>
@@ -2477,7 +2492,7 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
   }
 
   applyTilt(document.querySelectorAll('.feature-card'), 15, 22, true);
-  applyTilt(document.querySelectorAll('.pricing-card'), 7, 18, false);
+  applyTilt(document.querySelectorAll('.pricing-card'), 12, 20, true);
 })();
 
 // ── PARALLAX COMING-SOON SECTIONS ──
