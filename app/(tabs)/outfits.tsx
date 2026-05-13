@@ -817,8 +817,8 @@ ${jsonFormat}`;
       <StatusBar barStyle={renkler.statusBar} backgroundColor={renkler.bg} />
 
       <View style={[styles.header, { backgroundColor: renkler.bg, borderBottomColor: renkler.sinir }]}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.geri, { color: renkler.metin }]}>{t.geri}</Text>
+        <TouchableOpacity onPress={() => router.push('/takvim' as any)}>
+          <Text style={[styles.geri, { color: renkler.metin }]}>📅</Text>
         </TouchableOpacity>
         <Text style={[styles.baslik, { color: renkler.metin }]}>{t.bugunkuKombinler}</Text>
         <TouchableOpacity onPress={baslat}>

@@ -174,9 +174,14 @@ export default function Wardrobe() {
           <Text style={[styles.geri, { color: renkler.metin }]}>{t.geri}</Text>
         </TouchableOpacity>
         <Text style={[styles.baslik, { color: renkler.metin }]}>{t.gardırobum}</Text>
-        <TouchableOpacity onPress={ekleSecenekleri}>
-          <Text style={[styles.ekle, { color: aksanRenk }]}>{t.ekle}</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => router.push('/analiz' as any)}>
+            <Text style={{ fontSize: 18 }}>🧠</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={ekleSecenekleri}>
+            <Text style={[styles.ekle, { color: aksanRenk }]}>{t.ekle}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <Text style={[styles.sayi, { color: renkler.metin2 }]}>

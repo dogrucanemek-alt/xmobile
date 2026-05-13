@@ -6,7 +6,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useApp } from '../../lib/context';
 import { chatJarvis, type ChatMessage } from '../../lib/aiService';
 import type { Kiyafet, Profil } from '../../lib/types';
@@ -51,6 +51,7 @@ interface Mesaj { id: string; rol: 'user' | 'assistant'; metin: string; }
 
 export default function AITab() {
   const { renkler, dil } = useApp();
+  const router = useRouter();
   const { sabah } = useLocalSearchParams<{ sabah?: string }>();
   const [mesajlar, setMesajlar]     = useState<Mesaj[]>([]);
   const [girdi, setGirdi]           = useState('');
@@ -177,6 +178,14 @@ export default function AITab() {
                   <Text style={[styles.chipMetin, { color: renkler.metin }]}>{s}</Text>
                 </TouchableOpacity>
               ))}
+              <TouchableOpacity
+                style={[styles.chip, { backgroundColor: 'rgba(0,212,255,0.08)', borderColor: CYAN }]}
+                onPress={() => router.push('/analiz' as any)}
+              >
+                <Text style={[styles.chipMetin, { color: CYAN }]}>
+                  {dil === 'en' ? '🧠 Wardrobe Analysis' : '🧠 Gardırop Analizi'}
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         ) : (

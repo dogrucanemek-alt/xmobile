@@ -52,6 +52,8 @@ export default function RootLayout() {
               <Stack.Screen name="login"       options={{ headerShown: false, gestureEnabled: false }} />
               <Stack.Screen name="onboarding"  options={{ headerShown: false, gestureEnabled: false }} />
               <Stack.Screen name="history"     options={{ headerShown: false }} />
+              <Stack.Screen name="takvim"      options={{ headerShown: false }} />
+              <Stack.Screen name="analiz"      options={{ headerShown: false }} />
               <Stack.Screen name="avatar"      options={{ headerShown: false }} />
               <Stack.Screen name="import-model" options={{ headerShown: false }} />
               <Stack.Screen name="privacy"     options={{ headerShown: false }} />
