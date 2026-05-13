@@ -12,14 +12,14 @@
   <link rel="alternate" hreflang="en" href="https://aifurniture.com.tr/"/>
   <link rel="alternate" hreflang="x-default" href="https://aifurniture.com.tr/"/>
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
-  <link rel="preload" as="image" href="https://aifurniture.com.tr/wp-content/uploads/2026/05/ChatGPT-Image-8-May-2026-12_34_47.png" fetchpriority="high"/>
+  <link rel="preload" as="image" href="img/wardrobe-concept.png" fetchpriority="high"/>
 
   <!-- Open Graph -->
   <meta property="og:type" content="website"/>
   <meta property="og:url" content="https://aifurniture.com.tr/"/>
   <meta property="og:title" content="AI Furniture — Yapay Zeka Destekli Akıllı Gardırop"/>
   <meta property="og:description" content="Her sabah dolu dolaba bakıp ne giyeceğini bilemiyorsan — AI Furniture bitiriyor bunu. Yapay zeka + IoT entegreli dünyada ilk akıllı gardırop sistemi."/>
-  <meta property="og:image" content="https://aifurniture.com.tr/wp-content/uploads/2026/05/ChatGPT-Image-8-May-2026-12_34_47.png"/>
+  <meta property="og:image" content="https://aifurniture.com.tr/wp-content/uploads/2026/05/hero.png"/>
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
   <meta property="og:locale" content="tr_TR"/>
@@ -29,7 +29,7 @@
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:title" content="AI Furniture — Yapay Zeka Destekli Akıllı Gardırop"/>
   <meta name="twitter:description" content="Her sabah dolu dolaba bakıp ne giyeceğini bilemiyorsan — AI Furniture bitiriyor bunu."/>
-  <meta name="twitter:image" content="https://aifurniture.com.tr/wp-content/uploads/2026/05/ChatGPT-Image-8-May-2026-12_34_47.png"/>
+  <meta name="twitter:image" content="https://aifurniture.com.tr/wp-content/uploads/2026/05/hero.png"/>
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -280,6 +280,31 @@
       margin-bottom: 38px; max-width: 460px;
     }
     .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+    .hero-inline-form {
+      display: flex; gap: 0; margin-top: 20px; max-width: 420px;
+      border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; overflow: hidden;
+      background: rgba(0,0,0,0.35); backdrop-filter: blur(12px);
+    }
+    .hero-inline-input {
+      flex: 1; padding: 13px 16px; background: transparent; border: none; outline: none;
+      color: #fff; font-family: 'Barlow', sans-serif; font-size: 14px;
+    }
+    .hero-inline-input::placeholder { color: rgba(255,255,255,0.38); }
+    .hero-inline-btn {
+      padding: 13px 20px; background: #C8972B; border: none; cursor: pointer;
+      color: #000; font-family: 'Barlow Condensed', sans-serif; font-size: 13px;
+      font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      transition: background .2s; white-space: nowrap;
+    }
+    .hero-inline-btn:hover { background: #e0ab35; }
+    .hero-inline-note {
+      margin-top: 10px; font-size: 12px; color: rgba(255,255,255,0.38);
+      font-family: 'Barlow', sans-serif; letter-spacing: 0.5px;
+    }
+    @media (max-width: 600px) {
+      .hero-inline-form { max-width: 100%; }
+      .hero-inline-btn { padding: 13px 14px; font-size: 12px; }
+    }
     .scroll-hint {
       position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -1176,7 +1201,8 @@
     .video-header .eyebrow { margin-bottom: 18px; }
     .video-wrap {
       position: relative; width: 100%; padding-top: 56.25%;
-      background: #05050a; border: 1px solid rgba(255,255,255,0.08);
+      background: #02020a url('img/app-screens.png') center/cover no-repeat;
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 4px; overflow: hidden;
     }
     .video-inner {
@@ -1185,8 +1211,9 @@
     }
     .video-bg-anim {
       position: absolute; inset: 0; overflow: hidden;
-      background: radial-gradient(ellipse at 30% 50%, rgba(202,138,4,0.06) 0%, transparent 55%),
-                  radial-gradient(ellipse at 70% 30%, rgba(202,138,4,0.04) 0%, transparent 45%);
+      background: linear-gradient(rgba(2,2,10,0.76), rgba(2,2,10,0.76)),
+                  radial-gradient(ellipse at 30% 50%, rgba(202,138,4,0.1) 0%, transparent 55%),
+                  radial-gradient(ellipse at 70% 30%, rgba(202,138,4,0.07) 0%, transparent 45%);
     }
     .video-scan-line {
       position: absolute; left: 0; right: 0; height: 1px;
@@ -1350,6 +1377,11 @@
       <a href="#waitlist" class="btn btn-solid" data-tr="Erken Erişime Kaydol →" data-en="Join the Waitlist →">Erken Erişime Kaydol →</a>
       <a href="#product" class="btn" data-tr="Nasıl Çalışır?" data-en="How It Works?">Nasıl Çalışır?</a>
     </div>
+    <form class="hero-inline-form" id="heroInlineForm" onsubmit="handleHeroForm(event)">
+      <input type="email" class="hero-inline-input" id="heroEmail" placeholder="E-posta adresin" autocomplete="email" required/>
+      <button type="submit" class="hero-inline-btn" data-tr="Ücretsiz Kaydol" data-en="Join Free">Ücretsiz Kaydol</button>
+    </form>
+    <p class="hero-inline-note" data-tr="Ücretsiz · Kredi kartı gerekmez · 500+ kişi katıldı" data-en="Free · No credit card · 500+ joined">Ücretsiz · Kredi kartı gerekmez · 500+ kişi katıldı</p>
   </div>
   <div class="scroll-hint">
     <span data-tr="Kaydır" data-en="Scroll">Kaydır</span>
@@ -1617,10 +1649,10 @@
           <div class="video-scan-line"></div>
           <div class="video-grid-lines"></div>
         </div>
-        <div class="video-play-ring" id="videoPlayBtn" onclick="this.style.transform='scale(0.95)';setTimeout(function(){document.getElementById('videoPlayBtn').style.transform='';},150)">
+        <div class="video-play-ring" id="videoPlayBtn" onclick="var l=document.getElementById('videoLabelEl');this.style.transform='scale(0.95)';setTimeout(function(){document.getElementById('videoPlayBtn').style.transform='';},150);l.textContent=document.documentElement.lang==='en'?'Coming soon — join waitlist to get early access!':'Yakında — erken erişim için waitliste katıl!';setTimeout(function(){l.textContent=document.documentElement.lang==='en'?'Demo Video — Coming Soon':'Demo Video — Yakında';},3500)">
           <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
         </div>
-        <span class="video-label" data-tr="Demo Video — Yakında" data-en="Demo Video — Coming Soon">Demo Video — Yakında</span>
+        <span class="video-label" id="videoLabelEl" data-tr="Demo Video — Yakında" data-en="Demo Video — Coming Soon">Demo Video — Yakında</span>
         <div class="video-features-bar">
           <div class="video-feature-tag"><span class="video-dot"></span><span data-tr="Gardırop Tarama" data-en="Wardrobe Scan">Gardırop Tarama</span></div>
           <div class="video-feature-tag"><span class="video-dot"></span><span data-tr="AI Analiz" data-en="AI Analysis">AI Analiz</span></div>
@@ -2042,7 +2074,7 @@
       <span class="counter-dot"></span>
       <span id="counterJoined" data-tr="437 kişi kayıtlı" data-en="437 people joined">437 kişi kayıtlı</span>
     </div>
-    <span id="counterSlots" class="counter-slots" data-tr="— 63 yer kaldı" data-en="— 63 spots left">— 63 yer kaldı</span>
+    <span id="counterSlots" class="counter-slots" data-tr="— Sınırlı beta erişimi" data-en="— Limited beta access">— Sınırlı beta erişimi</span>
   </div>
   <form class="waitlist-form reveal reveal-d3" id="waitlistForm" onsubmit="handleWaitlist(event)">
     <input type="email" class="waitlist-input" id="waitlistEmail" placeholder="E-posta adresin" required autocomplete="email"/>
@@ -2104,9 +2136,9 @@
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.45/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.45/dist/lenis.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/@studio-freight/lenis@1.0.45/dist/lenis.min.js';document.head.appendChild(s);"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/gsap@3.12.5/dist/gsap.min.js';document.head.appendChild(s);"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/gsap@3.12.5/dist/ScrollTrigger.min.js';document.head.appendChild(s);"></script>
 <script>
 // ── MOBİL MENÜ ──
 var hamburgerBtn = document.getElementById('hamburgerBtn');
@@ -2387,7 +2419,7 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
 
 // ── HERO 3D SCENE ──
 </script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/three@0.169.0/build/three.min.js';document.head.appendChild(s);" defer></script>
 <script>
 // ── WARDROBE 3D SCENE (product section) ──
 (function() {
@@ -2686,7 +2718,7 @@ function toggleFaq(btn) {
 
 var SB_URL  = 'https://hhzcfculfxzaammvfbwn.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoemNmY3VsZnh6YWFtbXZmYnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNjY3NDYsImV4cCI6MjA5Mzg0Mjc0Nn0.Td69oOO8MCapyIvtpN5lwmUxnX9kjgdc4P9p_3n2zYs';
-var TOTAL_SPOTS = 500;
+var TOTAL_SPOTS = 2000;
 var COUNTER_SEED = 433; // base seed — real count adds on top
 var currentWaitlistCount = 0;
 
@@ -2699,8 +2731,8 @@ function updateCounter(count) {
   var remaining = Math.max(TOTAL_SPOTS - displayCount, 0);
   var trJoined = displayCount + ' kişi kayıtlı';
   var enJoined = displayCount + ' people joined';
-  var trSlots  = '— ' + remaining + ' yer kaldı';
-  var enSlots  = '— ' + remaining + ' spots left';
+  var trSlots  = remaining > 50 ? '— ' + remaining + ' yer kaldı' : '— Sınırlı beta erişimi';
+  var enSlots  = remaining > 50 ? '— ' + remaining + ' spots left' : '— Limited beta access';
   joined.dataset.tr = trJoined;
   joined.dataset.en = enJoined;
   slots.dataset.tr  = trSlots;
@@ -2726,6 +2758,30 @@ function fetchWaitlistCount() {
 }
 
 fetchWaitlistCount();
+
+function handleHeroForm(e) {
+  e.preventDefault();
+  var email = document.getElementById('heroEmail').value.trim();
+  var btn = document.querySelector('.hero-inline-btn');
+  btn.disabled = true;
+  btn.textContent = '...';
+  fetch(SB_URL + '/rest/v1/aifurniture_waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SB_ANON, 'Authorization': 'Bearer ' + SB_ANON, 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ email: email, source: 'hero' })
+  }).then(function(res) {
+    if (res.ok || res.status === 409) {
+      btn.textContent = '✓ Kaydedildi';
+      btn.style.background = '#2a7a2a';
+      document.getElementById('heroEmail').value = '';
+      if (res.ok) { gtag('event','waitlist_signup',{event_category:'engagement',email:email}); updateCounter(currentWaitlistCount+1); }
+      setTimeout(function() { btn.disabled=false; btn.textContent='Ücretsiz Kaydol'; btn.style.background=''; }, 3500);
+    } else {
+      btn.disabled=false; btn.textContent='Ücretsiz Kaydol';
+      alert('Bir hata oluştu, tekrar dene.');
+    }
+  }).catch(function() { btn.disabled=false; btn.textContent='Ücretsiz Kaydol'; });
+}
 
 function handleWaitlist(e) {
   e.preventDefault();
