@@ -22,7 +22,10 @@ export default function Login() {
     setYukleniyor(true);
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim().toLowerCase(),
-      options: { shouldCreateUser: true },
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: 'xmobile://login',
+      },
     });
     setYukleniyor(false);
     if (error) {

@@ -29,7 +29,7 @@ const SEZONLAR = ['Tüm Sezon', 'İlkbahar', 'Yaz', 'Sonbahar', 'Kış'];
 
 export default function Wardrobe() {
   const router = useRouter();
-  const { t, renkler, aksanRenk } = useApp();
+  const { t, renkler, aksanRenk, dil } = useApp();
 
   const [kiyafetler, setKiyafetler]       = useState<Kiyafet[]>([]);
   const [modalAcik, setModalAcik]         = useState(false);
@@ -217,19 +217,38 @@ export default function Wardrobe() {
       <ScrollView style={styles.liste} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 110 }}>
         {kiyafetler.length === 0 ? (
           <View style={styles.bosHal}>
-            <Text style={styles.bosHalIkon}>👔</Text>
+            <Text style={{ fontSize: 64, marginBottom: 8 }}>👗</Text>
             <Text style={[styles.bosHalBaslik, { color: renkler.metin }]}>
-              {t.gardırobunuzBos ?? 'Gardırobunuz boş'}
+              {dil === 'en' ? 'Your wardrobe is empty' : 'Gardırobun boş'}
             </Text>
             <Text style={[styles.bosHalAciklama, { color: renkler.metin2 }]}>
-              {t.kiyafetEkleyinAciklama ?? 'Kıyafetlerinizi ekleyerek AI kombin önerileri almaya başlayın.'}
+              {dil === 'en'
+                ? 'Add your clothes to get AI-powered outfit suggestions every day'
+                : 'Kıyafetlerini ekle, her gün AI destekli kombin önerileri al'}
             </Text>
+
+            {/* Adım adım yönlendirme */}
+            <View style={{ width: '100%', gap: 8, marginBottom: 20 }}>
+              {[
+                { no: '1', tr: 'Fotoğraf veya isim ile kıyafet ekle', en: 'Add clothes by photo or name' },
+                { no: '2', tr: 'AI gardırobunu öğrenir', en: 'AI learns your wardrobe' },
+                { no: '3', tr: 'Her gün kişisel kombin önerisi al', en: 'Get daily personalized outfit suggestions' },
+              ].map(step => (
+                <View key={step.no} style={[{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderRadius: 12, backgroundColor: renkler.kart }]}>
+                  <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: 'rgba(0,212,255,0.12)', borderWidth: 1, borderColor: 'rgba(0,212,255,0.3)', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ color: '#00D4FF', fontSize: 13, fontWeight: '700' }}>{step.no}</Text>
+                  </View>
+                  <Text style={{ color: renkler.metin, fontSize: 13, flex: 1 }}>{dil === 'en' ? step.en : step.tr}</Text>
+                </View>
+              ))}
+            </View>
+
             <TouchableOpacity
-              style={[styles.bosHalButon, { backgroundColor: renkler.btnPrimary }]}
+              style={[styles.bosHalButon, { backgroundColor: '#00D4FF' }]}
               onPress={ekleSecenekleri}
             >
-              <Text style={[styles.bosHalButonText, { color: renkler.btnPrimaryMetin }]}>
-                + {t.kiyafetEkle}
+              <Text style={[styles.bosHalButonText, { color: '#000' }]}>
+                + {dil === 'en' ? 'Add First Item' : 'İlk Kıyafeti Ekle'}
               </Text>
             </TouchableOpacity>
           </View>

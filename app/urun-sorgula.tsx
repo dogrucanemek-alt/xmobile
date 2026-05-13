@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, Image,
-  StatusBar, ActivityIndicator, ScrollView, Alert,
+  StatusBar, ActivityIndicator, ScrollView, Alert, Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -89,6 +89,18 @@ export default function UrunSorgula() {
   const [yukleniyor, setYukleniyor] = useState(false);
   const [sonuc,      setSonuc]      = useState('');
   const [uyum,       setUyum]       = useState<'uyar' | 'kismen' | 'uymaz' | null>(null);
+
+  const urunAdiniCıkar = (metin: string): string => {
+    const satir = metin.split('\n')[0];
+    const temiz = satir.replace(/^[0-9.\-*#]+\s*/, '').replace(/[()]/g, '').trim();
+    return temiz.slice(0, 60);
+  };
+
+  const trendyolAc = () => {
+    const ad = urunAdiniCıkar(sonuc);
+    const query = encodeURIComponent(ad);
+    Linking.openURL(`https://www.trendyol.com/sr?q=${query}`);
+  };
 
   const sonuctenUyumCıkar = (metin: string) => {
     const lower = metin.toLowerCase();
@@ -228,6 +240,16 @@ export default function UrunSorgula() {
                 <View style={[styles.sonucKart, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
                   <Text style={[styles.sonucMetin, { color: renkler.metin }]}>{sonuc}</Text>
                 </View>
+                <TouchableOpacity
+                  style={[styles.trendyolBtn]}
+                  onPress={trendyolAc}
+                  activeOpacity={0.85}
+                >
+                  <Text style={styles.trendyolBtnText}>
+                    🛍️ {dil === 'en' ? 'Search on Trendyol' : 'Trendyol\'da Ara'}
+                  </Text>
+                </TouchableOpacity>
+
                 <View style={styles.butonlar}>
                   <TouchableOpacity
                     style={[styles.buyukBtn, { backgroundColor: CYAN }]}
@@ -302,4 +324,10 @@ const styles = StyleSheet.create({
     borderRadius: 16, borderWidth: 0.5, padding: 16,
   },
   sonucMetin: { fontSize: 14, lineHeight: 22 },
+
+  trendyolBtn: {
+    backgroundColor: '#F27A1A', paddingVertical: 14, borderRadius: 14,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  trendyolBtnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
 });

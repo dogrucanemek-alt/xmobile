@@ -482,6 +482,16 @@ export default function Profile() {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.hesapSatir, { borderBottomColor: renkler.sinir, borderBottomWidth: 0.5 }]}
+            onPress={() => router.push('/(tabs)/discover' as any)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.hesapSatirText, { color: renkler.metin }]}>
+              {dil === 'en' ? '🌍 Community Discover' : '🌍 Keşfet Topluluğu'}
+            </Text>
+            <Text style={[styles.hesapSatirOk, { color: renkler.metin2 }]}>›</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.hesapSatir, { borderBottomColor: renkler.sinir, borderBottomWidth: 0.5 }]}
             onPress={() => router.push('/privacy' as any)}
             activeOpacity={0.7}
           >

@@ -31,6 +31,7 @@ import { useAuth } from '../../lib/authContext';
 import { takipEt, Olaylar } from '../../lib/analytics';
 import * as ImagePicker from 'expo-image-picker';
 import ShareKarti from '../../components/ShareKarti';
+import StoryKarti from '../../components/StoryKarti';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 
@@ -355,6 +356,7 @@ export default function Outfits() {
   const [customSecili, setCustomSecili] = useState<string[]>([]);
   const viewShotRef = useRef<ViewShot>(null);
   const shareKartiRef = useRef<View>(null);
+  const storyKartiRef = useRef<View>(null);
   const [shareMenuAcik, setShareMenuAcik] = useState(false);
   const kombinlerRef = useRef<Kombin[]>([]);
   const indexRef     = useRef(0);
@@ -1589,6 +1591,28 @@ ${jsonFormat}`;
             >
               <Text style={shareS.btnMetin}>
                 {dil === 'tr' ? '🖼 Tam Görünüm Paylaş' : '🖼 Share Full View'}
+              </Text>
+            </TouchableOpacity>
+
+            {/* Story hidden ref */}
+            {seciliKombin && (
+              <View ref={storyKartiRef} collapsable={false} style={{ position: 'absolute', top: -9999, left: -9999 }}>
+                <StoryKarti
+                  kombin={seciliKombin}
+                  havaDerece={hava?.derece}
+                  havaDurum={hava?.durum}
+                  dil={dil}
+                />
+              </View>
+            )}
+
+            <TouchableOpacity
+              style={[shareS.btn, { backgroundColor: 'rgba(131,58,180,0.15)', borderWidth: 0.5, borderColor: 'rgba(193,53,132,0.5)' }]}
+              onPress={() => paylasResim(storyKartiRef as any)}
+              disabled={paylasiyor}
+            >
+              <Text style={[shareS.btnMetin, { color: '#C13584' }]}>
+                {paylasiyor ? '...' : (dil === 'tr' ? '📱 Instagram Story Paylaş' : '📱 Share as Instagram Story')}
               </Text>
             </TouchableOpacity>
 

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Patent Şekilleri — TPE Başvurusu</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; background: #fff; color: #000; }
+
+  .sayfa {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 20mm 15mm 20mm 25mm;
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .baslik {
+    font-size: 11pt;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 6mm;
+    letter-spacing: 0.5px;
+  }
+
+  .alt-baslik {
+    font-size: 9pt;
+    text-align: center;
+    margin-bottom: 10mm;
+    color: #333;
+  }
+
+  svg { display: block; }
+
+  .sekil-adi {
+    font-size: 10pt;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 8mm;
+    letter-spacing: 1px;
+  }
+
+  @media print {
+    @page { size: A4 portrait; margin: 0; }
+    .sayfa { margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SAYFA 1 — ŞEKİL 1: SİSTEM MİMARİSİ
+═══════════════════════════════════════════════════════════════ -->
+<div class="sayfa">
+  <div class="baslik">BULUŞ: KIYAFET FOTOĞRAFI BULUNMAYAN GARDROP PARÇALARI İÇİN<br>YAPAY ZEKA DESTEKLİ SANAL DENEME SİSTEMİ VE YÖNTEMİ</div>
+  <div class="alt-baslik">Başvuru Sahibi: Emekcan Doğru</div>
+
+  <svg width="170mm" height="210mm" viewBox="0 0 480 595" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Başlık -->
+    <text x="240" y="22" text-anchor="middle" font-size="13" font-weight="bold" font-family="Arial">Şekil 1 — Sistem Mimarisi</text>
+
+    <!-- ── KATMAN ETİKETLERİ (sol) ── -->
+    <text x="10" y="115" font-size="8" font-family="Arial" fill="#555" transform="rotate(-90,10,115)" text-anchor="middle">İSTEMCİ KATMANI</text>
+    <text x="10" y="290" font-size="8" font-family="Arial" fill="#555" transform="rotate(-90,10,290)" text-anchor="middle">PROXY KATMANI</text>
+    <text x="10" y="460" font-size="8" font-family="Arial" fill="#555" transform="rotate(-90,10,460)" text-anchor="middle">SERVİS KATMANI</text>
+
+    <!-- Katman arkaplanları -->
+    <rect x="30" y="40"  width="440" height="150" rx="8" fill="#f8f8f8" stroke="#bbb" stroke-width="1" stroke-dasharray="4,3"/>
+    <rect x="30" y="210" width="440" height="150" rx="8" fill="#f0f0f0" stroke="#bbb" stroke-width="1" stroke-dasharray="4,3"/>
+    <rect x="30" y="380" width="440" height="170" rx="8" fill="#f8f8f8" stroke="#bbb" stroke-width="1" stroke-dasharray="4,3"/>
+
+    <!-- ══ İSTEMCİ KATMANI ══ -->
+    <!-- Mobil Uygulama -->
+    <rect x="155" y="60" width="170" height="110" rx="6" fill="white" stroke="#222" stroke-width="2"/>
+    <text x="240" y="82" text-anchor="middle" font-size="10" font-weight="bold" font-family="Arial">[10]</text>
+    <text x="240" y="97" text-anchor="middle" font-size="10" font-weight="bold" font-family="Arial">MOBİL İSTEMCİ</text>
+    <text x="240" y="112" text-anchor="middle" font-size="8.5" font-family="Arial">UYGULAMASI</text>
+    <line x1="160" y1="122" x2="320" y2="122" stroke="#aaa" stroke-width="0.8"/>
+    <text x="175" y="134" font-size="7.5" font-family="Arial">• Gardırop Yönetimi [11]</text>
+    <text x="175" y="146" font-size="7.5" font-family="Arial">• Kombin Öneri Motoru [12]</text>
+    <text x="175" y="158" font-size="7.5" font-family="Arial">• Sanal Deneme Arayüzü [13]</text>
+
+    <!-- ══ PROXY KATMANI ══ -->
+    <!-- Proxy Sunucu -->
+    <rect x="115" y="230" width="250" height="110" rx="6" fill="white" stroke="#222" stroke-width="2"/>
+    <text x="240" y="252" text-anchor="middle" font-size="10" font-weight="bold" font-family="Arial">[20]</text>
+    <text x="240" y="267" text-anchor="middle" font-size="10" font-weight="bold" font-family="Arial">GÜVENLİ API PROXY</text>
+    <text x="240" y="282" text-anchor="middle" font-size="8.5" font-family="Arial">KATMANI</text>
+    <line x1="120" y1="292" x2="360" y2="292" stroke="#aaa" stroke-width="0.8"/>
+    <text x="135" y="304" font-size="7.5" font-family="Arial">• /api/fashn — Sanal Deneme [21]</text>
+    <text x="135" y="316" font-size="7.5" font-family="Arial">• /api/dalle/generate — Görsel Üretim [22]</text>
+    <text x="135" y="328" font-size="7.5" font-family="Arial">• /api/claude — AI Sohbet [23]</text>
+
+    <!-- İstemci → Proxy ok -->
+    <line x1="240" y1="170" x2="240" y2="228" stroke="#222" stroke-width="1.5" marker-end="url(#ok)"/>
+    <rect x="150" y="187" width="180" height="16" fill="white"/>
+    <text x="240" y="198" text-anchor="middle" font-size="7.5" font-family="Arial">HTTPS İsteği (API Anahtarı Yok)</text>
+
+    <!-- Proxy → İstemci ok (yanıt) -->
+    <line x1="220" y1="228" x2="220" y2="172" stroke="#555" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#okGri)"/>
+
+    <!-- ══ SERVİS KATMANI ══ -->
+    <!-- Görüntü Üretim Servisi -->
+    <rect x="40" y="400" width="170" height="90" rx="6" fill="white" stroke="#222" stroke-width="2"/>
+    <text x="125" y="422" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">[30]</text>
+    <text x="125" y="437" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">GÖRÜNTÜ ÜRETİM</text>
+    <text x="125" y="451" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">SERVİSİ</text>
+    <line x1="45" y1="460" x2="205" y2="460" stroke="#aaa" stroke-width="0.8"/>
+    <text x="125" y="473" text-anchor="middle" font-size="7.5" font-family="Arial">Metin → Kıyafet Görseli</text>
+    <text x="125" y="484" text-anchor="middle" font-size="7.5" font-family="Arial">(DALL-E / GPT-Image-1)</text>
+
+    <!-- Sanal Deneme Servisi -->
+    <rect x="270" y="400" width="170" height="90" rx="6" fill="white" stroke="#222" stroke-width="2"/>
+    <text x="355" y="422" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">[40]</text>
+    <text x="355" y="437" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">SANAL DENEME</text>
+    <text x="355" y="451" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">SERVİSİ</text>
+    <line x1="275" y1="460" x2="435" y2="460" stroke="#aaa" stroke-width="0.8"/>
+    <text x="355" y="473" text-anchor="middle" font-size="7.5" font-family="Arial">Model + Kıyafet → Sonuç</text>
+    <text x="355" y="484" text-anchor="middle" font-size="7.5" font-family="Arial">(Fashn.ai API)</text>
+
+    <!-- Proxy → Görüntü Üretim -->
+    <line x1="165" y1="340" x2="125" y2="398" stroke="#222" stroke-width="1.5" marker-end="url(#ok)"/>
+    <text x="110" y="375" font-size="7" font-family="Arial" fill="#333">Metin Tanımı [22a]</text>
+
+    <!-- Proxy → Sanal Deneme -->
+    <line x1="315" y1="340" x2="355" y2="398" stroke="#222" stroke-width="1.5" marker-end="url(#ok)"/>
+    <text x="310" y="375" font-size="7" font-family="Arial" fill="#333">Görsel + Model [21a]</text>
+
+    <!-- Görüntü Üretim → Sanal Deneme (zincirleme) -->
+    <line x1="210" y1="445" x2="268" y2="445" stroke="#222" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ok)"/>
+    <text x="239" y="440" text-anchor="middle" font-size="7" font-family="Arial">[50]</text>
+    <text x="239" y="455" text-anchor="middle" font-size="6.5" font-family="Arial">Üretilen Görsel</text>
+
+    <!-- Ok işaretleri tanımları -->
+    <defs>
+      <marker id="ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#222"/>
+      </marker>
+      <marker id="okGri" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#666"/>
+      </marker>
+    </defs>
+
+    <!-- Açıklama kutusu -->
+    <rect x="30" y="552" width="440" height="36" rx="4" fill="#f5f5f5" stroke="#ccc" stroke-width="1"/>
+    <text x="250" y="566" text-anchor="middle" font-size="7.5" font-family="Arial">[10] Mobil İstemci  [20] Proxy Katmanı  [30] Görüntü Üretim Servisi  [40] Sanal Deneme Servisi</text>
+    <text x="250" y="580" text-anchor="middle" font-size="7.5" font-family="Arial">[50] Zincirleme Veri Akışı (Ana Buluş)  — — — — Yanıt Akışı</text>
+
+  </svg>
+
+  <div class="sekil-adi">ŞEKİL 1</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SAYFA 2 — ŞEKİL 2: ANA BULUŞ AKIŞ DİYAGRAMI
+═══════════════════════════════════════════════════════════════ -->
+<div class="sayfa">
+  <div class="baslik">BULUŞ: KIYAFET FOTOĞRAFI BULUNMAYAN GARDROP PARÇALARI İÇİN<br>YAPAY ZEKA DESTEKLİ SANAL DENEME SİSTEMİ VE YÖNTEMİ</div>
+  <div class="alt-baslik">Başvuru Sahibi: Emekcan Doğru</div>
+
+  <svg width="170mm" height="220mm" viewBox="0 0 480 624" xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+      <marker id="ok2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#222"/>
+      </marker>
+    </defs>
+
+    <text x="240" y="22" text-anchor="middle" font-size="13" font-weight="bold" font-family="Arial">Şekil 2 — Fotoğrafsız Kıyafet Sanal Deneme Yöntemi</text>
+
+    <!-- BAŞLA -->
+    <ellipse cx="240" cy="52" rx="60" ry="20" fill="white" stroke="#222" stroke-width="2"/>
+    <text x="240" y="57" text-anchor="middle" font-size="10" font-weight="bold" font-family="Arial">BAŞLA [S0]</text>
+
+    <!-- ok -->
+    <line x1="240" y1="72" x2="240" y2="95" stroke="#222" stroke-width="1.5" marker-end="url(#ok2)"/>
+
+    <!-- Adım 1: Sanal deneme isteği -->
+    <rect x="130" y="95" width="220" height="40" rx="5" fill="white" stroke="#222" stroke-width="1.5"/>
+    <text x="240" y="110" text-anchor="middle" font-size="9" font-family="Arial" font-weight="bold">[S1] Sanal Deneme İsteği</text>
+    <text x="240" y="127" text-anchor="middle" font-size="8.5" font-family="Arial">Kıyafet Seçimi + Model Fotoğrafı</text>
+
+    <!-- ok -->
+    <line x1="240" y1="135" x2="240" y2="158" stroke="#222" stroke-width="1.5" marker-end="url(#ok2)"/>
+
+    <!-- Karar: Görsel var mı? -->
+    <polygon points="240,158  360,195  240,232  120,195" fill="white" stroke="#222" stroke-width="2"/>
+    <text x="240" y="190" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">[S2]</text>
+    <text x="240" y="205" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">Görsel URI</text>
+    <text x="240" y="218" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">mevcut mu?</text>
+
+    <!-- EVET etiketi -->
+    <text x="368" y="192" font-size="9" font-family="Arial" fill="#333">EVET</text>
+    <!-- HAYIR etiketi -->
+    <text x="105" y="192" font-size="9" font-family="Arial" fill="#333">HAYIR</text>
+
+    <!-- HAYIR yolu (sol dal) -->
+    <line x1="120" y1="195" x2="60" y2="195" stroke="#222" stroke-width="1.5" marker-end="url(#ok2)"/>
+    <line x1="60" y1="195" x2="60" y2="268" stroke="#222" stroke-width="1.5" marker-end="url(#ok2)"/>
+
+    <!-- Adım 3: AI Görsel Üret (sol) -->
+    <rect x="10" y="268" width="150" height="50" rx="5" fill="#f0f0f0" stroke="#222" stroke-width="2"/>
+    <text x="85" y="285" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">[S3] AI Görsel</text>
+    <text x="85" y="299" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">Üretimi</text>
+    <text x="85" y="312" text-anchor="middle" font-size="8" font-family="Arial">Metin → Görsel [22]</text>
+
+    <!-- Adım 4: Önbelleğe Kaydet -->
+    <line x1="85" y1="318" x2="85" y2="340" stroke="#222" stroke-width="1.5" marker-end="url(#ok2)"/>
+    <rect x="10" y="340" width="150" height="40" rx="5" fill="white" stroke="#222" stroke-width="1.5"/>
+    <text x="85" y="357" text-anchor="middle" font-size="9" font-family="Arial">[S4] URL Önbelleğe</text>
+    <text x="85" y="371" text-anchor="middle" font-size="9" font-family="Arial">Kaydet [S4a]</text>
+
+    <!-- Sol dal birleşim -->
+    <line x1="85" y1="380" x2="85" y2="408" stroke="#222" stroke-width="1.5"/>
+    <line x1="85" y1="408" x2="218" y2="408" stroke="#222" stroke-width="1.5" marker-end="url(#ok2)"/>
+
+    <!-- EVET yolu (sağ dal) -->
+    <line x1="360" y1="195" x2="420" y2="195" stroke="#222" stroke-width="1.5"/>
+    <line x1="420" y1="195" x2="420" y2="408" stroke="#222" stroke-width="1.5"/>
+    <line x1="420" y1="408" x2="263" y2="408" stroke="#222" stroke-width="1.5" marker-end="url(#ok2)"/>
+
+    <!-- Adım 5: Proxy'ye Gönder -->
+    <rect x="130" y="390" width="220" height="42" rx="5" fill="white" stroke="#222" stroke-width="1.5"/>
+    <text x="240" y="407" text-anchor="middle" font-size="9" font-family="Arial" font-weight="bold">[S5] Proxy'ye Gönder</text>
+    <text x="240" y="421" text-anchor="middle" font-size="8.5" font-family="Arial">Model Foto + Kıyafet Görseli → [20]</text>
+
+    <!-- ok -->
+    <line x1="240" y1="432" x2="240" y2="452" stroke="#222" stroke-width="1.5" marker-end="url(#ok2)"/>
+
+    <!-- Adım 6: Durum Sorgula (döngü) -->
+    <rect x="130" y="452" width="220" height="42" rx="5" fill="white" stroke="#222" stroke-width="1.5"/>
+    <text x="240" y="469" text-anchor="middle" font-size="9" font-family="Arial" font-weight="bold">[S6] Durum Sorgula</text>
+    <text x="240" y="483" text-anchor="middle" font-size="8.5" font-family="Arial">5 sn aralıkla, max 200 sn [S6a]</text>
+
+    <!-- Döngü oku (sağ tarafta) -->
+    <line x1="350" y1="473" x2="395" y2="473" stroke="#222" stroke-width="1" stroke-dasharray="3,2"/>
+    <line x1="395" y1="473" x2="395" y2="440" stroke="#222" stroke-width="1" stroke-dasharray="3,2"/>
+    <line x1="395" y1="440" x2="352" y2="440" stroke="#222" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#ok2)"/>
+    <text x="400" y="460" font-size="7.5" font-family="Arial">Bekliyor</text>
+
+    <!-- ok -->
+    <line x1="240" y1="494" x2="240" y2="514" stroke="#222" stroke-width="1.5" marker-end="url(#ok2)"/>
+
+    <!-- Adım 7: Yerel İndir -->
+    <rect x="130" y="514" width="220" height="42" rx="5" fill="#f0f0f0" stroke="#222" stroke-width="2"/>
+    <text x="240" y="531" text-anchor="middle" font-size="9" font-family="Arial" font-weight="bold">[S7] Yerel Önbelleğe</text>
+    <text x="240" y="545" text-anchor="middle" font-size="9" font-family="Arial" font-weight="bold">İndir [S7a]</text>
+    <text x="240" y="555" text-anchor="middle" font-size="7.5" font-family="Arial">FileSystem.downloadAsync()</text>
+
+    <!-- ok -->
+    <line x1="240" y1="556" x2="240" y2="576" stroke="#222" stroke-width="1.5" marker-end="url(#ok2)"/>
+
+    <!-- BİTİŞ -->
+    <ellipse cx="240" cy="596" rx="60" ry="20" fill="white" stroke="#222" stroke-width="2"/>
+    <text x="240" y="601" text-anchor="middle" font-size="10" font-weight="bold" font-family="Arial">SONUÇ</text>
+    <text x="240" y="613" text-anchor="middle" font-size="9" font-family="Arial">Kullanıcıya Göster [S8]</text>
+
+    <!-- Açıklama köşe -->
+    <rect x="290" y="268" width="178" height="100" rx="4" fill="#fafafa" stroke="#ccc" stroke-width="1"/>
+    <text x="379" y="283" text-anchor="middle" font-size="8.5" font-weight="bold" font-family="Arial">ANA BULUŞ</text>
+    <line x1="295" y1="288" x2="463" y2="288" stroke="#ccc" stroke-width="0.8"/>
+    <text x="299" y="302" font-size="7.5" font-family="Arial">[S3] Metin → DALL-E/GPT-Image-1</text>
+    <text x="299" y="315" font-size="7.5" font-family="Arial">[S4a] URL kıyafet kaydına yazılır</text>
+    <text x="299" y="328" font-size="7.5" font-family="Arial">[S6a] AbortController timeout</text>
+    <text x="299" y="341" font-size="7.5" font-family="Arial">[S7a] CDN → Yerel cache (Android</text>
+    <text x="299" y="352" font-size="7.5" font-family="Arial">     render sorunu çözümü)</text>
+    <rect x="294" y="358" width="170" height="4" rx="2" fill="#222"/>
+
+  </svg>
+
+  <div class="sekil-adi">ŞEKİL 2</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SAYFA 3 — ŞEKİL 3: RENK UYUM SKORU ALGORİTMASI
+═══════════════════════════════════════════════════════════════ -->
+<div class="sayfa">
+  <div class="baslik">BULUŞ: KIYAFET FOTOĞRAFI BULUNMAYAN GARDROP PARÇALARI İÇİN<br>YAPAY ZEKA DESTEKLİ SANAL DENEME SİSTEMİ VE YÖNTEMİ</div>
+  <div class="alt-baslik">Başvuru Sahibi: Emekcan Doğru</div>
+
+  <svg width="170mm" height="225mm" viewBox="0 0 480 638" xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+      <marker id="ok3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#222"/>
+      </marker>
+    </defs>
+
+    <text x="240" y="22" text-anchor="middle" font-size="12" font-weight="bold" font-family="Arial">Şekil 3 — Renk Uyum Skoru Hesaplama Algoritması</text>
+
+    <!-- BAŞLA -->
+    <ellipse cx="240" cy="52" rx="60" ry="20" fill="white" stroke="#222" stroke-width="2"/>
+    <text x="240" y="58" text-anchor="middle" font-size="10" font-weight="bold" font-family="Arial">BAŞLA [R0]</text>
+
+    <line x1="240" y1="72" x2="240" y2="92" stroke="#222" stroke-width="1.5" marker-end="url(#ok3)"/>
+
+    <!-- Adım R1: Kıyafet adları -->
+    <rect x="110" y="92" width="260" height="42" rx="5" fill="white" stroke="#222" stroke-width="1.5"/>
+    <text x="240" y="109" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">[R1] Kombin Parçalarını Oku</text>
+    <text x="240" y="126" text-anchor="middle" font-size="8.5" font-family="Arial">Kıyafet adı dizisi: ["Lacivert Pantolon", …]</text>
+
+    <line x1="240" y1="134" x2="240" y2="154" stroke="#222" stroke-width="1.5" marker-end="url(#ok3)"/>
+
+    <!-- Adım R2: Anahtar kelime eşleştirme -->
+    <rect x="60" y="154" width="360" height="60" rx="5" fill="white" stroke="#222" stroke-width="1.5"/>
+    <text x="240" y="171" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">[R2] Anahtar Kelime Eşleştirme</text>
+    <text x="240" y="186" text-anchor="middle" font-size="8" font-family="Arial">Her kıyafet adı → RENK_TABLOSU (TR+EN) → HEX kod</text>
+    <text x="240" y="200" text-anchor="middle" font-size="7.5" font-family="Arial">Birden fazla eşleşme: en düşük karakter pozisyonu öncelikli</text>
+
+    <line x1="240" y1="214" x2="240" y2="234" stroke="#222" stroke-width="1.5" marker-end="url(#ok3)"/>
+
+    <!-- Adım R3: HSL dönüşüm -->
+    <rect x="90" y="234" width="300" height="44" rx="5" fill="white" stroke="#222" stroke-width="1.5"/>
+    <text x="240" y="252" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">[R3] HEX → HSL Dönüşümü</text>
+    <text x="240" y="268" text-anchor="middle" font-size="8.5" font-family="Arial">Her renk: (H: 0-360°, S: 0-1, L: 0-1)</text>
+
+    <line x1="240" y1="278" x2="240" y2="298" stroke="#222" stroke-width="1.5" marker-end="url(#ok3)"/>
+
+    <!-- Karar: Doygunluk filtresi -->
+    <polygon points="240,298  380,330  240,362  100,330" fill="white" stroke="#222" stroke-width="2"/>
+    <text x="240" y="325" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">[R4]</text>
+    <text x="240" y="339" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">S &gt; 0.12?</text>
+    <text x="240" y="352" text-anchor="middle" font-size="8" font-family="Arial">(Nötr renk filtresi)</text>
+    <text x="387" y="328" font-size="9" font-family="Arial">EVET</text>
+    <text x="60"  y="328" font-size="9" font-family="Arial">HAYIR</text>
+
+    <!-- HAYIR: Atla -->
+    <line x1="100" y1="330" x2="55" y2="330" stroke="#222" stroke-width="1.5"/>
+    <line x1="55"  y1="330" x2="55" y2="430" stroke="#222" stroke-width="1.5"/>
+    <line x1="55"  y1="430" x2="128" y2="430" stroke="#222" stroke-width="1.5" marker-end="url(#ok3)"/>
+    <rect x="15" y="355" width="65" height="30" rx="3" fill="#f0f0f0" stroke="#999" stroke-width="1"/>
+    <text x="48" y="367" text-anchor="middle" font-size="7.5" font-family="Arial">Nötr renk</text>
+    <text x="48" y="379" text-anchor="middle" font-size="7.5" font-family="Arial">— atla —</text>
+
+    <!-- EVET: Aktif renk listesine ekle -->
+    <line x1="380" y1="330" x2="430" y2="330" stroke="#222" stroke-width="1.5"/>
+    <line x1="430" y1="330" x2="430" y2="400" stroke="#222" stroke-width="1.5"/>
+    <line x1="430" y1="400" x2="353" y2="400" stroke="#222" stroke-width="1.5" marker-end="url(#ok3)"/>
+    <rect x="400" y="340" width="70" height="30" rx="3" fill="#f0f0f0" stroke="#999" stroke-width="1"/>
+    <text x="435" y="352" text-anchor="middle" font-size="7.5" font-family="Arial">Aktif renk</text>
+    <text x="435" y="364" text-anchor="middle" font-size="7.5" font-family="Arial">listesine ekle</text>
+
+    <!-- Adım R5: Çift hesaplama -->
+    <rect x="130" y="412" width="220" height="44" rx="5" fill="white" stroke="#222" stroke-width="1.5"/>
+    <text x="240" y="429" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">[R5] Her Renk Çifti İçin</text>
+    <text x="240" y="444" text-anchor="middle" font-size="8.5" font-family="Arial">Hue Mesafesi: |H₁ − H₂| mod 360°</text>
+    <text x="240" y="456" text-anchor="middle" font-size="8" font-family="Arial">(d &gt; 180° → 360 − d)</text>
+
+    <line x1="240" y1="456" x2="240" y2="476" stroke="#222" stroke-width="1.5" marker-end="url(#ok3)"/>
+
+    <!-- Skor tablosu -->
+    <rect x="50" y="476" width="380" height="90" rx="5" fill="white" stroke="#222" stroke-width="1.5"/>
+    <text x="240" y="494" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">[R6] Uyum Skoru Tablosu</text>
+    <!-- tablo çizgileri -->
+    <line x1="55" y1="500" x2="425" y2="500" stroke="#aaa" stroke-width="0.8"/>
+    <line x1="175" y1="498" x2="175" y2="560" stroke="#aaa" stroke-width="0.8"/>
+    <line x1="310" y1="498" x2="310" y2="560" stroke="#aaa" stroke-width="0.8"/>
+    <!-- başlıklar -->
+    <text x="115" y="497" text-anchor="middle" font-size="8" font-weight="bold" font-family="Arial">Renk Kategorisi</text>
+    <text x="242" y="497" text-anchor="middle" font-size="8" font-weight="bold" font-family="Arial">Hue Mesafesi</text>
+    <text x="367" y="497" text-anchor="middle" font-size="8" font-weight="bold" font-family="Arial">Puan</text>
+    <!-- satırlar -->
+    <text x="115" y="514" text-anchor="middle" font-size="8" font-family="Arial">Analog</text>
+    <text x="242" y="514" text-anchor="middle" font-size="8" font-family="Arial">≤ 30°</text>
+    <text x="367" y="514" text-anchor="middle" font-size="8" font-weight="bold" font-family="Arial">95</text>
+    <text x="115" y="529" text-anchor="middle" font-size="8" font-family="Arial">Tamamlayıcı</text>
+    <text x="242" y="529" text-anchor="middle" font-size="8" font-family="Arial">150° – 210°</text>
+    <text x="367" y="529" text-anchor="middle" font-size="8" font-weight="bold" font-family="Arial">88</text>
+    <text x="115" y="544" text-anchor="middle" font-size="8" font-family="Arial">Bölünmüş Tamam.</text>
+    <text x="242" y="544" text-anchor="middle" font-size="8" font-family="Arial">100°–140°, 220°–260°</text>
+    <text x="367" y="544" text-anchor="middle" font-size="8" font-weight="bold" font-family="Arial">78</text>
+    <text x="115" y="559" text-anchor="middle" font-size="8" font-family="Arial">Uyumsuz</text>
+    <text x="242" y="559" text-anchor="middle" font-size="8" font-family="Arial">61° – 99°</text>
+    <text x="367" y="559" text-anchor="middle" font-size="8" font-weight="bold" font-family="Arial">45 – 52</text>
+
+    <line x1="240" y1="566" x2="240" y2="586" stroke="#222" stroke-width="1.5" marker-end="url(#ok3)"/>
+
+    <!-- Adım R7: Ortalama -->
+    <rect x="110" y="586" width="260" height="32" rx="5" fill="#f0f0f0" stroke="#222" stroke-width="2"/>
+    <text x="240" y="601" text-anchor="middle" font-size="9" font-weight="bold" font-family="Arial">[R7] Genel Skor = Σ(puan) / çift sayısı</text>
+    <text x="240" y="614" text-anchor="middle" font-size="8.5" font-family="Arial">Sonuç: 0 – 100 arası uyum skoru</text>
+
+  </svg>
+
+  <div class="sekil-adi">ŞEKİL 3</div>
+</div>
+
+</body>
+</html>

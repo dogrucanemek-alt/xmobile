@@ -11,6 +11,8 @@ import { revenueCatBaslat } from '../lib/revenueCat';
 import { analyticsBaslat } from '../lib/analytics';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
+import * as Linking from 'expo-linking';
+import { supabase } from '../lib/supabase';
 
 sentryBaslat();
 revenueCatBaslat();
@@ -28,6 +30,42 @@ function ThemeFlashOverlay() {
       style={[StyleSheet.absoluteFillObject, { backgroundColor: bgColor, opacity: temaGecisAnimValue, zIndex: 9999 }]}
     />
   );
+}
+
+function DeepLinkHandler() {
+  useEffect(() => {
+    // İlk açılışta URL varsa işle
+    Linking.getInitialURL().then(url => { if (url) deepLinkIsle(url); });
+    // Uygulama açıkken gelen linkler
+    const sub = Linking.addEventListener('url', ({ url }) => deepLinkIsle(url));
+    return () => sub.remove();
+  }, []);
+
+  const deepLinkIsle = async (url: string) => {
+    // xmobile://login#access_token=... veya ?access_token=...
+    if (!url.includes('access_token') && !url.includes('token_hash')) return;
+    try {
+      const parsed = Linking.parse(url);
+      const params = parsed.queryParams ?? {};
+      const hash = (url.split('#')[1] ?? '').split('&').reduce((acc: any, p) => {
+        const [k, v] = p.split('=');
+        if (k) acc[k] = decodeURIComponent(v ?? '');
+        return acc;
+      }, {});
+      const accessToken  = (params['access_token']  ?? hash['access_token'])  as string | undefined;
+      const refreshToken = (params['refresh_token'] ?? hash['refresh_token']) as string | undefined;
+      const tokenHash    = (params['token_hash']    ?? hash['token_hash'])    as string | undefined;
+      const type         = (params['type']          ?? hash['type'])          as string | undefined;
+
+      if (accessToken && refreshToken) {
+        await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+      } else if (tokenHash && type) {
+        await supabase.auth.verifyOtp({ token_hash: tokenHash, type: type as any });
+      }
+    } catch {}
+  };
+
+  return null;
 }
 
 function NotificationHandler() {
@@ -58,6 +96,7 @@ export default function RootLayout() {
       <AppProvider>
         <AuthProvider>
           <SubscriptionProvider>
+            <DeepLinkHandler />
             <NotificationHandler />
             <ThemeFlashOverlay />
             <Stack screenOptions={{ headerShown: false }}>
