@@ -3,335 +3,436 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Furniture — Konsept</title>
+<title>AI Furniture — Akıllı Gardırop</title>
+<meta name="description" content="Yapay zeka destekli akıllı gardırop. Claude AI her sabah kıyafetinizi, havayı ve takviminizi analiz eder.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300;1,9..144,700&family=Syne:wght@400;600;700&family=Lora:wght@300;400&family=Fira+Code:wght@300;400&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#060606;--surface:#0b0b0b;--border:rgba(255,255,255,0.07);
-  --text:#ede9e0;--muted:rgba(237,233,224,0.38);
-  --gold:#c9a227;--gold-dim:rgba(201,162,39,0.10);--gold-line:rgba(201,162,39,0.22);
+  --bg:#050505;--surface:#0a0a0a;--surface2:#0f0f0f;
+  --border:rgba(255,255,255,0.055);--border2:rgba(255,255,255,0.09);
+  --gold:#C9A227;--gold-soft:rgba(201,162,39,0.1);--gold-line:rgba(201,162,39,0.22);
+  --cream:#EDE5D0;--text:#EDE5D0;--muted:rgba(237,229,208,0.38);--muted2:rgba(237,229,208,0.6);
+  --cyan:#00C8A8;
+  --fd:'Fraunces',Georgia,serif;--fu:'Syne',system-ui,sans-serif;
+  --fb:'Lora',Georgia,serif;--fm:'Fira Code',monospace;
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased;cursor:none}
+
+/* GRAIN */
+.noise{position:fixed;inset:0;z-index:900;pointer-events:none;opacity:.032;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px}
+
+/* CURSOR */
+#cr{position:fixed;top:0;left:0;z-index:9999;width:36px;height:36px;border:1px solid var(--gold);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:width .28s,height .28s,border-color .28s;will-change:transform}
+#cd{position:fixed;top:0;left:0;z-index:10000;width:4px;height:4px;background:var(--gold);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);will-change:transform}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 56px;height:60px;border-bottom:1px solid transparent;transition:background .4s,border-color .4s,backdrop-filter .4s}
-nav.scrolled{background:rgba(6,6,6,.88);border-color:var(--border);backdrop-filter:blur(14px)}
-.nav-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;letter-spacing:1.5px;color:var(--text);text-decoration:none}
-.nav-logo span{color:var(--gold)}
-.nav-links{display:flex;gap:36px;list-style:none}
-.nav-links a{font-size:11px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
-.nav-links a:hover{color:var(--text)}
-.nav-cta{font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:#000;background:var(--gold);border:none;padding:9px 22px;cursor:pointer;transition:opacity .2s}
-.nav-cta:hover{opacity:.88}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;border-bottom:1px solid transparent;transition:background .5s,border-color .5s}
+nav.scrolled{background:rgba(5,5,5,.9);border-color:var(--border);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.nl{font-family:var(--fu);font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--text);text-decoration:none}
+.nl span{color:var(--gold)}
+.nc{display:flex;gap:40px;list-style:none}
+.nc a{font-family:var(--fu);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
+.nc a:hover{color:var(--text)}
+.ncta{font-family:var(--fu);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#000;background:var(--gold);border:none;padding:10px 24px;cursor:none;transition:opacity .2s,transform .2s}
+.ncta:hover{opacity:.88;transform:translateY(-1px)}
 
 /* HERO */
-.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:100px 80px 80px;gap:60px;position:relative}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 68% 42%,rgba(201,162,39,.07) 0%,transparent 55%);pointer-events:none}
-.hero-text{position:relative;z-index:1}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:32px}
-.hero-eyebrow::before{content:'';width:20px;height:1px;background:var(--gold)}
-h1.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(48px,6vw,92px);font-weight:600;line-height:1.05;letter-spacing:-.5px;margin-bottom:28px}
-h1.hero-title em{font-style:italic;font-weight:300;color:rgba(237,233,224,.5)}
-.hero-sub{font-size:15px;font-weight:300;line-height:1.9;color:var(--muted);max-width:400px;margin-bottom:48px}
-.hero-actions{display:flex;align-items:center;gap:28px}
-.btn-primary{display:inline-block;font-size:11px;font-weight:400;letter-spacing:1.2px;text-transform:uppercase;background:var(--gold);color:#000;padding:14px 32px;text-decoration:none;transition:opacity .2s,transform .2s}
-.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
-.btn-ghost{font-size:12px;font-weight:300;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--gold-line);padding-bottom:2px;transition:color .2s,border-color .2s}
-.btn-ghost:hover{color:var(--text);border-color:var(--gold)}
-.hero-counter{margin-top:48px;padding-top:32px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px}
-.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(201,162,39,.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.8)}}
-.hero-counter p{font-size:13px;color:var(--muted)}
-.hero-counter p strong{color:var(--text);font-weight:500}
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:120px 80px 80px;gap:48px;position:relative;overflow:hidden}
+.h-bg{position:absolute;bottom:-0.1em;left:-0.02em;font-family:var(--fd);font-size:clamp(160px,22vw,320px);font-weight:700;font-style:italic;line-height:.85;color:rgba(237,229,208,.018);user-select:none;pointer-events:none;white-space:nowrap}
+.h-spot{position:absolute;inset:0;pointer-events:none;background:radial-gradient(600px circle at var(--mx,70%) var(--my,45%),rgba(201,162,39,.055) 0%,transparent 50%)}
+.ht{position:relative;z-index:2}
+.h-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--fu);font-size:9px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:32px}
+.h-tag::before{content:'';width:24px;height:1px;background:var(--gold)}
+h1.hh{font-family:var(--fd);font-size:clamp(52px,7vw,100px);font-weight:700;font-style:italic;font-optical-sizing:auto;line-height:1.0;letter-spacing:-.02em;margin-bottom:32px;color:var(--cream)}
+h1.hh em{font-style:normal;font-weight:300;color:rgba(237,229,208,.4)}
+.h-sub{font-size:15px;font-weight:300;line-height:1.9;color:var(--muted2);max-width:420px;margin-bottom:44px}
+.h-btns{display:flex;align-items:center;gap:24px;margin-bottom:48px}
+.btn-g{display:inline-flex;align-items:center;gap:8px;font-family:var(--fu);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;background:var(--gold);color:#000;padding:15px 32px;text-decoration:none;transition:opacity .2s,transform .2s;cursor:none}
+.btn-g:hover{opacity:.88;transform:translateY(-1px)}
+.btn-t{font-family:var(--fu);font-size:11px;color:var(--muted2);text-decoration:none;border-bottom:1px solid rgba(201,162,39,.3);padding-bottom:2px;transition:color .2s,border-color .2s;cursor:none}
+.btn-t:hover{color:var(--cream);border-color:var(--gold)}
+.h-live{display:inline-flex;align-items:center;gap:10px;font-family:var(--fu);font-size:11px;color:var(--muted)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px rgba(0,200,168,.6);animation:lp 2s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:1}50%{opacity:.25}}
+.h-live strong{color:var(--cream);font-weight:400}
 
 /* HERO VISUAL */
-.hero-visual{position:relative;z-index:1;display:flex;align-items:center;justify-content:flex-end}
-.wardrobe-box{width:100%;max-width:460px;aspect-ratio:8/9;background:#080808;border:1px solid rgba(255,255,255,0.055);position:relative;overflow:hidden}
-.wardrobe-box::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 52px,rgba(255,255,255,0.025) 52px,rgba(255,255,255,0.025) 53px)}
-.hanger-row{display:flex;padding:56px 28px 0}
-.hanger{flex:1;display:flex;flex-direction:column;align-items:center}
-.hanger-top{width:1px;height:14px;background:rgba(255,255,255,0.12);position:relative}
-.hanger-top::before{content:'';position:absolute;top:0;left:-4px;width:8px;height:5px;border:1px solid rgba(255,255,255,0.1);border-bottom:none;border-radius:4px 4px 0 0}
-.hanger-bar{width:44px;height:1px;background:rgba(255,255,255,0.1)}
-.hanger-garment{width:38px;height:54px;margin-top:2px;border-radius:0 0 3px 3px}
-.ai-card{position:absolute;top:22px;right:20px;width:172px;background:rgba(5,5,5,.94);border:1px solid var(--gold-line);padding:16px;backdrop-filter:blur(10px)}
-.ai-card-label{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:5px}
-.ai-card-label .dot{width:4px;height:4px;border-radius:50%;background:var(--gold);animation:pulse 1.5s ease-in-out infinite;flex-shrink:0}
-.ai-line{font-family:'Inter',monospace;font-size:10.5px;line-height:1.9;display:flex;gap:6px}
-.ai-line .p{color:var(--gold)}
-.ai-line .r{color:rgba(237,233,224,.55)}
-.ai-cursor{display:inline-block;width:5px;height:10px;background:var(--gold);margin-left:1px;animation:blink 1s step-end infinite;vertical-align:text-bottom}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.ai-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:12px}
-.ai-tag{font-size:8px;letter-spacing:.5px;background:var(--gold-dim);border:1px solid var(--gold-line);color:var(--gold);padding:3px 7px}
+.hv{position:relative;z-index:2;display:flex;align-items:center;justify-content:center}
+.mirror{width:100%;max-width:480px;aspect-ratio:7/9;position:relative;background:#07070a;border:1.5px solid rgba(201,162,39,.28);overflow:hidden;box-shadow:0 0 0 1px rgba(201,162,39,.06),0 40px 80px rgba(0,0,0,.7)}
+.mirror::after{content:'';position:absolute;top:14px;left:14px;right:14px;bottom:14px;border:1px solid rgba(201,162,39,.09);pointer-events:none;z-index:1}
+.m-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:48px 48px}
+.scan{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,200,168,.35),transparent);animation:scan 4s linear infinite;z-index:2}
+@keyframes scan{0%{top:0;opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+.w-clothes{position:absolute;inset:0;z-index:3;padding:40px 28px 0;display:flex;flex-direction:column}
+.w-rail{height:1px;background:rgba(255,255,255,.06);margin-bottom:4px}
+.w-items{display:flex;gap:8px;margin-bottom:28px}
+.wi{flex:1;height:60px;border-radius:0 0 2px 2px;position:relative}
+.wi::before{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:12px;height:10px;border-top:1px solid rgba(255,255,255,.1);border-left:1px solid rgba(255,255,255,.05);border-right:1px solid rgba(255,255,255,.05);border-radius:6px 6px 0 0}
+.ai-ov{position:absolute;bottom:28px;right:-24px;width:178px;background:rgba(6,6,10,.94);border:1px solid var(--gold-line);padding:18px 16px;backdrop-filter:blur(12px);z-index:10;box-shadow:0 24px 48px rgba(0,0,0,.7),0 0 0 1px rgba(201,162,39,.05)}
+.ai-lbl{display:flex;align-items:center;gap:6px;font-family:var(--fu);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.ai-lbl .dot{width:4px;height:4px;border-radius:50%;background:var(--gold);animation:lp 1.5s ease-in-out infinite}
+.ai-ln{display:flex;align-items:baseline;gap:6px;font-family:var(--fm);font-size:10px;line-height:2.1}
+.ai-ln .arr{color:var(--cyan)}
+.ai-ln .v{color:rgba(237,229,208,.55)}
+.ai-ln .sc{color:var(--gold)}
+.cur{display:inline-block;width:5px;height:10px;background:var(--gold);margin-left:1px;animation:bl 1s step-end infinite;vertical-align:text-bottom}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0}}
+.ai-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.ai-tag{font-family:var(--fu);font-size:8px;color:var(--gold);background:var(--gold-soft);border:1px solid var(--gold-line);padding:3px 8px}
+
+/* TICKER */
+.ticker{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:16px 0;background:var(--surface)}
+.t-track{display:flex;animation:tick 28s linear infinite;width:max-content}
+.t-item{display:flex;align-items:center;gap:28px;padding:0 28px;font-family:var(--fu);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.t-item .d{color:var(--gold);font-size:6px}
+@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* SECTIONS */
+.section-wrap{padding:160px 80px}
+.s-label{font-family:var(--fu);font-size:9px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.s-label::after{content:'';width:32px;height:1px;background:var(--gold-line)}
+h2.sh{font-family:var(--fd);font-size:clamp(36px,4.5vw,68px);font-weight:700;font-style:italic;font-optical-sizing:auto;line-height:1.08;color:var(--cream);margin-bottom:72px}
+h2.sh em{font-style:normal;font-weight:300;color:var(--muted2)}
 
 /* HOW */
-.how{padding:148px 80px;border-top:1px solid var(--border)}
-.section-eyebrow{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:22px;display:flex;align-items:center;gap:10px}
-.section-eyebrow::after{content:'';width:32px;height:1px;background:var(--gold-line)}
-h2.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,4.5vw,64px);font-weight:600;line-height:1.1;margin-bottom:72px}
-h2.section-title em{font-style:italic;font-weight:300;color:var(--muted)}
+.how{border-top:1px solid var(--border)}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
-.step{background:var(--bg);padding:52px 44px;position:relative;overflow:hidden}
-.step-num{font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:300;color:rgba(255,255,255,.035);line-height:1;margin-bottom:-12px;user-select:none}
-.step-icon{width:46px;height:46px;margin-bottom:26px;background:var(--gold-dim);border:1px solid var(--gold-line);display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
-.step-icon svg{width:20px;height:20px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.step h3{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;margin-bottom:12px;position:relative;z-index:1}
-.step p{font-size:13.5px;line-height:1.9;color:var(--muted);position:relative;z-index:1}
+.step{background:var(--bg);padding:64px 48px;position:relative;overflow:hidden;transition:background .3s}
+.step:hover{background:#080808}
+.s-num{position:absolute;top:-0.15em;left:-0.05em;font-family:var(--fd);font-size:180px;font-weight:700;font-style:italic;color:rgba(255,255,255,.023);line-height:1;user-select:none;pointer-events:none}
+.s-icon{width:48px;height:48px;background:var(--gold-soft);border:1px solid var(--gold-line);display:flex;align-items:center;justify-content:center;margin-bottom:28px;position:relative;z-index:1}
+.s-icon svg{width:20px;height:20px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.step h3{font-family:var(--fd);font-size:28px;font-weight:700;font-style:italic;margin-bottom:14px;position:relative;z-index:1;color:var(--cream)}
+.step p{font-size:13.5px;line-height:1.9;color:var(--muted2);position:relative;z-index:1}
 
 /* BENTO */
-.features{padding:148px 80px;border-top:1px solid var(--border)}
-.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;margin-top:60px}
-.card{background:var(--surface);border:1px solid var(--border);padding:38px 34px;position:relative;overflow:hidden;transition:border-color .3s}
-.card:hover{border-color:var(--gold-line)}
-.card.c7{grid-column:span 7}
-.card.c5{grid-column:span 5}
-.card.c6{grid-column:span 6}
-.card.c4{grid-column:span 4}
-.card-icon{width:38px;height:38px;margin-bottom:28px;background:var(--gold-dim);border:1px solid var(--gold-line);display:flex;align-items:center;justify-content:center}
-.card-icon svg{width:17px;height:17px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.card h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:10px}
-.card p{font-size:13px;line-height:1.85;color:var(--muted)}
-.terminal{margin-top:28px;padding:16px;background:rgba(0,0,0,.5);border:1px solid var(--border);font-size:10.5px;font-family:monospace}
-.t-line{display:flex;gap:6px;line-height:2}
-.t-line .p{color:var(--gold)}
-.t-line .r{color:rgba(237,233,224,.5)}
-.t-score{color:var(--gold);font-weight:500}
-.weather-row{display:flex;gap:6px;margin-top:24px}
-.w-pill{flex:1;padding:10px 6px;text-align:center;background:rgba(0,0,0,.4);border:1px solid var(--border)}
-.w-pill.active{border-color:var(--gold-line);background:var(--gold-dim)}
-.w-emoji{font-size:18px;display:block;margin-bottom:4px}
-.w-temp{font-size:10px;color:var(--muted)}
-.w-pill.active .w-temp{color:var(--gold)}
-.color-rows{display:flex;flex-direction:column;gap:8px;margin-top:24px}
-.c-row{display:flex;align-items:center;gap:8px}
-.c-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0;border:1px solid rgba(255,255,255,.08)}
-.c-bar-bg{flex:1;height:2px;background:var(--border);border-radius:1px;overflow:hidden}
-.c-bar-fill{height:100%;background:var(--gold);border-radius:1px}
-.c-pct{font-size:10px;color:var(--gold);font-weight:500;flex-shrink:0;width:28px;text-align:right}
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;margin-top:60px}
+.bc{background:var(--surface);border:1px solid var(--border);padding:40px 36px;position:relative;overflow:hidden;transition:border-color .3s,background .3s}
+.bc:hover{border-color:var(--gold-line);background:var(--surface2)}
+.bc.s7{grid-column:span 7}.bc.s5{grid-column:span 5}
+.bc.s6{grid-column:span 6}.bc.s4{grid-column:span 4}
+.b-ico{width:40px;height:40px;background:var(--gold-soft);border:1px solid var(--gold-line);display:flex;align-items:center;justify-content:center;margin-bottom:28px}
+.b-ico svg{width:17px;height:17px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.bc h3{font-family:var(--fd);font-size:24px;font-style:italic;font-weight:700;margin-bottom:10px;color:var(--cream)}
+.bc p{font-size:13px;line-height:1.85;color:var(--muted2)}
+.term{margin-top:28px;padding:18px;background:rgba(0,0,0,.55);border:1px solid var(--border);font-family:var(--fm);font-size:10.5px}
+.tl{display:flex;gap:8px;line-height:2.1}
+.tp{color:var(--cyan)}.tv{color:rgba(237,229,208,.5)}.tsc{color:var(--gold)}
+.wpills{display:flex;gap:6px;margin-top:28px}
+.wp{flex:1;padding:12px 6px;text-align:center;background:rgba(0,0,0,.4);border:1px solid var(--border);transition:border-color .2s,background .2s}
+.wp.on{border-color:var(--gold-line);background:var(--gold-soft)}
+.we{font-size:20px;display:block;margin-bottom:5px}
+.wt{font-family:var(--fu);font-size:10px;color:var(--muted)}
+.wp.on .wt{color:var(--gold)}
+.cbars{display:flex;flex-direction:column;gap:10px;margin-top:28px}
+.crow{display:flex;align-items:center;gap:10px}
+.cs{width:22px;height:22px;border-radius:50%;border:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.ct{flex:1;height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+.cf{height:100%;background:var(--gold);border-radius:1px}
+.cp{font-family:var(--fm);font-size:10px;color:var(--gold);width:30px;text-align:right}
 
 /* STATS */
-.stats{border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr)}
-.stat-b{padding:72px 52px;border-right:1px solid var(--border)}
-.stat-b:last-child{border-right:none}
-.stat-b-num{font-family:'Cormorant Garamond',serif;font-size:clamp(48px,5.5vw,82px);font-weight:600;line-height:1;color:var(--gold);display:block;margin-bottom:10px}
-.stat-b-lbl{font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface)}
+.sc{padding:80px 52px;border-right:1px solid var(--border)}
+.sc:last-child{border-right:none}
+.sn{font-family:var(--fd);font-size:clamp(52px,6vw,88px);font-weight:700;font-style:italic;color:var(--gold);line-height:1;display:block;margin-bottom:12px}
+.sl{font-family:var(--fu);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:64px}
+.tc{background:var(--bg);padding:52px 44px;transition:background .3s}
+.tc:hover{background:#080808}
+.tc-q{font-family:var(--fd);font-size:18px;font-style:italic;font-weight:300;line-height:1.7;color:var(--cream);margin-bottom:28px}
+.tc-s{color:var(--gold);font-size:11px;letter-spacing:2px;margin-bottom:14px}
+.tc-n{font-family:var(--fu);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
 
 /* PRICING */
-.pricing{padding:148px 80px;border-top:1px solid var(--border)}
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:64px}
-.p-card{background:var(--bg);padding:48px 40px;position:relative}
-.p-card.featured{background:#07070f;border-top:2px solid var(--gold)}
-.p-badge{display:inline-block;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;background:var(--gold-dim);border:1px solid var(--gold-line);color:var(--gold);padding:4px 12px;margin-bottom:18px}
-.p-name{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
-.p-price{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4vw,60px);font-weight:600;color:var(--text);line-height:1;margin-bottom:6px}
-.p-period{font-size:12px;color:var(--muted);margin-bottom:36px}
-.p-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:36px}
-.p-features li{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
-.p-features li.on{color:rgba(237,233,224,.7)}
-.p-features li.on::before{content:'✓';color:var(--gold);font-size:11px;flex-shrink:0}
-.p-features li:not(.on)::before{content:'—';color:rgba(237,233,224,.18);font-size:11px;flex-shrink:0}
-.p-btn{display:block;text-align:center;font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;padding:13px 0;text-decoration:none;transition:opacity .2s}
-.p-btn.outline{border:1px solid rgba(255,255,255,.14);color:var(--muted)}
-.p-btn.solid{background:var(--gold);color:#000}
-.p-btn:hover{opacity:.85}
+.pc{background:var(--bg);padding:52px 44px;position:relative;transition:background .3s}
+.pc:hover{background:#080808}
+.pc.feat{background:#07070f;border-top:2px solid var(--gold)}
+.p-badge{display:inline-block;font-family:var(--fu);font-size:8px;letter-spacing:2px;text-transform:uppercase;background:var(--gold-soft);border:1px solid var(--gold-line);color:var(--gold);padding:4px 12px;margin-bottom:20px}
+.p-tier{font-family:var(--fu);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.p-price{font-family:var(--fd);font-size:clamp(40px,4.5vw,64px);font-style:italic;font-weight:700;line-height:1;color:var(--cream);margin-bottom:6px}
+.p-per{font-size:12px;color:var(--muted);margin-bottom:36px}
+.p-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:40px}
+.p-list li{font-size:13px;color:var(--muted2);display:flex;align-items:center;gap:10px}
+.p-list li.on{color:var(--cream)}
+.p-list li.on::before{content:'✓';color:var(--gold);font-size:10px;flex-shrink:0}
+.p-list li:not(.on)::before{content:'—';color:rgba(237,229,208,.15);font-size:10px;flex-shrink:0}
+.p-btn{display:block;text-align:center;font-family:var(--fu);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:14px;text-decoration:none;cursor:none;transition:opacity .2s,transform .2s}
+.p-btn.out{border:1px solid rgba(255,255,255,.12);color:var(--muted)}
+.p-btn.sol{background:var(--gold);color:#000}
+.p-btn:hover{opacity:.85;transform:translateY(-1px)}
 
 /* CTA */
-.cta{padding:148px 80px;text-align:center;position:relative;overflow:hidden}
-.cta::before{content:'';position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(201,162,39,.07) 0%,transparent 60%);pointer-events:none}
-h2.cta-title{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,5vw,76px);font-weight:600;line-height:1.1;margin-bottom:20px}
-h2.cta-title em{font-style:italic;font-weight:300}
-.cta-sub{font-size:15px;color:var(--muted);margin-bottom:52px;line-height:1.8}
-.cta-form{display:flex;max-width:460px;margin:0 auto}
-.cta-input{flex:1;background:var(--surface);border:1px solid var(--border);border-right:none;padding:15px 18px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;font-weight:300;outline:none;transition:border-color .2s}
-.cta-input:focus{border-color:var(--gold-line)}
-.cta-input::placeholder{color:rgba(237,233,224,.2)}
-.cta-btn{background:var(--gold);color:#000;border:none;padding:15px 28px;font-family:'Inter',sans-serif;font-size:11px;font-weight:400;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.cta{padding:160px 80px;border-top:1px solid var(--border);text-align:center;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(201,162,39,.06) 0%,transparent 60%);pointer-events:none}
+h2.cta-h{font-family:var(--fd);font-size:clamp(40px,5.5vw,82px);font-weight:700;font-style:italic;font-optical-sizing:auto;line-height:1.08;color:var(--cream);margin-bottom:20px}
+h2.cta-h em{font-style:normal;font-weight:300;color:var(--muted2)}
+.cta-sub{font-size:15px;color:var(--muted2);line-height:1.8;margin-bottom:52px}
+.cta-form{display:flex;max-width:480px;margin:0 auto 20px}
+.cta-in{flex:1;background:var(--surface);border:1px solid var(--border2);border-right:none;padding:16px 20px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .2s}
+.cta-in:focus{border-color:var(--gold-line)}
+.cta-in::placeholder{color:rgba(237,229,208,.2)}
+.cta-btn{background:var(--gold);color:#000;border:none;padding:16px 28px;font-family:var(--fu);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:none;transition:opacity .2s;white-space:nowrap}
 .cta-btn:hover{opacity:.88}
-.cta-note{margin-top:18px;font-size:12px;color:var(--muted)}
+.cta-note{font-family:var(--fu);font-size:11px;color:var(--muted)}
 
 /* FOOTER */
 footer{padding:36px 80px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.footer-logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:rgba(237,233,224,.3)}
-.footer-logo span{color:var(--gold)}
-.footer-note{font-size:10px;color:rgba(237,233,224,.18);letter-spacing:.8px;text-transform:uppercase}
+.fl{font-family:var(--fu);font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(237,229,208,.25)}
+.fl span{color:var(--gold)}
+.fr{display:flex;align-items:center;gap:28px}
+.ftime{font-family:var(--fm);font-size:11px;color:var(--muted)}
+.fcopy{font-family:var(--fu);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(237,229,208,.2)}
 
 /* REVEAL */
-.reveal{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,1,.36,1)}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .85s ease,transform .85s cubic-bezier(.22,1,.36,1)}
 .reveal.visible{opacity:1;transform:translateY(0)}
-.rd1{transition-delay:.08s}.rd2{transition-delay:.16s}.rd3{transition-delay:.24s}.rd4{transition-delay:.32s}
+.rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}.rd4{transition-delay:.4s}
 
+/* RESPONSIVE */
 @media(max-width:1100px){
-  .hero{grid-template-columns:1fr;padding:110px 40px 80px}.hero-visual{display:none}
-  .card.c7,.card.c5,.card.c6,.card.c4{grid-column:span 12}
-  .stats{grid-template-columns:repeat(2,1fr)}.stat-b:nth-child(2){border-right:none}.stat-b:nth-child(3){border-top:1px solid var(--border)}
-  .steps,.pricing-grid{grid-template-columns:1fr}
+  .hero{grid-template-columns:1fr;padding:110px 48px 80px}
+  .hv{display:none}
+  .steps,.pricing-grid,.testi-grid{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .sc:nth-child(2){border-right:none}
+  .sc:nth-child(3){border-top:1px solid var(--border)}
+  .bc.s7,.bc.s5,.bc.s6,.bc.s4{grid-column:span 12}
 }
 @media(max-width:768px){
-  nav{padding:0 24px}.nav-links,.nav-cta{display:none}
-  .hero,.how,.features,.pricing,.cta{padding:100px 24px 80px}
-  footer{padding:28px 24px;flex-direction:column;gap:10px;text-align:center}
+  nav{padding:0 24px}
+  .nc,.ncta{display:none}
+  .hero,.section-wrap,.cta{padding-left:24px;padding-right:24px}
+  footer{padding:28px 24px;flex-direction:column;gap:12px;text-align:center}
+  .fr{flex-direction:column;gap:8px}
+  body{cursor:auto}
+  #cr,#cd{display:none}
 }
 </style>
 </head>
 <body>
 
+<div class="noise" aria-hidden="true"></div>
+<div id="cr" aria-hidden="true"></div>
+<div id="cd" aria-hidden="true"></div>
+
+<!-- NAV -->
 <nav id="nav">
-  <a href="#" class="nav-logo">AI <span>Furniture</span></a>
-  <ul class="nav-links">
+  <a href="#home" class="nl">AI <span>Furniture</span></a>
+  <ul class="nc">
     <li><a href="#how">Nasıl Çalışır</a></li>
     <li><a href="#features">Özellikler</a></li>
     <li><a href="#pricing">Fiyat</a></li>
   </ul>
-  <button class="nav-cta" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Ön Sipariş</button>
+  <button class="ncta" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Ön Sipariş</button>
 </nav>
 
 <!-- HERO -->
 <section class="hero" id="home">
-  <div class="hero-text">
-    <p class="hero-eyebrow reveal">Yapay Zeka Destekli Gardırop</p>
-    <h1 class="hero-title reveal rd1">Gardırobunuz<br><em>artık düşünüyor.</em></h1>
-    <p class="hero-sub reveal rd2">Claude AI her sabah hava durumunuzu, takviminizi ve stilinizi analiz ederek size mükemmel kombini sunuyor. Saniyeler içinde.</p>
-    <div class="hero-actions reveal rd3">
-      <a href="#waitlist" class="btn-primary">Bekleme Listesine Katıl</a>
-      <a href="#how" class="btn-ghost">Nasıl Çalışır?</a>
+  <div class="h-spot" id="spot"></div>
+  <div class="h-bg" aria-hidden="true">AKILLI</div>
+  <div class="ht">
+    <p class="h-tag reveal">Yapay Zeka Destekli Gardırop</p>
+    <h1 class="hh reveal rd1">Gardırobunuz<br><em>artık</em><br>düşünüyor.</h1>
+    <p class="h-sub reveal rd2">Claude AI her sabah hava durumunuzu, takviminizi ve stil profilinizi analiz ederek mükemmel kombini saniyeler içinde sunar.</p>
+    <div class="h-btns reveal rd3">
+      <a href="#waitlist" class="btn-g">Bekleme Listesine Katıl</a>
+      <a href="#how" class="btn-t">Nasıl Çalışır?</a>
     </div>
-    <div class="hero-counter reveal" style="transition-delay:.4s">
-      <div class="pulse-dot"></div>
-      <p><strong>1.319</strong> kişi bekleme listesinde</p>
+    <div class="h-live reveal rd4">
+      <span class="live-dot"></span>
+      <span><strong>1.319</strong> kişi bekleme listesinde</span>
     </div>
   </div>
-  <div class="hero-visual">
-    <div class="wardrobe-box">
-      <div class="hanger-row">
-        <div class="hanger"><div class="hanger-top"></div><div class="hanger-bar"></div><div class="hanger-garment" style="background:linear-gradient(180deg,#1a1a2e,#12122a)"></div></div>
-        <div class="hanger"><div class="hanger-top"></div><div class="hanger-bar"></div><div class="hanger-garment" style="background:linear-gradient(180deg,#2a2a2a,#1a1a1a)"></div></div>
-        <div class="hanger"><div class="hanger-top"></div><div class="hanger-bar"></div><div class="hanger-garment" style="background:linear-gradient(180deg,#3d2b1f,#281a11)"></div></div>
-        <div class="hanger"><div class="hanger-top"></div><div class="hanger-bar"></div><div class="hanger-garment" style="background:linear-gradient(180deg,#1a2a1a,#111811)"></div></div>
-        <div class="hanger"><div class="hanger-top"></div><div class="hanger-bar"></div><div class="hanger-garment" style="background:linear-gradient(180deg,rgba(201,162,39,.15),rgba(201,162,39,.05));border:1px solid rgba(201,162,39,.2)"></div></div>
-      </div>
-      <div class="ai-card">
-        <div class="ai-card-label"><span class="dot"></span>AI Analizi</div>
-        <div class="ai-line"><span class="p">&#8594;</span><span class="r">18&#176;C &middot; R&#252;zgar</span></div>
-        <div class="ai-line"><span class="p">&#8594;</span><span class="r">&#304;&#351; toplant&#305;s&#305;</span></div>
-        <div class="ai-line"><span class="p">&#10003;</span><span class="r">Kombin haz&#305;r<span class="ai-cursor"></span></span></div>
-        <div class="ai-tags">
-          <span class="ai-tag">%97 uyum</span>
-          <span class="ai-tag">Lacivert</span>
+  <div class="hv">
+    <div class="mirror">
+      <div class="m-grid"></div>
+      <div class="scan"></div>
+      <div class="w-clothes">
+        <div class="w-rail"></div>
+        <div class="w-items">
+          <div class="wi" style="background:linear-gradient(180deg,#1a1a2e,#0d0d1a)"></div>
+          <div class="wi" style="background:linear-gradient(180deg,#2a2218,#1a150e)"></div>
+          <div class="wi" style="background:linear-gradient(180deg,#1e1e1e,#111)"></div>
+          <div class="wi" style="background:linear-gradient(180deg,rgba(201,162,39,.18),rgba(201,162,39,.06));border:1px solid rgba(201,162,39,.15)"></div>
+          <div class="wi" style="background:linear-gradient(180deg,#1a2618,#0e160c)"></div>
         </div>
+        <div class="w-rail"></div>
+        <div class="w-items">
+          <div class="wi" style="background:linear-gradient(180deg,#2d1f1f,#1a1010)"></div>
+          <div class="wi" style="background:linear-gradient(180deg,#232323,#141414)"></div>
+          <div class="wi" style="background:linear-gradient(180deg,#1a1830,#0f0e1e)"></div>
+          <div class="wi" style="background:linear-gradient(180deg,#252018,#16130e)"></div>
+        </div>
+      </div>
+      <div class="ai-ov">
+        <div class="ai-lbl"><span class="dot"></span>AI Analizi</div>
+        <div class="ai-ln"><span class="arr">&#8594;</span><span class="v">18&#176;C &middot; R&#252;zgar</span></div>
+        <div class="ai-ln"><span class="arr">&#8594;</span><span class="v">&#304;&#351; Toplant&#305;s&#305;</span></div>
+        <div class="ai-ln"><span class="arr">&#8594;</span><span class="v">Renk: <span class="sc">%97</span></span></div>
+        <div class="ai-ln"><span class="arr" style="color:var(--gold)">&#10003;</span><span class="v">Kombin haz&#305;r<span class="cur"></span></span></div>
+        <div class="ai-tags"><span class="ai-tag">Lacivert</span><span class="ai-tag">K&#305;r&#305;k Beyaz</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="how" id="how">
-  <div class="section-eyebrow reveal">Nas&#305;l &#199;al&#305;&#351;&#305;r</div>
-  <h2 class="section-title reveal rd1">Sabah&#305;n&#305;z&#305; de&#287;i&#351;tiren<br><em>&#252;&#231; ad&#305;m.</em></h2>
+<!-- TICKER -->
+<div class="ticker">
+  <div class="t-track">
+    <div class="t-item">Yapay Zeka Motoru <span class="d">&#9670;</span></div>
+    <div class="t-item">Renk Uyumu Skoru <span class="d">&#9670;</span></div>
+    <div class="t-item">Hava Durumu Entegrasyonu <span class="d">&#9670;</span></div>
+    <div class="t-item">Sanal Deneme <span class="d">&#9670;</span></div>
+    <div class="t-item">Ak&#305;ll&#305; Gard&#305;rop &#220;nitesi <span class="d">&#9670;</span></div>
+    <div class="t-item">Ki&#351;isel Avatar <span class="d">&#9670;</span></div>
+    <div class="t-item">Takvim Entegrasyonu <span class="d">&#9670;</span></div>
+    <div class="t-item">Yapay Zeka Motoru <span class="d">&#9670;</span></div>
+    <div class="t-item">Renk Uyumu Skoru <span class="d">&#9670;</span></div>
+    <div class="t-item">Hava Durumu Entegrasyonu <span class="d">&#9670;</span></div>
+    <div class="t-item">Sanal Deneme <span class="d">&#9670;</span></div>
+    <div class="t-item">Ak&#305;ll&#305; Gard&#305;rop &#220;nitesi <span class="d">&#9670;</span></div>
+    <div class="t-item">Ki&#351;isel Avatar <span class="d">&#9670;</span></div>
+    <div class="t-item">Takvim Entegrasyonu <span class="d">&#9670;</span></div>
+  </div>
+</div>
+
+<!-- HOW -->
+<section class="section-wrap how" id="how">
+  <div class="s-label reveal">Nas&#305;l &#199;al&#305;&#351;&#305;r</div>
+  <h2 class="sh reveal rd1">Sabah&#305;n&#305;z&#305; de&#287;i&#351;tiren<br><em>&#252;&#231; ad&#305;m.</em></h2>
   <div class="steps">
     <div class="step reveal">
-      <div class="step-num">01</div>
-      <div class="step-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+      <div class="s-num">01</div>
+      <div class="s-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
       <h3>Foto&#287;rafla</h3>
       <p>Gard&#305;robunuzdaki her k&#305;yafeti foto&#287;raflay&#305;n. AI an&#305;nda kataloglar &#8212; renk, t&#252;r, mevsim, malzeme.</p>
     </div>
     <div class="step reveal rd1">
-      <div class="step-num">02</div>
-      <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg></div>
+      <div class="s-num">02</div>
+      <div class="s-icon"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg></div>
       <h3>AI Analiz Eder</h3>
       <p>Hava durumu, takviminiz ve stil profiliniz her sabah analiz edilir. Binlerce kombinasyon de&#287;erlendirilir.</p>
     </div>
     <div class="step reveal rd2">
-      <div class="step-num">03</div>
-      <div class="step-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="s-num">03</div>
+      <div class="s-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
       <h3>Kombin Haz&#305;r</h3>
       <p>Size &#246;zel, renk uyumlu, g&#252;ne uygun kombin sunulur. Avatar&#305;n&#305;zda deneyin &#8212; m&#252;kemmel g&#246;r&#252;n&#252;&#351; garantili.</p>
     </div>
   </div>
 </section>
 
-<!-- FEATURES BENTO -->
-<section class="features" id="features">
-  <div class="section-eyebrow reveal">&#214;zellikler</div>
-  <h2 class="section-title reveal rd1">Her &#246;zellik<br><em>bir sebepten var.</em></h2>
+<!-- FEATURES -->
+<section class="section-wrap" style="padding-top:0" id="features">
+  <div class="s-label reveal">&#214;zellikler</div>
+  <h2 class="sh reveal rd1">Her &#246;zellik<br><em>bir sebepten var.</em></h2>
   <div class="bento">
-    <div class="card c7 reveal">
-      <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg></div>
+    <div class="bc s7 reveal">
+      <div class="b-ico"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg></div>
       <h3>Yapay Zeka Motoru</h3>
-      <p>Claude AI gard&#305;robunuzu analiz eder. Hava durumuna, takviminize ve renk uyumuna g&#246;re ki&#351;isel kombinler.</p>
-      <div class="terminal">
-        <div class="t-line"><span class="p">&#8594;</span><span class="r">Gard&#305;rop analizi ba&#351;l&#305;yor...</span></div>
-        <div class="t-line"><span class="p">&#8594;</span><span class="r">Hava: 18&#176;C &middot; R&#252;zagarl&#305;</span></div>
-        <div class="t-line"><span class="p">&#8594;</span><span class="r">Etkinlik: Sabah toplant&#305;s&#305;</span></div>
-        <div class="t-line"><span class="p">&#8594;</span><span class="r">Renk uyumu: <span class="t-score">%97</span> &middot; Lacivert+Bej</span></div>
-        <div class="t-line"><span class="p">&#10003;</span><span class="r">Kombin haz&#305;r.<span class="ai-cursor"></span></span></div>
+      <p>Claude AI gard&#305;robunuzu analiz eder. Hava durumuna, takviminize ve renk uyumuna g&#246;re ki&#351;isel kombinler olu&#351;turur.</p>
+      <div class="term">
+        <div class="tl"><span class="tp">&#8594;</span><span class="tv">Gard&#305;rop analizi ba&#351;l&#305;yor...</span></div>
+        <div class="tl"><span class="tp">&#8594;</span><span class="tv">Hava: 18&#176;C &middot; R&#252;zagarl&#305;</span></div>
+        <div class="tl"><span class="tp">&#8594;</span><span class="tv">Etkinlik: Sabah toplant&#305;s&#305;</span></div>
+        <div class="tl"><span class="tp">&#8594;</span><span class="tv">Renk uyumu: <span class="tsc">%97</span> &middot; Lacivert+Bej</span></div>
+        <div class="tl"><span class="tp" style="color:var(--gold)">&#10003;</span><span class="tv">Kombin haz&#305;r.<span class="cur"></span></span></div>
       </div>
     </div>
-    <div class="card c5 reveal rd1">
-      <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg></div>
-      <h3>Hava Durumu Entegrasyonu</h3>
+    <div class="bc s5 reveal rd1">
+      <div class="b-ico"><svg viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg></div>
+      <h3>Hava Entegrasyonu</h3>
       <p>Ger&#231;ek zamanl&#305; hava verisi kombin &#246;nerinizi her zaman g&#252;ne uygun tutar.</p>
-      <div class="weather-row">
-        <div class="w-pill active"><span class="w-emoji">&#127780;&#65039;</span><span class="w-temp">18&#176;C</span></div>
-        <div class="w-pill"><span class="w-emoji">&#127783;&#65039;</span><span class="w-temp">12&#176;C</span></div>
-        <div class="w-pill"><span class="w-emoji">&#10052;&#65039;</span><span class="w-temp">&#8722;2&#176;C</span></div>
-        <div class="w-pill"><span class="w-emoji">&#9728;&#65039;</span><span class="w-temp">28&#176;C</span></div>
+      <div class="wpills">
+        <div class="wp on"><span class="we">&#127780;&#65039;</span><span class="wt">18&#176;C</span></div>
+        <div class="wp"><span class="we">&#127783;&#65039;</span><span class="wt">12&#176;C</span></div>
+        <div class="wp"><span class="we">&#10052;&#65039;</span><span class="wt">&#8722;2&#176;C</span></div>
+        <div class="wp"><span class="we">&#9728;&#65039;</span><span class="wt">28&#176;C</span></div>
       </div>
     </div>
-    <div class="card c6 reveal">
-      <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg></div>
+    <div class="bc s6 reveal">
+      <div class="b-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg></div>
       <h3>Renk Uyumu Skoru</h3>
-      <p>Geli&#351;mi&#351; renk teorisi motoru her kombinasyonu puanlar. Uyumsuz bir k&#305;yafetle asla evden &#231;&#305;kmayas&#305;n.</p>
-      <div class="color-rows">
-        <div class="c-row"><div class="c-dot" style="background:#1a1a2e"></div><div class="c-bar-bg"><div class="c-bar-fill" style="width:97%"></div></div><span class="c-pct">97%</span></div>
-        <div class="c-row"><div class="c-dot" style="background:#8b6914"></div><div class="c-bar-bg"><div class="c-bar-fill" style="width:91%"></div></div><span class="c-pct">91%</span></div>
-        <div class="c-row"><div class="c-dot" style="background:#d4c5a9"></div><div class="c-bar-bg"><div class="c-bar-fill" style="width:88%"></div></div><span class="c-pct">88%</span></div>
+      <p>Geli&#351;mi&#351; renk teorisi motoru her kombinasyonu puanlar ve uyumsuz kombinleri engeller.</p>
+      <div class="cbars">
+        <div class="crow"><div class="cs" style="background:#1a1a2e"></div><div class="ct"><div class="cf" style="width:97%"></div></div><span class="cp">97%</span></div>
+        <div class="crow"><div class="cs" style="background:#8b6914"></div><div class="ct"><div class="cf" style="width:91%"></div></div><span class="cp">91%</span></div>
+        <div class="crow"><div class="cs" style="background:#d4c5a9"></div><div class="ct"><div class="cf" style="width:88%"></div></div><span class="cp">88%</span></div>
       </div>
     </div>
-    <div class="card c6 reveal rd1">
-      <div class="card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+    <div class="bc s6 reveal rd1">
+      <div class="b-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
       <h3>Otomatik Tan&#305;ma</h3>
       <p>Herhangi bir k&#305;yafeti foto&#287;raflay&#305;n. Yapay zeka an&#305;nda ad&#305;n&#305;, t&#252;r&#252;n&#252; ve mevsimini tan&#305;mlar.</p>
     </div>
-    <div class="card c4 reveal">
-      <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+    <div class="bc s4 reveal">
+      <div class="b-ico"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
       <h3>Ki&#351;isel Avatar</h3>
-      <p>Her kombini, ten renginize ve v&#252;cudunuza uyan avatar&#305;n&#305;zda g&#246;r&#252;n.</p>
+      <p>Her kombini, ten renginize uyan avatar&#305;n&#305;zda g&#246;r&#252;n.</p>
     </div>
-    <div class="card c4 reveal rd1">
-      <div class="card-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-      <h3>Dev Dokunmatik Ekran</h3>
-      <p>Gard&#305;rop kap&#305;n&#305;zdaki tam boyutlu interaktif ekran.</p>
+    <div class="bc s4 reveal rd1">
+      <div class="b-ico"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+      <h3>Dokunmatik Ekran</h3>
+      <p>Gard&#305;rop kap&#305;n&#305;zdaki tam boyutlu AI ekran&#305;.</p>
     </div>
-    <div class="card c4 reveal rd2">
-      <div class="card-icon"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+    <div class="bc s4 reveal rd2">
+      <div class="b-ico"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
       <h3>Mobil Uygulama</h3>
-      <p>iOS ve Android&#8217;de &#252;cretsiz. Gard&#305;robunuz her zaman cebinizde.</p>
+      <p>iOS ve Android&#8217;de &#252;cretsiz. Gard&#305;robunuz cebinizde.</p>
     </div>
   </div>
 </section>
 
 <!-- STATS -->
 <div class="stats">
-  <div class="stat-b reveal"><span class="stat-b-num">3s</span><span class="stat-b-lbl">Kombin &#246;nerisi</span></div>
-  <div class="stat-b reveal rd1"><span class="stat-b-num">&#8734;</span><span class="stat-b-lbl">Stil kombinasyonu</span></div>
-  <div class="stat-b reveal rd2"><span class="stat-b-num">97%</span><span class="stat-b-lbl">Renk uyumu</span></div>
-  <div class="stat-b reveal rd3"><span class="stat-b-num">24/7</span><span class="stat-b-lbl">Hava takibi</span></div>
+  <div class="sc reveal"><span class="sn">3s</span><span class="sl">Kombin &#246;nerisi</span></div>
+  <div class="sc reveal rd1"><span class="sn">&#8734;</span><span class="sl">Stil kombinasyonu</span></div>
+  <div class="sc reveal rd2"><span class="sn">97%</span><span class="sl">Renk uyumu</span></div>
+  <div class="sc reveal rd3"><span class="sn">24/7</span><span class="sl">Hava takibi</span></div>
 </div>
 
+<!-- TESTIMONIALS -->
+<section class="section-wrap">
+  <div class="s-label reveal">Kullan&#305;c&#305;lar</div>
+  <h2 class="sh reveal rd1">&#214;nceden deneyenlerin<br><em>s&#246;zleri.</em></h2>
+  <div class="testi-grid">
+    <div class="tc reveal">
+      <div class="tc-s">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="tc-q">&#8220;Sabahlar&#305; art&#305;k 20 dakika kazan&#305;yorum. Gard&#305;robumu ilk kez bu kadar verimli kulland&#305;m.&#8221;</p>
+      <p class="tc-n">Selin K. &#8212; &#304;stanbul</p>
+    </div>
+    <div class="tc reveal rd1">
+      <div class="tc-s">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="tc-q">&#8220;Renk uyumu &#246;nerisi inan&#305;lmaz. Bir hafta i&#231;inde &#252;&#231; kez &#8216;bug&#252;n &#231;ok iyi g&#246;z&#252;k&#252;yorsun&#8217; dediler.&#8221;</p>
+      <p class="tc-n">Mert A. &#8212; Ankara</p>
+    </div>
+    <div class="tc reveal rd2">
+      <div class="tc-s">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="tc-q">&#8220;&#304;lk ba&#351;ta &#351;&#252;pheciydim. &#220;&#231; g&#252;n sonra e&#351;imden de sipariş ettirdim. E&#351;siz bir deneyim.&#8221;</p>
+      <p class="tc-n">Ay&#351;e D. &#8212; &#304;zmir</p>
+    </div>
+  </div>
+</section>
+
 <!-- PRICING -->
-<section class="pricing" id="pricing">
-  <div class="section-eyebrow reveal">Fiyatland&#305;rma</div>
-  <h2 class="section-title reveal rd1">Uygulama &#252;cretsiz ba&#351;lar.<br><em>Gard&#305;rop i&#231;in bekleme listesi.</em></h2>
+<section class="section-wrap" style="padding-top:0" id="pricing">
+  <div class="s-label reveal">Fiyatland&#305;rma</div>
+  <h2 class="sh reveal rd1">Uygulama &#252;cretsiz ba&#351;lar.<br><em>Gard&#305;rop i&#231;in bekleme listesi.</em></h2>
   <div class="pricing-grid">
-    <div class="p-card reveal">
-      <p class="p-name">&#220;cretsiz</p>
+    <div class="pc reveal">
+      <p class="p-tier">&#220;cretsiz</p>
       <div class="p-price">&#8378;0</div>
-      <p class="p-period">sonsuza dek &#252;cretsiz</p>
-      <ul class="p-features">
+      <p class="p-per">sonsuza dek &#252;cretsiz</p>
+      <ul class="p-list">
         <li class="on">G&#252;nl&#252;k 3 kombin &#246;nerisi</li>
         <li class="on">Hava durumu entegrasyonu</li>
         <li class="on">K&#305;yafet katalo&#287;u (50 &#252;r&#252;n)</li>
@@ -339,14 +440,14 @@ footer{padding:36px 80px;border-top:1px solid var(--border);display:flex;align-i
         <li>S&#305;n&#305;rs&#305;z kombin</li>
         <li>Renk uyumu skoru</li>
       </ul>
-      <a href="#waitlist" class="p-btn outline">&#220;cretsiz Ba&#351;la</a>
+      <a href="#waitlist" class="p-btn out">&#220;cretsiz Ba&#351;la</a>
     </div>
-    <div class="p-card featured reveal rd1">
+    <div class="pc feat reveal rd1">
       <div class="p-badge">En Pop&#252;ler</div>
-      <p class="p-name">Pro</p>
+      <p class="p-tier">Pro</p>
       <div class="p-price">&#8378;149</div>
-      <p class="p-period">/ ay &middot; y&#305;ll&#305;k &#246;deme</p>
-      <ul class="p-features">
+      <p class="p-per">/ ay &middot; y&#305;ll&#305;k &#246;deme</p>
+      <ul class="p-list">
         <li class="on">S&#305;n&#305;rs&#305;z kombin &#246;nerisi</li>
         <li class="on">Sanal deneme (try-on)</li>
         <li class="on">Renk uyumu skoru</li>
@@ -354,13 +455,13 @@ footer{padding:36px 80px;border-top:1px solid var(--border);display:flex;align-i
         <li class="on">Takvim entegrasyonu</li>
         <li class="on">&#214;ncelikli destek</li>
       </ul>
-      <a href="#waitlist" class="p-btn solid">Pro&#8217;ya Ge&#231; &#8594;</a>
+      <a href="#waitlist" class="p-btn sol">Pro&#8217;ya Ge&#231; &#8594;</a>
     </div>
-    <div class="p-card reveal rd2">
-      <p class="p-name">Ak&#305;ll&#305; Gard&#305;rop</p>
-      <div class="p-price" style="font-size:clamp(26px,3vw,40px);line-height:1.3">Erken Eri&#351;im</div>
-      <p class="p-period">fiyat bekleme listesinde a&#231;&#305;klanacak</p>
-      <ul class="p-features">
+    <div class="pc reveal rd2">
+      <p class="p-tier">Ak&#305;ll&#305; Gard&#305;rop</p>
+      <div class="p-price" style="font-size:clamp(28px,3vw,42px);line-height:1.3">Erken Eri&#351;im</div>
+      <p class="p-per">fiyat bekleme listesinde a&#231;&#305;klanacak</p>
+      <ul class="p-list">
         <li class="on">Pro uygulama dahil</li>
         <li class="on">Dokunmatik ekranl&#305; &#252;nite</li>
         <li class="on">Otomatik k&#305;yafet tan&#305;ma</li>
@@ -368,49 +469,78 @@ footer{padding:36px 80px;border-top:1px solid var(--border);display:flex;align-i
         <li class="on">2 y&#305;l garanti</li>
         <li class="on">Erken eri&#351;im indirimi</li>
       </ul>
-      <a href="#waitlist" class="p-btn solid">Fiyat&#305; Garantile &#8594;</a>
+      <a href="#waitlist" class="p-btn sol">Fiyat&#305; Garantile &#8594;</a>
     </div>
   </div>
 </section>
 
 <!-- CTA -->
 <section class="cta" id="waitlist">
-  <div class="section-eyebrow reveal" style="justify-content:center;margin-bottom:24px">Erken Eri&#351;im</div>
-  <h2 class="cta-title reveal rd1">Gard&#305;robunuzun gelece&#287;ini<br><em>&#351;imdiden rezerve edin.</em></h2>
+  <div class="s-label reveal" style="justify-content:center;margin-bottom:28px">Erken Eri&#351;im</div>
+  <h2 class="cta-h reveal rd1">Gard&#305;robunuzun gelece&#287;ini<br><em>&#351;imdiden rezerve edin.</em></h2>
   <p class="cta-sub reveal rd2">Bekleme listesine kat&#305;l&#305;n. Lansman fiyat&#305; yaln&#305;zca ilk &#252;yelere a&#231;&#305;klanacak.</p>
   <div class="cta-form reveal rd3">
-    <input type="email" class="cta-input" id="ctaEmail" placeholder="e-posta adresiniz">
+    <input type="email" class="cta-in" id="ctaEmail" placeholder="e-posta adresiniz">
     <button class="cta-btn" id="ctaBtn">Kat&#305;l</button>
   </div>
-  <p class="cta-note reveal" style="transition-delay:.4s" id="ctaNote">1.319 ki&#351;i zaten listede.</p>
+  <p class="cta-note reveal rd4" id="ctaNote">1.319 ki&#351;i zaten listede.</p>
 </section>
 
 <footer>
-  <div class="footer-logo">AI <span>Furniture</span> X</div>
-  <div class="footer-note">Konsept Tasar&#305;m &nbsp;&middot;&nbsp; 2026</div>
+  <div class="fl">AI <span>Furniture</span> X</div>
+  <div class="fr">
+    <span class="ftime" id="ft"></span>
+    <span class="fcopy">Konsept Tasar&#305;m &middot; 2026</span>
+  </div>
 </footer>
 
 <script>
-var nav = document.getElementById('nav');
-window.addEventListener('scroll', function(){
-  nav.classList.toggle('scrolled', window.scrollY > 30);
-}, {passive:true});
+// CURSOR
+var cr=document.getElementById('cr'),cd=document.getElementById('cd');
+var mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',function(e){
+  mx=e.clientX;my=e.clientY;
+  cd.style.left=mx+'px';cd.style.top=my+'px';
+  var h=document.querySelector('.hero');
+  if(h){
+    var r=h.getBoundingClientRect();
+    if(e.clientY>=r.top&&e.clientY<=r.bottom){
+      var px=((e.clientX-r.left)/r.width*100).toFixed(1);
+      var py=((e.clientY-r.top)/r.height*100).toFixed(1);
+      document.getElementById('spot').style.setProperty('--mx',px+'%');
+      document.getElementById('spot').style.setProperty('--my',py+'%');
+    }
+  }
+});
+document.querySelectorAll('a,button').forEach(function(el){
+  el.addEventListener('mouseenter',function(){cr.style.width='54px';cr.style.height='54px';cr.style.borderColor='var(--cream)'});
+  el.addEventListener('mouseleave',function(){cr.style.width='36px';cr.style.height='36px';cr.style.borderColor='var(--gold)'});
+});
+(function anim(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;cr.style.left=rx+'px';cr.style.top=ry+'px';requestAnimationFrame(anim)})();
 
-var io = new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
-  });
-},{threshold:0.12});
-document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+// NAV
+var nav=document.getElementById('nav');
+window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40)},{passive:true});
 
-document.getElementById('ctaBtn').addEventListener('click', function(){
-  var input = document.getElementById('ctaEmail');
-  var note = document.getElementById('ctaNote');
-  if(input.value && input.value.indexOf('@') > -1){
-    input.value = '';
-    input.placeholder = 'Kaydedildiniz! Yakinda haber verilecek.';
-    input.style.borderColor = 'var(--gold-line)';
-    note.textContent = 'Hosgeldiniz. Lansman onceliginiz hazir.';
+// REVEALS
+var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}})},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+
+// CLOCK
+function tick(){
+  var n=new Date(),h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');
+  var el=document.getElementById('ft');
+  if(el)el.textContent='Istanbul · '+h+':'+m+':'+s;
+}
+tick();setInterval(tick,1000);
+
+// FORM
+document.getElementById('ctaBtn').addEventListener('click',function(){
+  var i=document.getElementById('ctaEmail'),n=document.getElementById('ctaNote');
+  if(i.value&&i.value.indexOf('@')>-1){
+    i.value='';i.placeholder='Kaydedildiniz. Yakında haber verilecek.';
+    i.style.borderColor='var(--gold-line)';
+    n.textContent='Hoş geldiniz. Lansman önceliğiniz hazır.';
   }
 });
 </script>
