@@ -218,9 +218,16 @@
       font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
       color: #000; text-decoration: none; border: 1px solid var(--gold);
       background: var(--gold);
-      padding: 8px 20px; border-radius: 2px; transition: background 0.22s, border-color 0.22s, opacity 0.22s; cursor: pointer;
+      padding: 8px 20px; border-radius: 2px;
+      transition: background 0.22s, border-color 0.22s, box-shadow 0.22s, transform 0.15s;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(202,138,4,0.4), 0 0 40px rgba(202,138,4,0.15);
     }
-    .nav-cta:hover { background: var(--gold-light); border-color: var(--gold-light); }
+    .nav-cta:hover {
+      background: var(--gold-light); border-color: var(--gold-light);
+      box-shadow: 0 0 30px rgba(202,138,4,0.6), 0 0 60px rgba(202,138,4,0.25);
+      transform: translateY(-1px);
+    }
 
     /* ── BUTTONS ── */
     .btn {
@@ -228,12 +235,26 @@
       font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
       color: #fff; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
       padding: 12px 30px; border: 1px solid rgba(255,255,255,0.55);
-      border-radius: 2px; transition: background 0.22s, border-color 0.22s, color 0.22s; cursor: pointer; background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      transition: background 0.22s, border-color 0.22s, color 0.22s, transform 0.18s, box-shadow 0.22s;
+      cursor: pointer; background: rgba(255,255,255,0.06);
       backdrop-filter: blur(8px);
     }
-    .btn:hover { background: rgba(255,255,255,0.16); border-color: #fff; }
-    .btn-solid { background: var(--gold); color: #000; border-color: var(--gold); backdrop-filter: none; font-weight: 700; letter-spacing: 2.5px; }
-    .btn-solid:hover { background: var(--gold-light); border-color: var(--gold-light); }
+    .btn:hover {
+      background: rgba(255,255,255,0.16); border-color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .btn-solid {
+      background: var(--gold); color: #000; border-color: var(--gold);
+      backdrop-filter: none; font-weight: 700; letter-spacing: 2.5px;
+      box-shadow: 0 0 24px rgba(202,138,4,0.45), 0 0 60px rgba(202,138,4,0.18);
+    }
+    .btn-solid:hover {
+      background: var(--gold-light); border-color: var(--gold-light);
+      box-shadow: 0 0 40px rgba(202,138,4,0.65), 0 0 80px rgba(202,138,4,0.3);
+      transform: translateY(-2px);
+    }
     .btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
     /* ── HERO ── */
@@ -249,13 +270,27 @@
     .hero-overlay {
       position: absolute; inset: 0;
       background: linear-gradient(to bottom,
-        rgba(0,0,0,0.55) 0%,
-        rgba(0,0,0,0.25) 30%,
-        rgba(0,0,0,0.45) 60%,
-        rgba(0,0,0,0.92) 85%,
+        rgba(0,0,0,0.62) 0%,
+        rgba(0,0,0,0.28) 28%,
+        rgba(0,0,0,0.50) 58%,
+        rgba(0,0,0,0.94) 84%,
         #000 100%
       );
     }
+    /* gold ambient glow behind hero content */
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 70%;
+      background: radial-gradient(ellipse 80% 60% at 20% 100%,
+        rgba(202,138,4,0.18) 0%,
+        rgba(202,138,4,0.06) 40%,
+        transparent 70%
+      );
+      pointer-events: none; z-index: 1;
+    }
+    .hero-content { z-index: 2; }
     .hero-content {
       position: absolute; bottom: 96px; left: 60px; max-width: 700px;
     }
@@ -267,17 +302,20 @@
     }
     .hero-title {
       font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
-      font-size: clamp(60px, 8.5vw, 118px);
-      font-weight: 700; line-height: 0.96;
-      color: #fff; margin-bottom: 26px;
-      letter-spacing: -0.03em;
-      text-shadow: 0 2px 40px rgba(0,0,0,0.5);
+      font-size: clamp(72px, 11vw, 160px);
+      font-weight: 700; line-height: 0.92;
+      color: #fff; margin-bottom: 32px;
+      letter-spacing: -0.04em;
+      text-shadow:
+        0 0 80px rgba(202,138,4,0.35),
+        0 0 160px rgba(202,138,4,0.15),
+        0 4px 60px rgba(0,0,0,0.6);
     }
     .hero-sub {
       font-family: 'Jost', sans-serif;
-      font-size: 16px; font-weight: 300;
-      color: rgba(255,255,255,0.78); line-height: 1.82;
-      margin-bottom: 38px; max-width: 480px;
+      font-size: 17px; font-weight: 300;
+      color: rgba(255,255,255,0.85); line-height: 1.8;
+      margin-bottom: 40px; max-width: 500px;
     }
     .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
     .hero-inline-form {
@@ -337,9 +375,10 @@
     }
     .section-title {
       font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
-      font-size: clamp(38px, 5.5vw, 76px);
+      font-size: clamp(42px, 6vw, 88px);
       font-weight: 700;
-      line-height: 1.02; margin-bottom: 24px; letter-spacing: -0.035em;
+      line-height: 0.98; margin-bottom: 28px; letter-spacing: -0.04em;
+      text-shadow: 0 0 120px rgba(202,138,4,0.12);
     }
     .section-body {
       font-family: 'Jost', sans-serif;
@@ -355,11 +394,16 @@
     .stat-item {
       background: #000; padding: 36px 28px;
       position: relative; overflow: hidden;
-      border: 1px solid rgba(202,138,4,0.07);
+      border: 1px solid rgba(202,138,4,0.1);
       transform-style: preserve-3d; will-change: transform;
-      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.25s;
+      transition: transform 0.28s cubic-bezier(.22,1,.36,1), box-shadow 0.28s, border-color 0.28s;
+      cursor: default;
     }
-    .stat-item:hover { border-color: rgba(202,138,4,0.28); }
+    .stat-item:hover {
+      border-color: rgba(202,138,4,0.5);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 0 40px rgba(202,138,4,0.15), 0 20px 50px rgba(0,0,0,0.5);
+    }
     .stat-item.reveal {
       opacity: 0;
       transform: perspective(600px) rotateX(-22deg) translateZ(-14px) scale(0.94);
@@ -368,8 +412,11 @@
     .stat-item.reveal.visible { opacity: 1; transform: perspective(600px) rotateX(0) translateZ(0) scale(1); }
     .stat-number {
       font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
-      font-size: clamp(44px, 4.5vw, 64px); font-weight: 700; color: var(--gold);
+      font-size: clamp(48px, 5vw, 72px); font-weight: 700; color: var(--gold);
       display: block; line-height: 1; margin-bottom: 10px; letter-spacing: -0.03em;
+      text-shadow:
+        0 0 30px rgba(202,138,4,0.6),
+        0 0 80px rgba(202,138,4,0.25);
     }
     .stat-label {
       font-size: 11px; font-weight: 400;
@@ -485,7 +532,12 @@
     .phone-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     /* ── FEATURES ── */
-    .features-section { background: #04040f; padding: 144px 60px; }
+    .features-section {
+      background:
+        radial-gradient(ellipse 70% 40% at 50% 0%, rgba(202,138,4,0.08) 0%, transparent 60%),
+        #04040f;
+      padding: 144px 60px;
+    }
     .features-header { text-align: center; margin-bottom: 80px; }
     .features-header .eyebrow { margin-bottom: 18px; }
     .features-header .section-body { margin: 0 auto; }
@@ -500,9 +552,19 @@
       transform-style: preserve-3d; will-change: transform;
       position: relative; overflow: hidden;
       border: 1px solid rgba(202,138,4,0.09);
-      transition: background 0.22s, transform 0.12s ease, box-shadow 0.12s ease, border-color 0.25s;
+      transition: background 0.28s, transform 0.28s cubic-bezier(.22,1,.36,1), box-shadow 0.28s, border-color 0.28s;
+      cursor: pointer;
     }
-    .feature-card:hover { background: #080808; border-color: rgba(202,138,4,0.30); }
+    .feature-card:hover {
+      background: #060606;
+      border-color: rgba(202,138,4,0.55);
+      transform: translateY(-8px) scale(1.015);
+      box-shadow:
+        0 0 0 1px rgba(202,138,4,0.2),
+        0 20px 60px rgba(0,0,0,0.8),
+        0 0 80px rgba(202,138,4,0.12),
+        0 0 160px rgba(202,138,4,0.06);
+    }
     /* 3D perspective entrance — overrides generic reveal-scale for cards */
     .feature-card.reveal-scale {
       opacity: 0;
@@ -558,10 +620,14 @@
     .pricing-card {
       background: #000; padding: 52px 40px; position: relative;
       overflow: hidden; border: 1px solid rgba(202,138,4,0.09);
-      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.25s;
+      transition: transform 0.28s cubic-bezier(.22,1,.36,1), box-shadow 0.28s, border-color 0.28s;
       transform-style: preserve-3d; will-change: transform;
     }
-    .pricing-card:hover { border-color: rgba(202,138,4,0.30); }
+    .pricing-card:hover {
+      border-color: rgba(202,138,4,0.4);
+      transform: translateY(-5px);
+      box-shadow: 0 0 50px rgba(202,138,4,0.1), 0 24px 60px rgba(0,0,0,0.6);
+    }
     .pricing-card.reveal {
       opacity: 0;
       transform: perspective(700px) rotateY(-22deg) translateZ(-24px) scale(0.95);
@@ -668,8 +734,12 @@
 
     /* ── WAITLIST ── */
     .waitlist-section {
-      background: #000; padding: 96px 60px; text-align: center;
-      border-top: 1px solid rgba(255,255,255,0.07);
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 100%, rgba(202,138,4,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(202,138,4,0.06) 0%, transparent 60%),
+        #000;
+      padding: 120px 60px; text-align: center;
+      border-top: 1px solid rgba(202,138,4,0.15);
     }
     .waitlist-section .eyebrow { margin-bottom: 18px; }
     .waitlist-section .section-title { margin-bottom: 18px; }
@@ -1191,23 +1261,32 @@
 
     /* ── PRICING FEATURED GLOW ── */
     .pricing-card.featured {
-      background: #060610;
-      border-top: 1px solid var(--gold);
-      box-shadow: 0 0 0 1px rgba(202,138,4,0.12), 0 0 60px rgba(202,138,4,0.09), 0 0 120px rgba(202,138,4,0.04);
-      transform: scaleY(1.025) translateY(-4px);
+      background: #07070f;
+      border-top: 2px solid var(--gold);
+      box-shadow:
+        0 0 0 1px rgba(202,138,4,0.2),
+        0 0 60px rgba(202,138,4,0.2),
+        0 0 120px rgba(202,138,4,0.1),
+        0 40px 100px rgba(0,0,0,0.7);
+      transform: scaleY(1.04) translateY(-8px);
       z-index: 2;
     }
     .pricing-card.featured .pricing-badge {
-      background: rgba(202,138,4,0.18);
-      box-shadow: 0 0 16px rgba(202,138,4,0.25);
+      background: var(--gold);
+      color: #000;
+      box-shadow: 0 0 24px rgba(202,138,4,0.5), 0 0 60px rgba(202,138,4,0.2);
+    }
+    .pricing-card.featured .pricing-price {
+      text-shadow: 0 0 40px rgba(202,138,4,0.4);
     }
 
     /* ── SCROLL PROGRESS ── */
     #scrollProgress {
       position: fixed; top: 0; left: 0; height: 2px; width: 0%;
-      background: linear-gradient(90deg, var(--gold) 0%, #f59e0b 100%);
+      background: linear-gradient(90deg, #b87d00 0%, var(--gold) 50%, #f5c842 100%);
       z-index: 10000; pointer-events: none;
       transition: width 80ms linear;
+      box-shadow: 0 0 12px rgba(202,138,4,0.8), 0 0 30px rgba(202,138,4,0.4);
     }
 
     /* ── TESTIMONIALS ── */
@@ -1224,9 +1303,14 @@
       background: #080808; border: 1px solid rgba(255,255,255,0.07);
       padding: 44px 36px; position: relative; overflow: hidden;
       transform-style: preserve-3d; will-change: transform;
-      transition: border-color 0.3s ease, transform 0.12s ease, box-shadow 0.12s ease;
+      transition: border-color 0.28s ease, transform 0.28s cubic-bezier(.22,1,.36,1), box-shadow 0.28s ease;
+      cursor: default;
     }
-    .testimonial-card:hover { border-color: rgba(202,138,4,0.3); }
+    .testimonial-card:hover {
+      border-color: rgba(202,138,4,0.45);
+      transform: translateY(-6px);
+      box-shadow: 0 0 40px rgba(202,138,4,0.1), 0 20px 60px rgba(0,0,0,0.6);
+    }
     .testimonial-card.reveal-scale {
       opacity: 0;
       transform: perspective(700px) rotateY(-22deg) translateZ(-24px) scale(0.95);
@@ -1441,7 +1525,7 @@
     /* ── GRAIN TEXTURE OVERLAY ── */
     #grainOverlay {
       position: fixed; inset: 0; z-index: 9999; pointer-events: none;
-      opacity: 0.028; will-change: transform;
+      opacity: 0.045; will-change: transform;
     }
   </style>
 </head>
