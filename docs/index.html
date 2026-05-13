@@ -352,7 +352,20 @@
       gap: 1px; background: rgba(255,255,255,0.1);
       border: 1px solid rgba(255,255,255,0.1);
     }
-    .stat-item { background: #000; padding: 36px 28px; }
+    .stat-item {
+      background: #000; padding: 36px 28px;
+      position: relative; overflow: hidden;
+      border: 1px solid rgba(202,138,4,0.07);
+      transform-style: preserve-3d; will-change: transform;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.25s;
+    }
+    .stat-item:hover { border-color: rgba(202,138,4,0.28); }
+    .stat-item.reveal {
+      opacity: 0;
+      transform: perspective(600px) rotateX(-22deg) translateZ(-14px) scale(0.94);
+      transition: opacity 0.75s ease, transform 0.75s cubic-bezier(.22,1,.36,1), border-color 0.25s;
+    }
+    .stat-item.reveal.visible { opacity: 1; transform: perspective(600px) rotateX(0) translateZ(0) scale(1); }
     .stat-number {
       font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
       font-size: 52px; font-weight: 700; color: var(--gold);
@@ -1210,12 +1223,16 @@
     .testimonial-card {
       background: #080808; border: 1px solid rgba(255,255,255,0.07);
       padding: 44px 36px; position: relative; overflow: hidden;
-      transition: border-color 0.3s ease, transform 0.25s ease;
+      transform-style: preserve-3d; will-change: transform;
+      transition: border-color 0.3s ease, transform 0.12s ease, box-shadow 0.12s ease;
     }
-    .testimonial-card:hover {
-      border-color: rgba(202,138,4,0.3);
-      transform: translateY(-5px);
+    .testimonial-card:hover { border-color: rgba(202,138,4,0.3); }
+    .testimonial-card.reveal-scale {
+      opacity: 0;
+      transform: perspective(700px) rotateY(-22deg) translateZ(-24px) scale(0.95);
+      transition: opacity 0.85s ease, transform 0.85s cubic-bezier(.22,1,.36,1), border-color 0.25s;
     }
+    .testimonial-card.reveal-scale.visible { opacity: 1; transform: perspective(700px) rotateY(0) translateZ(0) scale(1); }
     .testimonial-card::before {
       content: '\201C';
       font-family: 'Bodoni Moda', serif; font-size: 96px; line-height: 1;
@@ -1347,9 +1364,17 @@
       display: flex; align-items: flex-start; gap: 16px;
       padding: 22px 24px; border: 1px solid rgba(255,255,255,0.07);
       border-radius: 2px; background: rgba(255,255,255,0.02);
-      transition: border-color 0.3s, background 0.3s;
+      position: relative; overflow: hidden;
+      transform-style: preserve-3d; will-change: transform;
+      transition: border-color 0.3s, background 0.3s, transform 0.12s ease, box-shadow 0.12s ease;
     }
     .b2b-pillar:hover { border-color: rgba(202,138,4,0.3); background: rgba(202,138,4,0.04); }
+    .b2b-pillar.reveal {
+      opacity: 0;
+      transform: perspective(600px) rotateY(-18deg) translateZ(-16px) scale(0.97);
+      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(.22,1,.36,1), border-color 0.3s;
+    }
+    .b2b-pillar.reveal.visible { opacity: 1; transform: perspective(600px) rotateY(0) translateZ(0) scale(1); }
     .b2b-pillar-icon {
       width: 38px; height: 38px; border-radius: 4px; flex-shrink: 0;
       border: 1px solid rgba(202,138,4,0.3); background: rgba(202,138,4,0.06);
@@ -1362,7 +1387,15 @@
       background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 4px; padding: 52px 40px;
       display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px;
+      position: relative; overflow: hidden;
+      transform-style: preserve-3d; will-change: transform;
     }
+    .b2b-panel.reveal-scale {
+      opacity: 0;
+      transform: perspective(700px) rotateY(22deg) translateZ(-24px) scale(0.95);
+      transition: opacity 0.85s ease, transform 0.85s cubic-bezier(.22,1,.36,1), border-color 0.25s;
+    }
+    .b2b-panel.reveal-scale.visible { opacity: 1; transform: perspective(700px) rotateY(0) translateZ(0) scale(1); }
     .b2b-panel-title { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.22); }
     .b2b-stat-row { display: flex; gap: 40px; }
     .b2b-stat { text-align: center; }
@@ -1482,19 +1515,19 @@
     </div>
     <div class="product-right reveal-right reveal-d1">
       <div class="stats-grid">
-        <div class="stat-item">
+        <div class="stat-item reveal reveal-d1">
           <span class="stat-number" data-target="3" data-suffix="s">3s</span>
           <span class="stat-label" data-tr="Kombin önerisi" data-en="Outfit suggestion">Kombin önerisi</span>
         </div>
-        <div class="stat-item">
+        <div class="stat-item reveal reveal-d2">
           <span class="stat-number">∞</span>
           <span class="stat-label" data-tr="Stil kombinasyonu" data-en="Style combinations">Stil kombinasyonu</span>
         </div>
-        <div class="stat-item">
+        <div class="stat-item reveal reveal-d3">
           <span class="stat-number">AI</span>
           <span class="stat-label" data-tr="Claude destekli motor" data-en="Claude-powered">Claude destekli motor</span>
         </div>
-        <div class="stat-item">
+        <div class="stat-item reveal reveal-d4">
           <span class="stat-number" data-target="24" data-suffix="/7">24/7</span>
           <span class="stat-label" data-tr="Hava durumu takibi" data-en="Weather-aware">Hava durumu takibi</span>
         </div>
@@ -1870,8 +1903,8 @@
       <p class="eyebrow reveal" data-tr="Markalar &amp; Tasarımcılar İçin" data-en="For Brands &amp; Designers">Markalar &amp; Tasarımcılar İçin</p>
       <h2 class="section-title reveal reveal-d1" data-tr="Koleksiyonunuzu<br>AI ile güçlendirin." data-en="Supercharge your<br>collection with AI.">Koleksiyonunuzu<br>AI ile güçlendirin.</h2>
       <p class="section-body reveal reveal-d2" data-tr="Moda markalarına, butiklere ve bağımsız tasarımcılara özel entegrasyon. Ürünlerinizi AI Furniture'ın öneri motoruna entegre edin — müşterileriniz doğru parçayı, doğru anda görsün." data-en="Dedicated integration for fashion brands, boutiques and independent designers. Connect your catalog to AI Furniture's recommendation engine — your customers see the right piece at the right moment.">Moda markalarına, butiklere ve bağımsız tasarımcılara özel entegrasyon. Ürünlerinizi AI Furniture'ın öneri motoruna entegre edin — müşterileriniz doğru parçayı, doğru anda görsün.</p>
-      <div class="b2b-pillars reveal reveal-d3">
-        <div class="b2b-pillar">
+      <div class="b2b-pillars">
+        <div class="b2b-pillar reveal reveal-d1">
           <div class="b2b-pillar-icon">
             <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           </div>
@@ -1880,7 +1913,7 @@
             <p data-tr="REST API ile ürün kataloğunuzu bağlayın. Kullanıcılar gerçek gardıroplarına uygun yeni parçaları AI önerileriyle keşfeder." data-en="Connect your product catalog via REST API. Users discover new pieces that actually fit their existing wardrobe through AI recommendations.">REST API ile ürün kataloğunuzu bağlayın. Kullanıcılar gerçek gardıroplarına uygun yeni parçaları AI önerileriyle keşfeder.</p>
           </div>
         </div>
-        <div class="b2b-pillar">
+        <div class="b2b-pillar reveal reveal-d2">
           <div class="b2b-pillar-icon">
             <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
           </div>
@@ -1889,7 +1922,7 @@
             <p data-tr="AI Furniture motorunu kendi markanızla sunun. Renk sistemi, logo ve UX tamamen özelleştirilebilir." data-en="Deploy the AI Furniture engine under your own brand. Color system, logo and UX are fully customizable.">AI Furniture motorunu kendi markanızla sunun. Renk sistemi, logo ve UX tamamen özelleştirilebilir.</p>
           </div>
         </div>
-        <div class="b2b-pillar">
+        <div class="b2b-pillar reveal reveal-d3">
           <div class="b2b-pillar-icon">
             <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           </div>
@@ -1898,7 +1931,7 @@
             <p data-tr="Koleksiyonunuzun nasıl kombinlendiğini görün. Hangi parçalar birlikte önerildi, hangileri gardıroplarda kalmadı?" data-en="See how your collection gets combined. Which pieces were recommended together, which ones sat unworn?">Koleksiyonunuzun nasıl kombinlendiğini görün. Hangi parçalar birlikte önerildi, hangileri gardıroplarda kalmadı?</p>
           </div>
         </div>
-        <div class="b2b-pillar">
+        <div class="b2b-pillar reveal reveal-d4">
           <div class="b2b-pillar-icon">
             <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
@@ -2493,6 +2526,10 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
 
   applyTilt(document.querySelectorAll('.feature-card'), 15, 22, true);
   applyTilt(document.querySelectorAll('.pricing-card'), 12, 20, true);
+  applyTilt(document.querySelectorAll('.stat-item'), 10, 14, true);
+  applyTilt(document.querySelectorAll('.testimonial-card'), 12, 18, true);
+  applyTilt(document.querySelectorAll('.b2b-pillar'), 6, 10, true);
+  applyTilt(document.querySelectorAll('.b2b-panel'), 10, 16, true);
 })();
 
 // ── PARALLAX COMING-SOON SECTIONS ──
