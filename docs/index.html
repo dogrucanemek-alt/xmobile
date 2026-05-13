@@ -369,8 +369,8 @@
       background: #000;
     }
     .wardrobe-showcase-inner {
-      position: relative; max-width: 1360px; margin: 0 auto;
-      padding: 48px 60px 0;
+      position: relative; max-width: 1480px; margin: 0 auto;
+      padding: 48px 0 0;
     }
     .wardrobe-img-wrap {
       position: relative; width: 100%;
@@ -393,7 +393,7 @@
       filter: brightness(1.05) contrast(1.06) saturate(0.88);
     }
     .wardrobe-img-caption {
-      position: absolute; bottom: 40px; left: 52px; z-index: 3;
+      position: absolute; bottom: 40px; left: 60px; z-index: 3;
     }
     .wardrobe-img-caption .eyebrow { margin-bottom: 10px; }
     .wardrobe-img-caption p {
@@ -403,7 +403,7 @@
       text-transform: uppercase; max-width: 480px;
     }
     .wardrobe-badge {
-      position: absolute; top: 36px; right: 52px; z-index: 3;
+      position: absolute; top: 36px; right: 60px; z-index: 3;
       border: 1px solid rgba(255,255,255,0.2);
       backdrop-filter: blur(12px); background: rgba(0,0,0,0.45);
       padding: 14px 22px; border-radius: 2px; text-align: right;
@@ -439,7 +439,15 @@
     .app-feature-name { font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 500; color: #fff; margin-bottom: 4px; }
     .app-feature-desc { font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.42); line-height: 1.65; }
     .app-store-row { display: flex; gap: 14px; flex-wrap: wrap; }
-    .app-visual { display: flex; justify-content: center; align-items: center; }
+    .app-visual {
+      display: flex; justify-content: center; align-items: center;
+      position: relative;
+    }
+    .app-visual::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(202,138,4,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
     .phone-frame {
       position: relative; width: 290px; aspect-ratio: 9 / 19.5;
       background: linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%);
@@ -540,20 +548,24 @@
 
     /* ── COMING SOON ── */
     .coming-soon {
-      position: relative; width: 100%; height: 100vh; min-height: 680px; overflow: hidden;
+      position: relative; width: 100%; height: 80vh; min-height: 520px; overflow: hidden;
     }
     .coming-soon-bg {
-      position: absolute; inset: -15%; width: calc(100% + 0px); height: calc(100% + 30%);
-      background: 52% 52% / cover no-repeat;
-      transform: translateY(0);
-      animation: kenBurnsPan 22s ease-in-out infinite;
+      position: absolute; inset: -12%; width: calc(100% + 0px); height: calc(100% + 24%);
+      background: 52% 40% / cover no-repeat;
+      transform: translateY(0) scale(1);
+      transition: transform 8s ease-out;
+      animation: kenBurnsPan 26s ease-in-out infinite;
+    }
+    .coming-soon:hover .coming-soon-bg {
+      transform: translateY(var(--cs-parallax, 0px)) scale(1.03);
     }
     @keyframes kenBurnsPan {
-      0%   { background-position: 52% 52%; }
-      25%  { background-position: 46% 48%; }
-      50%  { background-position: 54% 52%; }
-      75%  { background-position: 49% 55%; }
-      100% { background-position: 52% 52%; }
+      0%   { background-position: 52% 40%; }
+      25%  { background-position: 48% 44%; }
+      50%  { background-position: 54% 38%; }
+      75%  { background-position: 50% 42%; }
+      100% { background-position: 52% 40%; }
     }
     @media (prefers-reduced-motion: reduce) { .coming-soon-bg { animation: none; } }
     .wardrobe-glare {
@@ -566,15 +578,15 @@
     .coming-soon-overlay {
       position: absolute; inset: 0;
       background: linear-gradient(to bottom,
-        rgba(0,0,0,0.55) 0%,
-        rgba(0,0,0,0.3) 35%,
-        rgba(0,0,0,0.65) 70%,
-        rgba(0,0,0,0.96) 92%,
+        rgba(0,0,0,0.40) 0%,
+        rgba(0,0,0,0.15) 30%,
+        rgba(0,0,0,0.45) 62%,
+        rgba(0,0,0,0.88) 88%,
         #000 100%
       );
     }
     .coming-soon-content {
-      position: absolute; bottom: 96px; left: 60px; max-width: 680px;
+      position: absolute; bottom: 64px; left: 60px; max-width: 680px;
     }
     .badge {
       display: inline-block;
@@ -768,9 +780,26 @@
         grid-template-columns: unset !important;
         width: max-content !important; max-width: unset !important;
         margin: 0; will-change: transform;
-        padding-left: 60px;
+        padding-left: 60px; padding-right: 60px;
       }
       #featuresGrid .feature-card { flex: 0 0 380px; width: 380px; }
+    }
+    /* Horizontal scroll indicator */
+    .features-scroll-hint {
+      display: none;
+    }
+    @media (min-width: 900px) {
+      .features-scroll-hint {
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        margin-top: 28px; margin-bottom: 0;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+        color: rgba(255,255,255,0.2);
+      }
+      .features-scroll-hint::before, .features-scroll-hint::after {
+        content: ''; display: block; width: 28px; height: 1px;
+        background: rgba(255,255,255,0.12);
+      }
     }
 
     /* ── AIRPORT BOARD FLIP (stat numbers) ── */
@@ -864,6 +893,16 @@
       footer { padding: 56px 24px 40px; }
       .footer-top { grid-template-columns: 1fr; gap: 40px; }
       .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+
+    /* ── SECTION TRANSITION GLOW ── */
+    .section-glow-top {
+      position: relative;
+    }
+    .section-glow-top::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(to right, transparent, rgba(202,138,4,0.2), transparent);
+      z-index: 1; pointer-events: none;
     }
 
     /* ── DEMO SECTION ── */
@@ -1080,7 +1119,7 @@
     .tech-logos-track {
       display: flex; align-items: center;
       width: max-content; gap: 72px;
-      animation: techMarquee 22s linear infinite;
+      animation: techMarquee 40s linear infinite;
     }
     .tech-logos-wrapper:hover .tech-logos-track { animation-play-state: paused; }
     .tech-logo-item {
@@ -1522,7 +1561,7 @@
 <div class="wave-div" aria-hidden="true"><svg viewBox="0 0 2880 56" preserveAspectRatio="none" fill="none"><path d="M0,28 Q180,0 360,28 Q540,56 720,28 Q900,0 1080,28 Q1260,56 1440,28 Q1620,0 1800,28 Q1980,56 2160,28 Q2340,0 2520,28 Q2700,56 2880,28" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></svg></div>
 
 <!-- DEMO -->
-<section class="demo-section" id="demo">
+<section class="demo-section section-glow-top" id="demo">
   <div class="demo-container">
     <div class="demo-text">
       <p class="eyebrow reveal" data-tr="Nasıl Çalışır" data-en="How It Works">Nasıl Çalışır</p>
@@ -1672,6 +1711,7 @@
     <p class="eyebrow reveal" data-tr="Özellikler" data-en="Features">Özellikler</p>
     <h2 class="section-title reveal reveal-d1" data-tr="Giyinme şekliniz için<br>tasarlandı." data-en="Built for the<br>way you dress.">Giyinme şekliniz için<br>tasarlandı.</h2>
     <p class="section-body reveal reveal-d2" data-tr="Her gün harika görünmek için ihtiyacınız olan her şey." data-en="Everything you need to look great, every single day.">Her gün harika görünmek için ihtiyacınız olan her şey.</p>
+    <p class="features-scroll-hint" data-tr="Kaydır" data-en="Scroll">Kaydır</p>
   </div>
   <div class="features-grid" id="featuresGrid">
     <div class="feature-card reveal-scale reveal-d1">
@@ -2308,11 +2348,11 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
       var fGrid = document.getElementById('featuresGrid');
       var fSection = document.querySelector('.features-section');
       if (fGrid && fSection) {
-        var getMaxX = function() { return -(fGrid.scrollWidth - window.innerWidth + 60); };
+        var getMaxX = function() { return -(fGrid.scrollWidth - window.innerWidth); };
         ScrollTrigger.create({
           trigger: fSection,
           start: 'top top',
-          end: function() { return '+=' + (fGrid.scrollWidth - window.innerWidth + 60); },
+          end: function() { return '+=' + (fGrid.scrollWidth - window.innerWidth); },
           pin: true,
           scrub: 1,
           anticipatePin: 1,
