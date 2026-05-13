@@ -1,21 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, StatusBar, TextInput,
   TouchableOpacity, ActivityIndicator, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import { useRouter } from 'expo-router';
 import { supabase } from '../lib/supabase';
 import { useApp } from '../lib/context';
 
 const CYAN = '#00D4FF';
 
 export default function Login() {
+  const router = useRouter();
   const { renkler, dil } = useApp();
   const [email, setEmail]         = useState('');
   const [gonderildi, setGonderildi] = useState(false);
   const [yukleniyor, setYukleniyor] = useState(false);
 
   const tr = dil === 'tr';
+
+  // Magic link tıklandıktan sonra session gelince ana ekrana geç
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) router.replace('/(tabs)/outfits' as any);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const magicLinkGonder = async () => {
     if (!email.trim()) return;

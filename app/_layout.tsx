@@ -42,27 +42,35 @@ function DeepLinkHandler() {
   }, []);
 
   const deepLinkIsle = async (url: string) => {
-    // xmobile://login#access_token=... veya ?access_token=...
-    if (!url.includes('access_token') && !url.includes('token_hash')) return;
+    if (!url) return;
     try {
+      // Hem # hem ? formatını destekle: xmobile://login#access_token=... veya ?token_hash=...
       const parsed = Linking.parse(url);
-      const params = parsed.queryParams ?? {};
-      const hash = (url.split('#')[1] ?? '').split('&').reduce((acc: any, p) => {
+      const params: Record<string, string> = {};
+
+      // Query params
+      Object.entries(parsed.queryParams ?? {}).forEach(([k, v]) => {
+        if (typeof v === 'string') params[k] = v;
+      });
+
+      // Hash params (#key=val&key2=val2)
+      const hashStr = url.split('#')[1] ?? '';
+      hashStr.split('&').forEach(p => {
         const [k, v] = p.split('=');
-        if (k) acc[k] = decodeURIComponent(v ?? '');
-        return acc;
-      }, {});
-      const accessToken  = (params['access_token']  ?? hash['access_token'])  as string | undefined;
-      const refreshToken = (params['refresh_token'] ?? hash['refresh_token']) as string | undefined;
-      const tokenHash    = (params['token_hash']    ?? hash['token_hash'])    as string | undefined;
-      const type         = (params['type']          ?? hash['type'])          as string | undefined;
+        if (k && v) params[k] = decodeURIComponent(v);
+      });
+
+      const accessToken  = params['access_token'];
+      const refreshToken = params['refresh_token'];
+      const tokenHash    = params['token_hash'];
+      const type         = params['type'] ?? 'magiclink';
 
       if (accessToken && refreshToken) {
         await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
-      } else if (tokenHash && type) {
+      } else if (tokenHash) {
         await supabase.auth.verifyOtp({ token_hash: tokenHash, type: type as any });
       }
-    } catch {}
+    } catch { /* deep link parse hatası — sessizce geç */ }
   };
 
   return null;
