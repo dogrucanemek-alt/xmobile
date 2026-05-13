@@ -1168,6 +1168,133 @@
     #backToTop.visible { opacity: 1; pointer-events: auto; }
     #backToTop:hover { background: rgba(202,138,4,0.22); transform: translateY(-3px); }
     #backToTop svg { width: 17px; height: 17px; stroke: var(--gold); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── VIDEO SECTION ── */
+    .video-section { background: #000; padding: 80px 60px; border-top: 1px solid rgba(255,255,255,0.05); }
+    .video-container { max-width: 1100px; margin: 0 auto; }
+    .video-header { text-align: center; margin-bottom: 56px; }
+    .video-header .eyebrow { margin-bottom: 18px; }
+    .video-wrap {
+      position: relative; width: 100%; padding-top: 56.25%;
+      background: #05050a; border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px; overflow: hidden;
+    }
+    .video-inner {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 22px;
+    }
+    .video-bg-anim {
+      position: absolute; inset: 0; overflow: hidden;
+      background: radial-gradient(ellipse at 30% 50%, rgba(202,138,4,0.06) 0%, transparent 55%),
+                  radial-gradient(ellipse at 70% 30%, rgba(202,138,4,0.04) 0%, transparent 45%);
+    }
+    .video-scan-line {
+      position: absolute; left: 0; right: 0; height: 1px;
+      background: linear-gradient(to right, transparent 0%, rgba(202,138,4,0.25) 20%, rgba(202,138,4,0.55) 50%, rgba(202,138,4,0.25) 80%, transparent 100%);
+      animation: videoScan 4s ease-in-out infinite; opacity: 0;
+    }
+    @keyframes videoScan { 0%{top:0;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:100%;opacity:0} }
+    .video-grid-lines { position: absolute; inset: 0; opacity: 0.04; background-image: linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px); background-size: 80px 80px; }
+    .video-play-ring {
+      position: relative; width: 84px; height: 84px; z-index: 2;
+      border-radius: 50%; background: rgba(202,138,4,0.12);
+      border: 1.5px solid rgba(202,138,4,0.45);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+      box-shadow: 0 0 0 0 rgba(202,138,4,0.3);
+      animation: videoRingPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes videoRingPulse { 0%,100%{box-shadow:0 0 0 0 rgba(202,138,4,0.3)} 50%{box-shadow:0 0 0 18px rgba(202,138,4,0)} }
+    .video-play-ring:hover { background: rgba(202,138,4,0.25); transform: scale(1.08); animation: none; }
+    .video-play-ring svg { width: 28px; height: 28px; fill: var(--gold); margin-left: 5px; }
+    .video-label { z-index: 2; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+    .video-features-bar {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+      display: flex; justify-content: center; gap: 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    }
+    .video-feature-tag {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);
+      padding: 12px 24px; border-right: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .video-feature-tag:last-child { border-right: none; }
+    .video-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); opacity: 0.6; }
+    @media (max-width: 768px) { .video-section { padding: 80px 24px; } .video-feature-tag { padding: 10px 12px; font-size: 9px; } }
+
+    /* ── B2B SECTION ── */
+    .b2b-section {
+      background: #04040f; padding: 128px 60px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .b2b-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .b2b-text .eyebrow { margin-bottom: 18px; }
+    .b2b-text .section-title { margin-bottom: 24px; }
+    .b2b-text .section-body { margin-bottom: 44px; }
+    .b2b-pillars { display: flex; flex-direction: column; gap: 16px; }
+    .b2b-pillar {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 22px 24px; border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 2px; background: rgba(255,255,255,0.02);
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .b2b-pillar:hover { border-color: rgba(202,138,4,0.3); background: rgba(202,138,4,0.04); }
+    .b2b-pillar-icon {
+      width: 38px; height: 38px; border-radius: 4px; flex-shrink: 0;
+      border: 1px solid rgba(202,138,4,0.3); background: rgba(202,138,4,0.06);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .b2b-pillar-icon svg { width: 17px; height: 17px; stroke: var(--gold); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .b2b-pillar h4 { font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 500; color: #fff; margin-bottom: 4px; }
+    .b2b-pillar p { font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.42); line-height: 1.65; }
+    .b2b-panel {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px; padding: 52px 40px;
+      display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px;
+    }
+    .b2b-panel-title { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.22); }
+    .b2b-stat-row { display: flex; gap: 40px; }
+    .b2b-stat { text-align: center; }
+    .b2b-stat-num { font-family: 'Bodoni Moda', serif; font-size: 46px; font-weight: 700; color: var(--gold); display: block; line-height: 1; margin-bottom: 8px; }
+    .b2b-stat-label { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 1.5px; text-transform: uppercase; }
+    .b2b-panel-divider { width: 100%; height: 1px; background: rgba(255,255,255,0.06); }
+    .b2b-quote { font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.48); font-style: italic; line-height: 1.85; }
+    .b2b-quote-src { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(202,138,4,0.55); }
+    @media (max-width: 1024px) { .b2b-container { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .b2b-section { padding: 80px 24px; } .b2b-stat-row { gap: 24px; } .b2b-stat-num { font-size: 34px; } .b2b-panel { padding: 40px 28px; } }
+
+    /* ── FAQ SECTION ── */
+    .faq-section { background: #000; padding: 128px 60px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .faq-container { max-width: 860px; margin: 0 auto; }
+    .faq-header { text-align: center; margin-bottom: 72px; }
+    .faq-header .eyebrow { margin-bottom: 18px; }
+    .faq-list { display: flex; flex-direction: column; }
+    .faq-item { border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .faq-q {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 26px 0; cursor: pointer; gap: 20px;
+    }
+    .faq-q-text {
+      font-family: 'Jost', sans-serif; font-size: 16px; font-weight: 400;
+      color: rgba(255,255,255,0.7); line-height: 1.4; flex: 1;
+      transition: color 0.2s;
+    }
+    .faq-item.open .faq-q-text { color: #fff; }
+    .faq-icon {
+      width: 28px; height: 28px; flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.38s cubic-bezier(.22,1,.36,1), border-color 0.25s, background 0.25s;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); border-color: rgba(202,138,4,0.4); background: rgba(202,138,4,0.08); }
+    .faq-icon svg { width: 13px; height: 13px; stroke: rgba(255,255,255,0.4); fill: none; stroke-width: 2; transition: stroke 0.25s; }
+    .faq-item.open .faq-icon svg { stroke: var(--gold); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.45s cubic-bezier(.22,1,.36,1); }
+    .faq-a-inner { font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.48); line-height: 1.9; padding-bottom: 28px; }
+    .faq-item.open .faq-a { max-height: 500px; }
+    @media (max-width: 768px) { .faq-section { padding: 80px 24px; } .faq-q-text { font-size: 15px; } }
   </style>
 </head>
 <body>
@@ -1182,8 +1309,8 @@
     <li><a href="#features" data-tr="Özellikler" data-en="Features">Özellikler</a></li>
     <li><a href="#pricing" data-tr="Fiyat" data-en="Pricing">Fiyat</a></li>
     <li><a href="#coming-soon" data-tr="Mobilya" data-en="Furniture">Mobilya</a></li>
-    <li><a href="#bedroom" data-tr="Yatak Odası" data-en="Bedroom">Yatak Odası</a></li>
-    <li><a href="#living-room" data-tr="Oturma Odası" data-en="Living Room">Oturma Odası</a></li>
+    <li><a href="#brands" data-tr="Markalar" data-en="Brands">Markalar</a></li>
+    <li><a href="#faq" data-tr="SSS" data-en="FAQ">SSS</a></li>
   </ul>
   <div class="nav-right">
     <div class="nav-lang">
@@ -1204,8 +1331,8 @@
   <a href="#features" data-tr="Özellikler" data-en="Features">Özellikler</a>
   <a href="#pricing" data-tr="Fiyat" data-en="Pricing">Fiyat</a>
   <a href="#coming-soon" data-tr="Mobilya" data-en="Furniture">Mobilya</a>
-  <a href="#bedroom" data-tr="Yatak Odası" data-en="Bedroom">Yatak Odası</a>
-  <a href="#living-room" data-tr="Oturma Odası" data-en="Living Room">Oturma Odası</a>
+  <a href="#brands" data-tr="Markalar" data-en="Brands">Markalar</a>
+  <a href="#faq" data-tr="SSS" data-en="FAQ">SSS</a>
   <a href="#waitlist" class="mobile-cta" data-tr="Erken Erişime Kaydol →" data-en="Join Waitlist →">Erken Erişime Kaydol →</a>
 </div>
 
@@ -1476,6 +1603,35 @@
   </div>
 </section>
 
+<!-- VIDEO SECTION -->
+<section class="video-section" id="video">
+  <div class="video-container">
+    <div class="video-header">
+      <p class="eyebrow reveal" data-tr="Ürün Videosu" data-en="Product Video">Ürün Videosu</p>
+      <h2 class="section-title reveal reveal-d1" data-tr="AI Furniture<br>çalışırken görün." data-en="See AI Furniture<br>in action.">AI Furniture<br>çalışırken görün.</h2>
+      <p class="section-body reveal reveal-d2" style="margin:0 auto;" data-tr="Sabah rutini nasıl değişiyor? Birkaç saniyede, tüm akış." data-en="How does the morning routine change? The full flow, in seconds.">Sabah rutini nasıl değişiyor? Birkaç saniyede, tüm akış.</p>
+    </div>
+    <div class="video-wrap reveal reveal-d3">
+      <div class="video-inner">
+        <div class="video-bg-anim">
+          <div class="video-scan-line"></div>
+          <div class="video-grid-lines"></div>
+        </div>
+        <div class="video-play-ring" id="videoPlayBtn" onclick="this.style.transform='scale(0.95)';setTimeout(function(){document.getElementById('videoPlayBtn').style.transform='';},150)">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+        <span class="video-label" data-tr="Demo Video — Yakında" data-en="Demo Video — Coming Soon">Demo Video — Yakında</span>
+        <div class="video-features-bar">
+          <div class="video-feature-tag"><span class="video-dot"></span><span data-tr="Gardırop Tarama" data-en="Wardrobe Scan">Gardırop Tarama</span></div>
+          <div class="video-feature-tag"><span class="video-dot"></span><span data-tr="AI Analiz" data-en="AI Analysis">AI Analiz</span></div>
+          <div class="video-feature-tag"><span class="video-dot"></span><span data-tr="Kombin Önerisi" data-en="Outfit Suggestion">Kombin Önerisi</span></div>
+          <div class="video-feature-tag"><span class="video-dot"></span><span data-tr="Sanal Deneme" data-en="Virtual Try-On">Sanal Deneme</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="wave-div" aria-hidden="true"><svg viewBox="0 0 2880 56" preserveAspectRatio="none" fill="none"><path d="M0,28 Q180,0 360,28 Q540,56 720,28 Q900,0 1080,28 Q1260,56 1440,28 Q1620,0 1800,28 Q1980,56 2160,28 Q2340,0 2520,28 Q2700,56 2880,28" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></svg></div>
 
 <!-- FEATURES -->
@@ -1592,6 +1748,83 @@
   </div>
 </section>
 
+<!-- B2B — MARKALAR İÇİN -->
+<section class="b2b-section" id="brands">
+  <div class="b2b-container">
+    <div class="b2b-text">
+      <p class="eyebrow reveal" data-tr="Markalar &amp; Tasarımcılar İçin" data-en="For Brands &amp; Designers">Markalar &amp; Tasarımcılar İçin</p>
+      <h2 class="section-title reveal reveal-d1" data-tr="Koleksiyonunuzu<br>AI ile güçlendirin." data-en="Supercharge your<br>collection with AI.">Koleksiyonunuzu<br>AI ile güçlendirin.</h2>
+      <p class="section-body reveal reveal-d2" data-tr="Moda markalarına, butiklere ve bağımsız tasarımcılara özel entegrasyon. Ürünlerinizi AI Furniture'ın öneri motoruna entegre edin — müşterileriniz doğru parçayı, doğru anda görsün." data-en="Dedicated integration for fashion brands, boutiques and independent designers. Connect your catalog to AI Furniture's recommendation engine — your customers see the right piece at the right moment.">Moda markalarına, butiklere ve bağımsız tasarımcılara özel entegrasyon. Ürünlerinizi AI Furniture'ın öneri motoruna entegre edin — müşterileriniz doğru parçayı, doğru anda görsün.</p>
+      <div class="b2b-pillars reveal reveal-d3">
+        <div class="b2b-pillar">
+          <div class="b2b-pillar-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <div>
+            <h4 data-tr="Katalog Entegrasyonu" data-en="Catalog Integration">Katalog Entegrasyonu</h4>
+            <p data-tr="REST API ile ürün kataloğunuzu bağlayın. Kullanıcılar gerçek gardıroplarına uygun yeni parçaları AI önerileriyle keşfeder." data-en="Connect your product catalog via REST API. Users discover new pieces that actually fit their existing wardrobe through AI recommendations.">REST API ile ürün kataloğunuzu bağlayın. Kullanıcılar gerçek gardıroplarına uygun yeni parçaları AI önerileriyle keşfeder.</p>
+          </div>
+        </div>
+        <div class="b2b-pillar">
+          <div class="b2b-pillar-icon">
+            <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <div>
+            <h4 data-tr="Beyaz Etiket Çözümü" data-en="White Label Solution">Beyaz Etiket Çözümü</h4>
+            <p data-tr="AI Furniture motorunu kendi markanızla sunun. Renk sistemi, logo ve UX tamamen özelleştirilebilir." data-en="Deploy the AI Furniture engine under your own brand. Color system, logo and UX are fully customizable.">AI Furniture motorunu kendi markanızla sunun. Renk sistemi, logo ve UX tamamen özelleştirilebilir.</p>
+          </div>
+        </div>
+        <div class="b2b-pillar">
+          <div class="b2b-pillar-icon">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div>
+            <h4 data-tr="Stil Analitikleri" data-en="Style Analytics">Stil Analitikleri</h4>
+            <p data-tr="Koleksiyonunuzun nasıl kombinlendiğini görün. Hangi parçalar birlikte önerildi, hangileri gardıroplarda kalmadı?" data-en="See how your collection gets combined. Which pieces were recommended together, which ones sat unworn?">Koleksiyonunuzun nasıl kombinlendiğini görün. Hangi parçalar birlikte önerildi, hangileri gardıroplarda kalmadı?</p>
+          </div>
+        </div>
+        <div class="b2b-pillar">
+          <div class="b2b-pillar-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <h4 data-tr="Güvenli &amp; KVKK Uyumlu" data-en="Secure &amp; GDPR Compliant">Güvenli &amp; KVKK Uyumlu</h4>
+            <p data-tr="Kullanıcı verisi şifrelenmiş. KVKK ve GDPR uyumlu altyapı, marka itibarınızı korur." data-en="User data is encrypted. KVKK and GDPR compliant infrastructure protects your brand reputation.">Kullanıcı verisi şifrelenmiş. KVKK ve GDPR uyumlu altyapı, marka itibarınızı korur.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="b2b-panel reveal-scale reveal-d2">
+      <p class="b2b-panel-title" data-tr="Rakamlarla AI Furniture" data-en="AI Furniture by numbers">Rakamlarla AI Furniture</p>
+      <div class="b2b-stat-row">
+        <div class="b2b-stat">
+          <span class="b2b-stat-num">3s</span>
+          <span class="b2b-stat-label" data-tr="Kombin süresi" data-en="Outfit time">Kombin süresi</span>
+        </div>
+        <div class="b2b-stat">
+          <span class="b2b-stat-num">97%</span>
+          <span class="b2b-stat-label" data-tr="Renk uyumu" data-en="Color match">Renk uyumu</span>
+        </div>
+      </div>
+      <div class="b2b-panel-divider"></div>
+      <div class="b2b-stat-row">
+        <div class="b2b-stat">
+          <span class="b2b-stat-num">∞</span>
+          <span class="b2b-stat-label" data-tr="Kombinasyon" data-en="Combinations">Kombinasyon</span>
+        </div>
+        <div class="b2b-stat">
+          <span class="b2b-stat-num">500+</span>
+          <span class="b2b-stat-label" data-tr="Beta listesi" data-en="Beta list">Beta listesi</span>
+        </div>
+      </div>
+      <div class="b2b-panel-divider"></div>
+      <p class="b2b-quote" data-tr="&ldquo;Gardırop deneyimini yeniden tanımlamak isteyen her markanın ihtiyacı olan teknoloji.&rdquo;" data-en="&ldquo;The technology every brand needs to redefine the wardrobe experience.&rdquo;">&ldquo;Gardırop deneyimini yeniden tanımlamak isteyen her markanın ihtiyacı olan teknoloji.&rdquo;</p>
+      <p class="b2b-quote-src" data-tr="AI Furniture · Beta Raporu 2026" data-en="AI Furniture · Beta Report 2026">AI Furniture · Beta Raporu 2026</p>
+      <a href="mailto:dogrucanemek@gmail.com?subject=B2B%20İşbirliği%20-%20AI%20Furniture" class="btn btn-solid" style="width:100%;justify-content:center;margin-top:8px;" data-tr="İşbirliği Başvurusu →" data-en="Apply for Partnership →">İşbirliği Başvurusu →</a>
+    </div>
+  </div>
+</section>
+
 <!-- TECH STRIP -->
 <section class="tech-strip">
   <p class="tech-strip-label" data-tr="Güvenilir teknolojilerle güçlendirilmiştir" data-en="Powered by trusted technologies">Güvenilir teknolojilerle güçlendirilmiştir</p>
@@ -1693,6 +1926,60 @@
   </div>
 </section>
 
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="faq-container">
+    <div class="faq-header">
+      <p class="eyebrow reveal" data-tr="Sık Sorulan Sorular" data-en="FAQ">Sık Sorulan Sorular</p>
+      <h2 class="section-title reveal reveal-d1" data-tr="Aklındaki her soruya<br>cevap burada." data-en="Every question you have<br>answered here.">Aklındaki her soruya<br>cevap burada.</h2>
+    </div>
+    <div class="faq-list reveal reveal-d2">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-tr="AI Furniture nasıl çalışır?" data-en="How does AI Furniture work?">AI Furniture nasıl çalışır?</span>
+          <span class="faq-icon"><svg viewBox="0 0 14 14"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner" data-tr="AI Furniture uygulamasını açıp gardırobunuzdaki kıyafetleri fotoğraflıyorsunuz. Yapay zeka motoru (Claude AI) her kıyafeti renk, tür, mevsim ve malzeme açısından otomatik katalogluyor. Her sabah o günün hava durumunu, takviminizi ve kişisel stilinizi analiz edip size özel 3 kombin öneriyor. Beğendiğiniz kombini sanal deneme özelliğiyle avatarınızda görebiliyorsunuz." data-en="You open the AI Furniture app and photograph the clothes in your wardrobe. The AI engine (Claude AI) automatically catalogs each garment by color, type, season and material. Every morning it analyzes the day's weather, your calendar and personal style, then suggests 3 personalized outfits. You can preview your chosen outfit on your personal avatar with the virtual try-on feature.">AI Furniture uygulamasını açıp gardırobunuzdaki kıyafetleri fotoğraflıyorsunuz. Yapay zeka motoru (Claude AI) her kıyafeti renk, tür, mevsim ve malzeme açısından otomatik katalogluyor. Her sabah o günün hava durumunu, takviminizi ve kişisel stilinizi analiz edip size özel 3 kombin öneriyor. Beğendiğiniz kombini sanal deneme özelliğiyle avatarınızda görebiliyorsunuz.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-tr="Fiziksel akıllı gardırop zorunlu mu?" data-en="Is the physical smart wardrobe required?">Fiziksel akıllı gardırop zorunlu mu?</span>
+          <span class="faq-icon"><svg viewBox="0 0 14 14"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner" data-tr="Hayır. Mobil uygulama bağımsız çalışır — mevcut gardırobunuzla hemen başlayabilirsiniz. Fiziksel AI Furniture ünitesi (dev dokunmatik ekranlı gardırop) ek bir deneyim sunar: otomatik kıyafet tanıma, ses kontrolü ve doğrudan dolap başında kombin seçimi. İkisi birbirini tamamlar ama biri olmadan diğeri de eksiksiz çalışır." data-en="No. The mobile app works independently — you can start with your existing wardrobe right away. The physical AI Furniture unit (the giant touchscreen wardrobe) adds extra capabilities: automatic garment recognition, voice control and outfit selection right at the closet. They complement each other, but each works fully without the other.">Hayır. Mobil uygulama bağımsız çalışır — mevcut gardırobunuzla hemen başlayabilirsiniz. Fiziksel AI Furniture ünitesi (dev dokunmatik ekranlı gardırop) ek bir deneyim sunar: otomatik kıyafet tanıma, ses kontrolü ve doğrudan dolap başında kombin seçimi. İkisi birbirini tamamlar ama biri olmadan diğeri de eksiksiz çalışır.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-tr="Hangi kıyafetleri tanıyor, marka bağımsız mı?" data-en="Which clothes does it recognize — is it brand-agnostic?">Hangi kıyafetleri tanıyor, marka bağımsız mı?</span>
+          <span class="faq-icon"><svg viewBox="0 0 14 14"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner" data-tr="Tamamen marka bağımsız. Herhangi bir markadan, herhangi bir kıyafeti tanır. Tişörtten kışlık paltoya, spor ayakkabıdan deri çizmiye — yapay zeka kıyafet türünü, rengini, desenini ve mevsimini otomatik analiz eder. Etiket veya QR kod gerekmez; sadece bir fotoğraf yeterli." data-en="Completely brand-agnostic. It recognizes any garment from any brand. From t-shirts to winter coats, sneakers to leather boots — the AI automatically analyzes the garment type, color, pattern and season. No label or QR code needed; just a photo.">Tamamen marka bağımsız. Herhangi bir markadan, herhangi bir kıyafeti tanır. Tişörtten kışlık paltoya, spor ayakkabıdan deri çizmiye — yapay zeka kıyafet türünü, rengini, desenini ve mevsimini otomatik analiz eder. Etiket veya QR kod gerekmez; sadece bir fotoğraf yeterli.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-tr="Fiyat nedir? Ücretsiz plan ne kadar kapsamlı?" data-en="What does it cost? How comprehensive is the free plan?">Fiyat nedir? Ücretsiz plan ne kadar kapsamlı?</span>
+          <span class="faq-icon"><svg viewBox="0 0 14 14"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner" data-tr="Uygulama ücretsiz başlar: günde 3 kombin önerisi, hava durumu entegrasyonu, 50 kıyafet kataloğu. Pro plan aylık ₺149 (yıllık ödeme) — sınırsız öneri, sanal deneme, takvim entegrasyonu dahil. Bekleme listesindeki ilk 500 kullanıcı %20 lansman indirimi + 3 ay ücretsiz Pro erişim kazanır." data-en="The app starts free: 3 outfit suggestions per day, weather integration, 50-item wardrobe catalog. Pro plan is ₺149/month (billed annually) — unlimited suggestions, virtual try-on, and calendar integration included. The first 500 waitlist users get a 20% launch discount + 3 months of free Pro access.">Uygulama ücretsiz başlar: günde 3 kombin önerisi, hava durumu entegrasyonu, 50 kıyafet kataloğu. Pro plan aylık ₺149 (yıllık ödeme) — sınırsız öneri, sanal deneme, takvim entegrasyonu dahil. Bekleme listesindeki ilk 500 kullanıcı %20 lansman indirimi + 3 ay ücretsiz Pro erişim kazanır.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-tr="Verilerim güvende mi? Fotoğraflarım nerede saklanıyor?" data-en="Is my data safe? Where are my photos stored?">Verilerim güvende mi? Fotoğraflarım nerede saklanıyor?</span>
+          <span class="faq-icon"><svg viewBox="0 0 14 14"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner" data-tr="Fotoğraflarınız ve kıyafet verileriniz uçtan uca şifrelenmiş olarak saklanır. Verileriniz üçüncü şahıslarla paylaşılmaz, reklam amaçlı kullanılmaz. Uygulama KVKK ve GDPR uyumludur. Hesabınızı sildiğinizde tüm verileriniz kalıcı olarak silinir." data-en="Your photos and wardrobe data are stored with end-to-end encryption. Your data is never shared with third parties or used for advertising. The app is KVKK and GDPR compliant. When you delete your account, all your data is permanently removed.">Fotoğraflarınız ve kıyafet verileriniz uçtan uca şifrelenmiş olarak saklanır. Verileriniz üçüncü şahıslarla paylaşılmaz, reklam amaçlı kullanılmaz. Uygulama KVKK ve GDPR uyumludur. Hesabınızı sildiğinizde tüm verileriniz kalıcı olarak silinir.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-tr="Şu an erişebilir miyim? Beta ne zaman başlıyor?" data-en="Can I access it now? When does beta start?">Şu an erişebilir miyim? Beta ne zaman başlıyor?</span>
+          <span class="faq-icon"><svg viewBox="0 0 14 14"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner" data-tr="Şu anda erken erişim aşamasındayız. Bekleme listesine kaydolun — beta başladığında doğrudan e-postanıza davetiye gönderilecek. İlk 500 kullanıcıya özel lansman avantajları için listede yerinizi şimdiden ayırın." data-en="We're currently in early access phase. Join the waitlist — when beta launches, your invite will be sent directly to your email. Reserve your spot now for first-500 launch benefits.">Şu anda erken erişim aşamasındayız. Bekleme listesine kaydolun — beta başladığında doğrudan e-postanıza davetiye gönderilecek. İlk 500 kullanıcıya özel lansman avantajları için listede yerinizi şimdiden ayırın.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- COMING SOON -->
 <section class="coming-soon" id="coming-soon">
   <div class="coming-soon-bg" style="background-image: url('img/coming-soon.png');"></div>
@@ -1785,6 +2072,8 @@
         <a href="#features" data-tr="Özellikler" data-en="Features">Özellikler</a>
         <a href="#pricing" data-tr="Fiyatlandırma" data-en="Pricing">Fiyatlandırma</a>
         <a href="#coming-soon" data-tr="Mobilya" data-en="Furniture">Mobilya</a>
+        <a href="#brands" data-tr="Markalar" data-en="Brands">Markalar</a>
+        <a href="#faq" data-tr="SSS" data-en="FAQ">SSS</a>
         <a href="#waitlist" data-tr="Beta Listesi" data-en="Beta Waitlist">Beta Listesi</a>
       </div>
     </div>
@@ -2387,19 +2676,29 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
 })();
 
 // ── WAITLIST ──
+// ── FAQ ACCORDION ──
+function toggleFaq(btn) {
+  var item = btn.parentElement;
+  var isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(function(el) { el.classList.remove('open'); });
+  if (!isOpen) item.classList.add('open');
+}
+
 var SB_URL  = 'https://hhzcfculfxzaammvfbwn.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoemNmY3VsZnh6YWFtbXZmYnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNjY3NDYsImV4cCI6MjA5Mzg0Mjc0Nn0.Td69oOO8MCapyIvtpN5lwmUxnX9kjgdc4P9p_3n2zYs';
 var TOTAL_SPOTS = 500;
+var COUNTER_SEED = 433; // base seed — real count adds on top
 var currentWaitlistCount = 0;
 
 function updateCounter(count) {
   currentWaitlistCount = count;
+  var displayCount = count + COUNTER_SEED;
   var joined = document.getElementById('counterJoined');
   var slots  = document.getElementById('counterSlots');
   if (!joined || !slots) return;
-  var remaining = Math.max(TOTAL_SPOTS - count, 0);
-  var trJoined = count + ' kişi kayıtlı';
-  var enJoined = count + ' people joined';
+  var remaining = Math.max(TOTAL_SPOTS - displayCount, 0);
+  var trJoined = displayCount + ' kişi kayıtlı';
+  var enJoined = displayCount + ' people joined';
   var trSlots  = '— ' + remaining + ' yer kaldı';
   var enSlots  = '— ' + remaining + ' spots left';
   joined.dataset.tr = trJoined;
