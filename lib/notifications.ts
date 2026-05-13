@@ -1,8 +1,9 @@
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const NOTIF_KEY = 'xmobile_notif_scheduled';
+const NOTIF_KEY      = 'xmobile_notif_scheduled';
 const NOTIF_ACIK_KEY = 'xmobile_notif_acik';
+const NOTIF_SAAT_KEY = 'xmobile_notif_saat';
 
 // expo-notifications push support removed from Expo Go in SDK 53+
 // Conditionally import to avoid startup crash in Expo Go
@@ -39,6 +40,15 @@ export const bildirimAcikMi = async (): Promise<boolean> => {
   return val !== 'false';
 };
 
+export const bildirimSaatAl = async (): Promise<number> => {
+  const val = await AsyncStorage.getItem(NOTIF_SAAT_KEY);
+  return val ? parseInt(val, 10) : 8;
+};
+
+export const bildirimSaatKaydet = async (saat: number) => {
+  await AsyncStorage.setItem(NOTIF_SAAT_KEY, String(saat));
+};
+
 export const gunlukBildirimKur = async (dil?: 'tr' | 'en') => {
   if (!Notif) return;
   try {
@@ -53,18 +63,20 @@ export const gunlukBildirimKur = async (dil?: 'tr' | 'en') => {
     const izinVar = await bildirimIzniAl();
     if (!izinVar) return;
 
+    const saat = await bildirimSaatAl();
+
     await Notif.cancelAllScheduledNotificationsAsync();
     await Notif.scheduleNotificationAsync({
       content: {
-        title: dil === 'en' ? '👔 What will you wear today?' : '👔 Bugün ne giyeceksin?',
+        title: dil === 'en' ? '✨ Good morning! Style time.' : '✨ Günaydın! Kombin zamanı.',
         body: dil === 'en'
-          ? 'Open xmobile to get your AI outfit suggestion!'
-          : 'xmobile\'ı aç, bugünkü AI kombin önerini al!',
-        data: { ekran: 'outfits' },
+          ? 'Your AI stylist is ready — what will you wear today?'
+          : 'Moda AI\'ın hazır — bugün ne giyeceksin?',
+        data: { ekran: 'ai', sabah: true },
       },
       trigger: {
         type: Notif.SchedulableTriggerInputTypes.DAILY,
-        hour: 8,
+        hour: saat,
         minute: 0,
       },
     });

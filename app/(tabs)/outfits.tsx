@@ -12,23 +12,23 @@ import Svg, {
   ClipPath, Defs, Image as SvgImage,
   RadialGradient, LinearGradient, Stop,
 } from 'react-native-svg';
-import { useApp } from '../lib/context';
-import type { Kiyafet, Kombin, HavaDurumu, Profil } from '../lib/types';
-import { GECMIS_KEY } from './history';
-import ThreeDViewer from '../components/ThreeDViewer';
-import ThreeDInline from '../components/ThreeDInline';
-import UpsellModal from '../components/UpsellModal';
-import { useSubscription } from '../lib/subscriptionContext';
-import { meshyModelUret } from '../lib/meshyService';
-import { renkBul, parcaEsle, kiyafetRenkBul, hexToRgba, renkUyumSkoru } from '../lib/outfitColor';
+import { useApp } from '../../lib/context';
+import type { Kiyafet, Kombin, HavaDurumu, Profil } from '../../lib/types';
+import { GECMIS_KEY } from '../history';
+import ThreeDViewer from '../../components/ThreeDViewer';
+import ThreeDInline from '../../components/ThreeDInline';
+import UpsellModal from '../../components/UpsellModal';
+import { useSubscription } from '../../lib/subscriptionContext';
+import { meshyModelUret } from '../../lib/meshyService';
+import { renkBul, parcaEsle, kiyafetRenkBul, hexToRgba, renkUyumSkoru } from '../../lib/outfitColor';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
-import { kombinHakkiVar, kombinKullan, kalanHakAl } from '../lib/freemium';
-import { proMuKontrol } from '../lib/revenueCat';
-import { tryOnBaslat, tryOnBekle, kiyafetGorseliUret, type TryOnCategory } from '../lib/fashnService';
-import { postOlustur } from '../lib/socialService';
-import { useAuth } from '../lib/authContext';
-import { takipEt, Olaylar } from '../lib/analytics';
+import { kombinHakkiVar, kombinKullan, kalanHakAl } from '../../lib/freemium';
+import { proMuKontrol } from '../../lib/revenueCat';
+import { tryOnBaslat, tryOnBekle, kiyafetGorseliUret, type TryOnCategory } from '../../lib/fashnService';
+import { postOlustur } from '../../lib/socialService';
+import { useAuth } from '../../lib/authContext';
+import { takipEt, Olaylar } from '../../lib/analytics';
 import * as ImagePicker from 'expo-image-picker';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
@@ -889,7 +889,7 @@ ${jsonFormat}`;
           </TouchableOpacity>
         </View>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 110 }}>
           <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 0.95 }}>
           <View
             style={[styles.avatarBolum, { backgroundColor: renkler.kart }]}

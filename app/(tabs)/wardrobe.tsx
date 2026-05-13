@@ -2,12 +2,12 @@ import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, Image,
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from '../lib/fileSystem';
+import * as FileSystem from '../../lib/fileSystem';
 import * as Sharing from 'expo-sharing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useApp } from '../lib/context';
-import type { Kiyafet } from '../lib/types';
-import { kiyafetTani } from '../lib/vision';
+import { useApp } from '../../lib/context';
+import type { Kiyafet } from '../../lib/types';
+import { kiyafetTani } from '../../lib/vision';
 
 const STORAGE_KEY  = 'xmobile_kiyafetler';
 const VERI_VERSIYON = 2;
@@ -21,7 +21,7 @@ const fotografKaydet = async (uri: string): Promise<string> => {
   return hedef;
 };
 
-const BASLANGIC: import('../lib/types').Kiyafet[] = [];
+const BASLANGIC: import('../../lib/types').Kiyafet[] = [];
 
 const TURLER   = ['Üst', 'Alt', 'Dış Giyim', 'Ayakkabı', 'Aksesuar'];
 const SEZONLAR = ['Tüm Sezon', 'İlkbahar', 'Yaz', 'Sonbahar', 'Kış'];
@@ -183,7 +183,7 @@ export default function Wardrobe() {
         {kiyafetler.length} {t.kiyafet} · {t.duzenlemekIcin}
       </Text>
 
-      <ScrollView style={styles.liste} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.liste} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 110 }}>
         {kiyafetler.length === 0 ? (
           <View style={styles.bosHal}>
             <Text style={styles.bosHalIkon}>👔</Text>

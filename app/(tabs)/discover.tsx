@@ -5,10 +5,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { useApp } from '../lib/context';
-import { useAuth } from '../lib/authContext';
-import { postListesiAl, begeniToggle, kullaniciBegendimi, type SocialPost } from '../lib/socialService';
-import { takipEt, Olaylar } from '../lib/analytics';
+import { useApp } from '../../lib/context';
+import { useAuth } from '../../lib/authContext';
+import { postListesiAl, begeniToggle, kullaniciBegendimi, type SocialPost } from '../../lib/socialService';
+import { takipEt, Olaylar } from '../../lib/analytics';
 
 const { width } = Dimensions.get('window');
 const KART_W = (width - 48) / 2;
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   merkez:       { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
   bosText:      { fontSize: 15, textAlign: 'center', lineHeight: 24 },
   tekrarBtn:    { marginTop: 8, paddingHorizontal: 24, paddingVertical: 10, borderRadius: 20, borderWidth: 1, borderColor: '#00D4FF' },
-  liste:        { padding: 16, gap: 12 },
+  liste:        { padding: 16, gap: 12, paddingBottom: 110 },
   satir:        { gap: 12 },
   kart: {
     width: KART_W, borderRadius: 16, borderWidth: 0.5, overflow: 'hidden',

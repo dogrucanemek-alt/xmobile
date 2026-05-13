@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { copyAsync, documentDirectory } from '../lib/fileSystem';
-import { useApp } from '../lib/context';
-import { useAuth } from '../lib/authContext';
-import ThreeDViewer from '../components/ThreeDViewer';
-import { bildirimAcikMi, bildirimAc, bildirimKapat } from '../lib/notifications';
+import { copyAsync, documentDirectory } from '../../lib/fileSystem';
+import { useApp } from '../../lib/context';
+import { useAuth } from '../../lib/authContext';
+import ThreeDViewer from '../../components/ThreeDViewer';
+import { bildirimAcikMi, bildirimAc, bildirimKapat, bildirimSaatAl, bildirimSaatKaydet, gunlukBildirimKur } from '../../lib/notifications';
 
 const PROFIL_KEY = 'xmobile_profil';
 
@@ -52,10 +52,12 @@ export default function Profile() {
   const [viewer3D,      setViewer3D]      = useState(false);
   const [glbYukleniyor, setGlbYukleniyor] = useState(false);
   const [bildirimAcik,  setBildirimAcik]  = useState(true);
+  const [bildirimSaat,  setBildirimSaat]  = useState(8);
 
   useEffect(() => {
     yukle();
     bildirimAcikMi().then(setBildirimAcik);
+    bildirimSaatAl().then(setBildirimSaat);
   }, []);
 
   const glbSec = async () => {
@@ -158,7 +160,7 @@ export default function Profile() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.liste}>
+      <ScrollView style={styles.liste} contentContainerStyle={{ paddingBottom: 110 }}>
 
         {/* ── Profil Fotoğrafı ── */}
         <Text style={[styles.bolumEtiket, { color: renkler.metin2 }]}>
@@ -427,6 +429,34 @@ export default function Profile() {
               thumbColor={bildirimAcik ? '#00D4FF' : renkler.metin2}
             />
           </View>
+          {bildirimAcik && (
+            <View style={[styles.hesapSatir, { borderBottomColor: renkler.sinir, borderBottomWidth: 0.5, flexWrap: 'wrap', gap: 6 }]}>
+              <Text style={[styles.hesapSatirText, { color: renkler.metin }]}>
+                {dil === 'en' ? '⏰ Notification Time' : '⏰ Bildirim Saati'}
+              </Text>
+              <View style={{ flexDirection: 'row', gap: 6, flexWrap: 'wrap' }}>
+                {[7, 8, 9, 10, 11].map(s => (
+                  <TouchableOpacity
+                    key={s}
+                    onPress={async () => {
+                      setBildirimSaat(s);
+                      await bildirimSaatKaydet(s);
+                      await gunlukBildirimKur(dil);
+                    }}
+                    style={{
+                      paddingHorizontal: 12, paddingVertical: 5, borderRadius: 16, borderWidth: 1,
+                      borderColor: bildirimSaat === s ? '#00D4FF' : renkler.sinir,
+                      backgroundColor: bildirimSaat === s ? 'rgba(0,212,255,0.1)' : 'transparent',
+                    }}
+                  >
+                    <Text style={{ fontSize: 13, fontWeight: '600', color: bildirimSaat === s ? '#00D4FF' : renkler.metin2 }}>
+                      {s}:00
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
           <TouchableOpacity
             style={[styles.hesapSatir, { borderBottomColor: renkler.sinir, borderBottomWidth: 0.5 }]}
             onPress={() => router.push('/privacy' as any)}

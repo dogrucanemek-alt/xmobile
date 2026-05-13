@@ -27,8 +27,9 @@ function NotificationHandler() {
     try {
       const N = require('expo-notifications');
       listener.current = N.addNotificationResponseReceivedListener((response: any) => {
-        const ekran = response.notification.request.content.data?.ekran;
-        if (ekran === 'outfits') router.push('/outfits' as any);
+        const { ekran, sabah } = response.notification.request.content.data ?? {};
+        if (ekran === 'ai') router.push(sabah ? '/(tabs)/ai?sabah=1' : '/(tabs)/ai' as any);
+        else if (ekran === 'outfits') router.push('/(tabs)/outfits' as any);
       });
     } catch (_) {}
     return () => { try { listener.current?.remove(); } catch (_) {} };
@@ -46,20 +47,16 @@ export default function RootLayout() {
         <AuthProvider>
           <SubscriptionProvider>
             <NotificationHandler />
-            <Stack>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="login" options={{ headerShown: false, gestureEnabled: false }} />
-              <Stack.Screen name="wardrobe" options={{ headerShown: false }} />
-              <Stack.Screen name="outfits" options={{ headerShown: false }} />
-              <Stack.Screen name="profile" options={{ headerShown: false }} />
-              <Stack.Screen name="history" options={{ headerShown: false }} />
-              <Stack.Screen name="avatar" options={{ headerShown: false }} />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index"       options={{ headerShown: false }} />
+              <Stack.Screen name="login"       options={{ headerShown: false, gestureEnabled: false }} />
+              <Stack.Screen name="onboarding"  options={{ headerShown: false, gestureEnabled: false }} />
+              <Stack.Screen name="history"     options={{ headerShown: false }} />
+              <Stack.Screen name="avatar"      options={{ headerShown: false }} />
               <Stack.Screen name="import-model" options={{ headerShown: false }} />
-              <Stack.Screen name="privacy" options={{ headerShown: false }} />
-              <Stack.Screen name="jarvis" options={{ headerShown: false }} />
-              <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
+              <Stack.Screen name="privacy"     options={{ headerShown: false }} />
+              <Stack.Screen name="jarvis"      options={{ headerShown: false }} />
               <Stack.Screen name="subscription" options={{ headerShown: false, presentation: 'modal' }} />
-              <Stack.Screen name="discover" options={{ headerShown: false }} />
             </Stack>
           </SubscriptionProvider>
         </AuthProvider>
