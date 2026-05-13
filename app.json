@@ -4,7 +4,7 @@
     "slug": "xmobile",
     "version": "1.2.0",
     "orientation": "portrait",
-    "description": "Kişisel AI moda asistanın. Gardırobunu yönet, her sabah kombin önerisi al, hava durumuna göre stil tavsiyesi al.",
+    "description": "Your personal AI fashion assistant. Manage your wardrobe, get daily outfit suggestions powered by AI, and dress smart based on real-time weather. | Kişisel AI moda asistanın. Gardırobunu yönet, her sabah kombin önerisi al, hava durumuna göre stil tavsiyesi al.",
     "icon": "./assets/images/icon.png",
     "scheme": "xmobile",
     "userInterfaceStyle": "automatic",

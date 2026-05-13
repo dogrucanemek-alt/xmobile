@@ -62,21 +62,32 @@ ${gardıropMetin}
 
 Kısa ve pratik ol. Maks 150 kelime.`;
 
-  const res = await fetch(`${API_URL}/api/claude`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 300,
-      messages: [{
-        role: 'user',
-        content: [
-          { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64 } },
-          { type: 'text', text: prompt },
-        ],
-      }],
-    }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/api/claude`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64 } },
+            { type: 'text', text: prompt },
+          ],
+        }],
+      }),
+    });
+  } catch {
+    throw new Error(dil === 'en' ? 'Network error. Check your connection.' : 'Bağlantı hatası. İnternet bağlantını kontrol et.');
+  }
+  if (!res.ok) {
+    const errText = await res.text().catch(() => '');
+    if (res.status === 429) throw new Error(dil === 'en' ? 'Too many requests. Please wait a moment.' : 'Çok fazla istek. Lütfen biraz bekle.');
+    if (res.status >= 500) throw new Error(dil === 'en' ? 'Server error. Try again in a moment.' : 'Sunucu hatası. Biraz sonra tekrar dene.');
+    throw new Error(`API ${res.status}: ${errText.slice(0, 100)}`);
+  }
   const data = await res.json();
   return data.content?.[0]?.text ?? (dil === 'en' ? 'Analysis failed.' : 'Analiz başarısız.');
 }

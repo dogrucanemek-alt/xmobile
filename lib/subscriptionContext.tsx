@@ -11,10 +11,12 @@ interface AylikSayac {
 
 interface SubscriptionContextType {
   tier: Tier;
+  isPro: boolean;
   aylikKullanim: number;
   can3D: () => boolean;
   kullanim3DArtir: () => Promise<void>;
   tierDegistir: (yeniTier: Tier) => Promise<void>;
+  proYenile: () => Promise<void>;
 }
 
 const TIER_KEY = 'xmobile_subscription_tier';
@@ -27,10 +29,12 @@ const TIER_LIMITLER: Record<Tier, number> = {
 
 const SubscriptionContext = createContext<SubscriptionContextType>({
   tier: 'free',
+  isPro: false,
   aylikKullanim: 0,
   can3D: () => false,
   kullanim3DArtir: async () => {},
   tierDegistir: async () => {},
+  proYenile: async () => {},
 });
 
 function simdikiAy(): string {
@@ -41,24 +45,32 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   const [tier, setTier] = useState<Tier>('free');
   const [aylikKullanim, setAylikKullanim] = useState(0);
 
-  useEffect(() => {
-    (async () => {
-      const [kayitliTier, kayitliSayac, isPro] = await Promise.all([
-        AsyncStorage.getItem(TIER_KEY),
-        AsyncStorage.getItem(SAYAC_KEY),
-        proMuKontrol(),
-      ]);
-      if (isPro) {
-        setTier('pro');
-      } else if (kayitliTier) {
-        setTier(kayitliTier as Tier);
-      }
-      if (kayitliSayac) {
+  const proYenile = useCallback(async () => {
+    const [kayitliTier, kayitliSayac, isPro] = await Promise.all([
+      AsyncStorage.getItem(TIER_KEY),
+      AsyncStorage.getItem(SAYAC_KEY),
+      proMuKontrol(),
+    ]);
+    if (isPro) {
+      setTier('pro');
+    } else if (kayitliTier) {
+      setTier(kayitliTier as Tier);
+    } else {
+      setTier('free');
+    }
+    if (kayitliSayac) {
+      try {
         const sayac: AylikSayac = JSON.parse(kayitliSayac);
         if (sayac.ay === simdikiAy()) setAylikKullanim(sayac.sayi);
+      } catch {
+        await AsyncStorage.removeItem(SAYAC_KEY);
       }
-    })();
+    }
   }, []);
+
+  useEffect(() => { proYenile(); }, []);
+
+  const isPro = tier === 'pro';
 
   const can3D = useCallback(() => {
     const limit = TIER_LIMITLER[tier];
@@ -78,7 +90,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   }, []);
 
   return (
-    <SubscriptionContext.Provider value={{ tier, aylikKullanim, can3D, kullanim3DArtir, tierDegistir }}>
+    <SubscriptionContext.Provider value={{ tier, isPro, aylikKullanim, can3D, kullanim3DArtir, tierDegistir, proYenile }}>
       {children}
     </SubscriptionContext.Provider>
   );

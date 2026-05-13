@@ -342,7 +342,7 @@ export default function Wardrobe() {
       {cokluProgress && (
         <View style={[styles.progressBar, { backgroundColor: renkler.kart }]}>
           <Text style={[styles.progressText, { color: renkler.metin2 }]}>
-            Yükleniyor {cokluProgress.simdiki}/{cokluProgress.toplam}
+            {dil === 'en' ? 'Uploading' : 'Yükleniyor'} {cokluProgress.simdiki}/{cokluProgress.toplam}
           </Text>
           <View style={[styles.progressTrack, { backgroundColor: renkler.sinir }]}>
             <View style={[styles.progressFill, { backgroundColor: renkler.btnPrimary, width: `${(cokluProgress.simdiki / cokluProgress.toplam) * 100}%` as `${number}%` }]} />

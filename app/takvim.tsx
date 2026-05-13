@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from '../lib/context';
 import type { KombinKayit, Kombin } from '../lib/types';
@@ -55,18 +56,26 @@ export default function Takvim() {
   const [modal,   setModal]   = useState(false);
   const [gecmisListe, setGecmisListe] = useState<KombinKayit[]>([]);
 
-  useEffect(() => {
-    AsyncStorage.multiGet([GECMIS_KEY, TAKVIM_KEY]).then(([gv, tv]) => {
-      if (gv[1]) {
+  const veriYukle = useCallback(async () => {
+    const [gv, tv] = await AsyncStorage.multiGet([GECMIS_KEY, TAKVIM_KEY]);
+    if (gv[1]) {
+      try {
         const liste: KombinKayit[] = JSON.parse(gv[1]);
         setGecmisListe(liste.sort((a, b) => new Date(b.tarih).getTime() - new Date(a.tarih).getTime()));
         const map: Record<string, Kombin> = {};
         liste.forEach(k => { map[k.tarih.slice(0, 10)] = k.kombin; });
         setGecmis(map);
-      }
-      if (tv[1]) setTakvim(JSON.parse(tv[1]));
-    });
+      } catch { /* corrupt data — ignore */ }
+    }
+    if (tv[1]) {
+      try { setTakvim(JSON.parse(tv[1])); } catch { /* ignore */ }
+    }
   }, []);
+
+  useEffect(() => { veriYukle(); }, []);
+
+  // Ekrana her dönüşte geçmişi taze oku (outfits'te seçilen kombin anında görünsün)
+  useFocusEffect(useCallback(() => { veriYukle(); }, [veriYukle]));
 
   const kombinAl = (key: string): Kombin | null => gecmis[key] ?? takvim[key] ?? null;
   const gosterge  = (key: string) => !!kombinAl(key);

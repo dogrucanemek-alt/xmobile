@@ -13,10 +13,13 @@ async function sayacAl(): Promise<Sayac> {
   const simdi = new Date();
   const kayitli = await AsyncStorage.getItem(SAYAC_KEY);
   if (kayitli) {
-    const s: Sayac = JSON.parse(kayitli);
-    if (s.ay === simdi.getMonth() && s.yil === simdi.getFullYear()) return s;
+    try {
+      const s: Sayac = JSON.parse(kayitli);
+      if (s.ay === simdi.getMonth() && s.yil === simdi.getFullYear()) return s;
+    } catch {
+      await AsyncStorage.removeItem(SAYAC_KEY);
+    }
   }
-  // Yeni ay — sıfırla
   const yeni: Sayac = { adet: 0, ay: simdi.getMonth(), yil: simdi.getFullYear() };
   await AsyncStorage.setItem(SAYAC_KEY, JSON.stringify(yeni));
   return yeni;

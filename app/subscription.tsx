@@ -32,7 +32,7 @@ const OZELLIKLER = {
 export default function Subscription() {
   const router = useRouter();
   const { renkler, dil } = useApp();
-  const { tierDegistir } = useSubscription();
+  const { tierDegistir, proYenile } = useSubscription();
   const tr = dil === 'tr';
   const ozellikler = OZELLIKLER[dil];
 
@@ -62,6 +62,7 @@ export default function Subscription() {
       const basarili = await satin(teklifler[secili]);
       if (basarili) {
         await tierDegistir('pro');
+        await proYenile();
         Alert.alert(
           tr ? 'Pro\'ya Hoş Geldin! 🎉' : 'Welcome to Pro! 🎉',
           tr ? 'Tüm özellikler aktif.' : 'All features are now active.',
@@ -100,8 +101,35 @@ export default function Subscription() {
     const tip = pkg?.packageType ?? '';
     if (tip === 'MONTHLY' || pkg?.identifier?.includes('monthly')) return tr ? 'Aylık' : 'Monthly';
     if (tip === 'ANNUAL'  || pkg?.identifier?.includes('annual'))  return tr ? 'Yıllık' : 'Annual';
-    if (tip === 'LIFETIME'|| pkg?.identifier?.includes('lifetime')) return tr ? 'Ömür Boyu' : 'Lifetime';
+    if (tip === 'LIFETIME'|| pkg?.identifier?.includes('lifetime')) return tr ? 'Ömür Boyu ✦' : 'Lifetime ✦';
     return pkg?.identifier ?? tip;
+  };
+
+  const paketAltMetin = (pkg: any) => {
+    const tip = pkg?.packageType ?? '';
+    if (tip === 'LIFETIME' || pkg?.identifier?.includes('lifetime'))
+      return tr ? 'İlk 200 kişi · Sonsuza dek Pro' : 'First 200 · Pro forever';
+    return null;
+  };
+
+  // Yıllık paket için "günde X" çerçevelemesi
+  const gunlukFiyat = (pkg: any, list: any[]) => {
+    const tip = pkg?.packageType ?? '';
+    if (tip === 'ANNUAL' || pkg?.identifier?.includes('annual')) {
+      const yillikFiyat = pkg.product?.price ?? 0;
+      if (yillikFiyat > 0) {
+        const gunluk = (yillikFiyat / 365).toFixed(2);
+        return tr ? `Günde sadece ₺${gunluk}` : `Just ₺${gunluk}/day`;
+      }
+    }
+    if (tip === 'MONTHLY' || pkg?.identifier?.includes('monthly')) {
+      const aylikFiyat = pkg.product?.price ?? 0;
+      if (aylikFiyat > 0) {
+        const gunluk = (aylikFiyat / 30).toFixed(2);
+        return tr ? `Günde ₺${gunluk}` : `₺${gunluk}/day`;
+      }
+    }
+    return null;
   };
 
   const indirimBadge = (pkg: any, idx: number, list: any[]) => {
@@ -193,6 +221,16 @@ export default function Subscription() {
                     <View>
                       <Text style={[styles.paketAd, { color: renkler.metin }]}>{paketAdi(pkg)}</Text>
                       <Text style={[styles.paketFiyat, { color: renkler.metin2 }]}>{fiyatMetni(pkg)}</Text>
+                      {gunlukFiyat(pkg, teklifler) && (
+                        <Text style={[styles.gunlukFiyat, { color: CYAN }]}>
+                          {gunlukFiyat(pkg, teklifler)}
+                        </Text>
+                      )}
+                      {paketAltMetin(pkg) && (
+                        <Text style={[styles.lifetimeAlt, { color: '#FFD700' }]}>
+                          {paketAltMetin(pkg)}
+                        </Text>
+                      )}
                     </View>
                   </View>
                   {badge && (
@@ -218,21 +256,27 @@ export default function Subscription() {
           {satinAliyor
             ? <ActivityIndicator color="#000" />
             : <Text style={styles.btnPrimaryText}>
-                {tr ? 'Pro\'ya Geç →' : 'Upgrade to Pro →'}
+                {tr ? '7 Gün Ücretsiz Başla →' : 'Start Free 7 Days →'}
               </Text>
           }
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={geriYukleBasin} disabled={satinAliyor}>
-          <Text style={[styles.geriYukle, { color: renkler.metin2 }]}>
-            {tr ? 'Satın almayı geri yükle' : 'Restore purchase'}
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.altIkili}>
+          <TouchableOpacity
+            style={[styles.geriYukleBtn, { borderColor: renkler.sinir }]}
+            onPress={geriYukleBasin}
+            disabled={satinAliyor}
+          >
+            <Text style={[styles.geriYukle, { color: renkler.metin2 }]}>
+              {tr ? '↩ Satın almayı geri yükle' : '↩ Restore purchase'}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         <Text style={[styles.yasal, { color: renkler.metin2 }]}>
           {tr
-            ? 'Abonelik otomatik yenilenir. iTunes hesabından iptal edebilirsin.'
-            : 'Subscription auto-renews. Cancel anytime in your iTunes account.'}
+            ? '7 gün sonra otomatik ücretlendirilir. İstediğin zaman iptal et.'
+            : 'Charged after 7-day trial. Cancel anytime.'}
         </Text>
       </View>
     </View>
@@ -284,6 +328,8 @@ const styles = StyleSheet.create({
   radyoIc:        { width: 11, height: 11, borderRadius: 6, backgroundColor: CYAN },
   paketAd:        { fontSize: 16, fontWeight: '600', marginBottom: 2 },
   paketFiyat:     { fontSize: 13 },
+  gunlukFiyat:    { fontSize: 11, fontWeight: '600', marginTop: 2 },
+  lifetimeAlt:    { fontSize: 10, fontWeight: '600', marginTop: 1 },
   badge: {
     backgroundColor: CYAN, borderRadius: 20,
     paddingHorizontal: 10, paddingVertical: 4,
@@ -301,6 +347,10 @@ const styles = StyleSheet.create({
     borderRadius: 50, alignItems: 'center',
   },
   btnPrimaryText: { fontSize: 17, fontWeight: '700', color: '#000' },
+  altIkili:       { flexDirection: 'row', justifyContent: 'center' },
+  geriYukleBtn: {
+    borderWidth: 1, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 10,
+  },
   geriYukle:      { textAlign: 'center', fontSize: 13 },
   yasal: {
     textAlign: 'center', fontSize: 11, lineHeight: 16, opacity: 0.7,

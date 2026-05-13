@@ -24,7 +24,6 @@ import { renkBul, parcaEsle, kiyafetRenkBul, hexToRgba, renkUyumSkoru } from '..
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { kombinHakkiVar, kombinKullan, kalanHakAl } from '../../lib/freemium';
-import { proMuKontrol } from '../../lib/revenueCat';
 import { tryOnBaslat, tryOnBekle, kiyafetGorseliUret, type TryOnCategory } from '../../lib/fashnService';
 import { postOlustur } from '../../lib/socialService';
 import { useAuth } from '../../lib/authContext';
@@ -319,7 +318,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
 
 export default function Outfits() {
   const { t, renkler, aksanRenk, dil, avatarGlbUri, loadAvatarGlb } = useApp();
-  const { can3D, kullanim3DArtir, tier, aylikKullanim } = useSubscription();
+  const { can3D, kullanim3DArtir, tier, aylikKullanim, isPro, proYenile } = useSubscription();
   const { user } = useAuth();
   const router = useRouter();
   const { tryOnKiyafetId } = useLocalSearchParams<{ tryOnKiyafetId?: string }>();
@@ -671,13 +670,23 @@ export default function Outfits() {
     setYukleniyor(true);
     setHata('');
     try {
-      const isPro = await proMuKontrol();
-      const hakVar = await kombinHakkiVar(isPro);
+      await proYenile();
       const hak = await kalanHakAl(isPro);
       setKalanHak(hak.isPro ? null : hak.kalan);
-      if (!hakVar) {
+
+      if (!hak.isPro && hak.kalan === 0) {
         setYukleniyor(false);
-        router.push('/subscription' as any);
+        // Kullanıcıya açıklama ver, direk paywall'a at
+        Alert.alert(
+          dil === 'en' ? '✨ Free Limit Reached' : '✨ Ücretsiz Limit Doldu',
+          dil === 'en'
+            ? 'You\'ve used all 5 free outfits this month.\n\nUpgrade to Pro for unlimited combinations — just ₺59/month.'
+            : 'Bu ay 5 ücretsiz kombininin tamamını kullandın.\n\nSınırsız kombin için Pro\'ya geç — sadece ₺59/ay.',
+          [
+            { text: dil === 'en' ? 'Not Now' : 'Şimdi Değil', style: 'cancel' },
+            { text: dil === 'en' ? 'See Plans →' : 'Planları Gör →', onPress: () => router.push('/subscription' as any) },
+          ]
+        );
         return;
       }
 
@@ -797,9 +806,23 @@ ${jsonFormat}`;
         streakGuncelle().then(setStreak);
         takipEt(Olaylar.KOMBIN_OLUSTURULDU, { kombin_sayisi: parsed.kombinler.length });
         await kombinKullan();
-        const isPro2 = await proMuKontrol();
-        const hak2 = await kalanHakAl(isPro2);
+        const hak2 = await kalanHakAl(isPro);
         setKalanHak(hak2.isPro ? null : hak2.kalan);
+        // Son 1 hak kaldıysa hafif uyarı (alert değil, banner yeterli)
+        if (!hak2.isPro && hak2.kalan === 1) {
+          setTimeout(() => {
+            Alert.alert(
+              dil === 'en' ? '⚡ Last Free Outfit' : '⚡ Son Ücretsiz Kombinin',
+              dil === 'en'
+                ? 'This is your last free outfit this month. Go Pro for unlimited access — ₺59/month, cancel anytime.'
+                : 'Bu ay son ücretsiz kombinini kullandın. Sınırsız erişim için Pro\'ya geç — ₺59/ay, istediğin zaman iptal.',
+              [
+                { text: dil === 'en' ? 'Maybe Later' : 'Belki Sonra', style: 'cancel' },
+                { text: dil === 'en' ? 'Upgrade →' : 'Yükselt →', onPress: () => router.push('/subscription' as any) },
+              ]
+            );
+          }, 1500);
+        }
       } else {
         setHata(`Beklenmeyen API yanıtı: ${JSON.stringify(data).slice(0, 200)}`);
       }
