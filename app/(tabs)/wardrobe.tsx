@@ -6,8 +6,10 @@ import * as FileSystem from '../../lib/fileSystem';
 import * as Sharing from 'expo-sharing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from '../../lib/context';
+import { useAuth } from '../../lib/authContext';
 import type { Kiyafet, KombinKayit } from '../../lib/types';
 import { kiyafetTani } from '../../lib/vision';
+import { syncYukle, syncKaydet, syncSil, syncTumunuYukle } from '../../lib/wardrobeSync';
 
 const STORAGE_KEY  = 'xmobile_kiyafetler';
 const GECMIS_KEY   = 'xmobile_gecmis';
@@ -30,6 +32,7 @@ const SEZONLAR = ['Tüm Sezon', 'İlkbahar', 'Yaz', 'Sonbahar', 'Kış'];
 export default function Wardrobe() {
   const router = useRouter();
   const { t, renkler, aksanRenk, dil } = useApp();
+  const { user } = useAuth();
 
   const [kiyafetler, setKiyafetler]       = useState<Kiyafet[]>([]);
   const [aramaMetni, setAramaMetni]       = useState('');
@@ -48,13 +51,33 @@ export default function Wardrobe() {
     try {
       const versiyon = await AsyncStorage.getItem('xmobile_veri_v');
       const kayitli  = await AsyncStorage.getItem(STORAGE_KEY);
+      let lokal: Kiyafet[] = [];
       if (kayitli && Number(versiyon) >= VERI_VERSIYON) {
-        setKiyafetler(JSON.parse(kayitli));
+        lokal = JSON.parse(kayitli);
       } else {
-        setKiyafetler(BASLANGIC);
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(BASLANGIC));
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([]));
         await AsyncStorage.setItem('xmobile_veri_v', String(VERI_VERSIYON));
       }
+
+      if (user) {
+        // Supabase'den yükle — cloud her zaman öncelikli
+        try {
+          const uzak = await syncYukle(user.id);
+          if (uzak.length > 0) {
+            setKiyafetler(uzak);
+            await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(uzak));
+            return;
+          }
+          // Supabase boşsa ve lokalde veri varsa → cloud'a yükle
+          if (lokal.length > 0) {
+            setKiyafetler(lokal);
+            syncTumunuYukle(user.id, lokal).catch(() => {});
+            return;
+          }
+        } catch {}
+      }
+
+      setKiyafetler(lokal);
     } catch (e) {
       setKiyafetler(BASLANGIC);
     }
@@ -81,9 +104,16 @@ export default function Wardrobe() {
     } catch {}
   };
 
-  const kaydet = async (yeniListe: Kiyafet[]) => {
+  const kaydet = async (yeniListe: Kiyafet[], degisen?: Kiyafet, silinenId?: number) => {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(yeniListe));
     setKiyafetler(yeniListe);
+    if (user) {
+      if (silinenId !== undefined) {
+        syncSil(user.id, silinenId).catch(() => {});
+      } else if (degisen) {
+        syncKaydet(user.id, degisen).catch(() => {});
+      }
+    }
   };
 
   const fotodanEkle = async (uri: string) => {
@@ -92,7 +122,7 @@ export default function Wardrobe() {
     let tur = 'Üst';
     try { ({ ad, tur } = await kiyafetTani(kaliciUri)); } catch (e) { console.warn('Kıyafet tanıma hatası:', e); }
     const yeni = { id: Date.now(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri };
-    await kaydet([...kiyafetler, yeni]);
+    await kaydet([...kiyafetler, yeni], yeni);
     kiyafetDuzenle(yeni);
   };
 
@@ -130,7 +160,9 @@ export default function Wardrobe() {
       let ad = 'Yeni Kıyafet';
       let tur = 'Üst';
       try { ({ ad, tur } = await kiyafetTani(kaliciUri)); } catch (e) { console.warn('Tanıma hatası:', e); }
-      yeniListe.push({ id: Date.now() + Math.random(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri });
+      const yeniItem = { id: Date.now() + Math.random(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri };
+      yeniListe.push(yeniItem);
+      if (user) syncKaydet(user.id, yeniItem).catch(() => {});
     }
     await kaydet(yeniListe);
     setCokluProgress(null);
@@ -158,12 +190,9 @@ export default function Wardrobe() {
   const duzenKaydet = async () => {
     if (!seciliKiyafet) return;
     const fiyatSayi = duzenFiyat ? parseFloat(duzenFiyat.replace(',', '.')) : undefined;
-    const yeniListe = kiyafetler.map(k =>
-      k.id === seciliKiyafet.id
-        ? { ...k, ad: duzenAd, tur: duzenTur, sezon: duzenSezon, fiyat: fiyatSayi && !isNaN(fiyatSayi) ? fiyatSayi : undefined }
-        : k
-    );
-    await kaydet(yeniListe);
+    const guncellenmisItem = { ...seciliKiyafet, ad: duzenAd, tur: duzenTur, sezon: duzenSezon, fiyat: fiyatSayi && !isNaN(fiyatSayi) ? fiyatSayi : undefined };
+    const yeniListe = kiyafetler.map(k => k.id === seciliKiyafet.id ? guncellenmisItem : k);
+    await kaydet(yeniListe, guncellenmisItem);
     setModalAcik(false);
   };
 
@@ -185,7 +214,7 @@ export default function Wardrobe() {
     Alert.alert(t.buKiyafetiSil, t.silOnay, [
       { text: t.sil, style: 'destructive', onPress: async () => {
         const yeniListe = kiyafetler.filter(k => k.id !== id);
-        await kaydet(yeniListe);
+        await kaydet(yeniListe, undefined, id);
         setModalAcik(false);
       }},
       { text: t.iptal, style: 'cancel' },
