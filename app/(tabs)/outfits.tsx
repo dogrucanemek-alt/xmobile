@@ -661,7 +661,8 @@ export default function Outfits() {
 
   const kiyafetleriAl = async (): Promise<Kiyafet[]> => {
     const kayitli = await AsyncStorage.getItem('xmobile_kiyafetler');
-    const liste: Kiyafet[] = kayitli ? JSON.parse(kayitli) : [];
+    let liste: Kiyafet[] = [];
+    try { liste = kayitli ? JSON.parse(kayitli) : []; } catch {}
     setKiyafetler(liste);
     return liste;
   };
@@ -695,11 +696,13 @@ export default function Outfits() {
         kiyafetleriAl(),
       ]);
       if (profilStr) {
-        const parsedProfil = JSON.parse(profilStr) as import('../../lib/types').Profil;
-        setProfil(parsedProfil);
-        if (parsedProfil.avatarGlbPath) {
-          loadAvatarGlb(parsedProfil.avatarGlbPath);
-        }
+        try {
+          const parsedProfil = JSON.parse(profilStr) as import('../../lib/types').Profil;
+          setProfil(parsedProfil);
+          if (parsedProfil.avatarGlbPath) {
+            loadAvatarGlb(parsedProfil.avatarGlbPath);
+          }
+        } catch {}
       }
       let havaVeri: HavaDurumu;
       try {
@@ -777,7 +780,12 @@ ${jsonFormat}`;
         return;
       }
 
-      const data = await res.json();
+      let data: any;
+      try { data = await res.json(); } catch {
+        setHata('API yanıtı okunamadı. İnternet bağlantını kontrol et.');
+        setYukleniyor(false);
+        return;
+      }
 
       if (data.error) {
         setHata(`Claude Hatası: ${data.error.type} — ${data.error.message}`);
