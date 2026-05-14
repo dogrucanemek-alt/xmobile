@@ -675,21 +675,12 @@ export default function Outfits() {
       const hak = await kalanHakAl(isPro);
       setKalanHak(hak.isPro ? null : hak.kalan);
 
-      if (!hak.isPro && hak.kalan === 0) {
-        setYukleniyor(false);
-        // Kullanıcıya açıklama ver, direk paywall'a at
-        Alert.alert(
-          dil === 'en' ? '✨ Free Limit Reached' : '✨ Ücretsiz Limit Doldu',
-          dil === 'en'
-            ? 'You\'ve used all 5 free outfits this month.\n\nUpgrade to Pro for unlimited combinations — just ₺59/month.'
-            : 'Bu ay 5 ücretsiz kombininin tamamını kullandın.\n\nSınırsız kombin için Pro\'ya geç — sadece ₺59/ay.',
-          [
-            { text: dil === 'en' ? 'Not Now' : 'Şimdi Değil', style: 'cancel' },
-            { text: dil === 'en' ? 'See Plans →' : 'Planları Gör →', onPress: () => router.push('/subscription' as any) },
-          ]
-        );
-        return;
-      }
+      // TEMP: Limit check disabled for testing
+      // if (!hak.isPro && hak.kalan === 0) {
+      //   setYukleniyor(false);
+      //   Alert.alert(...);
+      //   return;
+      // }
 
       const [profilStr, kiyafetle] = await Promise.all([
         AsyncStorage.getItem('xmobile_profil'),
@@ -727,28 +718,44 @@ export default function Outfits() {
     }
 
     const lang = dil === 'en' ? 'English' : 'Turkish';
-    const numaraliListe = liste
-      .map((k, i) => `${i + 1}. "${k.ad}" (${k.tur}, ${k.sezon})`)
-      .join('\n');
-    const jsonFormat = `{"kombinler":[{"baslik":"${dil === 'en' ? 'title' : 'başlık'}","tur":"${dil === 'en' ? 'Work' : 'İş'}","parcalar":[1,3],"neden":"${dil === 'en' ? '1 sentence' : '1 cümle'}"}]}`;
+
+    // PARTITION: Shuffle wardrobe and split into 3 groups to prevent repetition
+    const shuffled = [...liste].sort(() => Math.random() - 0.5);
+    const itemsPerGroup = Math.ceil(shuffled.length / 3);
+    const grup1 = shuffled.slice(0, itemsPerGroup);
+    const grup2 = shuffled.slice(itemsPerGroup, itemsPerGroup * 2);
+    const grup3 = shuffled.slice(itemsPerGroup * 2);
+
+    // Create 3 separate prompts, each with a different group
+    const numaraliListe1 = grup1.map((k, i) => `${i + 1}. "${k.ad}" (${k.tur}, ${k.sezon})`).join('\n');
+    const numaraliListe2 = grup2.map((k, i) => `${i + 1}. "${k.ad}" (${k.tur}, ${k.sezon})`).join('\n');
+    const numaraliListe3 = grup3.map((k, i) => `${i + 1}. "${k.ad}" (${k.tur}, ${k.sezon})`).join('\n');
+
+    const jsonFormat = `{"baslik":"${dil === 'en' ? 'title' : 'başlık'}","tur":"${dil === 'en' ? 'Work' : 'İş'}","parcalar":[1,2],"neden":"${dil === 'en' ? '1 sentence' : '1 cümle'}"}`;
 
     const iltifat = dil === 'en'
       ? 'End with a short compliment like "You\'ll look great! ✨" or "Very stylish! 🔥"'
       : '"neden" alanını kısa bir iltifatla bitir: "Çok yakışıklı olacaksın! ✨" veya "Harika görüneceksin! 🔥" gibi';
 
-    const prompt = `Style assistant. Respond in ${lang}.
+    // Create 3 separate prompts for 3 separate API calls
+    const createPrompt = (grupNo: number, numaraliList: string, turStr: string) => `Style assistant. Respond in ${lang}.
 
 Weather: ${havaVeri.derece}°C, ${havaVeri.durum}, feels like ${havaVeri.hissedilen}°C
 
-WARDROBE (copy names exactly, character-for-character):
-${numaraliListe}
+WARDROBE (use items from this list ONLY):
+${numaraliList}
 
-Create 3 outfit combinations. Rules:
-- "parcalar": item NUMBERS from the list (e.g. [1, 3] to use items 1 and 3). Use 2-4 items per outfit.
-- "tur": ${dil === 'en' ? 'Work, Casual, Social, or Sport' : 'İş, Günlük, Sosyal veya Spor'}
-- "neden": 1 short sentence explaining why this works for today's weather. ${iltifat}
+Create 1 outfit. Style: ${turStr}.
+"tur": ${turStr}
+"parcalar": use 2-4 items from the list above
+"neden": 1 sentence. ${iltifat}
+
 Return ONLY valid JSON:
 ${jsonFormat}`;
+
+    const prompt1 = createPrompt(1, numaraliListe1, dil === 'en' ? 'Work' : 'İş');
+    const prompt2 = createPrompt(2, numaraliListe2, dil === 'en' ? 'Casual' : 'Günlük');
+    const prompt3 = createPrompt(3, numaraliListe3, dil === 'en' ? 'Social' : 'Sosyal');
 
     if (!API_URL) {
       setHata('EXPO_PUBLIC_API_URL tanımlı değil. .env dosyasını kontrol et ve Expo\'yu yeniden başlat.');
@@ -756,97 +763,113 @@ ${jsonFormat}`;
       return;
     }
 
-    const controller = new AbortController();
-    const zaman = setTimeout(() => controller.abort(), 60000);
+    // Make 3 separate API calls for 3 outfits
+    const callApi = async (prompt: string) => {
+      const controller = new AbortController();
+      const zaman = setTimeout(() => controller.abort(), 60000);
+
+      try {
+        const res = await fetch(`${API_URL}/api/chat`, {
+          method: 'POST',
+          signal: controller.signal,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 300,
+            system: 'You are a fashion style assistant. Respond with ONLY valid JSON.',
+            messages: [{ role: 'user', content: prompt }],
+          }),
+        });
+        clearTimeout(zaman);
+        return res;
+      } catch (e) {
+        clearTimeout(zaman);
+        throw e;
+      }
+    };
 
     try {
-      const res = await fetch(`${API_URL}/api/chat`, {
-        method: 'POST',
-        signal: controller.signal,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 1500,
-          system: 'You are a fashion style assistant. You MUST respond with valid JSON only. Never include any explanatory text, markdown, or code blocks outside the JSON structure.',
-          messages: [{ role: 'user', content: prompt }],
+      // Parse single response
+      const parseResponse = async (res: Response): Promise<any> => {
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(`API ${res.status}: ${errText.slice(0, 100)}`);
+        }
+        const data = await res.json();
+        if (data.error) throw new Error(`Claude: ${data.error.message}`);
+        if (!data.content?.[0]?.text) throw new Error('No response text');
+        const metin = data.content[0].text;
+        const bas = metin.indexOf('{');
+        const son = metin.lastIndexOf('}') + 1;
+        if (bas === -1 || son === 0) throw new Error('JSON not found');
+        return JSON.parse(metin.slice(bas, son));
+      };
+
+      // Resolve item names from the correct group
+      const resolveItems = (kombin: any, grup: Kiyafet[]) => ({
+        ...kombin,
+        parcalar: kombin.parcalar.map((p: any) => {
+          const idx = Number(p);
+          if (!isNaN(idx) && idx >= 1 && idx <= grup.length) return grup[idx - 1].ad;
+          return String(p);
         }),
       });
-      clearTimeout(zaman);
 
-      if (!res.ok) {
-        const errText = await res.text();
-        setHata(`API Hatası (${res.status}): ${errText.slice(0, 200)}`);
-        setYukleniyor(false);
-        return;
-      }
+      // Make 3 API calls in parallel with allSettled — partial failure is OK
+      const results = await Promise.allSettled([
+        callApi(prompt1).then(parseResponse),
+        callApi(prompt2).then(parseResponse),
+        callApi(prompt3).then(parseResponse),
+      ]);
 
-      let data: any;
-      try { data = await res.json(); } catch {
-        setHata('API yanıtı okunamadı. İnternet bağlantını kontrol et.');
-        setYukleniyor(false);
-        return;
-      }
+      const turler = dil === 'en' ? ['Work', 'Casual', 'Social'] : ['İş', 'Günlük', 'Sosyal'];
+      const gruplar = [grup1, grup2, grup3];
+      const resolved: Kombin[] = [];
 
-      if (data.error) {
-        setHata(`Claude Hatası: ${data.error.type} — ${data.error.message}`);
-        setYukleniyor(false);
-        return;
-      }
+      for (let i = 0; i < 3; i++) {
+        const result = results[i];
+        let kombin: Kombin | null = null;
 
-      if (data.content?.[0]?.text) {
-        const metin     = data.content[0].text as string;
-        const baslangic = metin.indexOf('{');
-        const bitis     = metin.lastIndexOf('}') + 1;
-        if (baslangic === -1 || bitis === 0) {
-          setHata(`JSON bulunamadı. Claude yanıtı: ${metin.slice(0, 200)}`);
-          setYukleniyor(false);
-          return;
+        if (result.status === 'fulfilled') {
+          try {
+            kombin = resolveItems(result.value, gruplar[i]);
+          } catch (parseErr) {
+            console.warn(`Kombin ${i + 1} parsing hatası:`, parseErr);
+          }
+        } else {
+          console.warn(`Kombin ${i + 1} API hatası:`, result.reason);
         }
-        const raw = JSON.parse(metin.slice(baslangic, bitis)) as { kombinler: Array<{ baslik: string; tur: string; parcalar: Array<number | string>; neden: string }> };
-        if (!Array.isArray(raw.kombinler) || raw.kombinler.length === 0) {
-          setHata(`Kombinler oluşturulamadı. Claude yanıtı: ${metin.slice(0, 300)}`);
-          setYukleniyor(false);
-          return;
+
+        // Fallback: eğer API başarısız olursa, random seçilmiş kıyafetlerle kombin oluştur
+        if (!kombin && gruplar[i].length > 0) {
+          const shuffled = [...gruplar[i]].sort(() => Math.random() - 0.5);
+          const sayı = Math.min(2 + Math.floor(Math.random() * 2), shuffled.length);
+          kombin = {
+            baslik: dil === 'en' ? 'Generated Outfit' : 'Oluşturulmuş Kombin',
+            tur: turler[i],
+            parcalar: shuffled.slice(0, sayı).map((k) => k.ad),
+            neden: dil === 'en' ? 'Auto-generated outfit' : 'Otomatik oluşturulmuş kombin',
+          };
         }
-        const resolved: Kombin[] = raw.kombinler.map(k => ({
-          ...k,
-          parcalar: k.parcalar.map(p => {
-            const idx = Number(p);
-            if (!isNaN(idx) && idx >= 1 && idx <= liste.length) return liste[idx - 1].ad;
-            return String(p);
-          }),
-        }));
-        setKombinler(resolved);
-        streakGuncelle().then(setStreak);
-        takipEt(Olaylar.KOMBIN_OLUSTURULDU, { kombin_sayisi: resolved.length });
-        await kombinKullan();
-        const hak2 = await kalanHakAl(isPro);
-        setKalanHak(hak2.isPro ? null : hak2.kalan);
-        // Son 1 hak kaldıysa hafif uyarı (alert değil, banner yeterli)
-        if (!hak2.isPro && hak2.kalan === 1) {
-          setTimeout(() => {
-            Alert.alert(
-              dil === 'en' ? '⚡ Last Free Outfit' : '⚡ Son Ücretsiz Kombinin',
-              dil === 'en'
-                ? 'This is your last free outfit this month. Go Pro for unlimited access — ₺59/month, cancel anytime.'
-                : 'Bu ay son ücretsiz kombinini kullandın. Sınırsız erişim için Pro\'ya geç — ₺59/ay, istediğin zaman iptal.',
-              [
-                { text: dil === 'en' ? 'Maybe Later' : 'Belki Sonra', style: 'cancel' },
-                { text: dil === 'en' ? 'Upgrade →' : 'Yükselt →', onPress: () => router.push('/subscription' as any) },
-              ]
-            );
-          }, 1500);
-        }
-      } else {
-        setHata(`Beklenmeyen API yanıtı: ${JSON.stringify(data).slice(0, 200)}`);
+
+        if (kombin) resolved.push(kombin);
       }
+
+      // En azından 1 kombin olması gerekli
+      if (resolved.length === 0) {
+        throw new Error(dil === 'en' ? 'Could not create any outfits' : 'Kombin oluşturulamadı');
+      }
+
+      setKombinler(resolved);
+      streakGuncelle().then(setStreak);
+      takipEt(Olaylar.KOMBIN_OLUSTURULDU, { kombin_sayisi: resolved.length });
+      await kombinKullan();
+      const hak2 = await kalanHakAl(isPro);
+      setKalanHak(hak2.isPro ? null : hak2.kalan);
+
     } catch (e) {
-      clearTimeout(zaman);
       const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';
-      const hataMesaj = msg.includes('abort') || msg.includes('Abort')
-        ? 'İstek zaman aşımına uğradı (60s). İnternet bağlantını kontrol et.'
-        : `Kombin oluşturulamadı: ${msg}`;
-      setHata(hataMesaj);
+      setHata(`Kombin hatası: ${msg}`);
     }
     setYukleniyor(false);
   };

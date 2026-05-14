@@ -60,7 +60,6 @@ export default function Wardrobe() {
       }
 
       if (user) {
-        // Supabase'den yükle — cloud her zaman öncelikli
         try {
           const uzak = await syncYukle(user.id);
           if (uzak.length > 0) {
@@ -74,11 +73,19 @@ export default function Wardrobe() {
             syncTumunuYukle(user.id, lokal).catch(() => {});
             return;
           }
-        } catch {}
+        } catch (e) {
+          console.warn('Supabase sync hatası, lokal veri kullanılıyor:', e);
+          // Supabase başarısız ama lokalde veri varsa kullan
+          if (lokal.length > 0) {
+            setKiyafetler(lokal);
+            return;
+          }
+        }
       }
 
-      setKiyafetler(lokal);
+      setKiyafetler(lokal.length > 0 ? lokal : BASLANGIC);
     } catch (e) {
+      console.error('Kıyafet yükleme kritik hatası:', e);
       setKiyafetler(BASLANGIC);
     }
   };
