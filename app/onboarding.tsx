@@ -188,7 +188,8 @@ export default function Onboarding() {
 
   const bitir = async () => {
     await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
-    router.replace('/login' as any);
+    // Store'a göndermeden önce '/login' yap
+    router.replace(__DEV__ ? '/(tabs)/outfits' : '/login' as any);
   };
 
   const dilSec = async (d: 'tr' | 'en') => {
