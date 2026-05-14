@@ -1,4 +1,3 @@
-import * as FileSystem from './fileSystem';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
@@ -10,10 +9,11 @@ export async function kiyafetTani(
   const kucuk = await ImageManipulator.manipulateAsync(
     imageUri,
     [{ resize: { width: 800 } }],
-    { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG },
+    { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG, base64: true },
   );
 
-  const base64 = await FileSystem.readAsStringAsync(kucuk.uri, { encoding: 'base64' });
+  const base64 = kucuk.base64;
+  if (!base64) return { ad: 'Yeni Kıyafet', tur: 'Üst' };
 
   const res = await fetch(`${API_URL}/api/claude`, {
     method: 'POST',
