@@ -598,7 +598,7 @@ export default function Outfits() {
   // Wardrobe'dan "Dene" butonuyla gelinince try-on otomatik aç
   useEffect(() => {
     if (!tryOnKiyafetId || kiyafetler.length === 0) return;
-    const hedef = kiyafetler.find(k => k.id === Number(tryOnKiyafetId));
+    const hedef = kiyafetler.find(k => String(k.id) === String(tryOnKiyafetId));
     if (!hedef) return;
     setTryOn({
       visible: true,

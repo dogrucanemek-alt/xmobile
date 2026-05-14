@@ -8,6 +8,8 @@ import { ONBOARDING_KEY } from './onboarding';
 
 const CYAN = '#00D4FF';
 const KVKK_KEY = 'xmobile_kvkk_onay';
+// Store'a göndermeden önce false yap
+const DEV_SKIP_LOGIN = true;
 
 export default function Index() {
   const router = useRouter();
@@ -20,7 +22,7 @@ export default function Index() {
     AsyncStorage.multiGet([KVKK_KEY, ONBOARDING_KEY]).then(([kvkk, onb]) => {
       if (!kvkk[1]) { setKvkkGoster(true); return; }
       if (!onb[1])  { router.replace('/onboarding'); return; }
-      if (!session && !__DEV__) { router.replace('/login' as any); return; }
+      if (!session && !__DEV__ && !DEV_SKIP_LOGIN) { router.replace('/login' as any); return; }
       router.replace('/outfits' as any);
     });
   }, [yukleniyor, session]);
@@ -30,7 +32,7 @@ export default function Index() {
     setKvkkGoster(false);
     const onb = await AsyncStorage.getItem(ONBOARDING_KEY);
     if (!onb) { router.replace('/onboarding'); return; }
-    if (!session && !__DEV__) { router.replace('/login' as any); return; }
+    if (!session && !__DEV__ && !DEV_SKIP_LOGIN) { router.replace('/login' as any); return; }
     router.replace('/outfits' as any);
   };
 

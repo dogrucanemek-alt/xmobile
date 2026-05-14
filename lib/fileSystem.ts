@@ -1,4 +1,5 @@
 import { File, Directory, Paths } from 'expo-file-system';
+import { readAsStringAsync as legacyReadAsStringAsync, EncodingType as LegacyEncodingType } from 'expo-file-system/legacy';
 
 export const documentDirectory: string = Paths.document.uri;
 export const cacheDirectory: string    = Paths.cache.uri;
@@ -13,14 +14,7 @@ export async function readAsStringAsync(
   options?: { encoding?: string },
 ): Promise<string> {
   if (options?.encoding === 'base64' || options?.encoding === EncodingType.Base64) {
-    const res = await fetch(uri);
-    const blob = await res.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve((reader.result as string).split(',')[1]);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
+    return legacyReadAsStringAsync(uri, { encoding: LegacyEncodingType.Base64 });
   }
   return new File(uri).text();
 }

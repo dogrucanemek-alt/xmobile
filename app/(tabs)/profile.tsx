@@ -123,7 +123,7 @@ export default function Profile() {
     if (!izin.granted) return;
     const sonuc = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: [1, 1],
+      aspect: [3, 4],
       quality: 0.8,
     });
     if (!sonuc.canceled) {
@@ -136,7 +136,7 @@ export default function Profile() {
     if (!izin.granted) return;
     const sonuc = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
-      aspect: [1, 1],
+      aspect: [3, 4],
       quality: 0.8,
     });
     if (!sonuc.canceled) {
