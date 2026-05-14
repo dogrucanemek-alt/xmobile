@@ -1,4 +1,5 @@
 import * as ImageManipulator from 'expo-image-manipulator';
+import { readAsStringAsync, EncodingType } from 'expo-file-system/legacy';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 const TURLER = ['Üst', 'Alt', 'Dış Giyim', 'Ayakkabı', 'Aksesuar'];
@@ -9,10 +10,10 @@ export async function kiyafetTani(
   const kucuk = await ImageManipulator.manipulateAsync(
     imageUri,
     [{ resize: { width: 800 } }],
-    { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG, base64: true },
+    { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG },
   );
 
-  const base64 = kucuk.base64;
+  const base64 = await readAsStringAsync(kucuk.uri, { encoding: EncodingType.Base64 });
   if (!base64) return { ad: 'Yeni Kıyafet', tur: 'Üst' };
 
   const res = await fetch(`${API_URL}/api/claude`, {

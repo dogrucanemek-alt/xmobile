@@ -119,11 +119,7 @@ export default function Wardrobe() {
   const fotodanEkle = async (uri: string) => {
     let ad = 'Yeni Kıyafet';
     let tur = 'Üst';
-    try {
-      ({ ad, tur } = await kiyafetTani(uri));
-    } catch (e) {
-      Alert.alert('Tanıma Hatası (DEBUG)', String(e));
-    }
+    try { ({ ad, tur } = await kiyafetTani(uri)); } catch (e) { console.warn('Tanıma hatası:', e); }
     let kaliciUri = uri;
     try { kaliciUri = await fotografKaydet(uri); } catch {}
     const yeni = { id: Date.now(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri };
