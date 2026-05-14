@@ -34,12 +34,13 @@ export async function kiyafetTani(
       return { ad: 'Yeni Kıyafet', tur: 'Üst' };
     }
 
-    const res = await fetch(`${API_URL}/api/claude`, {
+    const res = await fetch(`${API_URL}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 120,
+        system: 'You are a clothing identifier. Respond with ONLY valid JSON.',
         messages: [{
           role: 'user',
           content: [
