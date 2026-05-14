@@ -167,12 +167,29 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@300;400&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,700&family=Jost:wght@300;400&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700%7CSpace+Grotesk:wght@300;400;500;600;700%7CBodoni+Moda:opsz,wght@6..96,400;6..96,700%7CBarlow+Condensed:wght@600;700%7CBarlow:wght@300;400%7CJost:wght@300;400&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    :root { --gold: #CA8A04; --gold-light: #D4A017; --gold-dim: rgba(202,138,4,0.18); }
-    body { background: #000; color: #fff; font-family: 'Jost', 'Barlow', sans-serif; font-weight: 300; overflow-x: hidden; }
+    :root {
+    --gold: #c9a227;
+    --gold-light: #d4b143;
+    --gold-deep: #a3811e;
+    --gold-pale: #e8d28a;
+    --gold-dim: rgba(201,162,39,0.18);
+    --gold-faint: rgba(201,162,39,0.08);
+    --gold-line: rgba(201,162,39,0.35);
+    --gold-glow: rgba(201,162,39,0.45);
+    --color-bg: #060606;
+    --fg-2: rgba(255,255,255,0.65);
+    --fg-mute: #7a7484;
+    --shadow-glow-sm: 0 0 20px rgba(201,162,39,0.40), 0 0 40px rgba(201,162,39,0.15);
+    --shadow-glow-md: 0 0 30px rgba(201,162,39,0.55), 0 0 60px rgba(201,162,39,0.25);
+    --shadow-glow-lg: 0 0 40px rgba(201,162,39,0.65), 0 0 80px rgba(201,162,39,0.30);
+    --shadow-text-display: 0 0 40px rgba(201,162,39,0.80), 0 0 100px rgba(201,162,39,0.45), 0 0 200px rgba(201,162,39,0.20);
+    --ease-spring: cubic-bezier(.22, 1, .36, 1);
+  }
+    body { background: #000; color: #fff; font-family: 'Space Grotesk', 'Jost', sans-serif; font-weight: 300; overflow-x: hidden; }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -193,7 +210,7 @@
     }
     .nav-links a.nav-active { color: #fff; }
     .nav-logo {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-weight: 700; font-size: 17px; letter-spacing: 3.5px;
       text-transform: uppercase; color: #fff; text-decoration: none;
     }
@@ -208,30 +225,30 @@
     .nav-lang { display: flex; }
     .nav-lang button {
       background: none; border: none; cursor: pointer;
-      font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 600;
+      font-family: 'Space Grotesk', 'Barlow', sans-serif; font-size: 11px; font-weight: 600;
       letter-spacing: 1.5px; text-transform: uppercase;
       color: rgba(255,255,255,0.35); padding: 5px 8px; transition: color 0.2s;
     }
     .nav-lang button.active { color: #fff; }
     .nav-cta {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
       color: #000; text-decoration: none; border: 1px solid var(--gold);
       background: var(--gold);
       padding: 8px 20px; border-radius: 2px;
       transition: background 0.22s, border-color 0.22s, box-shadow 0.22s, transform 0.15s;
       cursor: pointer;
-      box-shadow: 0 0 20px rgba(202,138,4,0.4), 0 0 40px rgba(202,138,4,0.15);
+      box-shadow: 0 0 20px rgba(201,162,39,0.4), 0 0 40px rgba(201,162,39,0.15);
     }
     .nav-cta:hover {
       background: var(--gold-light); border-color: var(--gold-light);
-      box-shadow: 0 0 30px rgba(202,138,4,0.6), 0 0 60px rgba(202,138,4,0.25);
+      box-shadow: 0 0 30px rgba(201,162,39,0.6), 0 0 60px rgba(201,162,39,0.25);
       transform: translateY(-1px);
     }
 
     /* ── BUTTONS ── */
     .btn {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
       color: #fff; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
       padding: 12px 30px; border: 1px solid rgba(255,255,255,0.55);
@@ -248,11 +265,11 @@
     .btn-solid {
       background: var(--gold); color: #000; border-color: var(--gold);
       backdrop-filter: none; font-weight: 700; letter-spacing: 2.5px;
-      box-shadow: 0 0 24px rgba(202,138,4,0.45), 0 0 60px rgba(202,138,4,0.18);
+      box-shadow: 0 0 24px rgba(201,162,39,0.45), 0 0 60px rgba(201,162,39,0.18);
     }
     .btn-solid:hover {
       background: var(--gold-light); border-color: var(--gold-light);
-      box-shadow: 0 0 40px rgba(202,138,4,0.65), 0 0 80px rgba(202,138,4,0.3);
+      box-shadow: 0 0 40px rgba(201,162,39,0.65), 0 0 80px rgba(201,162,39,0.3);
       transform: translateY(-2px);
     }
     .btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
@@ -284,8 +301,8 @@
       bottom: 0; left: 0; right: 0;
       height: 70%;
       background: radial-gradient(ellipse 80% 60% at 20% 100%,
-        rgba(202,138,4,0.18) 0%,
-        rgba(202,138,4,0.06) 40%,
+        rgba(201,162,39,0.18) 0%,
+        rgba(201,162,39,0.06) 40%,
         transparent 70%
       );
       pointer-events: none; z-index: 1;
@@ -295,7 +312,7 @@
       position: absolute; bottom: 96px; left: 60px; max-width: 700px;
     }
     .eyebrow {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 10px; font-weight: 700; letter-spacing: 5px;
       text-transform: uppercase; color: var(--gold); margin-bottom: 18px;
       opacity: 1;
@@ -303,7 +320,7 @@
     /* ── HERO GHOST TEXT ── */
     .hero-ghost {
       position: absolute;
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-weight: 700; letter-spacing: -0.06em;
       font-size: clamp(160px, 26vw, 400px);
       color: rgba(255,255,255,0.025);
@@ -314,29 +331,33 @@
     }
 
     .hero-title {
-      font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
+      font-family: 'Cormorant Garamond', 'Bodoni Moda', serif;
       font-size: clamp(72px, 10vw, 128px);
       font-weight: 700; line-height: 0.9;
       color: #fff; margin-bottom: 28px;
       letter-spacing: -0.04em;
       text-shadow: 0 4px 60px rgba(0,0,0,0.6);
     }
+    .hero-title em {
+      font-style: italic; font-weight: 400;
+      color: rgba(255,255,255,0.88);
+    }
     .hero-gold-word {
       display: block;
       color: var(--gold);
       text-shadow:
-        0 0 40px rgba(202,138,4,0.8),
-        0 0 100px rgba(202,138,4,0.45),
-        0 0 200px rgba(202,138,4,0.2);
+        0 0 40px rgba(201,162,39,0.8),
+        0 0 100px rgba(201,162,39,0.45),
+        0 0 200px rgba(201,162,39,0.2);
     }
     .hero-trust-line {
       margin-top: 18px;
-      font-family: 'Jost', sans-serif;
+      font-family: 'Space Grotesk', 'Jost', sans-serif;
       font-size: 11.5px; font-weight: 300;
       color: rgba(255,255,255,0.3); letter-spacing: 0.8px;
     }
     .hero-sub {
-      font-family: 'Jost', sans-serif;
+      font-family: 'Space Grotesk', 'Jost', sans-serif;
       font-size: 17px; font-weight: 300;
       color: rgba(255,255,255,0.85); line-height: 1.8;
       margin-bottom: 40px; max-width: 500px;
@@ -349,19 +370,19 @@
     }
     .hero-inline-input {
       flex: 1; padding: 13px 16px; background: transparent; border: none; outline: none;
-      color: #fff; font-family: 'Barlow', sans-serif; font-size: 14px;
+      color: #fff; font-family: 'Space Grotesk', 'Barlow', sans-serif; font-size: 14px;
     }
     .hero-inline-input::placeholder { color: rgba(255,255,255,0.38); }
     .hero-inline-btn {
-      padding: 13px 20px; background: #C8972B; border: none; cursor: pointer;
-      color: #000; font-family: 'Barlow Condensed', sans-serif; font-size: 13px;
+      padding: 13px 20px; background: #c9a227; border: none; cursor: pointer;
+      color: #000; font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif; font-size: 13px;
       font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
       transition: background .2s; white-space: nowrap;
     }
-    .hero-inline-btn:hover { background: #e0ab35; }
+    .hero-inline-btn:hover { background: #d4b143; }
     .hero-inline-note {
       margin-top: 10px; font-size: 12px; color: rgba(255,255,255,0.38);
-      font-family: 'Barlow', sans-serif; letter-spacing: 0.5px;
+      font-family: 'Space Grotesk', 'Barlow', sans-serif; letter-spacing: 0.5px;
     }
     @media (max-width: 600px) {
       .hero-inline-form { max-width: 100%; }
@@ -373,7 +394,7 @@
       opacity: 0.3; will-change: transform;
     }
     .scroll-hint span {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
     }
     .scroll-arrow {
@@ -398,14 +419,14 @@
       gap: 100px; align-items: flex-start; max-width: 1360px; margin: 0 auto;
     }
     .section-title {
-      font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
+      font-family: 'Cormorant Garamond', 'Bodoni Moda', serif;
       font-size: clamp(32px, 3.8vw, 52px);
       font-weight: 700;
       line-height: 1.08; margin-bottom: 24px; letter-spacing: -0.03em;
-      text-shadow: 0 0 120px rgba(202,138,4,0.12);
+      text-shadow: 0 0 120px rgba(201,162,39,0.12);
     }
     .section-body {
-      font-family: 'Jost', sans-serif;
+      font-family: 'Space Grotesk', 'Jost', sans-serif;
       font-size: 15.5px; font-weight: 300;
       color: rgba(255,255,255,0.65); line-height: 1.9;
       margin-bottom: 44px; max-width: 520px;
@@ -418,15 +439,15 @@
     .stat-item {
       background: #000; padding: 36px 28px;
       position: relative; overflow: hidden;
-      border: 1px solid rgba(202,138,4,0.1);
+      border: 1px solid rgba(201,162,39,0.1);
       transform-style: preserve-3d; will-change: transform;
       transition: transform 0.28s cubic-bezier(.22,1,.36,1), box-shadow 0.28s, border-color 0.28s;
       cursor: default;
     }
     .stat-item:hover {
-      border-color: rgba(202,138,4,0.5);
+      border-color: rgba(201,162,39,0.5);
       transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 0 40px rgba(202,138,4,0.15), 0 20px 50px rgba(0,0,0,0.5);
+      box-shadow: 0 0 40px rgba(201,162,39,0.15), 0 20px 50px rgba(0,0,0,0.5);
     }
     .stat-item.reveal {
       opacity: 0;
@@ -435,12 +456,12 @@
     }
     .stat-item.reveal.visible { opacity: 1; transform: perspective(600px) rotateX(0) translateZ(0) scale(1); }
     .stat-number {
-      font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
+      font-family: 'Cormorant Garamond', 'Bodoni Moda', serif;
       font-size: clamp(38px, 3.8vw, 56px); font-weight: 700; color: var(--gold);
       display: block; line-height: 1; margin-bottom: 10px; letter-spacing: -0.03em;
       text-shadow:
-        0 0 30px rgba(202,138,4,0.6),
-        0 0 80px rgba(202,138,4,0.25);
+        0 0 30px rgba(201,162,39,0.6),
+        0 0 80px rgba(201,162,39,0.25);
     }
     .stat-label {
       font-size: 11px; font-weight: 400;
@@ -481,7 +502,7 @@
     }
     .wardrobe-img-caption .eyebrow { margin-bottom: 10px; }
     .wardrobe-img-caption p {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: clamp(22px, 3vw, 38px); font-weight: 600;
       letter-spacing: 0.5px; color: #fff; line-height: 1.2;
       text-transform: uppercase; max-width: 480px;
@@ -497,7 +518,7 @@
       color: rgba(255,255,255,0.4); display: block; margin-bottom: 6px;
     }
     .wardrobe-badge .badge-value {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 13px; font-weight: 600; letter-spacing: 2px;
       color: #fff; text-transform: uppercase;
     }
@@ -514,14 +535,14 @@
     .app-feature { display: flex; align-items: flex-start; gap: 16px; }
     .app-feature-icon {
       width: 40px; height: 40px; border-radius: 4px; flex-shrink: 0;
-      border: 1px solid rgba(202,138,4,0.3); background: rgba(202,138,4,0.06);
+      border: 1px solid rgba(201,162,39,0.3); background: rgba(201,162,39,0.06);
       display: flex; align-items: center; justify-content: center;
       transition: border-color 0.25s, background 0.25s;
     }
-    .app-feature:hover .app-feature-icon { border-color: var(--gold); background: rgba(202,138,4,0.12); }
+    .app-feature:hover .app-feature-icon { border-color: var(--gold); background: rgba(201,162,39,0.12); }
     .app-feature-icon svg { width: 18px; height: 18px; stroke: var(--gold); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-    .app-feature-name { font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 5px; letter-spacing: -0.01em; }
-    .app-feature-desc { font-family: 'Jost', sans-serif; font-size: 13.5px; font-weight: 300; color: rgba(255,255,255,0.5); line-height: 1.72; }
+    .app-feature-name { font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 5px; letter-spacing: -0.01em; }
+    .app-feature-desc { font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 13.5px; font-weight: 300; color: rgba(255,255,255,0.5); line-height: 1.72; }
     .app-store-row { display: flex; gap: 14px; flex-wrap: wrap; }
     .app-visual {
       display: flex; justify-content: center; align-items: center;
@@ -529,7 +550,7 @@
     }
     .app-visual::before {
       content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at center, rgba(202,138,4,0.07) 0%, transparent 70%);
+      background: radial-gradient(ellipse at center, rgba(201,162,39,0.07) 0%, transparent 70%);
       pointer-events: none;
     }
     .phone-frame {
@@ -540,7 +561,7 @@
         0 0 0 5px #0a0a0a,
         0 0 0 6px rgba(255,255,255,0.06),
         0 40px 80px rgba(0,0,0,0.9),
-        0 0 80px rgba(202,138,4,0.06);
+        0 0 80px rgba(201,162,39,0.06);
       overflow: hidden; will-change: transform;
     }
     .phone-island {
@@ -558,7 +579,7 @@
     /* ── FEATURES ── */
     .features-section {
       background:
-        radial-gradient(ellipse 70% 40% at 50% 0%, rgba(202,138,4,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 40% at 50% 0%, rgba(201,162,39,0.08) 0%, transparent 60%),
         #04040f;
       padding: 100px 60px;
     }
@@ -575,19 +596,19 @@
       background: #000; padding: 52px 40px;
       transform-style: preserve-3d; will-change: transform;
       position: relative; overflow: hidden;
-      border: 1px solid rgba(202,138,4,0.09);
+      border: 1px solid rgba(201,162,39,0.09);
       transition: background 0.28s, transform 0.28s cubic-bezier(.22,1,.36,1), box-shadow 0.28s, border-color 0.28s;
       cursor: pointer;
     }
     .feature-card:hover {
       background: #060606;
-      border-color: rgba(202,138,4,0.55);
+      border-color: rgba(201,162,39,0.55);
       transform: translateY(-8px) scale(1.015);
       box-shadow:
-        0 0 0 1px rgba(202,138,4,0.2),
+        0 0 0 1px rgba(201,162,39,0.2),
         0 20px 60px rgba(0,0,0,0.8),
-        0 0 80px rgba(202,138,4,0.12),
-        0 0 160px rgba(202,138,4,0.06);
+        0 0 80px rgba(201,162,39,0.12),
+        0 0 160px rgba(201,162,39,0.06);
     }
     /* 3D perspective entrance — overrides generic reveal-scale for cards */
     .feature-card.reveal-scale {
@@ -607,9 +628,9 @@
     /* Icon 3D float */
     .feature-icon {
       width: 42px; height: 42px;
-      border: 1px solid rgba(202,138,4,0.35); border-radius: 4px;
+      border: 1px solid rgba(201,162,39,0.35); border-radius: 4px;
       display: flex; align-items: center; justify-content: center; margin-bottom: 30px;
-      background: rgba(202,138,4,0.06);
+      background: rgba(201,162,39,0.06);
       transition: border-color 0.25s, background 0.25s, transform 0.25s cubic-bezier(.22,1,.36,1);
       transform: translateZ(0px);
     }
@@ -622,13 +643,13 @@
       stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
     }
     .feature-card h3 {
-      font-family: 'Bodoni Moda', serif;
+      font-family: 'Cormorant Garamond', 'Bodoni Moda', serif;
       font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
       margin-bottom: 12px; color: #fff;
       transform: translateZ(0); transition: transform 0.25s cubic-bezier(.22,1,.36,1);
     }
     .feature-card:hover h3 { transform: translateZ(10px); }
-    .feature-card p { font-family: 'Jost', sans-serif; font-size: 14.5px; font-weight: 300; color: rgba(255,255,255,0.55); line-height: 1.9; }
+    .feature-card p { font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 14.5px; font-weight: 300; color: rgba(255,255,255,0.55); line-height: 1.9; }
 
     /* ── PRİCİNG ── */
     .pricing-section { background: #000; padding: 100px 60px; border-top: 1px solid rgba(255,255,255,0.07); }
@@ -643,14 +664,14 @@
     }
     .pricing-card {
       background: #000; padding: 52px 40px; position: relative;
-      overflow: hidden; border: 1px solid rgba(202,138,4,0.09);
+      overflow: hidden; border: 1px solid rgba(201,162,39,0.09);
       transition: transform 0.28s cubic-bezier(.22,1,.36,1), box-shadow 0.28s, border-color 0.28s;
       transform-style: preserve-3d; will-change: transform;
     }
     .pricing-card:hover {
-      border-color: rgba(202,138,4,0.4);
+      border-color: rgba(201,162,39,0.4);
       transform: translateY(-5px);
-      box-shadow: 0 0 50px rgba(202,138,4,0.1), 0 24px 60px rgba(0,0,0,0.6);
+      box-shadow: 0 0 50px rgba(201,162,39,0.1), 0 24px 60px rgba(0,0,0,0.6);
     }
     .pricing-card.reveal {
       opacity: 0;
@@ -663,18 +684,18 @@
     }
     .pricing-badge {
       display: inline-block;
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
       color: #000; background: var(--gold); padding: 4px 12px; border-radius: 2px;
       margin-bottom: 28px;
     }
     .pricing-name {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
       color: rgba(255,255,255,0.4); margin-bottom: 16px;
     }
     .pricing-price {
-      font-family: 'Bodoni Moda', serif;
+      font-family: 'Cormorant Garamond', 'Bodoni Moda', serif;
       font-size: clamp(44px, 5vw, 68px); font-weight: 700; color: #fff;
       line-height: 1; margin-bottom: 6px; letter-spacing: -0.03em;
     }
@@ -736,34 +757,34 @@
     }
     .badge {
       display: inline-block;
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-      color: var(--gold); background: rgba(202,138,4,0.08);
-      border: 1px solid rgba(202,138,4,0.35);
+      color: var(--gold); background: rgba(201,162,39,0.08);
+      border: 1px solid rgba(201,162,39,0.35);
       padding: 5px 14px; border-radius: 2px; margin-bottom: 22px;
     }
     .cs-features {
       display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 32px;
     }
     .cs-feature {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
       color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.12);
       border-radius: 2px; padding: 5px 12px;
       transition: border-color 0.3s, color 0.3s;
     }
     .coming-soon-content:hover .cs-feature {
-      border-color: rgba(202,138,4,0.2); color: rgba(255,255,255,0.65);
+      border-color: rgba(201,162,39,0.2); color: rgba(255,255,255,0.65);
     }
 
     /* ── WAITLIST ── */
     .waitlist-section {
       background:
-        radial-gradient(ellipse 60% 50% at 50% 100%, rgba(202,138,4,0.12) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(202,138,4,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 50% 100%, rgba(201,162,39,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(201,162,39,0.06) 0%, transparent 60%),
         #000;
       padding: 120px 60px; text-align: center;
-      border-top: 1px solid rgba(202,138,4,0.15);
+      border-top: 1px solid rgba(201,162,39,0.15);
     }
     .waitlist-section .eyebrow { margin-bottom: 18px; }
     .waitlist-section .section-title { margin-bottom: 18px; }
@@ -776,14 +797,14 @@
       flex: 1; padding: 13px 22px;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.14); border-right: none;
-      color: #fff; font-size: 14px; font-family: 'Barlow', sans-serif; font-weight: 300;
+      color: #fff; font-size: 14px; font-family: 'Space Grotesk', 'Barlow', sans-serif; font-weight: 300;
       outline: none; border-radius: 2px 0 0 2px;
       transition: border-color 0.2s, background 0.2s;
     }
     .waitlist-input:focus { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.09); }
     .waitlist-input::placeholder { color: rgba(255,255,255,0.2); }
     .waitlist-btn {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
       background: var(--gold); color: #000; border: none;
       padding: 13px 26px; cursor: pointer; border-radius: 0 2px 2px 0;
@@ -797,9 +818,9 @@
     }
     .waitlist-counter .counter-pill {
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(202,138,4,0.1); border: 1px solid rgba(202,138,4,0.25);
+      background: rgba(201,162,39,0.1); border: 1px solid rgba(201,162,39,0.25);
       border-radius: 100px; padding: 6px 16px;
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
       color: var(--gold); text-transform: uppercase;
     }
@@ -814,11 +835,11 @@
     .waitlist-success {
       display: none;
       padding: 28px 32px;
-      background: rgba(202,138,4,0.08); border: 1px solid rgba(202,138,4,0.2);
+      background: rgba(201,162,39,0.08); border: 1px solid rgba(201,162,39,0.2);
       border-radius: 4px; margin-top: 28px; max-width: 480px; margin-left: auto; margin-right: auto;
     }
     .waitlist-success .success-title {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 18px; letter-spacing: 2.5px; text-transform: uppercase;
       color: var(--gold); margin-bottom: 10px;
     }
@@ -836,28 +857,28 @@
       gap: 64px; max-width: 1200px; margin: 0 auto 56px;
     }
     .footer-logo {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 17px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase;
       color: #fff; display: block; margin-bottom: 16px;
     }
     .footer-tagline {
-      font-family: 'Jost', sans-serif; font-size: 13.5px; font-weight: 300;
+      font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 13.5px; font-weight: 300;
       color: rgba(255,255,255,0.4); line-height: 1.8; margin-bottom: 24px;
     }
     .footer-email {
-      font-family: 'Jost', sans-serif; font-size: 12.5px;
-      color: rgba(202,138,4,0.65); text-decoration: none; letter-spacing: 0.2px;
+      font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 12.5px;
+      color: rgba(201,162,39,0.65); text-decoration: none; letter-spacing: 0.2px;
       transition: color 0.2s;
     }
     .footer-email:hover { color: var(--gold); }
     .footer-col-title {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
       color: rgba(255,255,255,0.22); margin-bottom: 20px;
     }
     .footer-nav-links { display: flex; flex-direction: column; gap: 13px; }
     .footer-nav-links a {
-      font-family: 'Jost', sans-serif; font-size: 13.5px; font-weight: 300;
+      font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 13.5px; font-weight: 300;
       color: rgba(255,255,255,0.48); text-decoration: none; transition: color 0.2s;
     }
     .footer-nav-links a:hover { color: rgba(255,255,255,0.88); }
@@ -868,7 +889,7 @@
       display: flex; align-items: center; justify-content: center;
       text-decoration: none; transition: border-color 0.25s, background 0.25s;
     }
-    .footer-social-icons a:hover { border-color: rgba(202,138,4,0.4); background: rgba(202,138,4,0.07); }
+    .footer-social-icons a:hover { border-color: rgba(201,162,39,0.4); background: rgba(201,162,39,0.07); }
     .footer-social-icons svg { width: 15px; height: 15px; fill: rgba(255,255,255,0.45); transition: fill 0.25s; }
     .footer-social-icons a:hover svg { fill: var(--gold); }
     .footer-divider {
@@ -879,10 +900,10 @@
       display: flex; align-items: center; justify-content: space-between;
       max-width: 1200px; margin: 0 auto; flex-wrap: wrap; gap: 16px;
     }
-    .footer-copy { font-family: 'Jost', sans-serif; font-size: 11px; color: rgba(255,255,255,0.18); letter-spacing: 0.3px; }
+    .footer-copy { font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 11px; color: rgba(255,255,255,0.18); letter-spacing: 0.3px; }
     .footer-legal { display: flex; gap: 24px; }
     .footer-legal a {
-      font-family: 'Jost', sans-serif; font-size: 11px;
+      font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 11px;
       color: rgba(255,255,255,0.2); text-decoration: none; letter-spacing: 0.3px; transition: color 0.2s;
     }
     .footer-legal a:hover { color: rgba(255,255,255,0.5); }
@@ -910,7 +931,7 @@
     /* Scroll progress bar */
     .scroll-bar {
       position: fixed; top: 0; left: 0; height: 1.5px; width: 0%;
-      background: linear-gradient(to right, rgba(202,138,4,0.5), #CA8A04, #D4A017);
+      background: linear-gradient(to right, rgba(201,162,39,0.5), #c9a227, #d4b143);
       z-index: 1002; pointer-events: none;
       transition: width 60ms linear;
     }
@@ -942,7 +963,7 @@
       .features-scroll-hint {
         display: flex; align-items: center; justify-content: center; gap: 10px;
         margin-top: 28px; margin-bottom: 0;
-        font-family: 'Barlow Condensed', sans-serif;
+        font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
         font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
         color: rgba(255,255,255,0.2);
       }
@@ -1015,7 +1036,7 @@
     .mobile-menu a:hover { color: #fff; }
     .mobile-menu .mobile-cta {
       margin-top: 20px; text-align: center;
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
       background: var(--gold); color: #000; padding: 13px; border-radius: 2px;
       border-bottom: none;
@@ -1055,7 +1076,7 @@
     }
     .section-glow-top::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(to right, transparent, rgba(202,138,4,0.2), transparent);
+      background: linear-gradient(to right, transparent, rgba(201,162,39,0.2), transparent);
       z-index: 1; pointer-events: none;
     }
 
@@ -1074,7 +1095,7 @@
       transition: opacity 0.5s, transform 0.5s;
     }
     .demo-step-num {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 11px; font-weight: 700; letter-spacing: 3px;
       color: rgba(255,255,255,0.22); min-width: 28px;
       padding-top: 2px; transition: color 0.4s;
@@ -1133,7 +1154,7 @@
 
     /* Slide 1: Scanning */
     .slide-header {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 10px; font-weight: 700; letter-spacing: 3px;
       color: rgba(255,255,255,0.3); text-transform: uppercase;
       margin-bottom: 24px;
@@ -1209,7 +1230,7 @@
       background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
       border-radius: 8px; padding: 8px 14px;
     }
-    .score-num { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1; }
+    .score-num { font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1; }
     .score-label { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase; }
     .score-desc { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.5; }
     .result-outfit {
@@ -1228,7 +1249,7 @@
       background: #fff; border-radius: 8px;
       font-size: 12px; font-weight: 700; color: #000;
       text-align: center; letter-spacing: 1px;
-      font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif; text-transform: uppercase;
     }
     @media (max-width: 960px) {
       .demo-container { grid-template-columns: 1fr; }
@@ -1243,12 +1264,12 @@
       display: flex; align-items: center; gap: 13px;
       border: 1px solid rgba(255,255,255,0.13); border-radius: 10px;
       padding: 13px 24px; text-decoration: none; color: rgba(255,255,255,0.38);
-      font-family: 'Jost', sans-serif; background: rgba(255,255,255,0.03);
+      font-family: 'Space Grotesk', 'Jost', sans-serif; background: rgba(255,255,255,0.03);
       transition: border-color 0.3s, color 0.3s, background 0.3s;
     }
-    .store-btn:hover { border-color: rgba(202,138,4,0.4); color: rgba(255,255,255,0.72); background: rgba(202,138,4,0.05); }
+    .store-btn:hover { border-color: rgba(201,162,39,0.4); color: rgba(255,255,255,0.72); background: rgba(201,162,39,0.05); }
     .store-btn svg { width: 22px; height: 22px; fill: currentColor; flex-shrink: 0; }
-    .store-btn-sub { font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 1px; color: rgba(202,138,4,0.55); }
+    .store-btn-sub { font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 1px; color: rgba(201,162,39,0.55); }
     .store-btn-name { font-size: 15px; font-weight: 500; display: block; color: inherit; }
 
     /* ── TECH STRIP ── */
@@ -1261,7 +1282,7 @@
       mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
     }
     .tech-strip-label {
-      text-align: center; font-family: 'Barlow Condensed', sans-serif;
+      text-align: center; font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif;
       font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
       color: rgba(255,255,255,0.2); margin-bottom: 32px;
     }
@@ -1283,7 +1304,7 @@
     .tech-logo-item:hover { opacity: 0.65; }
     .tech-logo-item svg { width: 20px; height: 20px; fill: #fff; flex-shrink: 0; }
     .tech-logo-item span {
-      font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 600;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 600;
       letter-spacing: 1.5px; text-transform: uppercase; color: #fff; white-space: nowrap;
     }
 
@@ -1292,9 +1313,9 @@
       background: #07070f;
       border-top: 2px solid var(--gold);
       box-shadow:
-        0 0 0 1px rgba(202,138,4,0.2),
-        0 0 60px rgba(202,138,4,0.2),
-        0 0 120px rgba(202,138,4,0.1),
+        0 0 0 1px rgba(201,162,39,0.2),
+        0 0 60px rgba(201,162,39,0.2),
+        0 0 120px rgba(201,162,39,0.1),
         0 40px 100px rgba(0,0,0,0.7);
       transform: scaleY(1.04) translateY(-8px);
       z-index: 2;
@@ -1302,10 +1323,10 @@
     .pricing-card.featured .pricing-badge {
       background: var(--gold);
       color: #000;
-      box-shadow: 0 0 24px rgba(202,138,4,0.5), 0 0 60px rgba(202,138,4,0.2);
+      box-shadow: 0 0 24px rgba(201,162,39,0.5), 0 0 60px rgba(201,162,39,0.2);
     }
     .pricing-card.featured .pricing-price {
-      text-shadow: 0 0 40px rgba(202,138,4,0.4);
+      text-shadow: 0 0 40px rgba(201,162,39,0.4);
     }
 
     /* ── SCROLL PROGRESS ── */
@@ -1314,7 +1335,7 @@
       background: linear-gradient(90deg, #b87d00 0%, var(--gold) 50%, #f5c842 100%);
       z-index: 10000; pointer-events: none;
       transition: width 80ms linear;
-      box-shadow: 0 0 12px rgba(202,138,4,0.8), 0 0 30px rgba(202,138,4,0.4);
+      box-shadow: 0 0 12px rgba(201,162,39,0.8), 0 0 30px rgba(201,162,39,0.4);
     }
 
     /* ── TESTIMONIALS ── */
@@ -1335,9 +1356,9 @@
       cursor: default;
     }
     .testimonial-card:hover {
-      border-color: rgba(202,138,4,0.45);
+      border-color: rgba(201,162,39,0.45);
       transform: translateY(-6px);
-      box-shadow: 0 0 40px rgba(202,138,4,0.1), 0 20px 60px rgba(0,0,0,0.6);
+      box-shadow: 0 0 40px rgba(201,162,39,0.1), 0 20px 60px rgba(0,0,0,0.6);
     }
     .testimonial-card.reveal-scale {
       opacity: 0;
@@ -1347,33 +1368,33 @@
     .testimonial-card.reveal-scale.visible { opacity: 1; transform: perspective(700px) rotateY(0) translateZ(0) scale(1); }
     .testimonial-card::before {
       content: '\201C';
-      font-family: 'Bodoni Moda', serif; font-size: 96px; line-height: 1;
-      color: rgba(202,138,4,0.1); display: block;
+      font-family: 'Cormorant Garamond', 'Bodoni Moda', serif; font-size: 96px; line-height: 1;
+      color: rgba(201,162,39,0.1); display: block;
       margin-bottom: -28px; margin-left: -6px;
       pointer-events: none;
     }
     .testimonial-stars { display: flex; gap: 3px; margin-bottom: 20px; }
     .testimonial-stars svg { width: 14px; height: 14px; fill: var(--gold); }
     .testimonial-quote {
-      font-family: 'Jost', sans-serif; font-size: 14.5px; font-weight: 300;
+      font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 14.5px; font-weight: 300;
       color: rgba(255,255,255,0.6); line-height: 1.85; margin-bottom: 32px;
       font-style: italic;
     }
     .testimonial-author { display: flex; align-items: center; gap: 14px; }
     .testimonial-avatar {
       width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
-      background: linear-gradient(135deg, rgba(202,138,4,0.35) 0%, rgba(202,138,4,0.08) 100%);
-      border: 1px solid rgba(202,138,4,0.35);
+      background: linear-gradient(135deg, rgba(201,162,39,0.35) 0%, rgba(201,162,39,0.08) 100%);
+      border: 1px solid rgba(201,162,39,0.35);
       display: flex; align-items: center; justify-content: center;
-      font-family: 'Bodoni Moda', serif; font-size: 15px; font-weight: 600;
+      font-family: 'Cormorant Garamond', 'Bodoni Moda', serif; font-size: 15px; font-weight: 600;
       color: var(--gold);
     }
     .testimonial-name {
-      font-family: 'Jost', sans-serif; font-size: 13.5px; font-weight: 500;
+      font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 13.5px; font-weight: 500;
       color: #fff; margin-bottom: 3px;
     }
     .testimonial-role {
-      font-family: 'Jost', sans-serif; font-size: 11.5px; font-weight: 300;
+      font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 11.5px; font-weight: 300;
       color: rgba(255,255,255,0.38); letter-spacing: 0.5px; text-transform: uppercase;
     }
     @media (max-width: 1024px) { .testimonials-grid { grid-template-columns: 1fr; gap: 16px; } }
@@ -1395,14 +1416,14 @@
     #backToTop {
       position: fixed; bottom: 96px; right: 30px;
       width: 42px; height: 42px; border-radius: 50%;
-      background: rgba(202,138,4,0.1); border: 1px solid rgba(202,138,4,0.3);
+      background: rgba(201,162,39,0.1); border: 1px solid rgba(201,162,39,0.3);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; z-index: 8888;
       opacity: 0; pointer-events: none;
       transition: opacity 0.3s, transform 0.2s, background 0.2s;
     }
     #backToTop.visible { opacity: 1; pointer-events: auto; }
-    #backToTop:hover { background: rgba(202,138,4,0.22); transform: translateY(-3px); }
+    #backToTop:hover { background: rgba(201,162,39,0.22); transform: translateY(-3px); }
     #backToTop svg { width: 17px; height: 17px; stroke: var(--gold); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
     /* ── VIDEO SECTION ── */
@@ -1423,29 +1444,29 @@
     .video-bg-anim {
       position: absolute; inset: 0; overflow: hidden;
       background: linear-gradient(rgba(2,2,10,0.76), rgba(2,2,10,0.76)),
-                  radial-gradient(ellipse at 30% 50%, rgba(202,138,4,0.1) 0%, transparent 55%),
-                  radial-gradient(ellipse at 70% 30%, rgba(202,138,4,0.07) 0%, transparent 45%);
+                  radial-gradient(ellipse at 30% 50%, rgba(201,162,39,0.1) 0%, transparent 55%),
+                  radial-gradient(ellipse at 70% 30%, rgba(201,162,39,0.07) 0%, transparent 45%);
     }
     .video-scan-line {
       position: absolute; left: 0; right: 0; height: 1px;
-      background: linear-gradient(to right, transparent 0%, rgba(202,138,4,0.25) 20%, rgba(202,138,4,0.55) 50%, rgba(202,138,4,0.25) 80%, transparent 100%);
+      background: linear-gradient(to right, transparent 0%, rgba(201,162,39,0.25) 20%, rgba(201,162,39,0.55) 50%, rgba(201,162,39,0.25) 80%, transparent 100%);
       animation: videoScan 4s ease-in-out infinite; opacity: 0;
     }
     @keyframes videoScan { 0%{top:0;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:100%;opacity:0} }
     .video-grid-lines { position: absolute; inset: 0; opacity: 0.04; background-image: linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px); background-size: 80px 80px; }
     .video-play-ring {
       position: relative; width: 84px; height: 84px; z-index: 2;
-      border-radius: 50%; background: rgba(202,138,4,0.12);
-      border: 1.5px solid rgba(202,138,4,0.45);
+      border-radius: 50%; background: rgba(201,162,39,0.12);
+      border: 1.5px solid rgba(201,162,39,0.45);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
-      box-shadow: 0 0 0 0 rgba(202,138,4,0.3);
+      box-shadow: 0 0 0 0 rgba(201,162,39,0.3);
       animation: videoRingPulse 2.5s ease-in-out infinite;
     }
-    @keyframes videoRingPulse { 0%,100%{box-shadow:0 0 0 0 rgba(202,138,4,0.3)} 50%{box-shadow:0 0 0 18px rgba(202,138,4,0)} }
-    .video-play-ring:hover { background: rgba(202,138,4,0.25); transform: scale(1.08); animation: none; }
+    @keyframes videoRingPulse { 0%,100%{box-shadow:0 0 0 0 rgba(201,162,39,0.3)} 50%{box-shadow:0 0 0 18px rgba(201,162,39,0)} }
+    .video-play-ring:hover { background: rgba(201,162,39,0.25); transform: scale(1.08); animation: none; }
     .video-play-ring svg { width: 28px; height: 28px; fill: var(--gold); margin-left: 5px; }
-    .video-label { z-index: 2; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+    .video-label { z-index: 2; font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.28); }
     .video-features-bar {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
       display: flex; justify-content: center; gap: 0;
@@ -1453,7 +1474,7 @@
       background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
     }
     .video-feature-tag {
-      font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 600;
+      font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 600;
       letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);
       padding: 12px 24px; border-right: 1px solid rgba(255,255,255,0.05);
       display: flex; align-items: center; gap: 8px;
@@ -1480,7 +1501,7 @@
       transform-style: preserve-3d; will-change: transform;
       transition: border-color 0.3s, background 0.3s, transform 0.12s ease, box-shadow 0.12s ease;
     }
-    .b2b-pillar:hover { border-color: rgba(202,138,4,0.3); background: rgba(202,138,4,0.04); }
+    .b2b-pillar:hover { border-color: rgba(201,162,39,0.3); background: rgba(201,162,39,0.04); }
     .b2b-pillar.reveal {
       opacity: 0;
       transform: perspective(600px) rotateY(-18deg) translateZ(-16px) scale(0.97);
@@ -1489,12 +1510,12 @@
     .b2b-pillar.reveal.visible { opacity: 1; transform: perspective(600px) rotateY(0) translateZ(0) scale(1); }
     .b2b-pillar-icon {
       width: 38px; height: 38px; border-radius: 4px; flex-shrink: 0;
-      border: 1px solid rgba(202,138,4,0.3); background: rgba(202,138,4,0.06);
+      border: 1px solid rgba(201,162,39,0.3); background: rgba(201,162,39,0.06);
       display: flex; align-items: center; justify-content: center;
     }
     .b2b-pillar-icon svg { width: 17px; height: 17px; stroke: var(--gold); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-    .b2b-pillar h4 { font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 500; color: #fff; margin-bottom: 4px; }
-    .b2b-pillar p { font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.42); line-height: 1.65; }
+    .b2b-pillar h4 { font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 14px; font-weight: 500; color: #fff; margin-bottom: 4px; }
+    .b2b-pillar p { font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.42); line-height: 1.65; }
     .b2b-panel {
       background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 4px; padding: 52px 40px;
@@ -1508,14 +1529,14 @@
       transition: opacity 0.85s ease, transform 0.85s cubic-bezier(.22,1,.36,1), border-color 0.25s;
     }
     .b2b-panel.reveal-scale.visible { opacity: 1; transform: perspective(700px) rotateY(0) translateZ(0) scale(1); }
-    .b2b-panel-title { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.22); }
+    .b2b-panel-title { font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.22); }
     .b2b-stat-row { display: flex; gap: 40px; }
     .b2b-stat { text-align: center; }
-    .b2b-stat-num { font-family: 'Bodoni Moda', serif; font-size: 46px; font-weight: 700; color: var(--gold); display: block; line-height: 1; margin-bottom: 8px; }
+    .b2b-stat-num { font-family: 'Cormorant Garamond', 'Bodoni Moda', serif; font-size: 46px; font-weight: 700; color: var(--gold); display: block; line-height: 1; margin-bottom: 8px; }
     .b2b-stat-label { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 1.5px; text-transform: uppercase; }
     .b2b-panel-divider { width: 100%; height: 1px; background: rgba(255,255,255,0.06); }
-    .b2b-quote { font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.48); font-style: italic; line-height: 1.85; }
-    .b2b-quote-src { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(202,138,4,0.55); }
+    .b2b-quote { font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.48); font-style: italic; line-height: 1.85; }
+    .b2b-quote-src { font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(201,162,39,0.55); }
     @media (max-width: 1024px) { .b2b-container { grid-template-columns: 1fr; } }
     @media (max-width: 768px) { .b2b-section { padding: 80px 24px; } .b2b-stat-row { gap: 24px; } .b2b-stat-num { font-size: 34px; } .b2b-panel { padding: 40px 28px; } }
 
@@ -1531,7 +1552,7 @@
       padding: 26px 0; cursor: pointer; gap: 20px;
     }
     .faq-q-text {
-      font-family: 'Jost', sans-serif; font-size: 16px; font-weight: 400;
+      font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 16px; font-weight: 400;
       color: rgba(255,255,255,0.7); line-height: 1.4; flex: 1;
       transition: color 0.2s;
     }
@@ -1542,11 +1563,11 @@
       display: flex; align-items: center; justify-content: center;
       transition: transform 0.38s cubic-bezier(.22,1,.36,1), border-color 0.25s, background 0.25s;
     }
-    .faq-item.open .faq-icon { transform: rotate(45deg); border-color: rgba(202,138,4,0.4); background: rgba(202,138,4,0.08); }
+    .faq-item.open .faq-icon { transform: rotate(45deg); border-color: rgba(201,162,39,0.4); background: rgba(201,162,39,0.08); }
     .faq-icon svg { width: 13px; height: 13px; stroke: rgba(255,255,255,0.4); fill: none; stroke-width: 2; transition: stroke 0.25s; }
     .faq-item.open .faq-icon svg { stroke: var(--gold); }
     .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.45s cubic-bezier(.22,1,.36,1); }
-    .faq-a-inner { font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.48); line-height: 1.9; padding-bottom: 28px; }
+    .faq-a-inner { font-family: 'Space Grotesk', 'Jost', sans-serif; font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.48); line-height: 1.9; padding-bottom: 28px; }
     .faq-item.open .faq-a { max-height: 500px; }
     @media (max-width: 768px) { .faq-section { padding: 80px 24px; } .faq-q-text { font-size: 15px; } }
 
@@ -1609,7 +1630,7 @@
   <div class="hero-content">
     <p class="eyebrow" data-tr="Wardrobe Intelligence" data-en="Wardrobe Intelligence">Wardrobe Intelligence</p>
     <h1 class="hero-title">
-      <span data-tr="En Akıllı" data-en="The Smartest">En Akıllı</span>
+      <span data-tr="En <em>Akıllı</em>" data-en="The <em>Smartest</em>">En <em>Akıllı</em></span>
       <span class="hero-gold-word" data-tr="Gardırop." data-en="Wardrobe.">Gardırop.</span>
     </h1>
     <p class="hero-sub" data-tr="Sabah kaosunu bitiriyor. Hava durumu, takvim ve stiline göre her sabah hazır kombin — giymeden önce görüntüle." data-en="Ends morning chaos. Weather, calendar, style — perfect outfit every morning. See it before you wear it.">Sabah kaosunu bitiriyor. Hava durumu, takvim ve stiline göre her sabah hazır kombin — giymeden önce görüntüle.</p>
@@ -2630,9 +2651,9 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
         var ry =  cx * maxAngle;
         var tiltIntensity = Math.sqrt(cx * cx + cy * cy); // 0..~0.7
         card.style.transform = 'perspective(700px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateZ(' + liftZ + 'px)';
-        card.style.boxShadow = '0 ' + (liftZ * 1.5) + 'px ' + (liftZ * 4) + 'px rgba(0,0,0,0.65), 0 0 ' + (liftZ * 3) + 'px rgba(202,138,4,' + (tiltIntensity * 0.18).toFixed(3) + ')';
+        card.style.boxShadow = '0 ' + (liftZ * 1.5) + 'px ' + (liftZ * 4) + 'px rgba(0,0,0,0.65), 0 0 ' + (liftZ * 3) + 'px rgba(201,162,39,' + (tiltIntensity * 0.18).toFixed(3) + ')';
         if (glare) {
-          glare.style.background = 'radial-gradient(ellipse at ' + (pctX * 100).toFixed(1) + '% ' + (pctY * 100).toFixed(1) + '%, rgba(255,255,255,0.11) 0%, rgba(202,138,4,0.05) 30%, transparent 65%)';
+          glare.style.background = 'radial-gradient(ellipse at ' + (pctX * 100).toFixed(1) + '% ' + (pctY * 100).toFixed(1) + '%, rgba(255,255,255,0.11) 0%, rgba(201,162,39,0.05) 30%, transparent 65%)';
         }
       });
 
