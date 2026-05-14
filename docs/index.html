@@ -399,9 +399,9 @@
     }
     .section-title {
       font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
-      font-size: clamp(36px, 4.8vw, 72px);
+      font-size: clamp(32px, 3.8vw, 52px);
       font-weight: 700;
-      line-height: 1.0; margin-bottom: 28px; letter-spacing: -0.035em;
+      line-height: 1.08; margin-bottom: 24px; letter-spacing: -0.03em;
       text-shadow: 0 0 120px rgba(202,138,4,0.12);
     }
     .section-body {
@@ -436,7 +436,7 @@
     .stat-item.reveal.visible { opacity: 1; transform: perspective(600px) rotateX(0) translateZ(0) scale(1); }
     .stat-number {
       font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
-      font-size: clamp(48px, 5vw, 72px); font-weight: 700; color: var(--gold);
+      font-size: clamp(38px, 3.8vw, 56px); font-weight: 700; color: var(--gold);
       display: block; line-height: 1; margin-bottom: 10px; letter-spacing: -0.03em;
       text-shadow:
         0 0 30px rgba(202,138,4,0.6),
@@ -503,7 +503,7 @@
     }
 
     /* ── APP SECTION ── */
-    .app-section { background: #060606; padding: 144px 60px; }
+    .app-section { background: #060606; padding: 100px 60px; }
     .app-layout {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 80px; align-items: center; max-width: 1200px; margin: 0 auto;
@@ -533,19 +533,19 @@
       pointer-events: none;
     }
     .phone-frame {
-      position: relative; width: 290px; aspect-ratio: 9 / 19.5;
+      position: relative; width: 220px; aspect-ratio: 9 / 18;
       background: linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%);
-      border-radius: 44px; border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 36px; border: 1.5px solid rgba(255,255,255,0.1);
       box-shadow:
-        0 0 0 6px #0a0a0a,
-        0 0 0 7px rgba(255,255,255,0.06),
-        0 60px 120px rgba(0,0,0,0.95),
-        0 0 100px rgba(202,138,4,0.05);
+        0 0 0 5px #0a0a0a,
+        0 0 0 6px rgba(255,255,255,0.06),
+        0 40px 80px rgba(0,0,0,0.9),
+        0 0 80px rgba(202,138,4,0.06);
       overflow: hidden; will-change: transform;
     }
     .phone-island {
-      position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
-      width: 88px; height: 26px; background: #000; border-radius: 20px; z-index: 10;
+      position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      width: 72px; height: 22px; background: #000; border-radius: 20px; z-index: 10;
     }
     .phone-btn {
       position: absolute; width: 3px; background: rgba(255,255,255,0.08); border-radius: 2px;
@@ -560,7 +560,7 @@
       background:
         radial-gradient(ellipse 70% 40% at 50% 0%, rgba(202,138,4,0.08) 0%, transparent 60%),
         #04040f;
-      padding: 144px 60px;
+      padding: 100px 60px;
     }
     .features-header { text-align: center; margin-bottom: 80px; }
     .features-header .eyebrow { margin-bottom: 18px; }
@@ -631,7 +631,7 @@
     .feature-card p { font-family: 'Jost', sans-serif; font-size: 14.5px; font-weight: 300; color: rgba(255,255,255,0.55); line-height: 1.9; }
 
     /* ── PRİCİNG ── */
-    .pricing-section { background: #000; padding: 144px 60px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .pricing-section { background: #000; padding: 100px 60px; border-top: 1px solid rgba(255,255,255,0.07); }
     .pricing-header { text-align: center; margin-bottom: 72px; }
     .pricing-header .eyebrow { margin-bottom: 18px; }
     .pricing-header .section-body { margin: 0 auto; max-width: 480px; }
@@ -923,7 +923,7 @@
 
     /* ── HORIZONTAL FEATURE SCROLL (desktop) ── */
     @media (min-width: 900px) {
-      .features-section { overflow: hidden; padding: 144px 0; }
+      .features-section { overflow: hidden; padding: 100px 0; }
       .features-header { padding: 0 60px; }
       #featuresGrid {
         display: flex !important; flex-wrap: nowrap !important;
@@ -1026,17 +1026,21 @@
       .nav-links { display: none; }
       .nav-hamburger { display: flex; }
       .hero-content { left: 24px; right: 24px; bottom: 72px; }
+      .hero-ghost { display: none; }
       .coming-soon-content { left: 24px; right: 24px; bottom: 72px; }
-      .product-section { padding: 80px 24px; }
-      .app-section { padding: 80px 24px; }
-      .app-layout { grid-template-columns: 1fr; gap: 56px; }
+      .product-section { padding: 72px 24px; }
+      .app-section { padding: 72px 24px; }
+      .app-layout { grid-template-columns: 1fr; gap: 48px; }
       .app-visual { order: -1; }
       .app-text .section-title { text-align: center; }
       .app-store-row { justify-content: center; }
-      .phone-frame { width: 240px; }
-      .features-section { padding: 80px 24px; }
+      .phone-frame { width: 190px; border-radius: 28px; }
+      .features-section { padding: 72px 24px; }
       .features-grid { grid-template-columns: 1fr; }
-      .waitlist-section { padding: 96px 24px; }
+      .demo-section { padding: 72px 24px; }
+      .testimonials-section { padding: 72px 24px; }
+      .pricing-section { padding: 72px 24px; }
+      .waitlist-section { padding: 80px 24px; }
       .waitlist-form { flex-direction: column; }
       .waitlist-input { border-right: 1px solid rgba(255,255,255,0.14); border-bottom: none; border-radius: 2px 2px 0 0; }
       .waitlist-btn { border-radius: 0 0 2px 2px; padding: 13px; }
@@ -1056,7 +1060,7 @@
     }
 
     /* ── DEMO SECTION ── */
-    .demo-section { background: #000; padding: 144px 60px; }
+    .demo-section { background: #000; padding: 100px 60px; }
     .demo-container {
       max-width: 1100px; margin: 0 auto;
       display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
@@ -1315,7 +1319,7 @@
 
     /* ── TESTIMONIALS ── */
     .testimonials-section {
-      background: #04040f; padding: 144px 60px;
+      background: #04040f; padding: 100px 60px;
       border-top: 1px solid rgba(255,255,255,0.07);
     }
     .testimonials-header { text-align: center; margin-bottom: 72px; }
