@@ -575,7 +575,7 @@
     .phone-btn-r1 { right: -5px; top: 110px; height: 52px; }
     .phone-btn-r2 { right: -5px; top: 176px; height: 36px; }
     .phone-btn-l1 { left: -5px; top: 140px; height: 62px; }
-    .phone-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .phone-frame img { width: 100%; height: 100%; object-fit: contain; display: block; background: #0a0a0a; }
 
     /* ── FEATURES ── */
     .features-section {
@@ -943,18 +943,15 @@
     /* Phone hover already handled — reinforce */
     .phone-wrap { will-change: transform; }
 
-    /* ── HORIZONTAL FEATURE SCROLL (desktop) ── */
+    /* Features — static 3-col grid */
     @media (min-width: 900px) {
-      .features-section { overflow: hidden; padding: 100px 0; }
-      .features-header { padding: 0 60px; }
+      .features-section { overflow: visible; padding: 100px 60px; }
       #featuresGrid {
-        display: flex !important; flex-wrap: nowrap !important;
-        grid-template-columns: unset !important;
-        width: max-content !important; max-width: unset !important;
-        margin: 0; will-change: transform;
-        padding-left: 60px; padding-right: 60px;
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        width: auto !important; max-width: 1200px !important;
+        padding-left: 0; padding-right: 0;
       }
-      #featuresGrid .feature-card { flex: 0 0 380px; width: 380px; }
     }
     /* Horizontal scroll indicator */
     .features-scroll-hint {
@@ -1295,7 +1292,7 @@
     .tech-logos-track {
       display: flex; align-items: center;
       width: max-content; gap: 72px;
-      animation: techMarquee 40s linear infinite;
+      animation: techMarquee 160s linear infinite;
     }
     .tech-logos-wrapper:hover .tech-logos-track { animation-play-state: paused; }
     .tech-logo-item {
@@ -1771,7 +1768,7 @@
         <div class="phone-btn phone-btn-r1"></div>
         <div class="phone-btn phone-btn-r2"></div>
         <div class="phone-btn phone-btn-l1"></div>
-        <img src="https://dogrucanemek-alt.github.io/xmobile/img/app-screens.png" alt="AI Furniture uygulama ekranları" loading="lazy"/>
+        <img src="img/app-screens.png" alt="AI Furniture uygulama ekranları" loading="lazy"/>
       </div>
     </div>
   </div>

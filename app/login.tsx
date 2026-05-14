@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase';
 import { useApp } from '../lib/context';
 
 const CYAN = '#00D4FF';
+const DEV_SKIP_LOGIN = true; // Store'a göndermeden önce false yap
 
 export default function Login() {
   const router = useRouter();
@@ -21,6 +22,10 @@ export default function Login() {
   const tr = dil === 'tr';
 
   useEffect(() => {
+    if (DEV_SKIP_LOGIN || __DEV__) {
+      router.replace('/(tabs)/outfits' as any);
+      return;
+    }
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) router.replace('/(tabs)/outfits' as any);
     });
