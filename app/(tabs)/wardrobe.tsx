@@ -117,10 +117,11 @@ export default function Wardrobe() {
   };
 
   const fotodanEkle = async (uri: string) => {
-    const kaliciUri = await fotografKaydet(uri);
     let ad = 'Yeni Kıyafet';
     let tur = 'Üst';
-    try { ({ ad, tur } = await kiyafetTani(kaliciUri)); } catch (e) { console.warn('Kıyafet tanıma hatası:', e); }
+    try { ({ ad, tur } = await kiyafetTani(uri)); } catch (e) { console.warn('Kıyafet tanıma hatası:', e); }
+    let kaliciUri = uri;
+    try { kaliciUri = await fotografKaydet(uri); } catch {}
     const yeni = { id: Date.now(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri };
     await kaydet([...kiyafetler, yeni], yeni);
     kiyafetDuzenle(yeni);
@@ -129,7 +130,7 @@ export default function Wardrobe() {
   const fotografCek = async () => {
     const izin = await ImagePicker.requestCameraPermissionsAsync();
     if (!izin.granted) return;
-    const sonuc = await ImagePicker.launchCameraAsync({ allowsEditing: true, aspect: [3, 4], quality: 0.8 });
+    const sonuc = await ImagePicker.launchCameraAsync({ allowsEditing: false, quality: 0.85 });
     if (!sonuc.canceled) await fotodanEkle(sonuc.assets[0].uri);
   };
 
@@ -155,11 +156,11 @@ export default function Wardrobe() {
     for (let i = 0; i < sonuc.assets.length; i++) {
       const asset = sonuc.assets[i];
       setCokluProgress({ simdiki: i + 1, toplam });
-      let kaliciUri: string;
-      try { kaliciUri = await fotografKaydet(asset.uri); } catch { kaliciUri = asset.uri; }
       let ad = 'Yeni Kıyafet';
       let tur = 'Üst';
-      try { ({ ad, tur } = await kiyafetTani(kaliciUri)); } catch (e) { console.warn('Tanıma hatası:', e); }
+      try { ({ ad, tur } = await kiyafetTani(asset.uri)); } catch (e) { console.warn('Tanıma hatası:', e); }
+      let kaliciUri: string;
+      try { kaliciUri = await fotografKaydet(asset.uri); } catch { kaliciUri = asset.uri; }
       const yeniItem = { id: Date.now() + Math.random(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri };
       yeniListe.push(yeniItem);
       if (user) syncKaydet(user.id, yeniItem).catch(() => {});
