@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet } from 'react-native';
 import { AppProvider, useApp } from '../lib/context';
 import { ErrorBoundary } from '../lib/error-boundary';
@@ -13,6 +13,7 @@ import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import * as Linking from 'expo-linking';
 import { supabase } from '../lib/supabase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 sentryBaslat();
 revenueCatBaslat();
@@ -76,6 +77,29 @@ function DeepLinkHandler() {
   return null;
 }
 
+function LegalCheck() {
+  const router = useRouter();
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    const checkLegal = async () => {
+      try {
+        const agreed = await AsyncStorage.getItem('legal_agreed');
+        if (!agreed) {
+          router.replace('/legal' as any);
+        }
+      } catch (_) {
+        router.replace('/legal' as any);
+      } finally {
+        setChecked(true);
+      }
+    };
+    checkLegal();
+  }, []);
+
+  return null;
+}
+
 function NotificationHandler() {
   const router = useRouter();
   const listener = useRef<any>(null);
@@ -104,10 +128,12 @@ export default function RootLayout() {
       <AppProvider>
         <AuthProvider>
           <SubscriptionProvider>
+            <LegalCheck />
             <DeepLinkHandler />
             <NotificationHandler />
             <ThemeFlashOverlay />
             <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="legal"      options={{ headerShown: false, gestureEnabled: false }} />
               <Stack.Screen name="index"       options={{ headerShown: false }} />
               <Stack.Screen name="login"       options={{ headerShown: false, gestureEnabled: false }} />
               <Stack.Screen name="onboarding"  options={{ headerShown: false, gestureEnabled: false }} />
