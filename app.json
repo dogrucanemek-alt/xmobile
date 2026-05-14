@@ -9,6 +9,14 @@
     "scheme": "xmobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/10ad1d8f-5e54-4560-9747-2175b63a7e1a",
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD"
+    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.xmobile.app",
@@ -75,7 +83,8 @@
           }
         }
       ],
-      "@sentry/react-native"
+      "@sentry/react-native",
+      "expo-updates"
     ],
     "experiments": {
       "typedRoutes": true
