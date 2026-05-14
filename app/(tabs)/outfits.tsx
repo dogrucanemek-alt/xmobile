@@ -356,7 +356,7 @@ export default function Outfits() {
   const [customAcik, setCustomAcik] = useState(false);
   const [streak, setStreak]         = useState<StreakData>({ current: 0, best: 0, lastActive: '' });
   const [stilSkor, setStilSkor]     = useState<StyleScore | null>(null);
-  const [customSecili, setCustomSecili] = useState<string[]>([]);
+  const [customSecili, setCustomSecili] = useState<number[]>([]);
   const viewShotRef = useRef<ViewShot>(null);
   const shareKartiRef = useRef<View>(null);
   const storyKartiRef = useRef<View>(null);
@@ -727,9 +727,7 @@ export default function Outfits() {
     const numaraliListe = liste
       .map((k, i) => `${i + 1}. "${k.ad}" (${k.tur}, ${k.sezon})`)
       .join('\n');
-    const jsonFormat = dil === 'en'
-      ? `{"kombinler":[{"baslik":"title","tur":"Work","parcalar":["EXACT item name from list"],"neden":"1 sentence"}]}`
-      : `{"kombinler":[{"baslik":"başlık","tur":"İş","parcalar":["LİSTEDEKİ TAM İSİM"],"neden":"1 cümle"}]}`;
+    const jsonFormat = `{"kombinler":[{"baslik":"${dil === 'en' ? 'title' : 'başlık'}","tur":"${dil === 'en' ? 'Work' : 'İş'}","parcalar":[1,3],"neden":"${dil === 'en' ? '1 sentence' : '1 cümle'}"}]}`;
 
     const iltifat = dil === 'en'
       ? 'End with a short compliment like "You\'ll look great! ✨" or "Very stylish! 🔥"'
@@ -743,7 +741,7 @@ WARDROBE (copy names exactly, character-for-character):
 ${numaraliListe}
 
 Create 3 outfit combinations. Rules:
-- "parcalar": EXACT names from the list above, no changes
+- "parcalar": item NUMBERS from the list (e.g. [1, 3] to use items 1 and 3). Use 2-4 items per outfit.
 - "tur": ${dil === 'en' ? 'Work, Casual, Social, or Sport' : 'İş, Günlük, Sosyal veya Spor'}
 - "neden": 1 short sentence explaining why this works for today's weather. ${iltifat}
 Return ONLY valid JSON:
@@ -796,15 +794,23 @@ ${jsonFormat}`;
           setYukleniyor(false);
           return;
         }
-        const parsed = JSON.parse(metin.slice(baslangic, bitis)) as { kombinler: Kombin[] };
-        if (!Array.isArray(parsed.kombinler) || parsed.kombinler.length === 0) {
+        const raw = JSON.parse(metin.slice(baslangic, bitis)) as { kombinler: Array<{ baslik: string; tur: string; parcalar: Array<number | string>; neden: string }> };
+        if (!Array.isArray(raw.kombinler) || raw.kombinler.length === 0) {
           setHata(`Kombinler oluşturulamadı. Claude yanıtı: ${metin.slice(0, 300)}`);
           setYukleniyor(false);
           return;
         }
-        setKombinler(parsed.kombinler);
+        const resolved: Kombin[] = raw.kombinler.map(k => ({
+          ...k,
+          parcalar: k.parcalar.map(p => {
+            const idx = Number(p);
+            if (!isNaN(idx) && idx >= 1 && idx <= liste.length) return liste[idx - 1].ad;
+            return String(p);
+          }),
+        }));
+        setKombinler(resolved);
         streakGuncelle().then(setStreak);
-        takipEt(Olaylar.KOMBIN_OLUSTURULDU, { kombin_sayisi: parsed.kombinler.length });
+        takipEt(Olaylar.KOMBIN_OLUSTURULDU, { kombin_sayisi: resolved.length });
         await kombinKullan();
         const hak2 = await kalanHakAl(isPro);
         setKalanHak(hak2.isPro ? null : hak2.kalan);
@@ -908,7 +914,7 @@ ${jsonFormat}`;
       )}
 
       {/* Streak + Stil Skoru */}
-      {(streak.current > 0 || stilSkor) && (
+      {(streak.current > 1 || stilSkor) && (
         <View style={[styles.streakBar, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
           {streak.current > 0 && (
             <View style={styles.streakItem}>
@@ -1292,21 +1298,21 @@ ${jsonFormat}`;
           {customSecili.length > 0 && (
             <View style={[styles.customSeciliSerit, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 12 }}>
-                {customSecili.map((ad, i) => {
-                  const k = kiyafetler.find(x => x.ad === ad);
+                {customSecili.map((id, i) => {
+                  const k = kiyafetler.find(x => x.id === id);
                   return (
                     <TouchableOpacity
                       key={i}
                       style={[styles.customSeciliChip, { backgroundColor: renkler.chip }]}
-                      onPress={() => setCustomSecili(s => s.filter((_, si) => si !== i))}
+                      onPress={() => setCustomSecili(s => s.filter(x => x !== id))}
                     >
                       {k?.foto
                         ? <Image source={{ uri: k.foto }} style={{ width: 36, height: 36, borderRadius: 8 }} />
                         : <View style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: renkler.sinir, alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ fontSize: 16 }}>{ad.charAt(0)}</Text>
+                            <Text style={{ fontSize: 16 }}>{k?.ad?.charAt(0) ?? '?'}</Text>
                           </View>
                       }
-                      <Text style={{ color: renkler.metin, fontSize: 11, maxWidth: 60 }} numberOfLines={2}>{ad}</Text>
+                      <Text style={{ color: renkler.metin, fontSize: 11, maxWidth: 60 }} numberOfLines={2}>{k?.ad ?? ''}</Text>
                       <Text style={{ color: '#E74C3C', fontSize: 11, fontWeight: '700' }}>✕</Text>
                     </TouchableOpacity>
                   );
@@ -1321,7 +1327,7 @@ ${jsonFormat}`;
               {dil === 'en' ? 'Tap to add / tap again to remove' : 'Eklemek için dokun, çıkarmak için tekrar dokun'}
             </Text>
             {kiyafetler.map(k => {
-              const secili = customSecili.includes(k.ad);
+              const secili = customSecili.includes(k.id);
               return (
                 <TouchableOpacity
                   key={k.id}
@@ -1331,7 +1337,7 @@ ${jsonFormat}`;
                     borderWidth: secili ? 1.5 : 1,
                   }]}
                   onPress={() => setCustomSecili(s =>
-                    s.includes(k.ad) ? s.filter(x => x !== k.ad) : [...s, k.ad]
+                    s.includes(k.id) ? s.filter(x => x !== k.id) : [...s, k.id]
                   )}
                 >
                   {k.foto
@@ -1364,7 +1370,8 @@ ${jsonFormat}`;
                     setTryOn({
                       visible: true, adim: 'sec', sonucUri: null, hata: null,
                       modelFoto: profil?.profilFoto ?? null,
-                      secilenParcalar: customSecili, adimMetni: '',
+                      secilenParcalar: customSecili.map(id => kiyafetler.find(x => x.id === id)?.ad ?? '').filter(Boolean),
+                      adimMetni: '',
                     });
                   }}
                 >
@@ -1378,7 +1385,7 @@ ${jsonFormat}`;
                     const yeniKombin: Kombin = {
                       baslik: dil === 'en' ? 'My Outfit' : 'Benim Kombinim',
                       tur: dil === 'en' ? 'Custom' : 'Özel',
-                      parcalar: customSecili,
+                      parcalar: customSecili.map(id => kiyafetler.find(x => x.id === id)?.ad ?? '').filter(Boolean),
                       neden: dil === 'en' ? 'Curated by you' : 'Senin seçimin',
                     };
                     setKombinler(prev => [yeniKombin, ...prev]);
@@ -1759,13 +1766,13 @@ const styles = StyleSheet.create({
   yenile:         { fontSize: 24, fontWeight: '300' },
   havaDurumu: {
     flexDirection: 'row', alignItems: 'center',
-    marginHorizontal: 16, marginBottom: 12, borderRadius: 18, padding: 16,
-    gap: 12, minHeight: 68,
+    marginHorizontal: 16, marginBottom: 12, borderRadius: 20, padding: 20,
+    gap: 14, minHeight: 90,
   },
-  havaIkon:       { fontSize: 30 },
-  havaDerece:     { fontSize: 15, fontWeight: '600' },
-  havaNot:        { fontSize: 12, marginTop: 2 },
-  havaSehir:      { fontSize: 13 },
+  havaIkon:       { fontSize: 38 },
+  havaDerece:     { fontSize: 18, fontWeight: '700' },
+  havaNot:        { fontSize: 13, marginTop: 3 },
+  havaSehir:      { fontSize: 14, fontWeight: '500' },
   yukleniyor:     { alignItems: 'center', paddingVertical: 80, gap: 16 },
   yukleniyorText: { fontSize: 14 },
   hataKutu:       { alignItems: 'center', paddingVertical: 60, paddingHorizontal: 32, gap: 12 },
