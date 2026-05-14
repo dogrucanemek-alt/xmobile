@@ -290,7 +290,7 @@
       );
       pointer-events: none; z-index: 1;
     }
-    .hero-content { z-index: 2; }
+    .hero-content { z-index: 2; position: relative; }
     .hero-content {
       position: absolute; bottom: 96px; left: 60px; max-width: 700px;
     }
@@ -300,16 +300,40 @@
       text-transform: uppercase; color: var(--gold); margin-bottom: 18px;
       opacity: 1;
     }
+    /* ── HERO GHOST TEXT ── */
+    .hero-ghost {
+      position: absolute;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; letter-spacing: -0.06em;
+      font-size: clamp(160px, 26vw, 400px);
+      color: rgba(255,255,255,0.025);
+      top: 50%; right: -20px;
+      transform: translateY(-50%);
+      pointer-events: none; user-select: none;
+      z-index: 1; white-space: nowrap; line-height: 1;
+    }
+
     .hero-title {
       font-family: 'Bodoni Moda', 'Barlow Condensed', serif;
-      font-size: clamp(52px, 6.5vw, 96px);
-      font-weight: 700; line-height: 0.97;
-      color: #fff; margin-bottom: 32px;
-      letter-spacing: -0.03em;
+      font-size: clamp(72px, 10vw, 128px);
+      font-weight: 700; line-height: 0.9;
+      color: #fff; margin-bottom: 28px;
+      letter-spacing: -0.04em;
+      text-shadow: 0 4px 60px rgba(0,0,0,0.6);
+    }
+    .hero-gold-word {
+      display: block;
+      color: var(--gold);
       text-shadow:
-        0 0 80px rgba(202,138,4,0.35),
-        0 0 160px rgba(202,138,4,0.15),
-        0 4px 60px rgba(0,0,0,0.6);
+        0 0 40px rgba(202,138,4,0.8),
+        0 0 100px rgba(202,138,4,0.45),
+        0 0 200px rgba(202,138,4,0.2);
+    }
+    .hero-trust-line {
+      margin-top: 18px;
+      font-family: 'Jost', sans-serif;
+      font-size: 11.5px; font-weight: 300;
+      color: rgba(255,255,255,0.3); letter-spacing: 0.8px;
     }
     .hero-sub {
       font-family: 'Jost', sans-serif;
@@ -1577,21 +1601,19 @@
 <section class="hero" id="home">
   <div class="hero-bg" id="heroBg"></div>
   <div class="hero-overlay"></div>
+  <div class="hero-ghost" aria-hidden="true">AKILLI</div>
   <div class="hero-content">
-    <p class="eyebrow">AI Furniture · Wardrobe Intelligence</p>
+    <p class="eyebrow" data-tr="Wardrobe Intelligence" data-en="Wardrobe Intelligence">Wardrobe Intelligence</p>
     <h1 class="hero-title">
-      <span data-tr="Şimdiye Kadar Yapılan En Akıllı Gardırop." data-en="The Smartest Wardrobe Ever Made.">Şimdiye Kadar Yapılan<br>En Akıllı Gardırop.</span>
+      <span data-tr="En Akıllı" data-en="The Smartest">En Akıllı</span>
+      <span class="hero-gold-word" data-tr="Gardırop." data-en="Wardrobe.">Gardırop.</span>
     </h1>
-    <p class="hero-sub" data-tr="Sabah kaosunu bitiriyor. Her gün hava durumuna, takvimine ve stiline göre hazır kombin — giymeden önce görüntüle." data-en="Ends morning chaos. Every day — perfect outfit based on weather, your calendar, your style. See it before you wear it.">Sabah kaosunu bitiriyor. Her gün hava durumuna, takvimine ve stiline göre hazır kombin — giymeden önce görüntüle.</p>
+    <p class="hero-sub" data-tr="Sabah kaosunu bitiriyor. Hava durumu, takvim ve stiline göre her sabah hazır kombin — giymeden önce görüntüle." data-en="Ends morning chaos. Weather, calendar, style — perfect outfit every morning. See it before you wear it.">Sabah kaosunu bitiriyor. Hava durumu, takvim ve stiline göre her sabah hazır kombin — giymeden önce görüntüle.</p>
     <div class="hero-btns">
       <a href="#waitlist" class="btn btn-solid" data-tr="Erken Erişime Kaydol →" data-en="Join the Waitlist →">Erken Erişime Kaydol →</a>
       <a href="#product" class="btn" data-tr="Nasıl Çalışır?" data-en="How It Works?">Nasıl Çalışır?</a>
     </div>
-    <form class="hero-inline-form" id="heroInlineForm" onsubmit="handleHeroForm(event)">
-      <input type="email" class="hero-inline-input" id="heroEmail" placeholder="E-posta adresin" autocomplete="email" required/>
-      <button type="submit" class="hero-inline-btn" data-tr="Ücretsiz Kaydol" data-en="Join Free">Ücretsiz Kaydol</button>
-    </form>
-    <p class="hero-inline-note" data-tr="Ücretsiz · Kredi kartı gerekmez · 500+ kişi katıldı" data-en="Free · No credit card · 500+ joined">Ücretsiz · Kredi kartı gerekmez · 500+ kişi katıldı</p>
+    <p class="hero-trust-line" data-tr="Ücretsiz · Kredi kartı gerekmez · 500+ kişi katıldı" data-en="Free · No credit card · 500+ joined">Ücretsiz · Kredi kartı gerekmez · 500+ kişi katıldı</p>
   </div>
   <div class="scroll-hint">
     <span data-tr="Kaydır" data-en="Scroll">Kaydır</span>
