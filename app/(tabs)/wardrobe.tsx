@@ -10,6 +10,7 @@ import { useAuth } from '../../lib/authContext';
 import type { Kiyafet, KombinKayit } from '../../lib/types';
 import { kiyafetTani } from '../../lib/vision';
 import { syncYukle, syncKaydet, syncSil, syncTumunuYukle } from '../../lib/wardrobeSync';
+import { handleError, logError } from '../../lib/errorHandler';
 
 const STORAGE_KEY  = 'xmobile_kiyafetler';
 const GECMIS_KEY   = 'xmobile_gecmis';
@@ -74,7 +75,8 @@ export default function Wardrobe() {
             return;
           }
         } catch (e) {
-          console.warn('Supabase sync hatası, lokal veri kullanılıyor:', e);
+          const error = handleError(e);
+          logError(error, 'wardrobe.yukle.sync');
           // Supabase başarısız ama lokalde veri varsa kullan
           if (lokal.length > 0) {
             setKiyafetler(lokal);
@@ -85,7 +87,8 @@ export default function Wardrobe() {
 
       setKiyafetler(lokal.length > 0 ? lokal : BASLANGIC);
     } catch (e) {
-      console.error('Kıyafet yükleme kritik hatası:', e);
+      const error = handleError(e);
+      logError(error, 'wardrobe.yukle');
       setKiyafetler(BASLANGIC);
     }
   };

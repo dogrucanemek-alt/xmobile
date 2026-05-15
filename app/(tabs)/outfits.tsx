@@ -33,6 +33,7 @@ import ShareKarti from '../../components/ShareKarti';
 import StoryKarti from '../../components/StoryKarti';
 import { streakGuncelle, streakOku, type StreakData } from '../../lib/streak';
 import { stilPuaniHesapla, type StyleScore } from '../../lib/styleScore';
+import { handleError, logError } from '../../lib/errorHandler';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 
@@ -834,10 +835,12 @@ ${jsonFormat}`;
           try {
             kombin = resolveItems(result.value, gruplar[i]);
           } catch (parseErr) {
-            console.warn(`Kombin ${i + 1} parsing hatası:`, parseErr);
+            const error = handleError(parseErr);
+            logError(error, `outfits.kombin${i + 1}.parse`);
           }
         } else {
-          console.warn(`Kombin ${i + 1} API hatası:`, result.reason);
+          const error = handleError(result.reason);
+          logError(error, `outfits.kombin${i + 1}.api`);
         }
 
         // Fallback: eğer API başarısız olursa, random seçilmiş kıyafetlerle kombin oluştur
@@ -868,8 +871,9 @@ ${jsonFormat}`;
       setKalanHak(hak2.isPro ? null : hak2.kalan);
 
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Bilinmeyen hata';
-      setHata(`Kombin hatası: ${msg}`);
+      const error = handleError(e);
+      logError(error, 'outfits.kombinOner');
+      setHata(`Kombin hatası: ${error.userMessage}`);
     }
     setYukleniyor(false);
   };

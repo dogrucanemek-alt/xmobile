@@ -1,6 +1,7 @@
 import * as ImageManipulator from 'expo-image-manipulator';
 import { readAsStringAsync, EncodingType } from 'expo-file-system/legacy';
 import { Alert } from 'react-native';
+import { handleError, logError } from './errorHandler';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 const TURLER = ['Üst', 'Alt', 'Dış Giyim', 'Ayakkabı', 'Aksesuar'];
@@ -17,7 +18,8 @@ export async function kiyafetTani(
         { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG },
       );
     } catch (e) {
-      console.warn('ImageManipulator hatası:', e);
+      const error = handleError(e);
+      logError(error, 'vision.manipulate');
       return { ad: 'Yeni Kıyafet', tur: 'Üst' };
     }
 
@@ -25,7 +27,8 @@ export async function kiyafetTani(
     try {
       base64 = await readAsStringAsync(kucuk.uri, { encoding: EncodingType.Base64 });
     } catch (e) {
-      console.warn('Base64 okuma hatası:', e);
+      const error = handleError(e);
+      logError(error, 'vision.base64');
       return { ad: 'Yeni Kıyafet', tur: 'Üst' };
     }
 
@@ -59,19 +62,22 @@ export async function kiyafetTani(
 
     if (!res.ok) {
       const err = await res.text();
-      console.warn(`Claude API hatası (${res.status}):`, err.slice(0, 100));
+      const error = handleError(new Error(`Claude API hatası (${res.status})`));
+      logError(error, 'vision.api');
       return { ad: 'Yeni Kıyafet', tur: 'Üst' };
     }
 
     const data = await res.json();
     if (data.error) {
-      console.warn('Claude API cevap hatası:', data.error);
+      const error = handleError(new Error(`Claude cevap hatası: ${data.error}`));
+      logError(error, 'vision.response');
       return { ad: 'Yeni Kıyafet', tur: 'Üst' };
     }
 
     const metin: string = data.content?.[0]?.text ?? '';
     if (!metin) {
-      console.warn('Claude boş cevap verdi');
+      const error = handleError(new Error('Claude boş cevap verdi'));
+      logError(error, 'vision.empty');
       return { ad: 'Yeni Kıyafet', tur: 'Üst' };
     }
 
