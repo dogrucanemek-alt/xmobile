@@ -1,129 +1,20 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import * as FileSystem from './fileSystem';
-
-const TEMA_KEY = 'xmobile_karanlik';
-const DIL_KEY  = 'xmobile_dil';
-
-const çeviriler = {
-  tr: {
-    tagline: 'Yapay zeka destekli gardırobunuzla her gün doğru kombinasyonu giyin.',
-    gardırobunuKur: 'Gardırobunu Kur',
-    profilimDuzenle: 'Profilimi Düzenle',
-    hesabınVarMı: 'Zaten hesabın var mı?',
-    girisYap: 'Giriş Yap',
-    gardırobum: 'Gardırobum',
-    duzenlemekIcin: 'düzenlemek için tıkla',
-    kiyafet: 'kıyafet',
-    kiyafetEkle: 'Kıyafet Ekle',
-    nasılEklemek: 'Nasıl eklemek istersin?',
-    fotografCek: 'Fotoğraf Çek',
-    galeridenSec: 'Galeriden Seç',
-    iptal: 'İptal',
-    kombinOnerisiAl: 'Kombin Önerileri Al',
-    kiyafetDuzenle: 'Kıyafeti Düzenle',
-    kaydet: 'Kaydet',
-    kiyafetAdi: 'Kıyafet Adı',
-    tur: 'Tür',
-    sezon: 'Sezon',
-    buKiyafetiSil: 'Bu Kıyafeti Sil',
-    silOnay: 'Silmek istiyor musun?',
-    sil: 'Sil',
-    geri: '‹ Geri',
-    ekle: '+ Ekle',
-    bugunkuKombinler: 'Bugünkü Kombinler',
-    yukleniyorText: 'True Ai kombinlerinizi hazırlıyor...',
-    buKombin: 'Bu Kombin',
-    buKombiniSec: 'Bu Kombini Seç ✓',
-    tekrarDene: 'Tekrar Dene',
-    kombinSecildi: 'Kombin Seçildi',
-    iyiGunler: 'İyi günler! 🎉',
-    hissedilen: 'Hissedilen',
-    nem: 'Nem',
-    gardırobunuzBos: 'Gardırobunuz boş',
-    kiyafetEkleyinAciklama: 'Kıyafetlerinizi ekleyerek AI kombin önerileri almaya başlayın.',
-  },
-  en: {
-    tagline: 'Wear the right outfit every day with your AI-powered wardrobe.',
-    gardırobunuKur: 'Set Up Wardrobe',
-    profilimDuzenle: 'Edit Profile',
-    hesabınVarMı: 'Already have an account?',
-    girisYap: 'Sign In',
-    gardırobum: 'My Wardrobe',
-    duzenlemekIcin: 'tap to edit',
-    kiyafet: 'items',
-    kiyafetEkle: 'Add Item',
-    nasılEklemek: 'How would you like to add?',
-    fotografCek: 'Take Photo',
-    galeridenSec: 'Choose from Gallery',
-    iptal: 'Cancel',
-    kombinOnerisiAl: 'Get Outfit Suggestions',
-    kiyafetDuzenle: 'Edit Item',
-    kaydet: 'Save',
-    kiyafetAdi: 'Item Name',
-    tur: 'Type',
-    sezon: 'Season',
-    buKiyafetiSil: 'Delete This Item',
-    silOnay: 'Are you sure?',
-    sil: 'Delete',
-    geri: '‹ Back',
-    ekle: '+ Add',
-    bugunkuKombinler: "Today's Outfits",
-    yukleniyorText: 'True Ai is preparing your outfits...',
-    buKombin: 'This Outfit',
-    buKombiniSec: 'Select This Outfit ✓',
-    tekrarDene: 'Try Again',
-    kombinSecildi: 'Outfit Selected',
-    iyiGunler: 'Have a great day! 🎉',
-    hissedilen: 'Feels like',
-    nem: 'Humidity',
-    gardırobunuzBos: 'Your wardrobe is empty',
-    kiyafetEkleyinAciklama: 'Add your clothes to start getting AI outfit suggestions.',
-  },
-};
-
-const açıkRenkler = {
-  bg: '#FFFFFF',
-  bg2: '#F5F5F7',
-  metin: '#0A0A0A',
-  metin2: '#6e6e73',
-  sinir: '#E5E5E5',
-  sinir2: 'rgba(0,0,0,0.12)',
-  kart: '#FFFFFF',
-  chip: '#F5F5F7',
-  btnPrimary: '#0A0A0A',
-  btnPrimaryMetin: '#FFFFFF',
-  aksanRenk: '#2997ff',
-  statusBar: 'dark-content' as const,
-};
-
-const karanlıkRenkler = {
-  bg: '#000000',
-  bg2: '#000000',
-  metin: '#FFFFFF',
-  metin2: 'rgba(255,255,255,0.65)',
-  sinir: 'rgba(255,255,255,0.1)',
-  sinir2: 'rgba(255,255,255,0.06)',
-  kart: '#0D0D0D',
-  chip: 'rgba(255,255,255,0.1)',
-  btnPrimary: '#FFFFFF',
-  btnPrimaryMetin: '#000000',
-  aksanRenk: '#2997ff',
-  statusBar: 'light-content' as const,
-};
-
-type Renkler = typeof açıkRenkler | typeof karanlıkRenkler;
+import { ThemeProvider, useTheme } from './themeContext';
+import { I18nProvider, useI18n } from './i18nContext';
 
 interface AppContextValue {
-  t: typeof çeviriler['tr'] | typeof çeviriler['en'];
-  renkler: Renkler;
+  // Theme
+  karanlik: boolean;
+  renkler: ReturnType<typeof useTheme>['renkler'];
   aksanRenk: string;
   temaToggle: () => void;
-  temaGecisAnimValue: Animated.Value;
+  temaGecisAnimValue: ReturnType<typeof useTheme>['temaGecisAnimValue'];
+  // i18n
   dil: 'tr' | 'en';
   dilDegistir: (d: 'tr' | 'en') => void;
-  karanlik: boolean;
+  t: ReturnType<typeof useI18n>['t'];
+  // Avatar
   avatarGlbUri: string | null;
   loadAvatarGlb: (path: string) => Promise<void>;
   clearAvatarGlb: () => void;
@@ -131,44 +22,14 @@ interface AppContextValue {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
-export const AppProvider = ({ children }: { children: React.ReactNode }) => {
-  const [karanlik, setKaranlik] = useState(true);
-  const [dil, setDil] = useState<'tr' | 'en'>('tr');
+function AppProviderInner({ children }: { children: React.ReactNode }) {
+  const theme = useTheme();
+  const i18n = useI18n();
   const [avatarGlbUri, setAvatarGlbUri] = useState<string | null>(null);
-  const temaGecisAnimValue = useRef(new Animated.Value(0)).current;
-  // Hangi path'in yüklendiğini tutar — aynı path için tekrar diskten okumayı önler
   const loadedPathRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    AsyncStorage.multiGet([TEMA_KEY, DIL_KEY]).then((pairs) => {
-      const tema = pairs[0][1];
-      const d    = pairs[1][1];
-      if (tema !== null) setKaranlik(tema === 'true');
-      if (d === 'tr' || d === 'en') setDil(d);
-    });
-  }, []);
-
-  const temaToggle = useCallback(() => {
-    Animated.sequence([
-      Animated.timing(temaGecisAnimValue, { toValue: 1, duration: 150, useNativeDriver: true }),
-      Animated.timing(temaGecisAnimValue, { toValue: 0, duration: 250, useNativeDriver: true }),
-    ]).start();
-    setTimeout(() => {
-      setKaranlik(prev => {
-        const next = !prev;
-        AsyncStorage.setItem(TEMA_KEY, String(next));
-        return next;
-      });
-    }, 150);
-  }, [temaGecisAnimValue]);
-
-  const dilDegistir = useCallback((yeniDil: 'tr' | 'en') => {
-    AsyncStorage.setItem(DIL_KEY, yeniDil);
-    setDil(yeniDil);
-  }, []);
-
   const loadAvatarGlb = useCallback(async (path: string) => {
-    if (loadedPathRef.current === path && avatarGlbUri) return; // zaten yüklü
+    if (loadedPathRef.current === path && avatarGlbUri) return;
     try {
       const b64 = await FileSystem.readAsStringAsync(path, {
         encoding: FileSystem.EncodingType.Base64,
@@ -187,16 +48,34 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     loadedPathRef.current = null;
   }, []);
 
-  const renkler = karanlik ? karanlıkRenkler : açıkRenkler;
-  const t = çeviriler[dil];
-  const aksanRenk = karanlik ? '#2997ff' : '#2997ff';
-
   const value = useMemo(
-    () => ({ t, renkler, aksanRenk, temaToggle, temaGecisAnimValue, dil, dilDegistir, karanlik, avatarGlbUri, loadAvatarGlb, clearAvatarGlb }),
-    [t, renkler, temaToggle, temaGecisAnimValue, dil, dilDegistir, karanlik, avatarGlbUri, loadAvatarGlb, clearAvatarGlb],
+    () => ({
+      karanlik: theme.karanlik,
+      renkler: theme.renkler,
+      aksanRenk: theme.aksanRenk,
+      temaToggle: theme.temaToggle,
+      temaGecisAnimValue: theme.temaGecisAnimValue,
+      dil: i18n.dil,
+      dilDegistir: i18n.dilDegistir,
+      t: i18n.t,
+      avatarGlbUri,
+      loadAvatarGlb,
+      clearAvatarGlb,
+    }),
+    [theme, i18n, avatarGlbUri, loadAvatarGlb, clearAvatarGlb],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+}
+
+export const AppProvider = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ThemeProvider>
+      <I18nProvider>
+        <AppProviderInner>{children}</AppProviderInner>
+      </I18nProvider>
+    </ThemeProvider>
+  );
 };
 
 export const useApp = () => {
@@ -204,3 +83,7 @@ export const useApp = () => {
   if (!ctx) throw new Error('useApp must be used within AppProvider');
   return ctx;
 };
+
+// Re-export individual hooks for more granular use
+export { useTheme } from './themeContext';
+export { useI18n } from './i18nContext';
