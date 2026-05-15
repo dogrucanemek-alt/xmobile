@@ -1,8 +1,8 @@
-import { File, Directory, Paths } from 'expo-file-system';
-import { readAsStringAsync as legacyReadAsStringAsync, EncodingType as LegacyEncodingType } from 'expo-file-system/legacy';
+import { File, Directory } from 'expo-file-system';
+import { readAsStringAsync as legacyReadAsStringAsync, EncodingType as LegacyEncodingType, documentDirectory as legacyDocDir, cacheDirectory as legacyCacheDir } from 'expo-file-system/legacy';
 
-export const documentDirectory: string = Paths.document.uri;
-export const cacheDirectory: string    = Paths.cache.uri;
+export const documentDirectory: string = legacyDocDir || '';
+export const cacheDirectory: string    = legacyCacheDir || '';
 
 export const EncodingType = {
   Base64: 'base64',

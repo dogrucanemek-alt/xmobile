@@ -169,7 +169,14 @@ export default function Profile() {
         <View style={[styles.fotoBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
           <TouchableOpacity onPress={fotografSec}>
             {profilFoto ? (
-              <Image source={{ uri: profilFoto }} style={styles.profilFoto} />
+              <Image
+                source={{ uri: profilFoto }}
+                style={styles.profilFoto}
+                onError={() => {
+                  console.log('Image load failed. URI:', profilFoto);
+                  setProfilFoto(null);
+                }}
+              />
             ) : (
               <View style={[styles.profilFotoPlaceholder, { backgroundColor: renkler.chip }]}>
                 <Text style={styles.profilFotoIcon}>👤</Text>
