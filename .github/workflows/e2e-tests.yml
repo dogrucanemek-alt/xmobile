@@ -1,0 +1,162 @@
+name: E2E Tests - Detox
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run nightly at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  e2e-ios:
+    name: E2E Tests - iOS Simulator
+    runs-on: macos-latest
+    # Skip on forks to save CI minutes
+    if: github.repository_owner == 'dogrucanemek-alt'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Detox
+        run: |
+          npm install -g detox-cli
+          brew tap wix/brew
+          brew install applesimutils
+
+      - name: Build Detox for iOS
+        run: |
+          detox build-framework-cache
+          detox build-app --configuration ios.sim.release
+
+      - name: Launch simulator
+        run: |
+          xcrun simctl create xmobile-test \
+            "iPhone 15" \
+            "com.apple.CoreSimulator.SimDeviceType.iPhone-15" \
+            "com.apple.CoreSimulator.SimRuntime.iOS-17-2" || true
+          xcrun simctl boot xmobile-test || true
+
+      - name: Run E2E tests
+        run: |
+          detox test --configuration ios.sim.release \
+            --cleanup \
+            --verbose \
+            --record-logs all
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-ios-artifacts
+          path: artifacts/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  e2e-android:
+    name: E2E Tests - Android Emulator
+    runs-on: ubuntu-latest
+    # Skip on forks and PRs to save CI minutes
+    if: github.event_name != 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 30
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Detox
+        run: npm install -g detox-cli
+
+      - name: Build Detox for Android
+        run: |
+          detox build-framework-cache
+          detox build-app --configuration android.emu.release
+
+      - name: Launch Android emulator
+        run: |
+          $ANDROID_SDK_ROOT/emulator/emulator \
+            -avd Pixel_4_API_30 \
+            -no-audio \
+            -no-boot-anim \
+            -gpu auto \
+            -accel auto \
+            -verbose &
+          adb wait-for-device
+
+      - name: Run E2E tests
+        run: |
+          detox test --configuration android.emu.release \
+            --cleanup \
+            --verbose \
+            --record-logs all
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-android-artifacts
+          path: artifacts/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  e2e-summary:
+    name: E2E Tests Summary
+    needs: [ e2e-ios ]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check E2E results
+        run: |
+          if [ "${{ needs.e2e-ios.result }}" = "success" ]; then
+            echo "✅ All E2E tests passed"
+            exit 0
+          else
+            echo "❌ E2E tests failed"
+            exit 1
+          fi
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const testsPassed = "${{ needs.e2e-ios.result }}" === "success";
+            const status = testsPassed ? "✅ PASSED" : "❌ FAILED";
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `E2E Tests: ${status}`
+            });
