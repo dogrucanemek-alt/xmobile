@@ -70,6 +70,8 @@
     "babel-jest": "^29.7.0",
     "babel-preset-expo": "^55.0.21",
     "canvas": "^3.2.3",
+    "detox": "^20.50.4",
+    "detox-cli": "^20.50.4",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "identity-obj-proxy": "^3.0.0",

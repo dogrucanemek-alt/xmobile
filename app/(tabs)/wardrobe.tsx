@@ -11,6 +11,7 @@ import type { Kiyafet, KombinKayit } from '../../lib/types';
 import { kiyafetTani } from '../../lib/vision';
 import { syncYukle, syncKaydet, syncSil, syncTumunuYukle } from '../../lib/wardrobeSync';
 import { handleError, logError } from '../../lib/errorHandler';
+import { getTestID, getButtonA11yProps, getInputA11yProps, formatCountA11y } from '../../lib/accessibility';
 
 const STORAGE_KEY  = 'xmobile_kiyafetler';
 const GECMIS_KEY   = 'xmobile_gecmis';
@@ -237,15 +238,32 @@ export default function Wardrobe() {
       <StatusBar barStyle={renkler.statusBar} backgroundColor={renkler.bg} />
 
       <View style={[styles.header, { backgroundColor: renkler.bg }]}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          testID={getTestID('wardrobe', 'button', 'back')}
+          {...getButtonA11yProps('Geri Git', 'Wardrobe ekranından çık')}
+        >
           <Text style={[styles.geri, { color: renkler.metin }]}>{t.geri}</Text>
         </TouchableOpacity>
-        <Text style={[styles.baslik, { color: renkler.metin }]}>{t.gardırobum}</Text>
+        <Text
+          style={[styles.baslik, { color: renkler.metin }]}
+          accessibilityRole="header"
+        >
+          {t.gardırobum}
+        </Text>
         <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => router.push('/analiz' as any)}>
+          <TouchableOpacity
+            onPress={() => router.push('/analiz' as any)}
+            testID={getTestID('wardrobe', 'button', 'analysis')}
+            {...getButtonA11yProps('Analiz Yap', 'Wardrobe analiz ekranına git')}
+          >
             <Text style={{ fontSize: 18 }}>🧠</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={ekleSecenekleri}>
+          <TouchableOpacity
+            onPress={ekleSecenekleri}
+            testID={getTestID('wardrobe', 'button', 'add')}
+            {...getButtonA11yProps('Kıyafet Ekle', 'Yeni kıyafet ekleme seçeneklerini aç')}
+          >
             <Text style={[styles.ekle, { color: aksanRenk }]}>{t.ekle}</Text>
           </TouchableOpacity>
         </View>
@@ -253,8 +271,11 @@ export default function Wardrobe() {
 
       {/* Arama */}
       {kiyafetler.length > 0 && (
-        <View style={[styles.aramaKutu, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
-          <Text style={{ fontSize: 15, color: renkler.metin2 }}>🔍</Text>
+        <View
+          style={[styles.aramaKutu, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}
+          testID={getTestID('wardrobe', 'search', 'container')}
+        >
+          <Text style={{ fontSize: 15, color: renkler.metin2 }} accessibilityRole="image">🔍</Text>
           <TextInput
             style={[styles.aramaInput, { color: renkler.metin }]}
             value={aramaMetni}
@@ -262,17 +283,27 @@ export default function Wardrobe() {
             placeholder={dil === 'en' ? 'Search wardrobe...' : 'Gardıropda ara...'}
             placeholderTextColor={renkler.metin2}
             autoCorrect={false}
+            testID={getTestID('wardrobe', 'input', 'search')}
+            {...getInputA11yProps('Gardırop Ara', 'İsim, tür veya renge göre ara')}
           />
           {aramaMetni.length > 0 && (
-            <TouchableOpacity onPress={() => setAramaMetni('')}>
+            <TouchableOpacity
+              onPress={() => setAramaMetni('')}
+              testID={getTestID('wardrobe', 'button', 'clear-search')}
+              {...getButtonA11yProps('Aramayı Temizle', 'Arama metnini sil')}
+            >
               <Text style={{ fontSize: 16, color: renkler.metin2 }}>✕</Text>
             </TouchableOpacity>
           )}
         </View>
       )}
 
-      <Text style={[styles.sayi, { color: renkler.metin2 }]}>
-        {kiyafetler.length} {t.kiyafet} · {t.duzenlemekIcin}
+      <Text
+        style={[styles.sayi, { color: renkler.metin2 }]}
+        testID={getTestID('wardrobe', 'text', 'count')}
+        accessibilityLiveRegion="polite"
+      >
+        {formatCountA11y(kiyafetler.length, 'kıyafet', 'kıyafet')} · {t.duzenlemekIcin}
       </Text>
 
       <ScrollView style={styles.liste} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 110 }}>
@@ -324,13 +355,32 @@ export default function Wardrobe() {
             <View
               key={k.id}
               style={[styles.kiyafetKart, { backgroundColor: renkler.kart }]}
+              testID={getTestID('wardrobe', 'item', k.id)}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={`${k.ad}, ${k.tur}, ${k.sezon}`}
+              accessibilityHint={k.fiyat ? `Fiyat: ${k.fiyat}₺` : undefined}
             >
-              <TouchableOpacity style={styles.kartIcerik} onPress={() => kiyafetDuzenle(k)}>
+              <TouchableOpacity
+                style={styles.kartIcerik}
+                onPress={() => kiyafetDuzenle(k)}
+                accessible={false}
+              >
                 {k.foto ? (
-                  <Image source={{ uri: k.foto }} style={styles.kiyafetFoto} />
+                  <Image
+                    source={{ uri: k.foto }}
+                    style={styles.kiyafetFoto}
+                    accessibilityLabel={`${k.ad} fotoğrafı`}
+                    accessible={true}
+                  />
                 ) : (
                   <View style={[styles.renkCircle, { backgroundColor: renkler.chip }]}>
-                    <Text style={[styles.renkHarf, { color: renkler.metin2 }]}>{k.ad.charAt(0)}</Text>
+                    <Text
+                      style={[styles.renkHarf, { color: renkler.metin2 }]}
+                      accessibilityRole="image"
+                    >
+                      {k.ad.charAt(0)}
+                    </Text>
                   </View>
                 )}
                 <View style={styles.bilgi}>
@@ -354,6 +404,8 @@ export default function Wardrobe() {
                     <TouchableOpacity
                       style={[styles.kartBtn, { borderColor: '#00D4FF' }]}
                       onPress={() => router.push({ pathname: '/outfits', params: { tryOnKiyafetId: k.id } } as any)}
+                      testID={getTestID('wardrobe', 'button', `try-on-${k.id}`)}
+                      {...getButtonA11yProps(`${k.ad} Dene`, 'Bu kıyafeti kullanarak kombin oluştur')}
                     >
                       <Text style={[styles.kartBtnText, { color: '#00D4FF' }]}>👗 Dene</Text>
                     </TouchableOpacity>
@@ -364,6 +416,8 @@ export default function Wardrobe() {
                           const available = await Sharing.isAvailableAsync();
                           if (available) await Sharing.shareAsync(k.foto!);
                         }}
+                        testID={getTestID('wardrobe', 'button', `share-${k.id}`)}
+                        {...getButtonA11yProps(`${k.ad} Paylaş`, 'Kıyafet fotoğrafını paylaş')}
                       >
                         <Text style={[styles.kartBtnText, { color: renkler.metin2 }]}>↑ Paylaş</Text>
                       </TouchableOpacity>
@@ -371,7 +425,12 @@ export default function Wardrobe() {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => sil(k.id)} style={styles.silBtn}>
+              <TouchableOpacity
+                onPress={() => sil(k.id)}
+                style={styles.silBtn}
+                testID={getTestID('wardrobe', 'button', `delete-${k.id}`)}
+                {...getButtonA11yProps(`${k.ad} Sil`, 'Bu kıyafeti kalıcı olarak sil')}
+              >
                 <Text style={styles.silBtnText}>🗑</Text>
               </TouchableOpacity>
             </View>
@@ -394,12 +453,16 @@ export default function Wardrobe() {
         <TouchableOpacity
           style={[styles.gecmisButon, { borderColor: renkler.sinir2 }]}
           onPress={() => router.push('/history')}
+          testID={getTestID('wardrobe', 'button', 'history')}
+          {...getButtonA11yProps('Geçmiş', 'Kullanılan kombinlerin geçmişini görüntüle')}
         >
           <Text style={[styles.gecmisButonText, { color: renkler.metin }]}>📋</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.kombinButon, { backgroundColor: renkler.btnPrimary, flex: 1 }]}
           onPress={() => router.push('/outfits')}
+          testID={getTestID('wardrobe', 'button', 'suggest-outfit')}
+          {...getButtonA11yProps('Kombin Önerisi Al', 'Yapay zeka tarafından önerilecek kombin al')}
         >
           <Text style={[styles.kombinButonText, { color: renkler.btnPrimaryMetin }]}>
             {t.kombinOnerisiAl}
@@ -408,14 +471,34 @@ export default function Wardrobe() {
       </View>
 
       {/* Düzenleme Modalı */}
-      <Modal visible={modalAcik} animationType="slide" presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen'}>
+      <Modal
+        visible={modalAcik}
+        animationType="slide"
+        presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen'}
+        testID={getTestID('wardrobe', 'modal', 'edit')}
+        accessible={true}
+        accessibilityViewIsModal={true}
+      >
         <View style={[styles.modal, { backgroundColor: renkler.bg2 }]}>
           <View style={[styles.modalHeader, { backgroundColor: renkler.bg }]}>
-            <TouchableOpacity onPress={() => setModalAcik(false)}>
+            <TouchableOpacity
+              onPress={() => setModalAcik(false)}
+              testID={getTestID('wardrobe', 'button', 'modal-cancel')}
+              {...getButtonA11yProps('İptal', 'Değişiklikleri kaydetmeden kapat')}
+            >
               <Text style={[styles.modalIptal, { color: renkler.metin }]}>{t.iptal}</Text>
             </TouchableOpacity>
-            <Text style={[styles.modalBaslik, { color: renkler.metin }]}>{t.kiyafetDuzenle}</Text>
-            <TouchableOpacity onPress={duzenKaydet}>
+            <Text
+              style={[styles.modalBaslik, { color: renkler.metin }]}
+              accessibilityRole="header"
+            >
+              {t.kiyafetDuzenle}
+            </Text>
+            <TouchableOpacity
+              onPress={duzenKaydet}
+              testID={getTestID('wardrobe', 'button', 'modal-save')}
+              {...getButtonA11yProps('Kaydet', 'Değişiklikleri kaydet')}
+            >
               <Text style={styles.modalKaydet}>{t.kaydet}</Text>
             </TouchableOpacity>
           </View>
@@ -430,14 +513,25 @@ export default function Wardrobe() {
             )}
           </TouchableOpacity>
 
-          <View style={[styles.inputGrup, { backgroundColor: renkler.kart }]}>
-            <Text style={[styles.inputLabel, { color: renkler.metin2 }]}>{t.kiyafetAdi}</Text>
+          <View
+            style={[styles.inputGrup, { backgroundColor: renkler.kart }]}
+            testID={getTestID('wardrobe', 'group', 'name')}
+          >
+            <Text
+              style={[styles.inputLabel, { color: renkler.metin2 }]}
+              nativeID="label-item-name"
+            >
+              {t.kiyafetAdi}
+            </Text>
             <TextInput
               style={[styles.input, { color: renkler.metin, borderBottomColor: renkler.sinir }]}
               value={duzenAd}
               onChangeText={setDuzenAd}
               placeholder="örn. Beyaz Gömlek"
               placeholderTextColor={renkler.metin2}
+              testID={getTestID('wardrobe', 'input', 'name')}
+              {...getInputA11yProps('Kıyafet Adı', 'Kıyafetin adını veya açıklamasını gir')}
+              nativeID="input-item-name"
             />
           </View>
 
@@ -479,8 +573,14 @@ export default function Wardrobe() {
             </View>
           </View>
 
-          <View style={[styles.inputGrup, { backgroundColor: renkler.kart }]}>
-            <Text style={[styles.inputLabel, { color: renkler.metin2 }]}>
+          <View
+            style={[styles.inputGrup, { backgroundColor: renkler.kart }]}
+            testID={getTestID('wardrobe', 'group', 'price')}
+          >
+            <Text
+              style={[styles.inputLabel, { color: renkler.metin2 }]}
+              nativeID="label-item-price"
+            >
               {t.tur === 'Type' ? 'Purchase Price (₺)' : 'Satın Alma Fiyatı (₺)'}
             </Text>
             <TextInput
@@ -490,10 +590,18 @@ export default function Wardrobe() {
               placeholder="örn. 299"
               placeholderTextColor={renkler.metin2}
               keyboardType="numeric"
+              testID={getTestID('wardrobe', 'input', 'price')}
+              {...getInputA11yProps('Satın Alma Fiyatı', 'Kıyafetin fiyatını TL olarak gir')}
+              nativeID="input-item-price"
             />
           </View>
 
-          <TouchableOpacity style={styles.silButon} onPress={() => seciliKiyafet && sil(seciliKiyafet.id)}>
+          <TouchableOpacity
+            style={styles.silButon}
+            onPress={() => seciliKiyafet && sil(seciliKiyafet.id)}
+            testID={getTestID('wardrobe', 'button', 'delete-item')}
+            {...getButtonA11yProps('Kıyafeti Sil', 'Seçili kıyafeti kalıcı olarak sil')}
+          >
             <Text style={styles.silButonText}>{t.buKiyafetiSil}</Text>
           </TouchableOpacity>
         </View>
