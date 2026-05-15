@@ -43,3 +43,4 @@ app-example
 /ios
 /android
 .gstack/
+.claude/settings.local.json
