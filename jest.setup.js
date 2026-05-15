@@ -16,3 +16,29 @@ jest.mock('expo-router', () => ({
   })),
   useLocalSearchParams: jest.fn(() => ({})),
 }));
+
+jest.mock('./lib/supabase', () => ({
+  supabase: {
+    from: jest.fn(),
+    storage: {
+      from: jest.fn(),
+    },
+    auth: {
+      setSession: jest.fn(),
+      verifyOtp: jest.fn(),
+    },
+  },
+}));
+
+jest.mock('./lib/fileSystem', () => ({
+  documentDirectory: '/mock/documents',
+  cacheDirectory: '/mock/cache',
+  readAsStringAsync: jest.fn(),
+  copyAsync: jest.fn(),
+  makeDirectoryAsync: jest.fn(),
+  deleteAsync: jest.fn(),
+  EncodingType: {
+    Base64: 'base64',
+    UTF8: 'utf8',
+  },
+}));

@@ -17,5 +17,7 @@ module.exports = {
     '!**/node_modules/**',
   ],
   testPathIgnorePatterns: ['/node_modules/', '/.expo/'],
-  transformIgnorePatterns: ['node_modules/(?!(expo|@react-native|@react-native-async-storage)/)'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(expo|@react-native|@react-native-async-storage|expo-file-system)/)',
+  ],
 };
