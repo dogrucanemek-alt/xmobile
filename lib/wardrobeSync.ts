@@ -48,7 +48,13 @@ export async function syncKaydet(userId: string, k: Kiyafet): Promise<void> {
   let fotoUrl = k.foto;
   if (fotoUrl && (fotoUrl.startsWith('file://') || fotoUrl.startsWith('content://'))) {
     const uploaded = await fotoYukle(userId, k.id, fotoUrl);
-    if (uploaded) fotoUrl = uploaded;
+    if (uploaded) {
+      fotoUrl = uploaded;
+    } else {
+      // Upload başarısız: geçersiz local path'i DB'ye yazma
+      // (başka cihazda/sandbox'ta bu path bulunamaz)
+      fotoUrl = null;
+    }
   }
   await supabase.from('wardrobe_items').upsert({
     item_id: k.id,

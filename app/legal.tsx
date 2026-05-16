@@ -18,8 +18,11 @@ export default function Legal() {
       );
       return;
     }
-    await AsyncStorage.setItem('legal_agreed', 'true');
-    router.replace('/(tabs)');
+    await AsyncStorage.multiSet([
+      ['legal_agreed', 'true'],
+      ['xmobile_kvkk_onay', 'true'],
+    ]);
+    router.replace('/' as any);
   };
 
   return (

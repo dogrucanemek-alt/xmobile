@@ -253,7 +253,6 @@ export const getInputA11yProps = (
   accessible: true,
   accessibilityLabel: label,
   accessibilityHint: placeholder || `Enter ${label.toLowerCase()}`,
-  accessibilityRole: 'textbox' as const,
   testID: testId,
 });
 

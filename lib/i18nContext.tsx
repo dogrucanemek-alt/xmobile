@@ -80,10 +80,13 @@ const çeviriler = {
   },
 };
 
+type Ceviri = typeof çeviriler['tr'];
+type TFunc = ((key: string) => string) & Ceviri;
+
 interface I18nContextValue {
   dil: 'tr' | 'en';
   dilDegistir: (d: 'tr' | 'en') => void;
-  t: typeof çeviriler['tr'] | typeof çeviriler['en'];
+  t: TFunc;
 }
 
 const I18nContext = createContext<I18nContextValue | null>(null);
@@ -102,7 +105,14 @@ export const I18nProvider = ({ children }: { children: React.ReactNode }) => {
     setDil(yeniDil);
   }, []);
 
-  const t = çeviriler[dil];
+  const t = useMemo<TFunc>(() => {
+    const dict = çeviriler[dil];
+    const fn = (key: string): string => {
+      const val = (dict as Record<string, string>)[key];
+      return typeof val === 'string' ? val : key;
+    };
+    return Object.assign(fn, dict) as TFunc;
+  }, [dil]);
 
   const value = useMemo(
     () => ({ dil, dilDegistir, t }),

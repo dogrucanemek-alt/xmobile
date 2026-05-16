@@ -19,8 +19,17 @@ export default function Index() {
 
   useEffect(() => {
     if (yukleniyor) return;
-    AsyncStorage.multiGet([KVKK_KEY, ONBOARDING_KEY]).then(([kvkk, onb]) => {
-      if (!kvkk[1]) { setKvkkGoster(true); return; }
+    // Bu noktaya geldiyse legal_agreed zaten kabul edilmiş (LegalCheck _layout.tsx'te yönlendirir).
+    // Legal ekranı KVKK'yı kapsıyor, ayrı KVKK_KEY kontrolü duplicate olduğu için kaldırıldı.
+    // Sadece legacy users için: legal_agreed varsa KVKK_KEY'i de set et (migration).
+    AsyncStorage.multiGet([KVKK_KEY, ONBOARDING_KEY, 'legal_agreed']).then(([kvkk, onb, legal]) => {
+      if (legal[1] && !kvkk[1]) {
+        AsyncStorage.setItem(KVKK_KEY, 'true').catch(() => {});
+      } else if (!legal[1] && !kvkk[1]) {
+        // Yedek: legal_agreed yoksa eski KVKK modal'ını göster (teorik olarak buraya gelmemeli)
+        setKvkkGoster(true);
+        return;
+      }
       if (!onb[1])  { router.replace('/onboarding'); return; }
       if (!session && !__DEV__ && !DEV_SKIP_LOGIN) { router.replace('/login' as any); return; }
       router.replace('/outfits' as any);
