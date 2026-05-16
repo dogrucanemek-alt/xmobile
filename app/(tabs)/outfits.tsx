@@ -25,9 +25,12 @@ import ViewShot, { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { kombinHakkiVar, kombinKullan, kalanHakAl } from '../../lib/freemium';
 import { tryOnBaslat, tryOnBekle, kiyafetGorseliUret, type TryOnCategory } from '../../lib/fashnService';
+import { getCached as tryOnCacheGet, setCached as tryOnCacheSet } from '../../lib/tryOnCache';
 import { postOlustur } from '../../lib/socialService';
 import { useAuth } from '../../lib/authContext';
 import { takipEt, Olaylar } from '../../lib/analytics';
+import HavaAnimasyon, { durumModu } from '../../components/HavaAnimasyon';
+import MidnightSky from '../../components/MidnightSky';
 import * as ImagePicker from 'expo-image-picker';
 import ShareKarti from '../../components/ShareKarti';
 import StoryKarti from '../../components/StoryKarti';
@@ -318,7 +321,7 @@ const AvatarSVG = React.memo(function AvatarSVG({ kombin, profil, kiyafetler }: 
 });
 
 export default function Outfits() {
-  const { t, renkler, aksanRenk, dil, avatarGlbUri, loadAvatarGlb } = useApp();
+  const { t, renkler, aksanRenk, dil, dilDegistir, karanlik, temaToggle, avatarGlbUri, loadAvatarGlb } = useApp();
   const { can3D, kullanim3DArtir, tier, aylikKullanim, isPro, proYenile } = useSubscription();
   const { user } = useAuth();
   const router = useRouter();
@@ -565,16 +568,32 @@ export default function Outfits() {
           garmentUri = await kiyafetGorseliUret(parca);
         }
 
+        // Cache hit ise Fashn'a hiç gitme — anında kullan
+        const cachedPath = await tryOnCacheGet(aktifModel, garmentUri);
+        if (cachedPath) {
+          setTryOn(s => ({ ...s, adimMetni: dil === 'en' ? '⚡ from cache' : '⚡ önbellekten' }));
+          aktifModel = cachedPath;
+          continue;
+        }
+
         const jobId = await tryOnBaslat(aktifModel, garmentUri, kategori);
-        aktifModel  = await tryOnBekle(jobId, (adim, toplam) => {
-          setTryOn(s => ({ ...s, adimMetni: `⏳ ${adim * 5}s / ~200s` }));
+        const sonucPath = await tryOnBekle(jobId, (adim) => {
+          // 4s ilk bekleme + 2s polling adımları
+          const gecenSn = 4 + adim * 2;
+          setTryOn(s => ({ ...s, adimMetni: `⏳ ${gecenSn}s` }));
         });
+        aktifModel = await tryOnCacheSet(aktifModel, garmentUri, sonucPath);
       }
 
       setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: aktifModel, hata: null }));
       takipEt(Olaylar.TRYON_TAMAMLANDI, { parca_sayisi: parcalar.length });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
+      const raw = e instanceof Error ? e.message : String(e);
+      const msg = raw === 'OUT_OF_CREDITS'
+        ? (dil === 'en'
+            ? 'Virtual try-on credits ran out. Please check your Fashn.ai account or try again next month.'
+            : 'Sanal deneme kredisi tükendi. Fashn.ai hesabını kontrol et veya gelecek ay tekrar dene.')
+        : raw;
       setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: null, hata: msg }));
     }
   };
@@ -912,20 +931,48 @@ ${jsonFormat}`;
     ? (skor >= 90 ? 'Perfect' : skor >= 75 ? 'Great'  : skor >= 60 ? 'Good' : 'Mismatch')
     : (skor >= 90 ? 'Mükemmel' : skor >= 75 ? 'Harika' : skor >= 60 ? 'İyi'  : 'Uyumsuz');
 
-  return (
-    <View style={[styles.container, { backgroundColor: renkler.bg2 }]}>
-      <StatusBar barStyle={renkler.statusBar} backgroundColor={renkler.bg} />
+  // Midnight gradient theme overrides — sadece karanlik mode'da
+  const camKart   = karanlik ? 'rgba(255,255,255,0.04)' : renkler.kart;
+  const camSinir  = karanlik ? 'rgba(0,212,255,0.14)'   : renkler.sinir;
 
-      <View style={[styles.header, { backgroundColor: renkler.bg, borderBottomColor: renkler.sinir }]}>
+  return (
+    <View style={[styles.container, { backgroundColor: karanlik ? '#000' : renkler.bg2 }]}>
+      <StatusBar barStyle={renkler.statusBar} backgroundColor={karanlik ? 'transparent' : renkler.bg} translucent={karanlik} />
+      {karanlik && <MidnightSky durum={hava ? durumModu(hava.durum) : 'clear-night'} />}
+
+      <View style={[styles.header, { backgroundColor: 'transparent', borderBottomColor: karanlik ? 'transparent' : renkler.sinir }]}>
         <TouchableOpacity onPress={() => router.push('/takvim' as any)}>
           <Text style={[styles.geri, { color: renkler.metin }]}>📅</Text>
         </TouchableOpacity>
         <Text style={[styles.baslik, { color: renkler.metin }]}>{t.bugunkuKombinler}</Text>
-        <TouchableOpacity onPress={baslat}>
-          <Text style={[styles.yenile, { color: aksanRenk }]}>↺</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={temaToggle}
+            accessibilityLabel={karanlik ? 'Açık moda geç' : 'Koyu moda geç'}
+            accessibilityRole="button"
+          >
+            <Text style={{ fontSize: 20 }}>{karanlik ? '☀️' : '🌙'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => dilDegistir(dil === 'tr' ? 'en' : 'tr')}
+            accessibilityLabel={dil === 'tr' ? 'Switch to English' : 'Türkçeye geç'}
+            accessibilityRole="button"
+          >
+            <Text style={{ fontSize: 13, fontWeight: '700', color: renkler.metin, letterSpacing: 0.5 }}>
+              {dil === 'tr' ? 'TR' : 'EN'}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={baslat} accessibilityLabel="Yenile" accessibilityRole="button">
+            <Text style={[styles.yenile, { color: aksanRenk }]}>↺</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 110 }}
+        showsVerticalScrollIndicator={false}
+      >
       {kalanHak !== null && (
         <TouchableOpacity
           style={styles.freemiumBant}
@@ -950,7 +997,7 @@ ${jsonFormat}`;
 
       {/* Streak + Stil Skoru */}
       {(streak.current > 1 || stilSkor) && (
-        <View style={[styles.streakBar, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
+        <View style={[styles.streakBar, { backgroundColor: camKart, borderColor: camSinir, borderWidth: karanlik ? 1 : 0.5 }]}>
           {streak.current > 0 && (
             <View style={styles.streakItem}>
               <Text style={styles.streakAtes}>🔥</Text>
@@ -986,7 +1033,15 @@ ${jsonFormat}`;
         </View>
       )}
 
-      <View style={[styles.havaDurumu, { backgroundColor: renkler.kart }]}>
+      <View style={[styles.havaDurumu, { backgroundColor: camKart, borderColor: camSinir, borderWidth: karanlik ? 1 : 0, overflow: 'hidden' }]}>
+        {hava && (
+          <HavaAnimasyon
+            durum={durumModu(
+              hava.durum,
+              new Date().getHours() < 6 || new Date().getHours() >= 20,
+            )}
+          />
+        )}
         {!hava ? <ActivityIndicator color={renkler.metin} /> : (
           <>
             <Text style={styles.havaIkon}>{havaIkon()}</Text>
@@ -1027,10 +1082,10 @@ ${jsonFormat}`;
           </TouchableOpacity>
         </View>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 110 }}>
-          <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 0.95 }}>
+        <>
+        <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 0.95 }}>
           <View
-            style={[styles.avatarBolum, { backgroundColor: renkler.kart }]}
+            style={[styles.avatarBolum, { backgroundColor: camKart, borderColor: camSinir, borderWidth: karanlik ? 1 : 0 }]}
             {...panResponder.panHandlers}
           >
             {seciliKombin && (
@@ -1155,7 +1210,7 @@ ${jsonFormat}`;
           </View>
 
           {seciliKombin && (
-            <View style={[styles.parcalarBolum, { backgroundColor: renkler.kart }]}>
+            <View style={[styles.parcalarBolum, { backgroundColor: camKart, borderColor: camSinir, borderWidth: karanlik ? 1 : 0 }]}>
               <Text style={[styles.parcalarBaslik, { color: renkler.metin2 }]}>{t.buKombin}</Text>
               <View style={styles.parcalar}>
                 {seciliKombin.parcalar.map((p, i) => {
@@ -1264,8 +1319,9 @@ ${jsonFormat}`;
           </TouchableOpacity>
 
           <View style={{ height: 40 }} />
-        </ScrollView>
+        </>
       )}
+      </ScrollView>
 
       {/* ── PARÇA DEĞİŞTİR MODAL ── */}
       <Modal
@@ -1679,6 +1735,7 @@ ${jsonFormat}`;
           <TouchableOpacity activeOpacity={1} style={shareS.sheet}>
             <View style={shareS.handle} />
             <Text style={shareS.baslik}>{dil === 'tr' ? 'Kombini Paylaş' : 'Share Outfit'}</Text>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 8 }}>
 
             {/* Share Card Preview */}
             {seciliKombin && (
@@ -1769,6 +1826,7 @@ ${jsonFormat}`;
             <TouchableOpacity style={shareS.iptal} onPress={() => setShareMenuAcik(false)}>
               <Text style={shareS.iptalMetin}>{dil === 'tr' ? 'İptal' : 'Cancel'}</Text>
             </TouchableOpacity>
+            </ScrollView>
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
@@ -1780,7 +1838,7 @@ const shareS = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
   sheet: {
     backgroundColor: '#0D0D0D', borderTopLeftRadius: 24, borderTopRightRadius: 24,
-    padding: 20, paddingBottom: 40,
+    padding: 20, paddingBottom: 40, maxHeight: '90%',
   },
   handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.2)', alignSelf: 'center', marginBottom: 16 },
   baslik: { fontSize: 17, fontWeight: '700', color: '#fff', textAlign: 'center', marginBottom: 20 },
