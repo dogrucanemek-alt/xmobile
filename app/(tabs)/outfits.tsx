@@ -576,7 +576,7 @@ export default function Outfits() {
           continue;
         }
 
-        const jobId = await tryOnBaslat(aktifModel, garmentUri, kategori);
+        const jobId = await tryOnBaslat(aktifModel, garmentUri, kategori, user?.id);
         const baslangic = Date.now();
         const sonucPath = await tryOnBekle(jobId, () => {
           const gecenSn = Math.round((Date.now() - baslangic) / 1000);

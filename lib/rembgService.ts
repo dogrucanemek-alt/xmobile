@@ -38,7 +38,7 @@ async function kucult(uri: string): Promise<string> {
  * Verilen yerel fotoğrafın arka planını siler ve PNG (şeffaf) olarak yerele indirir.
  * Başarısız olursa orijinal URI'yi geri döner (fallback).
  */
-export async function arkaPlaniTemizle(uri: string): Promise<string> {
+export async function arkaPlaniTemizle(uri: string, userId?: string): Promise<string> {
   try {
     const kucukUri = await kucult(uri);
     const b64 = await uriToBase64(kucukUri);
@@ -47,7 +47,7 @@ export async function arkaPlaniTemizle(uri: string): Promise<string> {
     const res = await fetch(`${API_URL}/api/fashn?action=rembg`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image: dataUri }),
+      body: JSON.stringify({ image: dataUri, user_id: userId }),
       signal: timeoutSignal(60000),
     });
     if (!res.ok) {

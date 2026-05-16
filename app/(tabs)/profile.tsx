@@ -38,7 +38,7 @@ const GOZ_RENKLERI = [
 export default function Profile() {
   const router = useRouter();
   const { t, renkler, aksanRenk, dil, clearAvatarGlb, loadAvatarGlb, avatarGlbUri, temaToggle, karanlik } = useApp();
-  const { session, cikisYap } = useAuth();
+  const { session, user, cikisYap } = useAuth();
 
   const [tenRengi,    setTenRengi]    = useState('#FDDBB4');
   const [sacRengi,    setSacRengi]    = useState('#1A1A1A');
@@ -124,7 +124,7 @@ export default function Profile() {
     setProfilFoto(uri);
     setFotoIsleniyor(true);
     try {
-      const temiz = await arkaPlaniTemizle(uri);
+      const temiz = await arkaPlaniTemizle(uri, user?.id);
       if (temiz && temiz !== uri) setProfilFoto(temiz);
     } finally {
       setFotoIsleniyor(false);

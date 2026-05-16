@@ -92,6 +92,7 @@ export async function tryOnBaslat(
   modelImageUri: string,
   garmentImageUri: string,
   category: TryOnCategory = 'auto',
+  userId?: string,
 ): Promise<string> {
   const [modelParam, garmentParam] = await Promise.all([
     gorselParam(modelImageUri),
@@ -105,6 +106,7 @@ export async function tryOnBaslat(
       model_image: modelParam,
       garment_image: garmentParam,
       category,
+      user_id: userId,
     }),
     signal: timeoutSignal(40000),
   });

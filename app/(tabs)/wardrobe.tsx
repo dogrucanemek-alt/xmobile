@@ -206,7 +206,7 @@ export default function Wardrobe() {
     // Arka plan temizleme — başarısız olursa orijinali kullan (best-effort)
     setEklemeMod('rembg');
     let temizUri = uri;
-    try { temizUri = await arkaPlaniTemizle(uri); } catch (e) { console.warn('Rembg hatası:', e); }
+    try { temizUri = await arkaPlaniTemizle(uri, user?.id); } catch (e) { console.warn('Rembg hatası:', e); }
     setEklemeMod(null);
 
     let kaliciUri = temizUri;
@@ -295,7 +295,7 @@ export default function Wardrobe() {
     // Arka plan temizleme (best-effort)
     setEklemeMod('rembg');
     let temizUri = sonuc.assets[0].uri;
-    try { temizUri = await arkaPlaniTemizle(sonuc.assets[0].uri); } catch (e) { console.warn('Rembg hatası:', e); }
+    try { temizUri = await arkaPlaniTemizle(sonuc.assets[0].uri, user?.id); } catch (e) { console.warn('Rembg hatası:', e); }
     setEklemeMod(null);
 
     let kaliciUri: string;
