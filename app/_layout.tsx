@@ -84,9 +84,15 @@ function LegalCheck() {
   useEffect(() => {
     const checkLegal = async () => {
       try {
-        const agreed = await AsyncStorage.getItem('legal_agreed');
-        if (!agreed) {
+        const pairs = await AsyncStorage.multiGet(['legal_agreed', 'xmobile_kvkk_onay']);
+        const accepted = pairs.some(([, v]) => v === 'true');
+        if (!accepted) {
           router.replace('/legal' as any);
+        } else {
+          // Bir anahtar var, diğeri yoksa eşitle — gelecekte aynı sorun çıkmasın
+          const [legal, kvkk] = pairs;
+          if (!legal[1]) AsyncStorage.setItem('legal_agreed', 'true').catch(() => {});
+          if (!kvkk[1])  AsyncStorage.setItem('xmobile_kvkk_onay', 'true').catch(() => {});
         }
       } catch (_) {
         router.replace('/legal' as any);
