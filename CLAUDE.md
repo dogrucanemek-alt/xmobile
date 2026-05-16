@@ -52,8 +52,8 @@
 ## WordPress / aifurniture.com.tr Deploy Pipeline
 
 - Source: `docs/index.html`
-- Build: `python C:\Users\emek.dogru\AppData\Local\Temp\wpwork\build_snippet.py <version>`
-- Deploy: `python C:\Users\emek.dogru\AppData\Local\Temp\wpwork\save_v<version>.py`
+- Build: `python docs/build_snippet.py <version>` (output → `%TEMP%\wpwork\snippet_v<version>.php`)
+- Deploy: `python C:\Users\emek.dogru\AppData\Local\Temp\wpwork\save_v<version>.py` (kept out of repo — contains session cookies)
 - WPCode snippet ID: 76
 - If session expired: `python C:\Users\emek.dogru\AppData\Local\Temp\wpwork\relogin.py` önce çalıştır
 - GitHub Pages: `https://dogrucanemek-alt.github.io/xmobile/` (docs/ klasöründen serve edilir)
