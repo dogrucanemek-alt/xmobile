@@ -12,7 +12,7 @@
   <link rel="alternate" hreflang="en" href="https://aifurniture.com.tr/"/>
   <link rel="alternate" hreflang="x-default" href="https://aifurniture.com.tr/"/>
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
-  <link rel="preload" as="image" href="img/wardrobe-concept.png" fetchpriority="high"/>
+  <link rel="preload" as="image" href="img/wardrobe-concept.webp" type="image/webp" fetchpriority="high"/>
 
   <!-- Open Graph -->
   <meta property="og:type" content="website"/>
@@ -282,6 +282,7 @@
     .hero-bg {
       position: absolute; inset: 0;
       background: url('img/wardrobe-concept.png') center 40% / cover no-repeat;
+      background-image: image-set(url('img/wardrobe-concept.webp') type('image/webp'), url('img/wardrobe-concept.png') type('image/png'));
       transform: scale(1.04); transition: transform 8s ease-out;
     }
     .hero-bg.loaded { transform: scale(1); }
@@ -1432,6 +1433,7 @@
     .video-wrap {
       position: relative; width: 100%; padding-top: 56.25%;
       background: #02020a url('img/app-screens.png') center/cover no-repeat;
+      background-image: image-set(url('img/app-screens.webp') type('image/webp'), url('img/app-screens.png') type('image/png'));
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 4px; overflow: hidden;
     }
@@ -1681,9 +1683,12 @@
 <section class="wardrobe-showcase">
   <div class="wardrobe-showcase-inner">
     <div class="wardrobe-img-wrap reveal">
-      <img src="img/wardrobe-concept.png"
-           alt="AI Furniture akıllı gardırop — yapay zeka destekli dokunmatik ekran"
-           loading="lazy" width="1360" height="620"/>
+      <picture>
+        <source srcset="img/wardrobe-concept.webp" type="image/webp"/>
+        <img src="img/wardrobe-concept.png"
+             alt="AI Furniture akıllı gardırop — yapay zeka destekli dokunmatik ekran"
+             loading="lazy" width="1360" height="620"/>
+      </picture>
       <div class="wardrobe-glare" id="wardrobeGlare"></div>
       <div class="wardrobe-img-caption">
         <p class="eyebrow" data-tr="Dünyanın İlki" data-en="World's First">Dünyanın İlki</p>
@@ -1768,7 +1773,10 @@
         <div class="phone-btn phone-btn-r1"></div>
         <div class="phone-btn phone-btn-r2"></div>
         <div class="phone-btn phone-btn-l1"></div>
-        <img src="img/app-screens.png" alt="AI Furniture uygulama ekranları" loading="lazy"/>
+        <picture>
+          <source srcset="img/app-screens.webp" type="image/webp"/>
+          <img src="img/app-screens.png" alt="AI Furniture uygulama ekranları" loading="lazy"/>
+        </picture>
       </div>
     </div>
   </div>
@@ -2270,7 +2278,7 @@
 
 <!-- COMING SOON -->
 <section class="coming-soon" id="coming-soon">
-  <div class="coming-soon-bg" style="background-image: url('img/coming-soon.png');"></div>
+  <div class="coming-soon-bg" style="background-image: url('img/coming-soon.png'); background-image: image-set(url('img/coming-soon.webp') type('image/webp'), url('img/coming-soon.png') type('image/png'));"></div>
   <div class="coming-soon-overlay"></div>
   <div class="coming-soon-content reveal-left">
     <div class="badge" data-tr="Yakında" data-en="Coming Soon">Yakında</div>
@@ -2287,7 +2295,7 @@
 
 <!-- BEDROOM -->
 <section class="coming-soon" id="bedroom">
-  <div class="coming-soon-bg" style="background-image: url('https://dogrucanemek-alt.github.io/xmobile/img/bedroom.png');"></div>
+  <div class="coming-soon-bg" style="background-image: url('img/bedroom.png'); background-image: image-set(url('img/bedroom.webp') type('image/webp'), url('img/bedroom.png') type('image/png'));"></div>
   <div class="coming-soon-overlay"></div>
   <div class="coming-soon-content reveal-left">
     <div class="badge" data-tr="Yakında" data-en="Coming Soon">Yakında</div>
@@ -2304,7 +2312,7 @@
 
 <!-- LIVING ROOM -->
 <section class="coming-soon" id="living-room">
-  <div class="coming-soon-bg" style="background-image: url('https://dogrucanemek-alt.github.io/xmobile/img/living-room.png');"></div>
+  <div class="coming-soon-bg" style="background-image: url('img/living-room.png'); background-image: image-set(url('img/living-room.webp') type('image/webp'), url('img/living-room.png') type('image/png'));"></div>
   <div class="coming-soon-overlay"></div>
   <div class="coming-soon-content reveal-left">
     <div class="badge" data-tr="Yakında" data-en="Coming Soon">Yakında</div>
