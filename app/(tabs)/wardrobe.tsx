@@ -1,6 +1,7 @@
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, Image, Alert, TextInput, Modal, TextStyle, Platform } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, Alert, TextInput, Modal, TextStyle, Platform } from 'react-native';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from '../../lib/fileSystem';
 import * as Sharing from 'expo-sharing';
@@ -9,6 +10,7 @@ import { useApp } from '../../lib/context';
 import { useAuth } from '../../lib/authContext';
 import type { Kiyafet, KombinKayit } from '../../lib/types';
 import { kiyafetTani } from '../../lib/vision';
+import { arkaPlaniTemizle } from '../../lib/rembgService';
 import { syncYukle, syncKaydet, syncSil, syncTumunuYukle } from '../../lib/wardrobeSync';
 import { handleError, logError } from '../../lib/errorHandler';
 import { getTestID, getButtonA11yProps, getInputA11yProps, formatCountA11y } from '../../lib/accessibility';
@@ -46,6 +48,8 @@ export default function Wardrobe() {
   const [duzenFiyat, setDuzenFiyat]       = useState('');
   const [kiyafetKullanim, setKiyafetKullanim] = useState<Record<number, number>>({});
   const [cokluProgress, setCokluProgress] = useState<{simdiki: number; toplam: number} | null>(null);
+  const [eklemeMod, setEklemeMod] = useState<null | 'tani' | 'rembg'>(null);
+  const [hatalıFotolar, setHatalıFotolar] = useState<Record<number, boolean>>({});
 
   useEffect(() => { yukle(); yukleKullanim(); }, []);
 
@@ -127,12 +131,86 @@ export default function Wardrobe() {
     }
   };
 
+  // Lokal sandbox fotoğrafları (Supabase'e yüklenmemiş) — başka cihaz/Expo Go'da görünmez
+  const bozukFotoIdler = useMemo(() => {
+    const ids = new Set<number>();
+    for (const k of kiyafetler) {
+      if (k.foto && (k.foto.startsWith('file://') || k.foto.startsWith('content://'))) {
+        ids.add(k.id);
+      }
+      if (hatalıFotolar[k.id]) ids.add(k.id);
+    }
+    return Array.from(ids);
+  }, [kiyafetler, hatalıFotolar]);
+
+  const bozukFotolariTemizle = () => {
+    if (bozukFotoIdler.length === 0) {
+      Alert.alert(
+        dil === 'en' ? 'Nothing to clean' : 'Temizlenecek bir şey yok',
+        dil === 'en' ? 'All photos look fine.' : 'Tüm fotoğraflar düzgün görünüyor.',
+      );
+      return;
+    }
+    Alert.alert(
+      dil === 'en' ? 'Clean Broken Photos' : 'Bozuk Fotoğrafları Temizle',
+      dil === 'en'
+        ? `${bozukFotoIdler.length} items have broken photos. Remove only the photos (items will stay)?`
+        : `${bozukFotoIdler.length} kıyafetin fotoğrafı yüklenemedi. Sadece fotoğrafları kaldırılsın mı (kıyafetler kalacak)?`,
+      [
+        { text: t.iptal, style: 'cancel' },
+        {
+          text: dil === 'en' ? 'Clean' : 'Temizle',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const bozukSet = new Set(bozukFotoIdler);
+              const yeniListe = kiyafetler.map(k =>
+                bozukSet.has(k.id) ? { ...k, foto: null } : k,
+              );
+              // Lokali kaydet — anında
+              await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(yeniListe));
+              setKiyafetler(yeniListe);
+              setHatalıFotolar({});
+              // Supabase senkronu — paralel, bitince Alert göster
+              if (user) {
+                await Promise.allSettled(
+                  yeniListe
+                    .filter(k => bozukSet.has(k.id))
+                    .map(k => syncKaydet(user.id, k)),
+                );
+              }
+              Alert.alert(
+                dil === 'en' ? 'Done' : 'Tamam',
+                dil === 'en'
+                  ? `${bozukFotoIdler.length} photos cleared.`
+                  : `${bozukFotoIdler.length} fotoğraf temizlendi.`,
+              );
+            } catch (e) {
+              Alert.alert(
+                dil === 'en' ? 'Error' : 'Hata',
+                String(e),
+              );
+            }
+          },
+        },
+      ],
+    );
+  };
+
   const fotodanEkle = async (uri: string) => {
     let ad = 'Yeni Kıyafet';
     let tur = 'Üst';
+    setEklemeMod('tani');
     try { ({ ad, tur } = await kiyafetTani(uri)); } catch (e) { console.warn('Tanıma hatası:', e); }
-    let kaliciUri = uri;
-    try { kaliciUri = await fotografKaydet(uri); } catch {}
+
+    // Arka plan temizleme — başarısız olursa orijinali kullan (best-effort)
+    setEklemeMod('rembg');
+    let temizUri = uri;
+    try { temizUri = await arkaPlaniTemizle(uri); } catch (e) { console.warn('Rembg hatası:', e); }
+    setEklemeMod(null);
+
+    let kaliciUri = temizUri;
+    try { kaliciUri = await fotografKaydet(temizUri); } catch {}
     const yeni = { id: Date.now(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri };
     await kaydet([...kiyafetler, yeni], yeni);
     kiyafetDuzenle(yeni);
@@ -213,8 +291,15 @@ export default function Wardrobe() {
     if (!izin.granted) return;
     const sonuc = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [3, 4], quality: 0.8 });
     if (sonuc.canceled) return;
+
+    // Arka plan temizleme (best-effort)
+    setEklemeMod('rembg');
+    let temizUri = sonuc.assets[0].uri;
+    try { temizUri = await arkaPlaniTemizle(sonuc.assets[0].uri); } catch (e) { console.warn('Rembg hatası:', e); }
+    setEklemeMod(null);
+
     let kaliciUri: string;
-    try { kaliciUri = await fotografKaydet(sonuc.assets[0].uri); } catch { kaliciUri = sonuc.assets[0].uri; }
+    try { kaliciUri = await fotografKaydet(temizUri); } catch { kaliciUri = temizUri; }
     if (!seciliKiyafet) return;
     const guncellenmis = { ...seciliKiyafet, foto: kaliciUri };
     setSeciliKiyafet(guncellenmis);
@@ -252,6 +337,15 @@ export default function Wardrobe() {
           {t.gardırobum}
         </Text>
         <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+          {bozukFotoIdler.length > 0 && (
+            <TouchableOpacity
+              onPress={bozukFotolariTemizle}
+              testID={getTestID('wardrobe', 'button', 'clean-broken')}
+              {...getButtonA11yProps('Bozuk Fotoğrafları Temizle', 'Yüklenemeyen fotoğrafları kaldır')}
+            >
+              <Text style={{ fontSize: 18 }}>🧹 {bozukFotoIdler.length}</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             onPress={() => router.push('/analiz' as any)}
             testID={getTestID('wardrobe', 'button', 'analysis')}
@@ -366,12 +460,16 @@ export default function Wardrobe() {
                 onPress={() => kiyafetDuzenle(k)}
                 accessible={false}
               >
-                {k.foto ? (
+                {k.foto && !hatalıFotolar[k.id] ? (
                   <Image
                     source={{ uri: k.foto }}
                     style={styles.kiyafetFoto}
+                    contentFit="cover"
+                    transition={200}
+                    cachePolicy="memory-disk"
                     accessibilityLabel={`${k.ad} fotoğrafı`}
                     accessible={true}
+                    onError={() => setHatalıFotolar(prev => ({ ...prev, [k.id]: true }))}
                   />
                 ) : (
                   <View style={[styles.renkCircle, { backgroundColor: renkler.chip }]}>
@@ -409,7 +507,7 @@ export default function Wardrobe() {
                     >
                       <Text style={[styles.kartBtnText, { color: '#00D4FF' }]}>👗 Dene</Text>
                     </TouchableOpacity>
-                    {k.foto ? (
+                    {k.foto && !hatalıFotolar[k.id] ? (
                       <TouchableOpacity
                         style={[styles.kartBtn, { borderColor: renkler.sinir }]}
                         onPress={async () => {
@@ -446,6 +544,16 @@ export default function Wardrobe() {
           <View style={[styles.progressTrack, { backgroundColor: renkler.sinir }]}>
             <View style={[styles.progressFill, { backgroundColor: renkler.btnPrimary, width: `${(cokluProgress.simdiki / cokluProgress.toplam) * 100}%` as `${number}%` }]} />
           </View>
+        </View>
+      )}
+
+      {eklemeMod && (
+        <View style={[styles.progressBar, { backgroundColor: renkler.kart, borderColor: 'rgba(0,212,255,0.25)', borderWidth: 1 }]}>
+          <Text style={[styles.progressText, { color: '#00D4FF', fontWeight: '600' }]}>
+            {eklemeMod === 'tani'
+              ? (dil === 'en' ? '✨ Recognizing clothing…' : '✨ Kıyafet tanınıyor…')
+              : (dil === 'en' ? '🪄 Removing background…'  : '🪄 Arka plan temizleniyor…')}
+          </Text>
         </View>
       )}
 
@@ -505,7 +613,7 @@ export default function Wardrobe() {
 
           <TouchableOpacity onPress={modalFotoGuncelle} activeOpacity={0.8}>
             {seciliKiyafet?.foto ? (
-              <Image source={{ uri: seciliKiyafet.foto }} style={styles.modalFoto} />
+              <Image source={{ uri: seciliKiyafet.foto }} style={styles.modalFoto} contentFit="cover" transition={200} cachePolicy="memory-disk" />
             ) : (
               <View style={[styles.modalFotoEkle, { backgroundColor: renkler.chip }]}>
                 <Text style={[styles.modalFotoEkleText, { color: renkler.metin2 }]}>📷 Fotoğraf Ekle</Text>
