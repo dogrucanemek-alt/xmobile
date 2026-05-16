@@ -113,6 +113,10 @@ export async function tryOnBaslat(
 
   const data = await safeJson(res);
   if (!res.ok || data.error) {
+    // Server-side aylık kullanıcı limiti
+    if (res.status === 429 && data?.error === 'monthly_limit_exceeded') {
+      throw new Error('USER_LIMIT_EXCEEDED');
+    }
     const rawErr = errMsg(data.error) || `Fashn API hatası: ${res.status}`;
     const lower = rawErr.toLowerCase();
     if (lower.includes('credit') || lower.includes('quota') || lower.includes('limit') || res.status === 402 || res.status === 429) {

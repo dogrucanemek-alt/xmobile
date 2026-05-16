@@ -589,10 +589,15 @@ export default function Outfits() {
       takipEt(Olaylar.TRYON_TAMAMLANDI, { parca_sayisi: parcalar.length });
     } catch (e) {
       const raw = e instanceof Error ? e.message : String(e);
+      if (raw === 'USER_LIMIT_EXCEEDED') {
+        setTryOn(s => ({ ...s, visible: false, adim: 'sec', secilenParcalar: [] }));
+        setUpsellGoster(true);
+        return;
+      }
       const msg = raw === 'OUT_OF_CREDITS'
         ? (dil === 'en'
-            ? 'Virtual try-on credits ran out. Please check your Fashn.ai account or try again next month.'
-            : 'Sanal deneme kredisi tükendi. Fashn.ai hesabını kontrol et veya gelecek ay tekrar dene.')
+            ? 'Virtual try-on credits ran out. Please try again next month.'
+            : 'Sanal deneme kredisi tükendi. Gelecek ay tekrar dene.')
         : raw;
       setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: null, hata: msg }));
     }
