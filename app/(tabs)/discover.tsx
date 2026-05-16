@@ -1,18 +1,22 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, FlatList, Image, TouchableOpacity,
+  View, Text, StyleSheet, FlatList, TouchableOpacity,
   ActivityIndicator, RefreshControl, StatusBar, Dimensions, ScrollView,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useApp } from '../../lib/context';
 import { useAuth } from '../../lib/authContext';
 import { postListesiAl, begeniToggle, kullaniciBegendimi, type SocialPost } from '../../lib/socialService';
+import { Linking } from 'react-native';
 import { takipEt, Olaylar } from '../../lib/analytics';
 
 const { width } = Dimensions.get('window');
 const KART_W = (width - 48) / 2;
 const CYAN   = '#00D4FF';
+const ITEM_HEIGHT = KART_W * 1.3 + 115; // gorsel (KART_W*1.3) + icerik (~115px)
+const ROW_GAP = 12;
 
 const KATEGORILER = ['Tümü', 'Casual', 'Formal', 'Spor', 'Gece', 'Yaz', 'Kış'];
 
@@ -73,7 +77,7 @@ export default function Discover() {
     ? postlar
     : postlar.filter(p => p.tur?.toLowerCase().includes(aktifFiltre.toLowerCase()));
 
-  const renderPost = ({ item }: { item: SocialPost }) => {
+  const renderPost = useCallback(({ item }: { item: SocialPost }) => {
     const begendi     = begenilenler.has(item.id);
     const displayName = item.profiles?.display_name ?? '—';
     const tarih       = new Date(item.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
@@ -81,7 +85,7 @@ export default function Discover() {
     return (
       <View style={[styles.kart, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
         {item.gorsel_url ? (
-          <Image source={{ uri: item.gorsel_url }} style={styles.kartGorsel} resizeMode="cover" />
+          <Image source={{ uri: item.gorsel_url }} style={styles.kartGorsel} contentFit="cover" transition={200} cachePolicy="memory-disk" />
         ) : (
           <View style={[styles.gorselYok, { backgroundColor: renkler.chip }]}>
             <Text style={{ fontSize: 32 }}>👗</Text>
@@ -104,6 +108,34 @@ export default function Discover() {
             {Array.isArray(item.parcalar) ? item.parcalar.join(' · ') : ''}
           </Text>
 
+          {/* Ürün linkleri — eğer varsa */}
+          {item.post_items && item.post_items.length > 0 && (
+            <View style={{ marginTop: 6, gap: 3 }}>
+              {item.post_items.slice(0, 3).map(pi => (
+                <TouchableOpacity
+                  key={pi.id ?? pi.parca_adi}
+                  onPress={() => pi.urun_url && Linking.openURL(pi.urun_url).catch(() => {})}
+                  disabled={!pi.urun_url}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 4,
+                    backgroundColor: 'rgba(0,212,255,0.08)',
+                    borderRadius: 8,
+                    paddingHorizontal: 6,
+                    paddingVertical: 3,
+                  }}
+                >
+                  <Text style={{ fontSize: 10 }}>🛒</Text>
+                  <Text style={{ fontSize: 10, color: CYAN, flex: 1 }} numberOfLines={1}>
+                    {pi.marka ?? pi.parca_adi}
+                    {pi.fiyat ? ` · ${pi.fiyat}₺` : ''}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+
           <View style={styles.altSatir}>
             <Text style={[styles.kullanici, { color: renkler.metin2 }]}>@{displayName}</Text>
             <TouchableOpacity style={styles.begeniBtn} onPress={() => begeni(item.id)}>
@@ -116,7 +148,7 @@ export default function Discover() {
         </View>
       </View>
     );
-  };
+  }, [begenilenler, renkler, begeni]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: renkler.bg }]}>
@@ -137,6 +169,7 @@ export default function Discover() {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.filtreSatir}
+        style={{ flexGrow: 0, maxHeight: 60 }}
       >
         {KATEGORILER.map(k => (
           <TouchableOpacity
@@ -204,6 +237,18 @@ export default function Discover() {
             <RefreshControl refreshing={yenileniyor} onRefresh={yenile} tintColor={CYAN} />
           }
           showsVerticalScrollIndicator={false}
+          getItemLayout={(_, index) => {
+            const row = Math.floor(index / 2);
+            return {
+              length: ITEM_HEIGHT,
+              offset: row * (ITEM_HEIGHT + ROW_GAP),
+              index,
+            };
+          }}
+          removeClippedSubviews={true}
+          windowSize={5}
+          maxToRenderPerBatch={6}
+          initialNumToRender={6}
           ListHeaderComponent={
             filtreli.length > 0 ? (
               <Text style={[styles.sayac, { color: renkler.metin2 }]}>
@@ -225,9 +270,10 @@ const styles = StyleSheet.create({
   },
   baslik:      { fontSize: 22, fontWeight: '800' },
   altBaslik:   { fontSize: 13 },
-  filtreSatir: { paddingHorizontal: 16, paddingVertical: 12, gap: 8 },
+  filtreSatir: { paddingHorizontal: 16, paddingVertical: 10, gap: 8, alignItems: 'center' },
   filtreChip: {
     paddingHorizontal: 16, paddingVertical: 7, borderRadius: 20, borderWidth: 0.5,
+    alignItems: 'center', justifyContent: 'center',
   },
   filtreText:  { fontSize: 13 },
   merkez:      { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, paddingHorizontal: 32 },
