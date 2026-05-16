@@ -1,4 +1,5 @@
 import * as FileSystem from 'expo-file-system/legacy';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 
@@ -52,10 +53,40 @@ function mimeType(uri: string): string {
 
 export type TryOnCategory = 'auto' | 'tops' | 'bottoms' | 'one-pieces';
 
+// Session cache: aynı fotoğraf birden fazla parça için tekrar tekrar encode edilmesin
+const gorselCache = new Map<string, string>();
+
+// Fashn için optimum: 1024px wide, jpeg 0.75 quality
+// Upload süresini 5-10x hızlandırır, kalite çok az düşer
+async function gorseliKucult(uri: string): Promise<string> {
+  try {
+    const sonuc = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: 1024 } }],
+      { compress: 0.75, format: ImageManipulator.SaveFormat.JPEG },
+    );
+    return sonuc.uri;
+  } catch {
+    // Küçültme başarısızsa orijinali kullan
+    return uri;
+  }
+}
+
 async function gorselParam(uri: string): Promise<string> {
   if (uri.startsWith('http')) return uri;
-  const b64 = await uriToBase64(uri);
-  return `data:${mimeType(uri)};base64,${b64}`;
+  const hit = gorselCache.get(uri);
+  if (hit) return hit;
+  // Küçült, sonra base64'e çevir
+  const kucukUri = await gorseliKucult(uri);
+  const b64 = await uriToBase64(kucukUri);
+  const dataUri = `data:image/jpeg;base64,${b64}`;
+  // Cache büyümesin: max 8 entry tut
+  if (gorselCache.size >= 8) {
+    const firstKey = gorselCache.keys().next().value;
+    if (firstKey !== undefined) gorselCache.delete(firstKey);
+  }
+  gorselCache.set(uri, dataUri);
+  return dataUri;
 }
 
 export async function tryOnBaslat(
@@ -71,12 +102,23 @@ export async function tryOnBaslat(
   const res = await fetch(`${API_URL}/api/fashn`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model_image: modelParam, garment_image: garmentParam, category }),
+    body: JSON.stringify({
+      model_image: modelParam,
+      garment_image: garmentParam,
+      category,
+    }),
     signal: timeoutSignal(40000),
   });
 
   const data = await safeJson(res);
-  if (!res.ok || data.error) throw new Error(errMsg(data.error) || `Fashn API hatası: ${res.status}`);
+  if (!res.ok || data.error) {
+    const rawErr = errMsg(data.error) || `Fashn API hatası: ${res.status}`;
+    const lower = rawErr.toLowerCase();
+    if (lower.includes('credit') || lower.includes('quota') || lower.includes('limit') || res.status === 402 || res.status === 429) {
+      throw new Error('OUT_OF_CREDITS');
+    }
+    throw new Error(rawErr);
+  }
   if (!data.id) throw new Error(`Fashn API: id gelmedi. Yanıt: ${JSON.stringify(data).slice(0, 120)}`);
   return data.id as string;
 }
@@ -109,9 +151,12 @@ export async function tryOnBekle(
   id: string,
   onProgress?: (adim: number, toplam: number) => void,
 ): Promise<string> {
-  const MAKS = 40; // 40 × 5s = 200 saniye max
+  // Önce kısa ilk bekleme (Fashn cold start min ~8s), sonra hızlı polling
+  // Toplam max ~200s ama tipik durumda 15-30s'de yakalar
+  await new Promise(r => setTimeout(r, 4000));
+
+  const MAKS = 100; // 100 × 2s = 200 saniye max
   for (let i = 0; i < MAKS; i++) {
-    await new Promise(r => setTimeout(r, 5000));
     onProgress?.(i + 1, MAKS);
 
     let durum: Awaited<ReturnType<typeof tryOnDurumuKontrol>>;
@@ -119,6 +164,7 @@ export async function tryOnBekle(
       durum = await tryOnDurumuKontrol(id);
     } catch {
       // Tek bir poll hatası kritik değil, devam et
+      await new Promise(r => setTimeout(r, 2000));
       continue;
     }
 
@@ -130,6 +176,8 @@ export async function tryOnBekle(
       return localPath;
     }
     if (durum.status === 'failed') throw new Error(errMsg(durum.error) || 'Try-on başarısız');
+
+    await new Promise(r => setTimeout(r, 2000));
   }
   throw new Error('Zaman aşımı: 200 saniyede sonuç gelmedi');
 }
