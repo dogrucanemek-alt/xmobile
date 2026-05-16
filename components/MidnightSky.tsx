@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { Animated, Dimensions, StyleSheet, View } from 'react-native';
-import Svg, { Defs, LinearGradient, Stop, Rect, RadialGradient } from 'react-native-svg';
+import { Animated, Dimensions, Easing, StyleSheet, View } from 'react-native';
+import Svg, { Circle, Defs, LinearGradient, Stop, Rect, RadialGradient } from 'react-native-svg';
 
 const { width: SW, height: SH } = Dimensions.get('window');
 
@@ -9,59 +9,51 @@ export type GokyuzuModu =
   | 'clouds' | 'rain' | 'drizzle' | 'snow'
   | 'thunder' | 'mist' | 'sunrise' | 'sunset' | 'none';
 
-// Tüm modlar dark-readable: alt %50 koyu, üst kısımdan ipucu ver, glow ile karakter ekle
+// Daha kontrastlı gradient'ler — üst stop'lar belirgin görünür, alt %30 derin siyah
 const GRADIENT: Record<GokyuzuModu, { stops: [string, string, string, string]; glow?: { color: string; cx: string; cy: string; opacity?: number } }> = {
   'clear-night': {
-    stops: ['#0a1730', '#070e22', '#040814', '#000000'],
-    glow: { color: '#00d4ff', cx: '80%', cy: '12%', opacity: 0.22 },
+    stops: ['#1a2f5c', '#0e1a36', '#050a18', '#000000'],
+    glow: { color: '#00d4ff', cx: '80%', cy: '12%', opacity: 0.30 },
   },
   'clear-day': {
-    // koyu deniz-mavi + üstte sıcak güneş halesi
-    stops: ['#1e4068', '#0f2848', '#06162c', '#000000'],
-    glow: { color: '#ffd068', cx: '82%', cy: '10%', opacity: 0.42 },
+    stops: ['#2a5c98', '#16386a', '#0a1c3c', '#000000'],
+    glow: { color: '#ffd068', cx: '82%', cy: '10%', opacity: 0.52 },
   },
   'clouds': {
-    // gri-mavi pus, glow yok keskin değil
-    stops: ['#2a3340', '#1a2028', '#0e1218', '#000000'],
-    glow: { color: '#8a96a8', cx: '50%', cy: '8%', opacity: 0.18 },
+    stops: ['#4a5b72', '#2a3645', '#141a22', '#000000'],
+    glow: { color: '#c0ccd8', cx: '50%', cy: '6%', opacity: 0.28 },
   },
   'rain': {
-    // koyu petrol mavi
-    stops: ['#1a2a3a', '#0e1824', '#070c14', '#000000'],
-    glow: { color: '#4a6890', cx: '50%', cy: '15%', opacity: 0.18 },
+    stops: ['#2c4258', '#162538', '#0a121e', '#000000'],
+    glow: { color: '#6a8ab0', cx: '50%', cy: '12%', opacity: 0.26 },
   },
   'drizzle': {
-    stops: ['#202e3e', '#121b28', '#080d14', '#000000'],
-    glow: { color: '#5a7898', cx: '50%', cy: '12%', opacity: 0.16 },
+    stops: ['#36475a', '#1c2838', '#0e151f', '#000000'],
+    glow: { color: '#7a98b8', cx: '50%', cy: '12%', opacity: 0.24 },
   },
   'snow': {
-    // soğuk çelik mavi + beyaz halesi
-    stops: ['#2a3a52', '#16223a', '#0a1124', '#000000'],
-    glow: { color: '#dee8f4', cx: '50%', cy: '10%', opacity: 0.20 },
+    stops: ['#4c6688', '#243a5e', '#101a32', '#000000'],
+    glow: { color: '#dee8f4', cx: '50%', cy: '10%', opacity: 0.32 },
   },
   'thunder': {
-    // gerilimli mor-siyah
-    stops: ['#15152a', '#0a0a18', '#04040e', '#000000'],
-    glow: { color: '#7a5aff', cx: '50%', cy: '18%', opacity: 0.28 },
+    stops: ['#2a2a48', '#15152a', '#06061a', '#000000'],
+    glow: { color: '#9a7aff', cx: '50%', cy: '18%', opacity: 0.38 },
   },
   'mist': {
-    // ışıksız gri kül
-    stops: ['#252a32', '#171a20', '#0d0f14', '#000000'],
-    glow: { color: '#a8b4c0', cx: '50%', cy: '12%', opacity: 0.14 },
+    stops: ['#3c4452', '#1f242e', '#0e1218', '#000000'],
+    glow: { color: '#b8c0cc', cx: '50%', cy: '12%', opacity: 0.22 },
   },
   'sunrise': {
-    // koyu lacivert + sol üstte turuncu hale
-    stops: ['#1a1a44', '#0e0e2a', '#070718', '#000000'],
-    glow: { color: '#ffae5a', cx: '18%', cy: '14%', opacity: 0.42 },
+    stops: ['#2c2868', '#16124a', '#0a0828', '#000000'],
+    glow: { color: '#ffae5a', cx: '18%', cy: '14%', opacity: 0.52 },
   },
   'sunset': {
-    // koyu eflatun + sağda pembe hale
-    stops: ['#241032', '#160a22', '#0a0512', '#000000'],
-    glow: { color: '#ff7a8a', cx: '82%', cy: '18%', opacity: 0.42 },
+    stops: ['#3a1850', '#221038', '#100620', '#000000'],
+    glow: { color: '#ff7a8a', cx: '82%', cy: '18%', opacity: 0.52 },
   },
   'none': {
-    stops: ['#0a1730', '#070e22', '#040814', '#000000'],
-    glow: { color: '#00d4ff', cx: '80%', cy: '12%', opacity: 0.22 },
+    stops: ['#1a2f5c', '#0e1a36', '#050a18', '#000000'],
+    glow: { color: '#00d4ff', cx: '80%', cy: '12%', opacity: 0.30 },
   },
 };
 
@@ -88,6 +80,97 @@ function Yildiz({ x, y, delay, boyut }: { x: number; y: number; delay: number; b
         borderRadius: boyut / 2,
         backgroundColor: '#fff',
         opacity: op,
+      }}
+    />
+  );
+}
+
+// Atmosferik bulut — full-screen, çok yumuşak, yavaş kayan büyük bulut
+function AtmosferBulutu({ y, width, sure, opacity, delay = 0, renk = '#ffffff' }: { y: number; width: number; sure: number; opacity: number; delay?: number; renk?: string }) {
+  const x = useRef(new Animated.Value(-width)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.delay(delay),
+        Animated.timing(x, { toValue: SW + width, duration: sure, easing: Easing.linear, useNativeDriver: true }),
+        Animated.timing(x, { toValue: -width, duration: 0, useNativeDriver: true }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [delay, sure, width, x]);
+  const fill = renk;
+  const h = width * 0.55;
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={{ position: 'absolute', top: y, opacity, transform: [{ translateX: x }] }}
+    >
+      <Svg width={width} height={h} viewBox="0 0 100 55">
+        <Circle cx="22" cy="35" r="18" fill={fill} />
+        <Circle cx="40" cy="22" r="22" fill={fill} />
+        <Circle cx="60" cy="20" r="25" fill={fill} />
+        <Circle cx="80" cy="32" r="20" fill={fill} />
+      </Svg>
+    </Animated.View>
+  );
+}
+
+// Yağmur damlası — full-screen yüksekliğinde düşer
+function YagmurDamlasi({ x, delay, sure, renk = 'rgba(180,210,255,0.42)' }: { x: number; delay: number; sure: number; renk?: string }) {
+  const y = useRef(new Animated.Value(-30)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.delay(delay),
+        Animated.timing(y, { toValue: SH * 0.7, duration: sure, easing: Easing.linear, useNativeDriver: true }),
+        Animated.timing(y, { toValue: -30, duration: 0, useNativeDriver: true }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [delay, sure, y]);
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={{
+        position: 'absolute', left: x, top: 0,
+        width: 1.2, height: 16, backgroundColor: renk, borderRadius: 1,
+        transform: [{ translateY: y }],
+      }}
+    />
+  );
+}
+
+// Kar tanesi
+function KarTanesi({ x, delay, sure }: { x: number; delay: number; sure: number }) {
+  const y = useRef(new Animated.Value(-10)).current;
+  const drift = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    const loopY = Animated.loop(
+      Animated.sequence([
+        Animated.delay(delay),
+        Animated.timing(y, { toValue: SH * 0.7, duration: sure, easing: Easing.linear, useNativeDriver: true }),
+        Animated.timing(y, { toValue: -10, duration: 0, useNativeDriver: true }),
+      ]),
+    );
+    const loopX = Animated.loop(
+      Animated.sequence([
+        Animated.timing(drift, { toValue: 12, duration: sure / 2, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(drift, { toValue: -12, duration: sure / 2, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ]),
+    );
+    loopY.start(); loopX.start();
+    return () => { loopY.stop(); loopX.stop(); };
+  }, [delay, sure, y, drift]);
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={{
+        position: 'absolute', left: x, top: 0,
+        width: 4, height: 4, borderRadius: 2,
+        backgroundColor: '#fff', opacity: 0.7,
+        transform: [{ translateY: y }, { translateX: drift }],
       }}
     />
   );
@@ -130,8 +213,12 @@ function GunesHalkasi({ renk, cx, cy }: { renk: string; cx: number; cy: number }
 
 export default function MidnightSky({ durum = 'clear-night' }: { durum?: GokyuzuModu }) {
   const config = GRADIENT[durum] ?? GRADIENT['clear-night'];
-  const yildizGoster = durum === 'clear-night' || durum === 'thunder';
-  const gunesGoster  = durum === 'clear-day' || durum === 'sunrise' || durum === 'sunset';
+  const yildizGoster  = durum === 'clear-night';
+  const gunesGoster   = durum === 'clear-day' || durum === 'sunrise' || durum === 'sunset';
+  const bulutGoster   = durum === 'clouds' || durum === 'mist' || durum === 'rain' || durum === 'drizzle' || durum === 'thunder';
+  const yagmurGoster  = durum === 'rain' || durum === 'thunder';
+  const cisentiGoster = durum === 'drizzle';
+  const karGoster     = durum === 'snow';
 
   const yildizlar = useMemo(
     () =>
@@ -140,6 +227,36 @@ export default function MidnightSky({ durum = 'clear-night' }: { durum?: Gokyuzu
         y: (i * 47) % Math.round(SH * 0.55),
         delay: (i * 191) % 3500,
         boyut: 1 + ((i * 7) % 3),
+      })),
+    [],
+  );
+
+  const yagmurlar = useMemo(
+    () =>
+      Array.from({ length: 36 }).map((_, i) => ({
+        x: (i * 31) % SW,
+        delay: (i * 137) % 1800,
+        sure: 900 + ((i * 53) % 600),
+      })),
+    [],
+  );
+
+  const cisentiler = useMemo(
+    () =>
+      Array.from({ length: 50 }).map((_, i) => ({
+        x: (i * 23) % SW,
+        delay: (i * 89) % 2500,
+        sure: 1500 + ((i * 41) % 700),
+      })),
+    [],
+  );
+
+  const karlar = useMemo(
+    () =>
+      Array.from({ length: 28 }).map((_, i) => ({
+        x: (i * 37) % SW,
+        delay: (i * 211) % 3000,
+        sure: 4500 + ((i * 113) % 2500),
       })),
     [],
   );
@@ -165,6 +282,7 @@ export default function MidnightSky({ durum = 'clear-night' }: { durum?: Gokyuzu
         <Rect x="0" y="0" width="100%" height="100%" fill={`url(#bg_${durum})`} />
         {config.glow && <Rect x="0" y="0" width="100%" height="100%" fill={`url(#glow_${durum})`} />}
       </Svg>
+
       {gunesGoster && config.glow && (
         <GunesHalkasi
           renk={config.glow.color}
@@ -172,7 +290,24 @@ export default function MidnightSky({ durum = 'clear-night' }: { durum?: Gokyuzu
           cy={SH * (parseFloat(config.glow.cy) / 100)}
         />
       )}
+
       {yildizGoster && yildizlar.map((s, i) => <Yildiz key={i} {...s} />)}
+
+      {bulutGoster && (
+        <>
+          <AtmosferBulutu y={SH * 0.05} width={SW * 0.65} sure={48000} opacity={0.10} delay={0} />
+          <AtmosferBulutu y={SH * 0.14} width={SW * 0.45} sure={36000} opacity={0.07} delay={6000} />
+          <AtmosferBulutu y={SH * 0.22} width={SW * 0.75} sure={56000} opacity={0.08} delay={14000} />
+        </>
+      )}
+
+      {yagmurGoster && yagmurlar.map((d, i) => <YagmurDamlasi key={`r${i}`} {...d} />)}
+
+      {cisentiGoster && cisentiler.map((d, i) => (
+        <YagmurDamlasi key={`d${i}`} x={d.x} delay={d.delay} sure={d.sure} renk="rgba(180,210,255,0.28)" />
+      ))}
+
+      {karGoster && karlar.map((d, i) => <KarTanesi key={`s${i}`} {...d} />)}
     </View>
   );
 }

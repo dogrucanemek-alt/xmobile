@@ -1034,7 +1034,7 @@ ${jsonFormat}`;
       )}
 
       <View style={[styles.havaDurumu, { backgroundColor: camKart, borderColor: camSinir, borderWidth: karanlik ? 1 : 0, overflow: 'hidden' }]}>
-        {hava && (
+        {hava && !karanlik && (
           <HavaAnimasyon
             durum={durumModu(
               hava.durum,
