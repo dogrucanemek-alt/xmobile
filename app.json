@@ -14,8 +14,8 @@
     },
     "updates": {
       "url": "https://u.expo.dev/10ad1d8f-5e54-4560-9747-2175b63a7e1a",
-      "enabled": true,
-      "checkAutomatically": "ON_LOAD"
+      "enabled": false,
+      "checkAutomatically": "NEVER"
     },
     "ios": {
       "supportsTablet": false,
@@ -45,7 +45,7 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "output": "static",
+      "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
