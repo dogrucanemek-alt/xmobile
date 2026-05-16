@@ -22,6 +22,7 @@
 - If assets exist there, use them. Do not use placeholders where real assets are available.
 - If a logo is present, use it. If a color palette is defined, use those exact values — do not invent brand colors.
 - **aifurniture.com.tr brand colors:** Gold `#c9a227` (or `rgba(202,138,4,x)`), Background `#060606`, Text white.
+- **Taste references:** When the user says "X gibi olsun / X tarzında yap" (e.g. "Stripe gibi", "Apple gibi"), read `brand_assets/design-references/<brand>/DESIGN.md` first. 54 brands available (apple, stripe, linear, vercel, notion, claude, cal, cursor, spotify, webflow, spacex, supabase, etc). Each file has typography, color, spacing, animation philosophy with exact values.
 
 ### Output Defaults
 - Single `index.html` file, all styles inline, unless user says otherwise
