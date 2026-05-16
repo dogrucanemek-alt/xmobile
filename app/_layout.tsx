@@ -77,33 +77,29 @@ function DeepLinkHandler() {
   return null;
 }
 
-function LegalCheck() {
-  const router = useRouter();
-  const [checked, setChecked] = useState(false);
+function useLegalGate() {
+  const [durum, setDurum] = useState<'kontrol' | 'kabul' | 'red'>('kontrol');
 
   useEffect(() => {
-    const checkLegal = async () => {
+    (async () => {
       try {
         const pairs = await AsyncStorage.multiGet(['legal_agreed', 'xmobile_kvkk_onay']);
         const accepted = pairs.some(([, v]) => v === 'true');
-        if (!accepted) {
-          router.replace('/legal' as any);
-        } else {
-          // Bir anahtar var, diğeri yoksa eşitle — gelecekte aynı sorun çıkmasın
+        if (accepted) {
           const [legal, kvkk] = pairs;
           if (!legal[1]) AsyncStorage.setItem('legal_agreed', 'true').catch(() => {});
           if (!kvkk[1])  AsyncStorage.setItem('xmobile_kvkk_onay', 'true').catch(() => {});
+          setDurum('kabul');
+        } else {
+          setDurum('red');
         }
-      } catch (_) {
-        router.replace('/legal' as any);
-      } finally {
-        setChecked(true);
+      } catch {
+        setDurum('red');
       }
-    };
-    checkLegal();
+    })();
   }, []);
 
-  return null;
+  return durum;
 }
 
 function NotificationHandler() {
@@ -126,6 +122,17 @@ function NotificationHandler() {
   return null;
 }
 
+function LegalRedirect() {
+  const router = useRouter();
+  const durum = useLegalGate();
+
+  useEffect(() => {
+    if (durum === 'red') router.replace('/legal' as any);
+  }, [durum]);
+
+  return null;
+}
+
 export default function RootLayout() {
   useEffect(() => { gunlukBildirimKur(); }, []);
 
@@ -134,7 +141,7 @@ export default function RootLayout() {
       <AppProvider>
         <AuthProvider>
           <SubscriptionProvider>
-            <LegalCheck />
+            <LegalRedirect />
             <DeepLinkHandler />
             <NotificationHandler />
             <ThemeFlashOverlay />

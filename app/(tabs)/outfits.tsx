@@ -4,7 +4,7 @@ import {
   ScrollView, ActivityIndicator, Alert, Image,
   PanResponder, Animated, Modal, Platform, Linking,
 } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import Svg, {
@@ -577,9 +577,9 @@ export default function Outfits() {
         }
 
         const jobId = await tryOnBaslat(aktifModel, garmentUri, kategori);
-        const sonucPath = await tryOnBekle(jobId, (adim) => {
-          // 4s ilk bekleme + 2s polling adımları
-          const gecenSn = 4 + adim * 2;
+        const baslangic = Date.now();
+        const sonucPath = await tryOnBekle(jobId, () => {
+          const gecenSn = Math.round((Date.now() - baslangic) / 1000);
           setTryOn(s => ({ ...s, adimMetni: `⏳ ${gecenSn}s` }));
         });
         aktifModel = await tryOnCacheSet(aktifModel, garmentUri, sonucPath);
@@ -630,6 +630,34 @@ export default function Outfits() {
       adimMetni: '',
     });
   }, [tryOnKiyafetId, kiyafetler.length]);
+
+  // Tab'a focus geldiğinde profili yenile (profilden döndüğünde fotoğraf güncel olsun)
+  useFocusEffect(
+    React.useCallback(() => {
+      AsyncStorage.getItem('xmobile_profil').then(str => {
+        if (!str) return;
+        try {
+          const yeni = JSON.parse(str) as import('../../lib/types').Profil;
+          setProfil(prev => {
+            if (prev?.profilFoto === yeni.profilFoto && prev?.avatarGlbPath === yeni.avatarGlbPath) return prev;
+            return yeni;
+          });
+        } catch {}
+      });
+    }, [])
+  );
+
+  // Wardrobe akışı: modal kapanınca otomatik geri dön
+  const wardrobeAkisi = !!tryOnKiyafetId;
+  const tryOnKapat = () => {
+    setTryOn(s => ({ ...s, visible: false, secilenParcalar: [] }));
+    if (wardrobeAkisi) {
+      setTimeout(() => {
+        if (router.canGoBack()) router.back();
+        else router.replace('/(tabs)/wardrobe' as any);
+      }, 50);
+    }
+  };
 
   const parcayi3DGoster = async (parcaAdi: string) => {
     if (!can3D()) {
@@ -940,6 +968,7 @@ ${jsonFormat}`;
       <StatusBar barStyle={renkler.statusBar} backgroundColor={karanlik ? 'transparent' : renkler.bg} translucent={karanlik} />
       {karanlik && <MidnightSky durum={hava ? durumModu(hava.durum) : 'clear-night'} />}
 
+      {!wardrobeAkisi && (<>
       <View style={[styles.header, { backgroundColor: 'transparent', borderBottomColor: karanlik ? 'transparent' : renkler.sinir }]}>
         <TouchableOpacity onPress={() => router.push('/takvim' as any)}>
           <Text style={[styles.geri, { color: renkler.metin }]}>📅</Text>
@@ -993,44 +1022,6 @@ ${jsonFormat}`;
             </Text>
           )}
         </TouchableOpacity>
-      )}
-
-      {/* Streak + Stil Skoru */}
-      {(streak.current > 1 || stilSkor) && (
-        <View style={[styles.streakBar, { backgroundColor: camKart, borderColor: camSinir, borderWidth: karanlik ? 1 : 0.5 }]}>
-          {streak.current > 0 && (
-            <View style={styles.streakItem}>
-              <Text style={styles.streakAtes}>🔥</Text>
-              <View>
-                <Text style={[styles.streakSayi, { color: renkler.metin }]}>{streak.current}</Text>
-                <Text style={[styles.streakLabel, { color: renkler.metin2 }]}>
-                  {dil === 'en' ? 'day streak' : 'günlük seri'}
-                </Text>
-              </View>
-            </View>
-          )}
-          {streak.current > 0 && stilSkor && (
-            <View style={[styles.streakDivider, { backgroundColor: renkler.sinir }]} />
-          )}
-          {stilSkor && (
-            <View style={styles.streakItem}>
-              <Text style={{ fontSize: 22 }}>✨</Text>
-              <View>
-                <Text style={[styles.streakSayi, { color: '#00D4FF' }]}>{stilSkor.puan}</Text>
-                <Text style={[styles.streakLabel, { color: renkler.metin2 }]}>{stilSkor.seviye}</Text>
-              </View>
-            </View>
-          )}
-          {stilSkor && stilSkor.rozetler.length > 0 && (
-            <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 4, justifyContent: 'flex-end' }}>
-              {stilSkor.rozetler.slice(0, 2).map((r, i) => (
-                <View key={i} style={[styles.rozetChip, { backgroundColor: 'rgba(0,212,255,0.08)', borderColor: 'rgba(0,212,255,0.2)' }]}>
-                  <Text style={{ fontSize: 10, color: '#00D4FF' }}>{r}</Text>
-                </View>
-              ))}
-            </View>
-          )}
-        </View>
       )}
 
       <View style={[styles.havaDurumu, { backgroundColor: camKart, borderColor: camSinir, borderWidth: karanlik ? 1 : 0, overflow: 'hidden' }]}>
@@ -1118,16 +1109,14 @@ ${jsonFormat}`;
                       );
                     }
 
-                    // Fotoğraf modu: ücretsiz, tam boy profil fotoğrafı + renk katmanı
+                    // Fotoğraf modu: arka plansız PNG (rembg sonrası) direkt karta otur
                     if (hasFoto) {
                       return (
-                        <View style={{ width: DISP_W, height: DISP_H, borderRadius: 12, overflow: 'hidden' }}>
-                          <Image
-                            source={{ uri: profil!.profilFoto! }}
-                            style={{ width: DISP_W, height: DISP_H }}
-                            resizeMode="cover"
-                          />
-                        </View>
+                        <Image
+                          source={{ uri: profil!.profilFoto! }}
+                          style={{ width: DISP_W, height: DISP_H }}
+                          resizeMode="contain"
+                        />
                       );
                     }
 
@@ -1322,6 +1311,7 @@ ${jsonFormat}`;
         </>
       )}
       </ScrollView>
+      </>)}
 
       {/* ── PARÇA DEĞİŞTİR MODAL ── */}
       <Modal
@@ -1499,14 +1489,14 @@ ${jsonFormat}`;
         visible={tryOn.visible}
         animationType="slide"
         presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen'}
-        onRequestClose={() => setTryOn(s => ({ ...s, visible: false, secilenParcalar: [] }))}
+        onRequestClose={() => tryOnKapat()}
       >
         <View style={[styles.tryOnModal, { backgroundColor: renkler.bg }]}>
           <View style={styles.tryOnHeader}>
             <Text style={[styles.tryOnBaslik, { color: renkler.metin }]}>
               {dil === 'en' ? '👗 Virtual Try-On' : '👗 Sanal Deneme'}
             </Text>
-            <TouchableOpacity onPress={() => setTryOn(s => ({ ...s, visible: false, secilenParcalar: [] }))}>
+            <TouchableOpacity onPress={() => tryOnKapat()}>
               <Text style={[styles.tryOnKapat, { color: renkler.metin2 }]}>✕</Text>
             </TouchableOpacity>
           </View>
@@ -1631,7 +1621,7 @@ ${jsonFormat}`;
             <View style={styles.tryOnYukleniyor}>
               <ActivityIndicator size="large" color="#00D4FF" />
               <Text style={[styles.tryOnYukleniyorText, { color: renkler.metin }]}>
-                {dil === 'en' ? 'AI is dressing you up...' : 'AI kıyafeti sana giydiriyor...'}
+                {dil === 'en' ? 'True AI is dressing you up...' : 'True AI kıyafeti sana giydiriyor...'}
               </Text>
               {tryOn.adimMetni ? (
                 <Text style={[styles.tryOnYukleniyorAlt, { color: '#00D4FF' }]}>

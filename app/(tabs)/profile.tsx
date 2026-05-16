@@ -9,6 +9,7 @@ import { useApp } from '../../lib/context';
 import { useAuth } from '../../lib/authContext';
 import ThreeDViewer from '../../components/ThreeDViewer';
 import { bildirimAcikMi, bildirimAc, bildirimKapat, bildirimSaatAl, bildirimSaatKaydet, gunlukBildirimKur } from '../../lib/notifications';
+import { arkaPlaniTemizle } from '../../lib/rembgService';
 
 const PROFIL_KEY = 'xmobile_profil';
 
@@ -53,6 +54,7 @@ export default function Profile() {
   const [glbYukleniyor, setGlbYukleniyor] = useState(false);
   const [bildirimAcik,  setBildirimAcik]  = useState(true);
   const [bildirimSaat,  setBildirimSaat]  = useState(8);
+  const [fotoIsleniyor, setFotoIsleniyor] = useState(false);
 
   useEffect(() => {
     yukle();
@@ -118,6 +120,17 @@ export default function Profile() {
     );
   };
 
+  const fotoIsleVeKaydet = async (uri: string) => {
+    setProfilFoto(uri);
+    setFotoIsleniyor(true);
+    try {
+      const temiz = await arkaPlaniTemizle(uri);
+      if (temiz && temiz !== uri) setProfilFoto(temiz);
+    } finally {
+      setFotoIsleniyor(false);
+    }
+  };
+
   const fotografSec = async () => {
     const izin = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!izin.granted) return;
@@ -126,9 +139,7 @@ export default function Profile() {
       aspect: [3, 4],
       quality: 0.8,
     });
-    if (!sonuc.canceled) {
-      setProfilFoto(sonuc.assets[0].uri);
-    }
+    if (!sonuc.canceled) fotoIsleVeKaydet(sonuc.assets[0].uri);
   };
 
   const fotografCek = async () => {
@@ -139,9 +150,7 @@ export default function Profile() {
       aspect: [3, 4],
       quality: 0.8,
     });
-    if (!sonuc.canceled) {
-      setProfilFoto(sonuc.assets[0].uri);
-    }
+    if (!sonuc.canceled) fotoIsleVeKaydet(sonuc.assets[0].uri);
   };
 
   return (
@@ -155,8 +164,10 @@ export default function Profile() {
         <Text style={[styles.baslik, { color: renkler.metin }]}>
           {dil === 'en' ? 'My Profile' : 'Profilim'}
         </Text>
-        <TouchableOpacity onPress={kaydet}>
-          <Text style={[styles.kaydetBtn, { color: aksanRenk }]}>{t.kaydet}</Text>
+        <TouchableOpacity onPress={kaydet} disabled={fotoIsleniyor}>
+          <Text style={[styles.kaydetBtn, { color: fotoIsleniyor ? renkler.metin2 : aksanRenk }]}>
+            {fotoIsleniyor ? '…' : t.kaydet}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -169,14 +180,21 @@ export default function Profile() {
         <View style={[styles.fotoBolum, { backgroundColor: renkler.kart, borderColor: renkler.sinir }]}>
           <TouchableOpacity onPress={fotografSec}>
             {profilFoto ? (
-              <Image
-                source={{ uri: profilFoto }}
-                style={styles.profilFoto}
-                onError={() => {
-                  console.log('Image load failed. URI:', profilFoto);
-                  setProfilFoto(null);
-                }}
-              />
+              <View>
+                <Image
+                  source={{ uri: profilFoto }}
+                  style={styles.profilFoto}
+                  onError={() => setProfilFoto(null)}
+                />
+                {fotoIsleniyor && (
+                  <View style={[styles.profilFoto, { position: 'absolute', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.6)' }]}>
+                    <ActivityIndicator color="#00D4FF" />
+                    <Text style={{ color: '#fff', fontSize: 10, marginTop: 6, fontWeight: '600' }}>
+                      {dil === 'en' ? 'Cleaning…' : 'Temizleniyor…'}
+                    </Text>
+                  </View>
+                )}
+              </View>
             ) : (
               <View style={[styles.profilFotoPlaceholder, { backgroundColor: renkler.chip }]}>
                 <Text style={styles.profilFotoIcon}>👤</Text>

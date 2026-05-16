@@ -56,18 +56,17 @@ export type TryOnCategory = 'auto' | 'tops' | 'bottoms' | 'one-pieces';
 // Session cache: aynı fotoğraf birden fazla parça için tekrar tekrar encode edilmesin
 const gorselCache = new Map<string, string>();
 
-// Fashn için optimum: 1024px wide, jpeg 0.75 quality
-// Upload süresini 5-10x hızlandırır, kalite çok az düşer
+// Fashn için: 1024px wide, jpeg 0.85 quality
+// 0.85 = upload hızı + zincirleme color drift arasında denge
 async function gorseliKucult(uri: string): Promise<string> {
   try {
     const sonuc = await ImageManipulator.manipulateAsync(
       uri,
       [{ resize: { width: 1024 } }],
-      { compress: 0.75, format: ImageManipulator.SaveFormat.JPEG },
+      { compress: 0.85, format: ImageManipulator.SaveFormat.JPEG },
     );
     return sonuc.uri;
   } catch {
-    // Küçültme başarısızsa orijinali kullan
     return uri;
   }
 }

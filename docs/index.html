@@ -171,7 +171,7 @@
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,700;1,400&family=Space+Grotesk:wght@300;500;700&display=swap"></noscript>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
     :root {
     --gold: #c9a227;
     --gold-light: #d4b143;
@@ -1067,6 +1067,10 @@
       footer { padding: 56px 24px 40px; }
       .footer-top { grid-template-columns: 1fr; gap: 40px; }
       .footer-bottom { flex-direction: column; align-items: flex-start; }
+
+      .reveal-left  { transform: translateX(-16px) scale(0.97); }
+      .reveal-right { transform: translateX(16px) scale(0.97); }
+      .btn, .waitlist-btn { min-height: 44px; }
     }
 
     /* ── SECTION TRANSITION GLOW ── */

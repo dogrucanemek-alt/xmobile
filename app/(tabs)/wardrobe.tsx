@@ -324,7 +324,10 @@ export default function Wardrobe() {
 
       <View style={[styles.header, { backgroundColor: renkler.bg }]}>
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={() => {
+            if (router.canGoBack()) router.back();
+            else router.replace('/(tabs)/outfits' as any);
+          }}
           testID={getTestID('wardrobe', 'button', 'back')}
           {...getButtonA11yProps('Geri Git', 'Wardrobe ekranından çık')}
         >

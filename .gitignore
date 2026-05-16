@@ -46,3 +46,5 @@ app-example
 .claude/settings.local.json
 
 .vercel
+expo_out.txt
+.claude/scheduled_tasks.lock

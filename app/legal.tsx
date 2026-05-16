@@ -18,10 +18,14 @@ export default function Legal() {
       );
       return;
     }
-    await AsyncStorage.multiSet([
-      ['legal_agreed', 'true'],
-      ['xmobile_kvkk_onay', 'true'],
-    ]);
+    // Sıralı setItem (multiSet bazı Android cihazlarda atomik commit etmiyor)
+    await AsyncStorage.setItem('legal_agreed', 'true');
+    await AsyncStorage.setItem('xmobile_kvkk_onay', 'true');
+    // Verify
+    const v = await AsyncStorage.getItem('legal_agreed');
+    if (v !== 'true') {
+      await AsyncStorage.setItem('legal_agreed', 'true');
+    }
     router.replace('/' as any);
   };
 
