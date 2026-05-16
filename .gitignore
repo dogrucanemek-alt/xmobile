@@ -44,3 +44,5 @@ app-example
 /android
 .gstack/
 .claude/settings.local.json
+
+.vercel

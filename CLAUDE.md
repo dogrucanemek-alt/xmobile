@@ -1,5 +1,12 @@
 # CLAUDE.md — xmobile Project Rules
 
+## Behavioral Guardrails (Karpathy-distilled)
+
+- **Think before coding.** Sur surface assumptions, flag tradeoffs, ask if ambiguous. Don't pick silently between interpretations.
+- **Simplicity first.** Minimum code that solves the problem. No speculative features, no premature abstractions, no error handling for impossible scenarios.
+- **Surgical changes.** Touch only what the request requires. Don't "improve" adjacent code, don't refactor unbroken code, don't reformat. Match existing style.
+- **Goal-driven execution.** Translate vague tasks into verifiable success criteria. "Make it work" is weak — write the test or check that proves done.
+
 ## Frontend Website (docs/index.html, docs/concept.html)
 
 ### Always Do First
