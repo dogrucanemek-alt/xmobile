@@ -7,6 +7,8 @@ import { useRouter } from 'expo-router';
 import { useApp } from '../lib/context';
 import { tekliflerAl, satin, geriYukle } from '../lib/revenueCat';
 import { useSubscription } from '../lib/subscriptionContext';
+import { useAuth } from '../lib/authContext';
+import { tierGuncelle } from '../lib/tierService';
 
 const CYAN = '#00D4FF';
 
@@ -33,6 +35,7 @@ export default function Subscription() {
   const router = useRouter();
   const { renkler, dil } = useApp();
   const { tierDegistir, proYenile } = useSubscription();
+  const { user } = useAuth();
   const tr = dil === 'tr';
   const ozellikler = OZELLIKLER[dil];
 
@@ -63,6 +66,7 @@ export default function Subscription() {
       if (basarili) {
         await tierDegistir('pro');
         await proYenile();
+        if (user?.id) await tierGuncelle(user.id, 'pro');
         Alert.alert(
           tr ? 'Pro\'ya Hoş Geldin! 🎉' : 'Welcome to Pro! 🎉',
           tr ? 'Tüm özellikler aktif.' : 'All features are now active.',
@@ -79,7 +83,10 @@ export default function Subscription() {
     setSatinAliyor(true);
     try {
       const basarili = await geriYukle();
-      if (basarili) await tierDegistir('pro');
+      if (basarili) {
+        await tierDegistir('pro');
+        if (user?.id) await tierGuncelle(user.id, 'pro');
+      }
       Alert.alert(
         basarili ? (tr ? 'Geri Yüklendi ✓' : 'Restored ✓') : (tr ? 'Abonelik Bulunamadı' : 'No Subscription Found'),
         basarili
