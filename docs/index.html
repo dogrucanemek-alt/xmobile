@@ -331,6 +331,61 @@
       pointer-events: none; user-select: none;
       z-index: 1; white-space: nowrap; line-height: 1;
     }
+    /* ── HERO WIREFRAME ACCENT (floating wardrobe blueprint) ── */
+    .hero-accent {
+      position: absolute;
+      top: 50%; right: 4%;
+      width: 38vw; max-width: 540px; min-width: 240px;
+      transform: translateY(-50%);
+      opacity: 0.32;
+      z-index: 1;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      filter: drop-shadow(0 0 40px rgba(201,162,39,0.25));
+      transition: opacity 1.2s cubic-bezier(.22,1,.36,1);
+      animation: heroAccentFloat 8s ease-in-out infinite;
+    }
+    .hero-accent img { width: 100%; height: auto; display: block; }
+    @keyframes heroAccentFloat {
+      0%, 100% { transform: translate(0, -50%) rotate(0deg); }
+      50%      { transform: translate(0, calc(-50% - 12px)) rotate(0.6deg); }
+    }
+    @media (max-width: 1024px) { .hero-accent { display: none; } }
+    /* ── HERO CURSOR DOT (gold follower, desktop only) ── */
+    .hero-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 24px rgba(201,162,39,0.6), 0 0 8px rgba(255,213,74,0.9);
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.4s ease;
+      will-change: transform;
+    }
+    .hero-cursor.visible { opacity: 0.85; }
+    @media (max-width: 768px), (pointer: coarse) {
+      .hero-cursor { display: none; }
+    }
+    /* ── HERO CONTENT STAGED REVEAL ── */
+    .hero-content .eyebrow,
+    .hero-content .hero-title span,
+    .hero-content .hero-sub,
+    .hero-content .hero-btns,
+    .hero-content .hero-trust-line {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.95s cubic-bezier(.22,1,.36,1), transform 0.95s cubic-bezier(.22,1,.36,1);
+    }
+    .hero.is-staged .hero-content .eyebrow            { opacity: 1; transform: translateY(0); transition-delay: 0.10s; }
+    .hero.is-staged .hero-content .hero-title span:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.30s; }
+    .hero.is-staged .hero-content .hero-title span:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.55s; }
+    .hero.is-staged .hero-content .hero-sub           { opacity: 1; transform: translateY(0); transition-delay: 0.85s; }
+    .hero.is-staged .hero-content .hero-btns          { opacity: 1; transform: translateY(0); transition-delay: 1.15s; }
+    .hero.is-staged .hero-content .hero-trust-line    { opacity: 1; transform: translateY(0); transition-delay: 1.45s; }
 
     .hero-title {
       font-family: 'Cormorant Garamond', 'Bodoni Moda', serif;
@@ -1967,6 +2022,10 @@
   <div class="hero-bg" id="heroBg"></div>
   <div class="hero-overlay"></div>
   <div class="hero-ghost" aria-hidden="true">AKILLI</div>
+  <div class="hero-accent" id="heroAccent" aria-hidden="true">
+    <img src="img/wardrobe-wireframe-desktop.webp" alt="" loading="eager" width="865" height="770"/>
+  </div>
+  <div class="hero-cursor" id="heroCursor" aria-hidden="true"></div>
   <div class="hero-content">
     <p class="eyebrow" data-tr="Wardrobe Intelligence" data-en="Wardrobe Intelligence">Wardrobe Intelligence</p>
     <h1 class="hero-title">
@@ -3974,10 +4033,51 @@ mobileMenu.querySelectorAll('a').forEach(function(link) {
   });
 });
 
-// ── HERO BG ZOOM ──
+// ── HERO BG ZOOM + STAGED REVEAL + CURSOR + ACCENT PARALLAX ──
 window.addEventListener('load', function() {
+  var hero = document.getElementById('home');
   document.getElementById('heroBg').classList.add('loaded');
+  // Trigger staged reveal
+  setTimeout(function() { hero.classList.add('is-staged'); }, 60);
 });
+(function() {
+  var hero = document.getElementById('home');
+  var heroAccent = document.getElementById('heroAccent');
+  var heroBg = document.getElementById('heroBg');
+  var cursor = document.getElementById('heroCursor');
+  if (!hero || !cursor) return;
+  // Skip on touch / reduced-motion
+  var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (coarse || reduced) return;
+
+  var mouseX = 0, mouseY = 0;
+  var cursorX = 0, cursorY = 0;
+  var inHero = false;
+
+  hero.addEventListener('mouseenter', function() { inHero = true; cursor.classList.add('visible'); });
+  hero.addEventListener('mouseleave', function() { inHero = false; cursor.classList.remove('visible'); });
+  window.addEventListener('mousemove', function(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  }, { passive: true });
+
+  function loop() {
+    requestAnimationFrame(loop);
+    // Cursor follower — damped follow
+    cursorX += (mouseX - cursorX) * 0.18;
+    cursorY += (mouseY - cursorY) * 0.18;
+    cursor.style.transform = 'translate(' + cursorX + 'px, ' + cursorY + 'px) translate(-50%, -50%)';
+    // Parallax on hero accent (scroll handler already manages bg)
+    if (inHero && heroAccent) {
+      var rect = hero.getBoundingClientRect();
+      var nx = (mouseX - rect.width / 2) / rect.width;
+      var ny = (mouseY - rect.height / 2) / rect.height;
+      heroAccent.style.transform = 'translate(' + (-nx * 12) + 'px, calc(-50% + ' + (-ny * 10) + 'px)) rotate(' + (nx * 1.5) + 'deg)';
+    }
+  }
+  requestAnimationFrame(loop);
+})();
 
 // ── LANGUAGE TOGGLE ──
 var lang = 'tr';
