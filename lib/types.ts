@@ -2,6 +2,8 @@ export interface Kiyafet {
   id: number;
   ad: string;
   tur: string;
+  /** Yalnızca tur === 'Aksesuar' iken anlamlı: Şapka, Kravat, Atkı, Saat, Kemer, Gözlük, Çanta, Takı, Eldiven, Diğer. */
+  altTur?: string;
   sezon: string;
   foto: string | null;
   renk?: string;

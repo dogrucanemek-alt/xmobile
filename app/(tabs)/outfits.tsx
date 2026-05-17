@@ -22,6 +22,7 @@ import { useSubscription } from '../../lib/subscriptionContext';
 import { meshyModelUret } from '../../lib/meshyService';
 import { renkBul, parcaEsle, kiyafetRenkBul, hexToRgba, renkUyumSkoru } from '../../lib/outfitColor';
 import { validateOutfit } from '../../lib/outfitValidator';
+import { AKSESUAR_ALT_TURLERI, AKSESUAR_LABELS_EN, aksesuarAltTurTahmin, type AksesuarAltTur } from '../../lib/accessories';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { kombinHakkiVar, kombinKullan, kalanHakAl } from '../../lib/freemium';
@@ -893,19 +894,36 @@ export default function Outfits() {
     const grup3 = partitioned[2];
 
     // Item listing helper — kategori bazlı gruplandır + numara ver
+    // Aksesuarlar alt-tipiyle ayrı listelenir ki AI 2 kemer / 2 saat önermesin
     const formatWardrobe = (grup: typeof liste): string => {
-      const groups: Record<string, string[]> = { Üst: [], Alt: [], Ayakkabı: [], 'Dış Giyim': [], Aksesuar: [] };
+      const baseGroups: Record<string, string[]> = { Üst: [], Alt: [], Ayakkabı: [], 'Dış Giyim': [] };
+      const aksesuarGroups: Record<string, string[]> = {};
       grup.forEach((k, i) => {
-        const cat = (k.tur in groups) ? k.tur : 'Aksesuar';
-        groups[cat].push(`  ${i + 1}. "${k.ad}" (${k.sezon})`);
+        const num = `  ${i + 1}. "${k.ad}" (${k.sezon})`;
+        if (k.tur in baseGroups) {
+          baseGroups[k.tur].push(num);
+        } else if (k.tur === 'Aksesuar') {
+          const altTur = (k.altTur as AksesuarAltTur | undefined) || aksesuarAltTurTahmin(k.ad);
+          (aksesuarGroups[altTur] = aksesuarGroups[altTur] || []).push(num);
+        } else {
+          (aksesuarGroups['Diğer'] = aksesuarGroups['Diğer'] || []).push(num);
+        }
       });
-      const labels = dil === 'en'
-        ? { 'Üst': 'TOPS', 'Alt': 'BOTTOMS', 'Ayakkabı': 'SHOES', 'Dış Giyim': 'OUTERWEAR', 'Aksesuar': 'ACCESSORIES' }
-        : { 'Üst': 'ÜST', 'Alt': 'ALT', 'Ayakkabı': 'AYAKKABI', 'Dış Giyim': 'DIŞ GİYİM', 'Aksesuar': 'AKSESUAR' };
+      const baseLabels = dil === 'en'
+        ? { 'Üst': 'TOPS', 'Alt': 'BOTTOMS', 'Ayakkabı': 'SHOES', 'Dış Giyim': 'OUTERWEAR' }
+        : { 'Üst': 'ÜST', 'Alt': 'ALT', 'Ayakkabı': 'AYAKKABI', 'Dış Giyim': 'DIŞ GİYİM' };
       const lines: string[] = [];
-      for (const [tr, items] of Object.entries(groups)) {
+      for (const [tr, items] of Object.entries(baseGroups)) {
         if (items.length === 0) continue;
-        lines.push(`${labels[tr as keyof typeof labels]}:`);
+        lines.push(`${baseLabels[tr as keyof typeof baseLabels]}:`);
+        lines.push(...items);
+      }
+      for (const [altTur, items] of Object.entries(aksesuarGroups)) {
+        if (items.length === 0) continue;
+        const label = dil === 'en'
+          ? (AKSESUAR_LABELS_EN[altTur as AksesuarAltTur] ?? altTur).toUpperCase()
+          : altTur.toUpperCase();
+        lines.push(`${label}:`);
         lines.push(...items);
       }
       return lines.join('\n');
@@ -952,10 +970,15 @@ OUTFIT RULES (strict):
 - Color harmony required — avoid clashing (red+green, orange+pink, neon mismatches)
 - Items must work TOGETHER (no "white shirt + blue sweatshirt + white pants" type triple-base layering)
 
+ACCESSORY RULES (optional — add 1-3 only if they elevate the look):
+- Each accessory category (HAT/TIE/SCARF/WATCH/BELT/GLASSES/BAG/GLOVES) → MAX 1 item; JEWELRY → MAX 2
+- Style match: TIE only with formal style (no tie with t-shirt/sweatshirt); SCARF/GLOVES only when cold; HAT casual unless formal hat
+- Skip accessories entirely if the wardrobe has none that fit — do NOT force them
+
 Style: ${turStr} → ${rules}
 ${retryHint ? `\nIMPORTANT: ${retryHint}\n` : ''}
 "tur": ${turStr}
-"parcalar": array of NUMBERS from the list, 3-4 items
+"parcalar": array of NUMBERS from the list, 3-6 items (3 base + up to 3 accessories)
 "neden": 1 sentence about WHY this works. ${iltifat}
 
 Return ONLY valid JSON:

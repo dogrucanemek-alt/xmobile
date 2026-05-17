@@ -1,5 +1,6 @@
 import type { Kiyafet } from './types';
 import { renkUyumSkoru } from './outfitColor';
+import { aksesuarAltTurTahmin, type AksesuarAltTur } from './accessories';
 
 /**
  * Kıyafet adından "katmanlı/üst-katman" mı diye anlar.
@@ -57,7 +58,8 @@ export function validateOutfit(
   if (!parcalar || parcalar.length === 0) {
     return { valid: false, reason: 'no items' };
   }
-  if (parcalar.length < 2 || parcalar.length > 5) {
+  // Üst + alt + ayakkabı (3) → +max 1 dış giyim → +max 4 aksesuar (şapka/kemer/saat/atkı/kravat/gözlük/çanta/eldiven/2 takı). Üst sınır 8.
+  if (parcalar.length < 2 || parcalar.length > 8) {
     return { valid: false, reason: `unusual item count: ${parcalar.length}` };
   }
 
@@ -72,6 +74,7 @@ export function validateOutfit(
   }
 
   let ustBase = 0, ustLayer = 0, alt = 0, ayakkabi = 0, disGiyim = 0, onePiece = 0;
+  const aksesuarSayim: Record<string, number> = {};
 
   for (const item of items) {
     if (isOnePiece(item.ad)) { onePiece++; continue; }
@@ -81,6 +84,10 @@ export function validateOutfit(
     } else if (item.tur === 'Alt') alt++;
     else if (item.tur === 'Ayakkabı') ayakkabi++;
     else if (item.tur === 'Dış Giyim') disGiyim++;
+    else if (item.tur === 'Aksesuar') {
+      const altTur = (item.altTur as AksesuarAltTur | undefined) || aksesuarAltTurTahmin(item.ad);
+      aksesuarSayim[altTur] = (aksesuarSayim[altTur] || 0) + 1;
+    }
   }
 
   const details = { ustBase, ustLayer, alt, ayakkabi, disGiyim, onePiece };
@@ -102,6 +109,14 @@ export function validateOutfit(
   // Layer + Outerwear toplamı max 1
   if (ustLayer + disGiyim > 1) {
     return { valid: false, reason: `too many layers: ${ustLayer + disGiyim}`, details };
+  }
+
+  // Aksesuar alt-tip kuralları — Takı haric her tipten max 1
+  for (const [altTur, sayi] of Object.entries(aksesuarSayim)) {
+    const limit = altTur === 'Takı' ? 2 : 1;
+    if (sayi > limit) {
+      return { valid: false, reason: `too many ${altTur} (${sayi}, max ${limit})`, details };
+    }
   }
 
   // Renk uyumu — düşük skor reject (büyük çakışmalar için)

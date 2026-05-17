@@ -5,6 +5,7 @@ export const KiyafetSchema = z.object({
   id: z.number().int().positive(),
   ad: z.string().min(1).max(100),
   tur: z.enum(['Üst', 'Alt', 'Dış Giyim', 'Ayakkabı', 'Aksesuar']),
+  altTur: z.enum(['Şapka', 'Kravat', 'Atkı', 'Saat', 'Kemer', 'Gözlük', 'Çanta', 'Takı', 'Eldiven', 'Diğer']).optional(),
   sezon: z.enum(['Tüm Sezon', 'İlkbahar', 'Yaz', 'Sonbahar', 'Kış']),
   foto: z.string().url().nullable().optional(),
   renk: z.string().max(50).optional(),

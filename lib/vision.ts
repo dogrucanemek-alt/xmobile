@@ -3,12 +3,14 @@ import { readAsStringAsync, EncodingType } from 'expo-file-system/legacy';
 import { Alert } from 'react-native';
 import { handleError, logError } from './errorHandler';
 
+import { AKSESUAR_ALT_TURLERI, aksesuarAltTurTahmin } from './accessories';
+
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://xmobile-proxy.vercel.app';
 const TURLER = ['Üst', 'Alt', 'Dış Giyim', 'Ayakkabı', 'Aksesuar'];
 
 export async function kiyafetTani(
   imageUri: string,
-): Promise<{ ad: string; tur: string }> {
+): Promise<{ ad: string; tur: string; altTur?: string }> {
   try {
     let kucuk: Awaited<ReturnType<typeof ImageManipulator.manipulateAsync>>;
     try {
@@ -53,7 +55,8 @@ export async function kiyafetTani(
             },
             {
               type: 'text',
-              text: `Bu kıyafetin rengini ve türünü Türkçe olarak belirle. Sadece JSON döndür:\n{"ad":"[Renk] [Tür] (örn: Gri Jean, Siyah Gömlek, Bej Trençkot, Beyaz Spor Ayakkabı)","tur":"${TURLER.join(' veya ')}"}`,
+              text: `Bu kıyafetin rengini ve türünü Türkçe olarak belirle. Sadece JSON döndür:
+{"ad":"[Renk] [Tür] (örn: Gri Jean, Siyah Gömlek, Bej Trençkot, Beyaz Spor Ayakkabı)","tur":"${TURLER.join(' veya ')}","altTur":"yalnız tur=Aksesuar ise: ${AKSESUAR_ALT_TURLERI.join(' veya ')}"}`,
             },
           ],
         }],
@@ -90,7 +93,13 @@ export async function kiyafetTani(
 
     const parsed = JSON.parse(metin.slice(bas, son));
     const tur = TURLER.includes(parsed.tur) ? parsed.tur : 'Üst';
-    return { ad: parsed.ad?.trim() || 'Yeni Kıyafet', tur };
+    const ad = parsed.ad?.trim() || 'Yeni Kıyafet';
+    if (tur !== 'Aksesuar') return { ad, tur };
+    // AI'dan gelen altTur'u doğrula, geçersizse isimden tahmin et
+    const altTur = AKSESUAR_ALT_TURLERI.includes(parsed.altTur)
+      ? parsed.altTur
+      : aksesuarAltTurTahmin(ad);
+    return { ad, tur, altTur };
   } catch (e) {
     console.error('Kıyafet tanıma beklenmeyen hatası:', e);
     return { ad: 'Yeni Kıyafet', tur: 'Üst' };

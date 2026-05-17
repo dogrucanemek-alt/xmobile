@@ -10,6 +10,7 @@ import { useApp } from '../../lib/context';
 import { useAuth } from '../../lib/authContext';
 import type { Kiyafet, KombinKayit } from '../../lib/types';
 import { kiyafetTani } from '../../lib/vision';
+import { AKSESUAR_ALT_TURLERI, AKSESUAR_LABELS_EN } from '../../lib/accessories';
 import { arkaPlaniTemizle } from '../../lib/rembgService';
 import { syncYukle, syncKaydet, syncSil, syncTumunuYukle } from '../../lib/wardrobeSync';
 import { handleError, logError } from '../../lib/errorHandler';
@@ -44,6 +45,7 @@ export default function Wardrobe() {
   const [seciliKiyafet, setSeciliKiyafet] = useState<Kiyafet | null>(null);
   const [duzenAd, setDuzenAd]             = useState('');
   const [duzenTur, setDuzenTur]           = useState('');
+  const [duzenAltTur, setDuzenAltTur]     = useState<string>('');
   const [duzenSezon, setDuzenSezon]       = useState('');
   const [duzenFiyat, setDuzenFiyat]       = useState('');
   const [kiyafetKullanim, setKiyafetKullanim] = useState<Record<number, number>>({});
@@ -200,8 +202,9 @@ export default function Wardrobe() {
   const fotodanEkle = async (uri: string) => {
     let ad = 'Yeni Kıyafet';
     let tur = 'Üst';
+    let altTur: string | undefined;
     setEklemeMod('tani');
-    try { ({ ad, tur } = await kiyafetTani(uri)); } catch (e) { console.warn('Tanıma hatası:', e); }
+    try { ({ ad, tur, altTur } = await kiyafetTani(uri)); } catch (e) { console.warn('Tanıma hatası:', e); }
 
     // Arka plan temizleme — başarısız olursa orijinali kullan (best-effort)
     setEklemeMod('rembg');
@@ -211,7 +214,7 @@ export default function Wardrobe() {
 
     let kaliciUri = temizUri;
     try { kaliciUri = await fotografKaydet(temizUri); } catch {}
-    const yeni = { id: Date.now(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri };
+    const yeni: Kiyafet = { id: Date.now(), ad, tur, altTur, sezon: 'Tüm Sezon', foto: kaliciUri };
     await kaydet([...kiyafetler, yeni], yeni);
     kiyafetDuzenle(yeni);
   };
@@ -247,10 +250,11 @@ export default function Wardrobe() {
       setCokluProgress({ simdiki: i + 1, toplam });
       let ad = 'Yeni Kıyafet';
       let tur = 'Üst';
-      try { ({ ad, tur } = await kiyafetTani(asset.uri)); } catch (e) { console.warn('Tanıma hatası:', e); }
+      let altTur: string | undefined;
+      try { ({ ad, tur, altTur } = await kiyafetTani(asset.uri)); } catch (e) { console.warn('Tanıma hatası:', e); }
       let kaliciUri: string;
       try { kaliciUri = await fotografKaydet(asset.uri); } catch { kaliciUri = asset.uri; }
-      const yeniItem = { id: Date.now() + Math.random(), ad, tur, sezon: 'Tüm Sezon', foto: kaliciUri };
+      const yeniItem: Kiyafet = { id: Date.now() + Math.random(), ad, tur, altTur, sezon: 'Tüm Sezon', foto: kaliciUri };
       yeniListe.push(yeniItem);
       if (user) syncKaydet(user.id, yeniItem).catch(() => {});
     }
@@ -279,6 +283,7 @@ export default function Wardrobe() {
     setSeciliKiyafet(k);
     setDuzenAd(k.ad);
     setDuzenTur(k.tur);
+    setDuzenAltTur(k.altTur ?? '');
     setDuzenSezon(k.sezon);
     setDuzenFiyat(k.fiyat ? String(k.fiyat) : '');
     setModalAcik(true);
@@ -287,7 +292,14 @@ export default function Wardrobe() {
   const duzenKaydet = async () => {
     if (!seciliKiyafet) return;
     const fiyatSayi = duzenFiyat ? parseFloat(duzenFiyat.replace(',', '.')) : undefined;
-    const guncellenmisItem = { ...seciliKiyafet, ad: duzenAd, tur: duzenTur, sezon: duzenSezon, fiyat: fiyatSayi && !isNaN(fiyatSayi) ? fiyatSayi : undefined };
+    const guncellenmisItem: Kiyafet = {
+      ...seciliKiyafet,
+      ad: duzenAd,
+      tur: duzenTur,
+      altTur: duzenTur === 'Aksesuar' && duzenAltTur ? duzenAltTur : undefined,
+      sezon: duzenSezon,
+      fiyat: fiyatSayi && !isNaN(fiyatSayi) ? fiyatSayi : undefined,
+    };
     const yeniListe = kiyafetler.map(k => k.id === seciliKiyafet.id ? guncellenmisItem : k);
     await kaydet(yeniListe, guncellenmisItem);
     setModalAcik(false);
@@ -665,7 +677,10 @@ export default function Wardrobe() {
                   style={[styles.chip, { backgroundColor: renkler.chip, borderColor: renkler.sinir },
                     duzenTur === tur && { backgroundColor: renkler.btnPrimary, borderColor: renkler.btnPrimary }
                   ]}
-                  onPress={() => setDuzenTur(tur)}
+                  onPress={() => {
+                    setDuzenTur(tur);
+                    if (tur !== 'Aksesuar') setDuzenAltTur('');
+                  }}
                 >
                   <Text style={[styles.chipText, { color: renkler.metin2 },
                     duzenTur === tur && { color: renkler.btnPrimaryMetin }
@@ -674,6 +689,29 @@ export default function Wardrobe() {
               ))}
             </View>
           </View>
+
+          {duzenTur === 'Aksesuar' && (
+            <View style={[styles.inputGrup, { backgroundColor: renkler.kart }]}>
+              <Text style={[styles.inputLabel, { color: renkler.metin2 }]}>
+                {dil === 'en' ? 'Type' : 'Tip'}
+              </Text>
+              <View style={styles.chipGrup}>
+                {AKSESUAR_ALT_TURLERI.map(altTur => (
+                  <TouchableOpacity
+                    key={altTur}
+                    style={[styles.chip, { backgroundColor: renkler.chip, borderColor: renkler.sinir },
+                      duzenAltTur === altTur && { backgroundColor: renkler.btnPrimary, borderColor: renkler.btnPrimary }
+                    ]}
+                    onPress={() => setDuzenAltTur(altTur)}
+                  >
+                    <Text style={[styles.chipText, { color: renkler.metin2 },
+                      duzenAltTur === altTur && { color: renkler.btnPrimaryMetin }
+                    ]}>{dil === 'en' ? AKSESUAR_LABELS_EN[altTur] : altTur}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
 
           <View style={[styles.inputGrup, { backgroundColor: renkler.kart }]}>
             <Text style={[styles.inputLabel, { color: renkler.metin2 }]}>{t.sezon}</Text>
