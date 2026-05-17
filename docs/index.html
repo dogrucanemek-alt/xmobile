@@ -1152,8 +1152,30 @@
       transform: translateX(0);
       background: rgba(201,162,39,0.05);
     }
+    .tech-card.focused {
+      border-color: var(--gold) !important;
+      background: rgba(201,162,39,0.10) !important;
+      box-shadow: 0 0 20px rgba(201,162,39,0.25);
+    }
     .tech-grid-left .tech-card:hover  { transform: translateX(-3px); }
     .tech-grid-right .tech-card:hover { transform: translateX(3px); }
+    .tech-back-btn {
+      position: absolute; top: 14px; left: 14px;
+      z-index: 4;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+      border: 1px solid rgba(201,162,39,0.45);
+      color: var(--gold);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 8px 14px;
+      border-radius: 2px;
+      cursor: pointer;
+      opacity: 0; transform: translateX(-8px); pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s, background 0.2s;
+    }
+    .tech-back-btn.show { opacity: 1; transform: translateX(0); pointer-events: auto; }
+    .tech-back-btn:hover { background: rgba(201,162,39,0.85); color: #000; }
     .tech-icon {
       width: 22px; height: 22px;
       color: var(--gold);
@@ -2217,10 +2239,28 @@ function _initMiniOrbit(){
       self._cTheta += (self._tTheta - self._cTheta) * self.dampingFactor;
       self._cPhi += (self._tPhi - self._cPhi) * self.dampingFactor;
       self._cRadius += (self._tRadius - self._cRadius) * self.dampingFactor;
+      // Damped target movement (for focus transitions)
+      if (self._tTargetX !== undefined) {
+        self.target.x += (self._tTargetX - self.target.x) * self.dampingFactor;
+        self.target.y += (self._tTargetY - self.target.y) * self.dampingFactor;
+        self.target.z += (self._tTargetZ - self.target.z) * self.dampingFactor;
+      }
       var s = new THREE.Spherical(self._cRadius, self._cPhi, self._cTheta);
       var v = new THREE.Vector3().setFromSpherical(s).add(self.target);
       camera.position.copy(v);
       camera.lookAt(self.target);
+    };
+
+    // Smoothly transition view to target + camera pos
+    self.setView = function(targetVec, cameraPosVec) {
+      var rel = new THREE.Vector3().subVectors(cameraPosVec, targetVec);
+      var sph = new THREE.Spherical().setFromVector3(rel);
+      self._tTheta = sph.theta;
+      self._tPhi = Math.max(self.minPolarAngle, Math.min(self.maxPolarAngle, sph.phi));
+      self._tRadius = Math.max(self.minDistance, Math.min(self.maxDistance, sph.radius));
+      self._tTargetX = targetVec.x;
+      self._tTargetY = targetVec.y;
+      self._tTargetZ = targetVec.z;
     };
   }
   window.MiniOrbit = MiniOrbit;
@@ -2870,6 +2910,52 @@ function _initTechScene(){
   resize();
   window.addEventListener('resize', resize);
 
+  // ── FOCUS / ZOOM SYSTEM ──
+  var defaultTarget = controls.target.clone();
+  var defaultCamPos = camera.position.clone();
+  var currentFocus = null;
+  // Per-target camera offset (relative to target world pos)
+  var focusOffsets = {
+    cv:    new THREE.Vector3( 2.8, 0.6, 3.2),
+    ir:    new THREE.Vector3( 2.0, 0.4, 3.5),
+    rfid:  new THREE.Vector3( 2.5, 1.2, 3.0),
+    temp:  new THREE.Vector3(-3.0, 0.5, 2.8),
+    motion:new THREE.Vector3( 0.5, 0.8, 3.6),
+    ai:    new THREE.Vector3( 2.5, 0.4, 3.0),
+    screen:new THREE.Vector3( 2.8, 0.0, 2.8),
+    tryon: new THREE.Vector3( 1.8, 0.4, 2.5),
+    memory:new THREE.Vector3(-2.0, 0.4, 2.8),
+    chat:  new THREE.Vector3(-1.8, 0.5, 2.2)
+  };
+  var focusTmp = new THREE.Vector3();
+  function focusOn(name) {
+    var t = scene.getObjectByName(name);
+    if (!t) return;
+    t.getWorldPosition(focusTmp);
+    var off = focusOffsets[name] || new THREE.Vector3(2.5, 0.5, 3);
+    controls.setView(focusTmp.clone(), focusTmp.clone().add(off));
+    controls.autoRotate = false;
+    currentFocus = name;
+    backBtn.classList.add('show');
+    // Highlight card
+    cards.forEach(function(c) { c.classList.toggle('focused', c.dataset.target === name); });
+  }
+  function backToOverview() {
+    controls.setView(defaultTarget.clone(), defaultCamPos.clone());
+    if (!reduced) controls.autoRotate = true;
+    currentFocus = null;
+    backBtn.classList.remove('show');
+    cards.forEach(function(c) { c.classList.remove('focused'); });
+  }
+
+  // ── BACK BUTTON ──
+  var backBtn = document.createElement('button');
+  backBtn.className = 'tech-back-btn';
+  backBtn.innerHTML = '← <span data-tr="Genel Görünüm" data-en="Overview">Genel Görünüm</span>';
+  backBtn.setAttribute('aria-label', 'Genel görünüme dön');
+  backBtn.addEventListener('click', backToOverview);
+  wrap.appendChild(backBtn);
+
   // ── CONNECTOR LINES ──
   var ns = 'http://www.w3.org/2000/svg';
   var lines = [];
@@ -2882,14 +2968,26 @@ function _initTechScene(){
     line.setAttribute('x2', '0'); line.setAttribute('y2', '0');
     svg.appendChild(line);
     lines.push({ line: line, card: card, target: tgt, isLeft: !!card.closest('.tech-grid-left') });
+    card.style.cursor = 'pointer';
     card.addEventListener('mouseenter', function() {
       line.classList.add('active');
-      controls.autoRotate = false;
+      if (!currentFocus) controls.autoRotate = false;
     });
     card.addEventListener('mouseleave', function() {
       line.classList.remove('active');
-      if (!reduced) controls.autoRotate = true;
+      if (!reduced && !currentFocus) controls.autoRotate = true;
     });
+    card.addEventListener('click', function() {
+      if (currentFocus === tgtName) {
+        backToOverview();
+      } else {
+        focusOn(tgtName);
+      }
+    });
+  });
+  // Clicking canvas while focused returns to overview
+  canvas.addEventListener('dblclick', function() {
+    if (currentFocus) backToOverview();
   });
 
   // ── VISIBILITY (only render when in viewport) ──
