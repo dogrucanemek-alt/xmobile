@@ -983,9 +983,13 @@
 
     /* ── PRODUCT 3D WARDROBE CANVAS ── */
     #wardrobeScene {
-      width: 100%; height: 220px; display: block;
+      width: 100%; height: 240px; display: block;
       margin-top: 20px; border-radius: 2px;
-      opacity: 0.9;
+      opacity: 1;
+      filter:
+        brightness(2.4) contrast(1.35)
+        drop-shadow(0 0 8px rgba(255,200,50,0.65))
+        drop-shadow(0 0 2px rgba(255,230,140,0.9));
     }
 
     /* ── WAITLIST SHADER BG ── */
@@ -2735,12 +2739,12 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
 
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 100);
-  camera.position.set(0, 0.5, 6.5);
+  camera.position.set(0, 0.5, 5.2);
 
   // ── WARDROBE WIREFRAME ──
   var bodyGeo  = new THREE.BoxGeometry(2.4, 3.4, 1.0);
   var bodyEdge = new THREE.EdgesGeometry(bodyGeo);
-  var goldMat  = new THREE.LineBasicMaterial({ color: 0xCA8A04 });
+  var goldMat  = new THREE.LineBasicMaterial({ color: 0xFFCC33 });
   var wardrobeBody = new THREE.LineSegments(bodyEdge, goldMat);
   scene.add(wardrobeBody);
 
@@ -2782,7 +2786,7 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
   scene.add(particles);
 
   // Grid floor
-  var grid = new THREE.GridHelper(7, 14, 0x1a1a0a, 0x0d0d05);
+  var grid = new THREE.GridHelper(7, 14, 0x5a4419, 0x3a2c10);
   grid.position.y = -1.7;
   scene.add(grid);
 
