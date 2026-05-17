@@ -1131,15 +1131,15 @@
     }
     .tech-grid {
       display: flex; flex-direction: column;
-      gap: 12px;
+      gap: 8px;
       grid-row: 1;
     }
     .tech-grid-left  { grid-column: 1; align-items: flex-end; text-align: right; }
     .tech-grid-right { grid-column: 3; align-items: flex-start; text-align: left; }
     .tech-card {
       display: flex; flex-direction: column;
-      gap: 3px; padding: 10px 14px;
-      max-width: 240px;
+      gap: 2px; padding: 8px 12px;
+      max-width: 220px;
       background: rgba(255,255,255,0.025);
       border: 1px solid rgba(255,255,255,0.06);
       border-radius: 2px;
@@ -1155,10 +1155,10 @@
     .tech-grid-left .tech-card:hover  { transform: translateX(-3px); }
     .tech-grid-right .tech-card:hover { transform: translateX(3px); }
     .tech-icon {
-      width: 26px; height: 26px;
+      width: 22px; height: 22px;
       color: var(--gold);
-      margin-bottom: 2px;
-      filter: drop-shadow(0 0 6px rgba(201,162,39,0.35));
+      margin-bottom: 1px;
+      filter: drop-shadow(0 0 5px rgba(201,162,39,0.35));
     }
     .tech-grid-left .tech-icon { align-self: flex-end; }
     .tech-eyebrow {
@@ -1168,13 +1168,13 @@
     }
     .tech-label {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 16px; font-weight: 700; letter-spacing: -0.01em;
+      font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
       color: #fff;
-      line-height: 1.15;
+      line-height: 1.1;
     }
     .tech-desc {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 11px; font-weight: 300; line-height: 1.5;
+      font-size: 10.5px; font-weight: 300; line-height: 1.45;
       color: rgba(255,255,255,0.6);
     }
     /* Tablet — image full width, cards stack below in 2 columns */
@@ -2509,32 +2509,46 @@ function _initTechScene(){
   ai.name = 'ai';
   scene.add(ai);
 
-  // 7. TRYON (floating wireframe person silhouette beside wardrobe)
+  // 7. TRYON — tailor's dress-form mannequin (no stick figure)
   function buildTryOn() {
     var g = new THREE.Group();
-    var head = new THREE.Mesh(
-      new THREE.SphereGeometry(0.16, 12, 12),
-      new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT, wireframe: true })
+    // 2D silhouette profile (hip → waist → bust → shoulder → neck)
+    var profile = [
+      new THREE.Vector2(0.05, -1.00),
+      new THREE.Vector2(0.32, -0.95),
+      new THREE.Vector2(0.34, -0.65),  // hip
+      new THREE.Vector2(0.27, -0.30),  // waist
+      new THREE.Vector2(0.38,  0.10),  // bust
+      new THREE.Vector2(0.44,  0.40),  // shoulder broad
+      new THREE.Vector2(0.10,  0.55),  // neck narrow
+      new THREE.Vector2(0.12,  0.70),  // neck top
+      new THREE.Vector2(0.0,   0.72)   // closing cap
+    ];
+    var form = new THREE.LatheGeometry(profile, 18);
+    // Wireframe mesh — clean outline + topology lines
+    g.add(new THREE.Mesh(form, new THREE.MeshBasicMaterial({
+      color: GOLD_BRIGHT, wireframe: true, transparent: true, opacity: 0.75
+    })));
+    // Stand base disc
+    var base = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.22, 0.26, 0.04, 24, 1, false),
+      new THREE.MeshBasicMaterial({ color: GOLD })
     );
-    head.position.y = 0.70;
-    g.add(head);
-    // body trapezoid (3 lines)
-    g.add(thickLine(new THREE.Vector3(-0.20, 0.50, 0), new THREE.Vector3(0.20, 0.50, 0), 0.012, GOLD_BRIGHT));
-    g.add(thickLine(new THREE.Vector3(-0.20, 0.50, 0), new THREE.Vector3(-0.18, -0.40, 0), 0.012, GOLD_BRIGHT));
-    g.add(thickLine(new THREE.Vector3(0.20, 0.50, 0), new THREE.Vector3(0.18, -0.40, 0), 0.012, GOLD_BRIGHT));
-    g.add(thickLine(new THREE.Vector3(-0.18, -0.40, 0), new THREE.Vector3(0.18, -0.40, 0), 0.010, GOLD_BRIGHT, 0.7));
-    // legs
-    g.add(thickLine(new THREE.Vector3(-0.10, -0.40, 0), new THREE.Vector3(-0.12, -0.95, 0), 0.010, GOLD_BRIGHT, 0.7));
-    g.add(thickLine(new THREE.Vector3(0.10, -0.40, 0), new THREE.Vector3(0.12, -0.95, 0), 0.010, GOLD_BRIGHT, 0.7));
-    // arms
-    g.add(thickLine(new THREE.Vector3(-0.20, 0.45, 0), new THREE.Vector3(-0.32, 0.05, 0), 0.010, GOLD_BRIGHT, 0.7));
-    g.add(thickLine(new THREE.Vector3(0.20, 0.45, 0), new THREE.Vector3(0.32, 0.05, 0), 0.010, GOLD_BRIGHT, 0.7));
-    // ghost ring around figure
+    base.position.y = -1.05;
+    g.add(base);
+    // Stand pole
+    g.add(thickLine(
+      new THREE.Vector3(0, -1.03, 0),
+      new THREE.Vector3(0, -0.80, 0),
+      0.020, GOLD
+    ));
+    // Aura ring at waist
     var aura = new THREE.Mesh(
-      new THREE.TorusGeometry(0.45, 0.008, 4, 32),
+      new THREE.TorusGeometry(0.55, 0.008, 4, 36),
       new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.35 })
     );
-    aura.rotation.x = Math.PI / 2.5;
+    aura.rotation.x = Math.PI / 2;
+    aura.position.y = -0.15;
     g.add(aura);
     return g;
   }
