@@ -1053,7 +1053,7 @@
 
     /* ── TECH INSIDE — exploded diagram section ── */
     .tech-section {
-      background: #050505; padding: 128px 0 144px;
+      background: #050505; padding: 96px 0 112px;
       border-top: 1px solid rgba(255,255,255,0.05);
       border-bottom: 1px solid rgba(255,255,255,0.05);
       position: relative; overflow: hidden;
@@ -1072,15 +1072,16 @@
     .tech-header .section-body { margin: 0 auto; max-width: 580px; }
     .tech-stage {
       display: grid;
-      grid-template-columns: 1fr minmax(420px, 920px) 1fr;
-      gap: 32px; align-items: center;
-      max-width: 1620px; margin: 0 auto;
+      grid-template-columns: minmax(220px, 1fr) minmax(420px, 780px) minmax(220px, 1fr);
+      gap: 28px; align-items: center;
+      max-width: 1480px; margin: 0 auto;
       padding: 0 32px;
     }
     .tech-stage-bg { display: none; }
     .tech-canvas-wrap {
       position: relative; width: 100%;
-      aspect-ratio: 16 / 11; min-height: 480px;
+      aspect-ratio: 16 / 10;
+      min-height: 360px; max-height: 70vh;
       grid-column: 2; grid-row: 1;
       filter: drop-shadow(0 0 60px rgba(201,162,39,0.18));
     }
@@ -1130,15 +1131,15 @@
     }
     .tech-grid {
       display: flex; flex-direction: column;
-      gap: 18px;
+      gap: 12px;
       grid-row: 1;
     }
     .tech-grid-left  { grid-column: 1; align-items: flex-end; text-align: right; }
     .tech-grid-right { grid-column: 3; align-items: flex-start; text-align: left; }
     .tech-card {
       display: flex; flex-direction: column;
-      gap: 4px; padding: 14px 16px;
-      max-width: 260px;
+      gap: 3px; padding: 10px 14px;
+      max-width: 240px;
       background: rgba(255,255,255,0.025);
       border: 1px solid rgba(255,255,255,0.06);
       border-radius: 2px;
@@ -1154,9 +1155,9 @@
     .tech-grid-left .tech-card:hover  { transform: translateX(-3px); }
     .tech-grid-right .tech-card:hover { transform: translateX(3px); }
     .tech-icon {
-      width: 30px; height: 30px;
+      width: 26px; height: 26px;
       color: var(--gold);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
       filter: drop-shadow(0 0 6px rgba(201,162,39,0.35));
     }
     .tech-grid-left .tech-icon { align-self: flex-end; }
@@ -1167,13 +1168,13 @@
     }
     .tech-label {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 18px; font-weight: 700; letter-spacing: -0.01em;
+      font-size: 16px; font-weight: 700; letter-spacing: -0.01em;
       color: #fff;
       line-height: 1.15;
     }
     .tech-desc {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 11.5px; font-weight: 300; line-height: 1.55;
+      font-size: 11px; font-weight: 300; line-height: 1.5;
       color: rgba(255,255,255,0.6);
     }
     /* Tablet — image full width, cards stack below in 2 columns */
@@ -2247,16 +2248,16 @@ function _initTechScene(){
   renderer.setClearColor(0x050505, 1);
 
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
-  camera.position.set(3.2, 2.0, 11);
+  var camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+  camera.position.set(2.8, 1.4, 9.5);
 
   var controls = new MiniOrbit(camera, canvas);
   controls.dampingFactor = 0.08;
-  controls.minDistance = 7;
-  controls.maxDistance = 16;
-  controls.minPolarAngle = Math.PI * 0.18;
+  controls.minDistance = 6.5;
+  controls.maxDistance = 14;
+  controls.minPolarAngle = Math.PI * 0.20;
   controls.maxPolarAngle = Math.PI * 0.62;
-  controls.target.set(0, 0.3, 0);
+  controls.target.set(0, 0.6, 0);
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   controls.autoRotate = !reduced;
   controls.autoRotateSpeed = 0.35;
