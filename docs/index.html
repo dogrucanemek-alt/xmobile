@@ -989,13 +989,59 @@
     }
     /* Desktop: live canvas is too subtle (WebGL 1px lines invisible on
        standard monitors). Show pre-rendered mobile screenshot instead. */
-    #wardrobeStatic {
+    .wireframe-stage {
       display: none;
-      width: 100%; height: auto; margin-top: 20px; border-radius: 2px;
+      position: relative;
+      margin-top: 28px;
+      padding: 24px 0;
     }
+    #wardrobeStatic {
+      width: 60%; height: auto; display: block;
+      margin: 0 auto; border-radius: 2px;
+    }
+    .wf-callout {
+      position: absolute;
+      display: flex; flex-direction: column; gap: 4px;
+      max-width: 170px;
+      padding-left: 14px;
+      border-left: 1px solid rgba(201,162,39,0.35);
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.7s cubic-bezier(.22,1,.36,1), transform 0.7s cubic-bezier(.22,1,.36,1);
+    }
+    .product-right.visible .wf-callout { opacity: 1; transform: translateY(0); }
+    .product-right.visible .wf-tl { transition-delay: 0.35s; }
+    .product-right.visible .wf-tr { transition-delay: 0.5s; }
+    .product-right.visible .wf-bl { transition-delay: 0.65s; }
+    .product-right.visible .wf-br { transition-delay: 0.8s; }
+    .wf-eyebrow {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 9.5px; font-weight: 600; letter-spacing: 2.4px;
+      color: var(--gold); text-transform: uppercase;
+    }
+    .wf-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px; font-weight: 700; letter-spacing: -0.01em;
+      color: #fff;
+    }
+    .wf-desc {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11.5px; font-weight: 300; line-height: 1.55;
+      color: rgba(255,255,255,0.55);
+    }
+    /* Position callouts around the wireframe — left side flipped (border on right) */
+    .wf-tl { top: 8%;  left: 2%;  text-align: right; padding-left: 0; padding-right: 14px; border-left: none; border-right: 1px solid rgba(201,162,39,0.35); align-items: flex-end; }
+    .wf-bl { bottom: 12%; left: 2%; text-align: right; padding-left: 0; padding-right: 14px; border-left: none; border-right: 1px solid rgba(201,162,39,0.35); align-items: flex-end; }
+    .wf-tr { top: 8%;  right: 2%; }
+    .wf-br { bottom: 12%; right: 2%; }
+
     @media (min-width: 769px) {
       #wardrobeScene { display: none; }
-      #wardrobeStatic { display: block; }
+      .wireframe-stage { display: block; }
+    }
+    @media (max-width: 1100px) {
+      .wf-callout { max-width: 130px; }
+      .wf-label { font-size: 16px; }
+      .wf-desc { font-size: 10.5px; }
     }
 
     /* ── WAITLIST SHADER BG ── */
@@ -1697,7 +1743,29 @@
         </div>
       </div>
       <canvas id="wardrobeScene"></canvas>
-      <img id="wardrobeStatic" src="img/wardrobe-wireframe-desktop.webp" alt="AI Furniture wireframe gardırop" loading="lazy" width="865" height="770"/>
+      <div class="wireframe-stage">
+        <img id="wardrobeStatic" src="img/wardrobe-wireframe-desktop.webp" alt="AI Furniture wireframe gardırop" loading="lazy" width="865" height="770"/>
+        <div class="wf-callout wf-tl">
+          <span class="wf-eyebrow" data-tr="01 · ZEKA" data-en="01 · BRAIN">01 · ZEKA</span>
+          <span class="wf-label" data-tr="AI Beyin" data-en="AI Brain">AI Beyin</span>
+          <span class="wf-desc" data-tr="Claude destekli öneri motoru" data-en="Claude-powered recommendation engine">Claude destekli öneri motoru</span>
+        </div>
+        <div class="wf-callout wf-tr">
+          <span class="wf-eyebrow" data-tr="02 · ALGI" data-en="02 · SENSORS">02 · ALGI</span>
+          <span class="wf-label" data-tr="IoT Sensörler" data-en="IoT Sensors">IoT Sensörler</span>
+          <span class="wf-desc" data-tr="Hava, ışık, sıcaklık takibi" data-en="Weather, light, temperature">Hava, ışık, sıcaklık takibi</span>
+        </div>
+        <div class="wf-callout wf-bl">
+          <span class="wf-eyebrow" data-tr="03 · ARAYÜZ" data-en="03 · INTERFACE">03 · ARAYÜZ</span>
+          <span class="wf-label" data-tr="Dokunmatik Ekran" data-en="Touchscreen">Dokunmatik Ekran</span>
+          <span class="wf-desc" data-tr="Tavandan tabana 100&quot; panel" data-en="Floor-to-ceiling 100&quot; panel">Tavandan tabana 100" panel</span>
+        </div>
+        <div class="wf-callout wf-br">
+          <span class="wf-eyebrow" data-tr="04 · HAREKET" data-en="04 · MOTION">04 · HAREKET</span>
+          <span class="wf-label" data-tr="Otonom Asansör" data-en="Auto Lift">Otonom Asansör</span>
+          <span class="wf-desc" data-tr="Kıyafetler önünüze gelir" data-en="Clothes come to you">Kıyafetler önünüze gelir</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
