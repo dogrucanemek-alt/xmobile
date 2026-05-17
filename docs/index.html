@@ -1522,19 +1522,29 @@
     }
     @keyframes videoScan { 0%{top:0;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:100%;opacity:0} }
     .video-grid-lines { position: absolute; inset: 0; opacity: 0.04; background-image: linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px); background-size: 80px 80px; }
-    .video-play-ring {
-      position: relative; width: 84px; height: 84px; z-index: 2;
-      border-radius: 50%; background: rgba(201,162,39,0.12);
-      border: 1.5px solid rgba(201,162,39,0.45);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
-      box-shadow: 0 0 0 0 rgba(201,162,39,0.3);
-      animation: videoRingPulse 2.5s ease-in-out infinite;
+    /* Real demo video — portrait (392x850) centered in 16:9 wrap */
+    #demoVideo {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      height: 92%; width: auto; max-width: 92%;
+      z-index: 2; border-radius: 14px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,162,39,0.18);
+      background: #000;
     }
-    @keyframes videoRingPulse { 0%,100%{box-shadow:0 0 0 0 rgba(201,162,39,0.3)} 50%{box-shadow:0 0 0 18px rgba(201,162,39,0)} }
-    .video-play-ring:hover { background: rgba(201,162,39,0.25); transform: scale(1.08); animation: none; }
-    .video-play-ring svg { width: 28px; height: 28px; fill: var(--gold); margin-left: 5px; }
-    .video-label { z-index: 2; font-family: 'Space Grotesk', 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+    .video-unmute {
+      position: absolute; bottom: 64px; right: 24px; z-index: 3;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: rgba(255,255,255,0.85); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .video-unmute:hover { background: rgba(201,162,39,0.85); color: #000; transform: scale(1.06); }
+    .video-unmute svg { width: 20px; height: 20px; }
+    .video-unmute .ico-sound { display: none; }
+    .video-unmute.on .ico-muted { display: none; }
+    .video-unmute.on .ico-sound { display: block; }
     .video-features-bar {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
       display: flex; justify-content: center; gap: 0;
@@ -2003,10 +2013,15 @@
           <div class="video-scan-line"></div>
           <div class="video-grid-lines"></div>
         </div>
-        <div class="video-play-ring" id="videoPlayBtn" onclick="var l=document.getElementById('videoLabelEl');this.style.transform='scale(0.95)';setTimeout(function(){document.getElementById('videoPlayBtn').style.transform='';},150);l.textContent=document.documentElement.lang==='en'?'Coming soon — join waitlist to get early access!':'Yakında — erken erişim için waitliste katıl!';setTimeout(function(){l.textContent=document.documentElement.lang==='en'?'Demo Video — Coming Soon':'Demo Video — Yakında';},3500)">
-          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-        </div>
-        <span class="video-label" id="videoLabelEl" data-tr="Demo Video — Yakında" data-en="Demo Video — Coming Soon">Demo Video — Yakında</span>
+        <video id="demoVideo" autoplay muted loop playsinline preload="metadata"
+               poster="img/aif-demo-poster.webp">
+          <source src="img/aif-demo.webm" type="video/webm">
+          <source src="img/aif-demo.mp4" type="video/mp4">
+        </video>
+        <button class="video-unmute" id="videoUnmute" aria-label="Sesi aç" onclick="var v=document.getElementById('demoVideo');v.muted=!v.muted;this.classList.toggle('on',!v.muted);">
+          <svg class="ico-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3z" fill="currentColor"/><line x1="2" y1="2" x2="22" y2="22" stroke="currentColor" stroke-width="2"/></svg>
+          <svg class="ico-sound" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4.03v8.05A4.5 4.5 0 0 0 16.5 12z" fill="currentColor"/></svg>
+        </button>
         <div class="video-features-bar">
           <div class="video-feature-tag"><span class="video-dot"></span><span data-tr="Gardırop Tarama" data-en="Wardrobe Scan">Gardırop Tarama</span></div>
           <div class="video-feature-tag"><span class="video-dot"></span><span data-tr="AI Analiz" data-en="AI Analysis">AI Analiz</span></div>
