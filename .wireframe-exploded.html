@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>
+html,body{margin:0;padding:0;background:#060606;overflow:hidden;}
+canvas{display:block;}
+</style></head><body>
+<canvas id="c" width="2400" height="1350"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+(function(){
+  const W=2400, H=1350;
+  const canvas = document.getElementById('c');
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(1);
+  renderer.setClearColor(0x060606, 1);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(28, W/H, 0.1, 100);
+  camera.position.set(2.8, 2.0, 11);
+  camera.lookAt(0, 0.3, 0);
+
+  const GOLD = 0xc9a227;
+  const GOLD_BRIGHT = 0xffd54a;
+  const GOLD_DIM = 0x6a5018;
+
+  // Thick line as cylinder oriented along p1→p2
+  function thickLine(p1, p2, radius, color, opacity) {
+    const r = radius || 0.015;
+    const dist = p1.distanceTo(p2);
+    if (dist < 0.001) return new THREE.Group();
+    const geo = new THREE.CylinderGeometry(r, r, dist, 8, 1, false);
+    const mat = new THREE.MeshBasicMaterial({
+      color: color || GOLD,
+      transparent: opacity !== undefined && opacity < 1,
+      opacity: opacity !== undefined ? opacity : 1
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
+    mesh.position.copy(mid);
+    const dir = new THREE.Vector3().subVectors(p2, p1).normalize();
+    const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), dir);
+    mesh.quaternion.copy(q);
+    return mesh;
+  }
+
+  // Wireframe box edges (returns Group)
+  function thickBoxEdges(w, h, d, r, color) {
+    const x = w/2, y = h/2, z = d/2;
+    const c = [
+      [-x,-y,-z],[ x,-y,-z],[ x,-y, z],[-x,-y, z],
+      [-x, y,-z],[ x, y,-z],[ x, y, z],[-x, y, z]
+    ].map(p => new THREE.Vector3(...p));
+    const edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+    const g = new THREE.Group();
+    edges.forEach(([a,b]) => g.add(thickLine(c[a], c[b], r, color)));
+    return g;
+  }
+
+  // Rectangle outline (4 edges, in XY plane offset to z)
+  function rectOutline(w, h, r, color, opacity) {
+    const x = w/2, y = h/2;
+    const c = [
+      new THREE.Vector3(-x,-y,0),
+      new THREE.Vector3( x,-y,0),
+      new THREE.Vector3( x, y,0),
+      new THREE.Vector3(-x, y,0),
+    ];
+    const g = new THREE.Group();
+    for (let i = 0; i < 4; i++) {
+      g.add(thickLine(c[i], c[(i+1)%4], r, color, opacity));
+    }
+    return g;
+  }
+
+  // === WARDROBE CARCASS (back, sides, top, bottom — but NOT the doors) ===
+  const WW = 3.0, WH = 4.5, WD = 1.5;
+  const carcass = new THREE.Group();
+  // Back panel (4 corners at z=-WD/2)
+  const back = [
+    new THREE.Vector3(-WW/2, -WH/2, -WD/2),
+    new THREE.Vector3( WW/2, -WH/2, -WD/2),
+    new THREE.Vector3( WW/2,  WH/2, -WD/2),
+    new THREE.Vector3(-WW/2,  WH/2, -WD/2),
+  ];
+  for (let i = 0; i < 4; i++) carcass.add(thickLine(back[i], back[(i+1)%4], 0.026, GOLD));
+  // Front-bottom edges (no front-top since doors will be open above)
+  carcass.add(thickLine(
+    new THREE.Vector3(-WW/2, -WH/2, WD/2),
+    new THREE.Vector3( WW/2, -WH/2, WD/2),
+    0.026, GOLD
+  ));
+  // Front-top frame
+  carcass.add(thickLine(
+    new THREE.Vector3(-WW/2,  WH/2, WD/2),
+    new THREE.Vector3( WW/2,  WH/2, WD/2),
+    0.026, GOLD
+  ));
+  // Vertical edges (left & right at front and back)
+  [-WW/2, WW/2].forEach(x => {
+    [-WD/2, WD/2].forEach(z => {
+      carcass.add(thickLine(
+        new THREE.Vector3(x, -WH/2, z),
+        new THREE.Vector3(x,  WH/2, z),
+        0.026, GOLD
+      ));
+    });
+    // Side panels — connect top edges
+    carcass.add(thickLine(
+      new THREE.Vector3(x,  WH/2, -WD/2),
+      new THREE.Vector3(x,  WH/2,  WD/2),
+      0.026, GOLD
+    ));
+    carcass.add(thickLine(
+      new THREE.Vector3(x, -WH/2, -WD/2),
+      new THREE.Vector3(x, -WH/2,  WD/2),
+      0.026, GOLD
+    ));
+  });
+  scene.add(carcass);
+
+  // === DOORS (open at ~75° outward) ===
+  const doorW = WW/2 - 0.05;
+  const doorH = WH - 0.1;
+  const doorAngleL = -Math.PI * 0.42;  // negative rotates outward
+  const doorAngleR =  Math.PI * 0.42;
+  // Left door
+  const leftDoorGroup = new THREE.Group();
+  leftDoorGroup.add(rectOutline(doorW, doorH, 0.016, GOLD));
+  leftDoorGroup.position.set(-doorW/2, 0, 0);
+  const leftDoorPivot = new THREE.Group();
+  leftDoorPivot.add(leftDoorGroup);
+  leftDoorPivot.position.set(-WW/2, 0, WD/2);
+  leftDoorPivot.rotation.y = doorAngleL;
+  scene.add(leftDoorPivot);
+  // Right door (with TOUCHSCREEN)
+  const rightDoorGroup = new THREE.Group();
+  rightDoorGroup.add(rectOutline(doorW, doorH, 0.016, GOLD));
+  // Touchscreen panel inset
+  const scrW = doorW * 0.72, scrH = doorH * 0.86;
+  rightDoorGroup.add(rectOutline(scrW, scrH, 0.014, GOLD_BRIGHT));
+  // Screen lit panel (translucent gold)
+  const scrPanel = new THREE.Mesh(
+    new THREE.PlaneGeometry(scrW * 0.96, scrH * 0.96),
+    new THREE.MeshBasicMaterial({color: 0xCA8A04, transparent: true, opacity: 0.30, side: THREE.DoubleSide})
+  );
+  scrPanel.position.z = -0.005;
+  rightDoorGroup.add(scrPanel);
+  // Screen UI hint lines (horizontal stripes)
+  const uiYs = [scrH*0.35, scrH*0.15, scrH*-0.05, scrH*-0.25, scrH*-0.40];
+  uiYs.forEach((y, i) => {
+    const lw = scrW * (0.60 + (i%2)*0.15);
+    rightDoorGroup.add(thickLine(
+      new THREE.Vector3(-lw/2, y, 0.012),
+      new THREE.Vector3( lw/2, y, 0.012),
+      0.012, GOLD_BRIGHT, 0.85
+    ));
+  });
+  // Active card highlight near top of screen
+  const acY = scrH*0.28, acW = scrW*0.88, acH = 0.36;
+  rightDoorGroup.add(rectOutline(acW, acH, 0.016, GOLD_BRIGHT));
+  rightDoorGroup.children[rightDoorGroup.children.length-1].position.z = 0.013;
+  rightDoorGroup.children[rightDoorGroup.children.length-1].position.y = acY;
+  rightDoorGroup.position.set(doorW/2, 0, 0);
+  const rightDoorPivot = new THREE.Group();
+  rightDoorPivot.add(rightDoorGroup);
+  rightDoorPivot.position.set(WW/2, 0, WD/2);
+  rightDoorPivot.rotation.y = doorAngleR;
+  scene.add(rightDoorPivot);
+
+  // === INTERIOR — shelves, hanging rails, drawer ===
+  const interior = new THREE.Group();
+  // 3 horizontal shelves
+  [WH*0.30, 0, WH*-0.20].forEach((sy, idx) => {
+    interior.add(thickLine(
+      new THREE.Vector3(-WW/2 + 0.05, sy, -WD/2 + 0.05),
+      new THREE.Vector3( WW/2 - 0.05, sy, -WD/2 + 0.05),
+      0.014, GOLD_DIM, 0.85
+    ));
+    interior.add(thickLine(
+      new THREE.Vector3(-WW/2 + 0.05, sy,  WD/2 - 0.05),
+      new THREE.Vector3( WW/2 - 0.05, sy,  WD/2 - 0.05),
+      0.014, GOLD_DIM, 0.85
+    ));
+    // depth lines at edges
+    [-WW/2 + 0.05, WW/2 - 0.05].forEach(x => {
+      interior.add(thickLine(
+        new THREE.Vector3(x, sy, -WD/2 + 0.05),
+        new THREE.Vector3(x, sy,  WD/2 - 0.05),
+        0.014, GOLD_DIM, 0.85
+      ));
+    });
+  });
+  // Hanging rail (horizontal) at top section
+  const railY = WH * 0.40;
+  interior.add(thickLine(
+    new THREE.Vector3(-WW/2 + 0.12, railY, 0),
+    new THREE.Vector3( WW/2 - 0.12, railY, 0),
+    0.018, GOLD, 0.95
+  ));
+  // Hanger ticks on rail
+  for (let i = 0; i < 8; i++) {
+    const t = -WW/2 + 0.25 + i * (WW - 0.5) / 7;
+    interior.add(thickLine(
+      new THREE.Vector3(t, railY, 0),
+      new THREE.Vector3(t, railY - 0.35, 0),
+      0.008, GOLD_BRIGHT, 0.75
+    ));
+    // Simple shirt silhouette (T-shape)
+    interior.add(thickLine(
+      new THREE.Vector3(t - 0.12, railY - 0.4, 0),
+      new THREE.Vector3(t + 0.12, railY - 0.4, 0),
+      0.008, GOLD_BRIGHT, 0.65
+    ));
+    interior.add(thickLine(
+      new THREE.Vector3(t - 0.12, railY - 0.4, 0),
+      new THREE.Vector3(t - 0.10, railY - 1.05, 0),
+      0.007, GOLD_BRIGHT, 0.55
+    ));
+    interior.add(thickLine(
+      new THREE.Vector3(t + 0.12, railY - 0.4, 0),
+      new THREE.Vector3(t + 0.10, railY - 1.05, 0),
+      0.007, GOLD_BRIGHT, 0.55
+    ));
+  }
+  // Drawer at bottom
+  const drawerY = -WH * 0.42;
+  const drawerH = 0.4;
+  interior.add(rectOutline(WW * 0.85, drawerH, 0.014, GOLD));
+  interior.children[interior.children.length-1].position.set(0, drawerY, WD/2 - 0.02);
+  // Drawer handle
+  interior.add(thickLine(
+    new THREE.Vector3(-0.18, drawerY, WD/2 - 0.01),
+    new THREE.Vector3( 0.18, drawerY, WD/2 - 0.01),
+    0.010, GOLD_BRIGHT
+  ));
+  scene.add(interior);
+
+  // === HARDWARE MODULES inside wardrobe (small wireframe boxes) ===
+  function moduleBox(pos, size, label, color) {
+    const m = thickBoxEdges(size, size, size * 0.6, 0.011, color || GOLD_BRIGHT);
+    m.position.copy(pos);
+    scene.add(m);
+    // Pulsing center dot for visibility
+    const dot = new THREE.Mesh(
+      new THREE.SphereGeometry(size * 0.18, 12, 12),
+      new THREE.MeshBasicMaterial({color: 0xfff0a0})
+    );
+    dot.position.copy(pos);
+    scene.add(dot);
+    return m;
+  }
+
+  // CV Camera modules (top-left and top-right inside)
+  moduleBox(new THREE.Vector3(-WW/2 + 0.30, WH/2 - 0.30, 0.2), 0.32, 'CV1');
+  moduleBox(new THREE.Vector3( WW/2 - 0.30, WH/2 - 0.30, 0.2), 0.32, 'CV2');
+
+  // IR Sensor strip (mid-back ceiling)
+  for (let i = -1; i <= 1; i++) {
+    const dot = new THREE.Mesh(
+      new THREE.SphereGeometry(0.08, 10, 10),
+      new THREE.MeshBasicMaterial({color: GOLD_BRIGHT})
+    );
+    dot.position.set(i * 0.5, WH/2 - 0.1, -WD/2 + 0.15);
+    scene.add(dot);
+  }
+
+  // RFID Reader (bottom inside)
+  moduleBox(new THREE.Vector3(-WW/2 + 0.30, -WH/2 + 0.30, -WD/2 + 0.25), 0.28, 'RFID', GOLD);
+
+  // Motion Detector (small cylinder on ceiling)
+  const motion = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.10, 0.14, 0.18, 8, 1, false),
+    new THREE.MeshBasicMaterial({color: GOLD_BRIGHT, transparent: true, opacity: 0.9})
+  );
+  motion.position.set(0, WH/2 - 0.15, -WD/2 + 0.4);
+  scene.add(motion);
+
+  // AI Processing Hub — Icosahedron (top of carcass exterior)
+  const aiHubPos = new THREE.Vector3(0, WH/2 + 0.6, -WD/2 + 0.4);
+  const aiHubGroup = new THREE.Group();
+  const icoGeo = new THREE.IcosahedronGeometry(0.42, 1);
+  const icoEdges = new THREE.EdgesGeometry(icoGeo);
+  const ep = icoEdges.attributes.position;
+  for (let i = 0; i < ep.count; i += 2) {
+    const a = new THREE.Vector3().fromBufferAttribute(ep, i);
+    const b = new THREE.Vector3().fromBufferAttribute(ep, i+1);
+    aiHubGroup.add(thickLine(a, b, 0.012, GOLD_BRIGHT, 1));
+  }
+  const aiCore = new THREE.Mesh(
+    new THREE.SphereGeometry(0.12, 16, 16),
+    new THREE.MeshBasicMaterial({color: 0xfff0a0})
+  );
+  aiHubGroup.add(aiCore);
+  aiHubGroup.position.copy(aiHubPos);
+  scene.add(aiHubGroup);
+
+  // LED Light Strip (along top inside edge)
+  for (let i = 0; i < 12; i++) {
+    const t = -WW/2 + 0.2 + i * (WW - 0.4) / 11;
+    const led = new THREE.Mesh(
+      new THREE.SphereGeometry(0.04, 8, 8),
+      new THREE.MeshBasicMaterial({color: 0xfff5b8, transparent: true, opacity: 0.95})
+    );
+    led.position.set(t, WH/2 - 0.05, 0);
+    scene.add(led);
+  }
+
+  // Humidity & Temp Sensor (small box on left wall)
+  moduleBox(new THREE.Vector3(-WW/2 + 0.05, 0.0, 0), 0.18, 'HTSensor', GOLD);
+
+  // Power Management Module (bottom-back)
+  moduleBox(new THREE.Vector3(0, -WH/2 + 0.18, -WD/2 + 0.15), 0.35, 'PWR', GOLD_DIM);
+
+  // === GRID FLOOR ===
+  const grid = new THREE.GridHelper(14, 28, 0x5a4419, 0x2a2010);
+  grid.position.y = -WH/2 - 0.15;
+  scene.add(grid);
+
+  // === FLOATING PARTICLES ===
+  const pGeo = new THREE.BufferGeometry();
+  const pCount = 140;
+  const pPos = new Float32Array(pCount * 3);
+  for (let i = 0; i < pCount; i++) {
+    pPos[i*3]   = (Math.random() - 0.5) * 14;
+    pPos[i*3+1] = (Math.random() - 0.3) * 9;
+    pPos[i*3+2] = (Math.random() - 0.5) * 5 - 1.5;
+  }
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+  scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
+    color: GOLD_BRIGHT, size: 0.04, transparent: true, opacity: 0.55
+  })));
+
+  window.__scene__ = scene;
+  window.__camera__ = camera;
+  window.__renderer__ = renderer;
+
+  setTimeout(() => {
+    renderer.render(scene, camera);
+    window.__renderedPNG__ = canvas.toDataURL('image/png');
+    window.__rendered__ = true;
+  }, 300);
+})();
+</script></body></html>
