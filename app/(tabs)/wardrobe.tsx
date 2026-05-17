@@ -260,12 +260,19 @@ export default function Wardrobe() {
   };
 
   const ekleSecenekleri = () => {
-    Alert.alert(t.kiyafetEkle, t.nasılEklemek, [
-      { text: t.fotografCek,              onPress: fotografCek },
-      { text: t.galeridenSec,             onPress: galeridenSec },
-      { text: '📚 Çoklu Seç (Galeri)',    onPress: cokluSec },
-      { text: t.iptal,                    style: 'cancel' },
-    ]);
+    const ipucu = dil === 'en'
+      ? '💡 Tip: Use product photos (item alone) for best AI try-on results. Photos with a model wearing the item may give unexpected output.'
+      : '💡 İpucu: En iyi sanal deneme sonucu için ürün fotoğrafları (kıyafet tek başına) kullan. Modelli (üstte giyilen) fotoğraflar beklenmeyen sonuç verebilir.';
+    Alert.alert(
+      t.kiyafetEkle,
+      `${t.nasılEklemek}\n\n${ipucu}`,
+      [
+        { text: t.fotografCek,              onPress: fotografCek },
+        { text: t.galeridenSec,             onPress: galeridenSec },
+        { text: '📚 Çoklu Seç (Galeri)',    onPress: cokluSec },
+        { text: t.iptal,                    style: 'cancel' },
+      ],
+    );
   };
 
   const kiyafetDuzenle = (k: Kiyafet) => {

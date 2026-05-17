@@ -21,6 +21,7 @@ import UpsellModal from '../../components/UpsellModal';
 import { useSubscription } from '../../lib/subscriptionContext';
 import { meshyModelUret } from '../../lib/meshyService';
 import { renkBul, parcaEsle, kiyafetRenkBul, hexToRgba, renkUyumSkoru } from '../../lib/outfitColor';
+import { validateOutfit } from '../../lib/outfitValidator';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { kombinHakkiVar, kombinKullan, kalanHakAl } from '../../lib/freemium';
@@ -853,17 +854,44 @@ export default function Outfits() {
 
     const lang = dil === 'en' ? 'English' : 'Turkish';
 
-    // PARTITION: Shuffle wardrobe and split into 3 groups to prevent repetition
-    const shuffled = [...liste].sort(() => Math.random() - 0.5);
-    const itemsPerGroup = Math.ceil(shuffled.length / 3);
-    const grup1 = shuffled.slice(0, itemsPerGroup);
-    const grup2 = shuffled.slice(itemsPerGroup, itemsPerGroup * 2);
-    const grup3 = shuffled.slice(itemsPerGroup * 2);
+    // PARTITION: stratified — her grup en az 1 Üst + 1 Alt + 1 Ayakkabı içersin
+    const byCategory: Record<string, typeof liste> = {};
+    for (const k of liste) {
+      const t = k.tur || 'Diğer';
+      (byCategory[t] = byCategory[t] || []).push(k);
+    }
+    // Her kategoriyi shuffle et + round-robin 3 gruba dağıt
+    Object.values(byCategory).forEach(arr => arr.sort(() => Math.random() - 0.5));
+    const partitioned: typeof liste[] = [[], [], []];
+    Object.values(byCategory).forEach(arr => {
+      arr.forEach((item, i) => partitioned[i % 3].push(item));
+    });
+    const grup1 = partitioned[0];
+    const grup2 = partitioned[1];
+    const grup3 = partitioned[2];
 
-    // Create 3 separate prompts, each with a different group
-    const numaraliListe1 = grup1.map((k, i) => `${i + 1}. "${k.ad}" (${k.tur}, ${k.sezon})`).join('\n');
-    const numaraliListe2 = grup2.map((k, i) => `${i + 1}. "${k.ad}" (${k.tur}, ${k.sezon})`).join('\n');
-    const numaraliListe3 = grup3.map((k, i) => `${i + 1}. "${k.ad}" (${k.tur}, ${k.sezon})`).join('\n');
+    // Item listing helper — kategori bazlı gruplandır + numara ver
+    const formatWardrobe = (grup: typeof liste): string => {
+      const groups: Record<string, string[]> = { Üst: [], Alt: [], Ayakkabı: [], 'Dış Giyim': [], Aksesuar: [] };
+      grup.forEach((k, i) => {
+        const cat = (k.tur in groups) ? k.tur : 'Aksesuar';
+        groups[cat].push(`  ${i + 1}. "${k.ad}" (${k.sezon})`);
+      });
+      const labels = dil === 'en'
+        ? { 'Üst': 'TOPS', 'Alt': 'BOTTOMS', 'Ayakkabı': 'SHOES', 'Dış Giyim': 'OUTERWEAR', 'Aksesuar': 'ACCESSORIES' }
+        : { 'Üst': 'ÜST', 'Alt': 'ALT', 'Ayakkabı': 'AYAKKABI', 'Dış Giyim': 'DIŞ GİYİM', 'Aksesuar': 'AKSESUAR' };
+      const lines: string[] = [];
+      for (const [tr, items] of Object.entries(groups)) {
+        if (items.length === 0) continue;
+        lines.push(`${labels[tr as keyof typeof labels]}:`);
+        lines.push(...items);
+      }
+      return lines.join('\n');
+    };
+
+    const numaraliListe1 = formatWardrobe(grup1);
+    const numaraliListe2 = formatWardrobe(grup2);
+    const numaraliListe3 = formatWardrobe(grup3);
 
     const jsonFormat = `{"baslik":"${dil === 'en' ? 'title' : 'başlık'}","tur":"${dil === 'en' ? 'Work' : 'İş'}","parcalar":[1,2],"neden":"${dil === 'en' ? '1 sentence' : '1 cümle'}"}`;
 
@@ -871,25 +899,51 @@ export default function Outfits() {
       ? 'End with a short compliment like "You\'ll look great! ✨" or "Very stylish! 🔥"'
       : '"neden" alanını kısa bir iltifatla bitir: "Çok yakışıklı olacaksın! ✨" veya "Harika görüneceksin! 🔥" gibi';
 
-    // Create 3 separate prompts for 3 separate API calls
-    const createPrompt = (grupNo: number, numaraliList: string, turStr: string) => `Style assistant. Respond in ${lang}.
+    const styleRules = dil === 'en'
+      ? {
+          'Work': 'formal/business — shirts, blouses, blazers, NO sweatshirts, NO t-shirts, NO sneakers',
+          'Casual': 'relaxed — t-shirts, jeans, sneakers OK, AVOID formal blazers',
+          'Social': 'bold/trendy — mix textures, statement pieces',
+        }
+      : {
+          'İş': 'resmi/iş — gömlek, bluz, blazer; sweatshirt/tişört YOK, spor ayakkabı YOK',
+          'Günlük': 'rahat — tişört, kot, sneaker OK, resmi blazer DEĞİL',
+          'Sosyal': 'cesur/trend — doku karışımı, dikkat çekici parçalar',
+        };
+
+    const createPrompt = (numaraliList: string, turStr: string, retryHint?: string) => {
+      const rules = styleRules[turStr as keyof typeof styleRules] || '';
+      return `Fashion stylist AI. Respond in ${lang}.
 
 Weather: ${havaVeri.derece}°C, ${havaVeri.durum}, feels like ${havaVeri.hissedilen}°C
 
-WARDROBE (use items from this list ONLY):
+WARDROBE (categorized — use ONLY these numbered items):
 ${numaraliList}
 
-Create 1 outfit. Style: ${turStr}.
+OUTFIT RULES (strict):
+- EXACTLY 1 item from TOPS (Üst) — main shirt/blouse/tee
+- EXACTLY 1 item from BOTTOMS (Alt) — pants/skirt/shorts
+- EXACTLY 1 item from SHOES (Ayakkabı)
+- OPTIONAL: 1 item from OUTERWEAR (Dış Giyim) if cold OR style allows
+- NEVER pick 2 items from same category (no 2 shirts, no 2 pants)
+- If a "TOP" item name contains "sweatshirt"/"hoodie"/"kazak"/"cardigan", count it as OUTERWEAR not base TOP
+- Color harmony required — avoid clashing (red+green, orange+pink, neon mismatches)
+- Items must work TOGETHER (no "white shirt + blue sweatshirt + white pants" type triple-base layering)
+
+Style: ${turStr} → ${rules}
+${retryHint ? `\nIMPORTANT: ${retryHint}\n` : ''}
 "tur": ${turStr}
-"parcalar": use 2-4 items from the list above
-"neden": 1 sentence. ${iltifat}
+"parcalar": array of NUMBERS from the list, 3-4 items
+"neden": 1 sentence about WHY this works. ${iltifat}
 
 Return ONLY valid JSON:
 ${jsonFormat}`;
+    };
 
-    const prompt1 = createPrompt(1, numaraliListe1, dil === 'en' ? 'Work' : 'İş');
-    const prompt2 = createPrompt(2, numaraliListe2, dil === 'en' ? 'Casual' : 'Günlük');
-    const prompt3 = createPrompt(3, numaraliListe3, dil === 'en' ? 'Social' : 'Sosyal');
+    const turlerArr = dil === 'en' ? ['Work', 'Casual', 'Social'] : ['İş', 'Günlük', 'Sosyal'];
+    const prompt1 = createPrompt(numaraliListe1, turlerArr[0]);
+    const prompt2 = createPrompt(numaraliListe2, turlerArr[1]);
+    const prompt3 = createPrompt(numaraliListe3, turlerArr[2]);
 
     if (!API_URL) {
       setHata('EXPO_PUBLIC_API_URL tanımlı değil. .env dosyasını kontrol et ve Expo\'yu yeniden başlat.');
@@ -955,11 +1009,32 @@ ${jsonFormat}`;
         }),
       });
 
+      // Validate + retry once on invalid (kategori kuralları)
+      const tryWithRetry = async (
+        grup: Kiyafet[],
+        turStr: string,
+        numaraliList: string,
+      ): Promise<Kombin> => {
+        const initialRes = await callApi(createPrompt(numaraliList, turStr));
+        const initialJson = await parseResponse(initialRes);
+        const resolved1 = resolveItems(initialJson, grup) as Kombin;
+        const v1 = validateOutfit(resolved1.parcalar, grup);
+        if (v1.valid) return resolved1;
+
+        // Tek retry — hint ile
+        const hint = dil === 'en'
+          ? `Previous attempt failed validation (${v1.reason}). Pick EXACTLY 1 base top, 1 bottom, 1 shoes; max 1 outerwear. Color must harmonize.`
+          : `Önceki deneme başarısız (${v1.reason}). TAM 1 üst, 1 alt, 1 ayakkabı seç; max 1 dış giyim. Renkler uyumlu olsun.`;
+        const retryRes = await callApi(createPrompt(numaraliList, turStr, hint));
+        const retryJson = await parseResponse(retryRes);
+        return resolveItems(retryJson, grup) as Kombin;
+      };
+
       // Make 3 API calls in parallel with allSettled — partial failure is OK
       const results = await Promise.allSettled([
-        callApi(prompt1).then(parseResponse),
-        callApi(prompt2).then(parseResponse),
-        callApi(prompt3).then(parseResponse),
+        tryWithRetry(grup1, turlerArr[0], numaraliListe1),
+        tryWithRetry(grup2, turlerArr[1], numaraliListe2),
+        tryWithRetry(grup3, turlerArr[2], numaraliListe3),
       ]);
 
       const turler = dil === 'en' ? ['Work', 'Casual', 'Social'] : ['İş', 'Günlük', 'Sosyal'];
@@ -971,12 +1046,8 @@ ${jsonFormat}`;
         let kombin: Kombin | null = null;
 
         if (result.status === 'fulfilled') {
-          try {
-            kombin = resolveItems(result.value, gruplar[i]);
-          } catch (parseErr) {
-            const error = handleError(parseErr);
-            logError(error, `outfits.kombin${i + 1}.parse`);
-          }
+          // tryWithRetry zaten resolveItems çağırıyor — Kombin direkt geliyor
+          kombin = result.value as Kombin;
         } else {
           const error = handleError(result.reason);
           logError(error, `outfits.kombin${i + 1}.api`);
@@ -1665,6 +1736,11 @@ ${jsonFormat}`;
                 {dil === 'en'
                   ? 'Select one or more garments to try on:'
                   : 'Denemek istediğin parçaları seç:'}
+              </Text>
+              <Text style={{ color: renkler.metin2, fontSize: 11, marginBottom: 6, opacity: 0.7 }}>
+                {dil === 'en'
+                  ? '💡 Best results with product-only photos (no model wearing the item)'
+                  : '💡 En iyi sonuç: kıyafet tek başına fotoğrafı (model olmadan)'}
               </Text>
               {(() => {
                 // Custom builder'dan gelince seçili parçaları göster; yoksa mevcut kombinin parçalarını
