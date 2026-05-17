@@ -996,17 +996,24 @@
       padding: 24px 0;
     }
     #wardrobeStatic {
-      width: 60%; height: auto; display: block;
+      width: 78%; height: auto; display: block;
       margin: 0 auto; border-radius: 2px;
+      filter: drop-shadow(0 0 24px rgba(201,162,39,0.18));
     }
     .wf-callout {
       position: absolute;
-      display: flex; flex-direction: column; gap: 4px;
-      max-width: 170px;
+      display: flex; flex-direction: column; gap: 6px;
+      max-width: 160px;
       padding-left: 14px;
       border-left: 1px solid rgba(201,162,39,0.35);
       opacity: 0; transform: translateY(8px);
       transition: opacity 0.7s cubic-bezier(.22,1,.36,1), transform 0.7s cubic-bezier(.22,1,.36,1);
+    }
+    .wf-icon {
+      width: 38px; height: 38px;
+      color: var(--gold);
+      margin-bottom: 6px;
+      filter: drop-shadow(0 0 8px rgba(201,162,39,0.4));
     }
     .product-right.visible .wf-callout { opacity: 1; transform: translateY(0); }
     .product-right.visible .wf-tl { transition-delay: 0.35s; }
@@ -1756,21 +1763,46 @@
       <div class="wireframe-stage">
         <img id="wardrobeStatic" src="img/wardrobe-wireframe-desktop.webp" alt="AI Furniture wireframe gardırop" loading="lazy" width="865" height="770"/>
         <div class="wf-callout wf-tl">
+          <svg class="wf-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="20,3 36,12 36,28 20,37 4,28 4,12"/>
+            <path d="M20,3 L20,37 M4,12 L36,28 M4,28 L36,12 M20,3 L4,28 M20,3 L36,28 M20,37 L4,12 M20,37 L36,12" stroke-width="0.6" opacity="0.55"/>
+            <circle cx="20" cy="20" r="2" fill="currentColor" stroke="none"/>
+          </svg>
           <span class="wf-eyebrow" data-tr="01 · ZEKA" data-en="01 · BRAIN">01 · ZEKA</span>
           <span class="wf-label" data-tr="AI Beyin" data-en="AI Brain">AI Beyin</span>
           <span class="wf-desc" data-tr="Claude destekli öneri motoru" data-en="Claude-powered recommendation engine">Claude destekli öneri motoru</span>
         </div>
         <div class="wf-callout wf-tr">
+          <svg class="wf-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+            <circle cx="20" cy="20" r="2.5" fill="currentColor" stroke="none"/>
+            <circle cx="20" cy="20" r="7" opacity="0.85"/>
+            <circle cx="20" cy="20" r="12" opacity="0.6"/>
+            <circle cx="20" cy="20" r="17" opacity="0.35"/>
+          </svg>
           <span class="wf-eyebrow" data-tr="02 · ALGI" data-en="02 · SENSORS">02 · ALGI</span>
           <span class="wf-label" data-tr="IoT Sensörler" data-en="IoT Sensors">IoT Sensörler</span>
           <span class="wf-desc" data-tr="Hava, ışık, sıcaklık takibi" data-en="Weather, light, temperature">Hava, ışık, sıcaklık takibi</span>
         </div>
         <div class="wf-callout wf-bl">
+          <svg class="wf-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="4" width="22" height="32" rx="2.5"/>
+            <line x1="14" y1="33" x2="26" y2="33" stroke-width="0.6" opacity="0.5"/>
+            <circle cx="20" cy="20" r="1.6" fill="currentColor" stroke="none"/>
+            <circle cx="20" cy="20" r="5" opacity="0.7"/>
+            <circle cx="20" cy="20" r="8.5" opacity="0.4"/>
+          </svg>
           <span class="wf-eyebrow" data-tr="03 · ARAYÜZ" data-en="03 · INTERFACE">03 · ARAYÜZ</span>
           <span class="wf-label" data-tr="Dokunmatik Ekran" data-en="Touchscreen">Dokunmatik Ekran</span>
           <span class="wf-desc" data-tr="Tavandan tabana 100&quot; panel" data-en="Floor-to-ceiling 100&quot; panel">Tavandan tabana 100" panel</span>
         </div>
         <div class="wf-callout wf-br">
+          <svg class="wf-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+            <line x1="20" y1="3" x2="20" y2="9"/>
+            <path d="M20,9 L11,18 L29,18 Z" stroke-width="1.3"/>
+            <line x1="20" y1="18" x2="20" y2="30"/>
+            <path d="M7,30 L33,30 L29,34 L11,34 Z" />
+            <line x1="13" y1="32" x2="27" y2="32" stroke-width="0.6" opacity="0.5"/>
+          </svg>
           <span class="wf-eyebrow" data-tr="04 · HAREKET" data-en="04 · MOTION">04 · HAREKET</span>
           <span class="wf-label" data-tr="Otonom Asansör" data-en="Auto Lift">Otonom Asansör</span>
           <span class="wf-desc" data-tr="Kıyafetler önünüze gelir" data-en="Clothes come to you">Kıyafetler önünüze gelir</span>
