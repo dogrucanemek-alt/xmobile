@@ -466,12 +466,6 @@
     @keyframes waveDrift { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
     .divider { display: none; }
 
-    /* ── PRODUCT SECTION ── */
-    .product-section {
-      background: #000; padding: 80px 60px;
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 100px; align-items: flex-start; max-width: 1360px; margin: 0 auto;
-    }
     .section-title {
       font-family: 'Cormorant Garamond', 'Bodoni Moda', serif;
       font-size: clamp(32px, 3.8vw, 52px);
@@ -1033,76 +1027,6 @@
     }
     .stat-number.board-anim { animation: boardFlip 0.55s cubic-bezier(0.22,1,0.36,1) both; }
 
-    /* ── PRODUCT 3D WARDROBE CANVAS ── */
-    #wardrobeScene {
-      width: 100%; height: 240px; display: block;
-      margin-top: 20px; border-radius: 2px;
-      opacity: 0.9;
-    }
-    /* Desktop: live canvas is too subtle (WebGL 1px lines invisible on
-       standard monitors). Show pre-rendered mobile screenshot instead. */
-    .wireframe-stage {
-      display: none;
-      position: relative;
-      margin-top: 28px;
-      padding: 24px 0;
-    }
-    #wardrobeStatic {
-      width: 100%; height: auto; display: block;
-      margin: 0 auto; border-radius: 2px;
-      filter: drop-shadow(0 0 32px rgba(201,162,39,0.22));
-    }
-    .wf-callout {
-      position: absolute;
-      display: flex; flex-direction: column; gap: 6px;
-      max-width: 160px;
-      padding-left: 14px;
-      border-left: 1px solid rgba(201,162,39,0.35);
-      opacity: 0; transform: translateY(8px);
-      transition: opacity 0.7s cubic-bezier(.22,1,.36,1), transform 0.7s cubic-bezier(.22,1,.36,1);
-    }
-    .wf-icon {
-      width: 38px; height: 38px;
-      color: var(--gold);
-      margin-bottom: 6px;
-      filter: drop-shadow(0 0 8px rgba(201,162,39,0.4));
-    }
-    .product-right.visible .wf-callout { opacity: 1; transform: translateY(0); }
-    .product-right.visible .wf-tl { transition-delay: 0.35s; }
-    .product-right.visible .wf-tr { transition-delay: 0.5s; }
-    .product-right.visible .wf-bl { transition-delay: 0.65s; }
-    .product-right.visible .wf-br { transition-delay: 0.8s; }
-    .wf-eyebrow {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 9.5px; font-weight: 600; letter-spacing: 2.4px;
-      color: var(--gold); text-transform: uppercase;
-    }
-    .wf-label {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 19px; font-weight: 700; letter-spacing: -0.01em;
-      color: #fff;
-    }
-    .wf-desc {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 11.5px; font-weight: 300; line-height: 1.55;
-      color: rgba(255,255,255,0.55);
-    }
-    /* Position callouts around the wireframe — left side flipped (border on right) */
-    .wf-tl { top: 8%;  left: 2%;  text-align: right; padding-left: 0; padding-right: 14px; border-left: none; border-right: 1px solid rgba(201,162,39,0.35); align-items: flex-end; }
-    .wf-bl { bottom: 12%; left: 2%; text-align: right; padding-left: 0; padding-right: 14px; border-left: none; border-right: 1px solid rgba(201,162,39,0.35); align-items: flex-end; }
-    .wf-tr { top: 8%;  right: 2%; }
-    .wf-br { bottom: 12%; right: 2%; }
-
-    @media (min-width: 769px) {
-      #wardrobeScene { display: none; }
-      .wireframe-stage { display: block; }
-    }
-    @media (max-width: 1100px) {
-      .wf-callout { max-width: 130px; }
-      .wf-label { font-size: 16px; }
-      .wf-desc { font-size: 10.5px; }
-    }
-
     /* ── TECH INSIDE — exploded diagram section ── */
     .tech-section {
       background: #050505; padding: 96px 0 112px;
@@ -1377,7 +1301,6 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 1024px) {
-      .product-section { grid-template-columns: 1fr; gap: 56px; }
       .features-grid { grid-template-columns: repeat(2, 1fr); }
     }
     /* ── HAMBURGER ── */
@@ -1424,7 +1347,6 @@
       .hero-content { left: 24px; right: 24px; bottom: 72px; }
       .hero-ghost { display: none; }
       .coming-soon-content { left: 24px; right: 24px; bottom: 72px; }
-      .product-section { padding: 72px 24px; }
       .app-section { padding: 72px 24px; }
       .app-layout { grid-template-columns: 1fr; gap: 48px; }
       .app-visual { order: -1; }
@@ -2045,89 +1967,6 @@
   <div class="scroll-hint">
     <span data-tr="Kaydır" data-en="Scroll">Kaydır</span>
     <div class="scroll-arrow"></div>
-  </div>
-</section>
-
-<!-- PRODUCT -->
-<section id="product">
-  <div class="product-section">
-    <div class="product-left">
-      <p class="eyebrow reveal-left" data-tr="AI Furniture'ı Tanıyın" data-en="Introducing AI Furniture">AI Furniture'ı Tanıyın</p>
-      <h2 class="section-title reveal-left reveal-d1" data-tr="Gardırobunuz.<br>Artık Düşünüyor." data-en="Your wardrobe.<br>Now it thinks.">Gardırobunuz.<br>Artık Düşünüyor.</h2>
-      <p class="section-body reveal-left reveal-d2" data-tr="Yapay zeka destekli, tavan yüksekliğinde dokunmatik ekranlı gardırop. Her sabah mükemmel kombin — hava durumuna, takviminize ve zevkinize göre seçilmiş." data-en="A floor-to-ceiling touchscreen wardrobe powered by AI. Every morning, the perfect outfit — chosen for the weather, your calendar, your taste.">Yapay zeka destekli, tavan yüksekliğinde dokunmatik ekranlı gardırop. Her sabah mükemmel kombin — hava durumuna, takviminize ve zevkinize göre seçilmiş.</p>
-      <a href="#waitlist" class="btn reveal-left reveal-d3" data-tr="Ön Sipariş Ver →" data-en="Pre-order Now →">Ön Sipariş Ver →</a>
-    </div>
-    <div class="product-right reveal-right reveal-d1">
-      <div class="stats-grid">
-        <div class="stat-item reveal reveal-d1">
-          <span class="stat-number" data-target="3" data-suffix="s">3s</span>
-          <span class="stat-label" data-tr="Kombin önerisi" data-en="Outfit suggestion">Kombin önerisi</span>
-        </div>
-        <div class="stat-item reveal reveal-d2">
-          <span class="stat-number">∞</span>
-          <span class="stat-label" data-tr="Stil kombinasyonu" data-en="Style combinations">Stil kombinasyonu</span>
-        </div>
-        <div class="stat-item reveal reveal-d3">
-          <span class="stat-number">AI</span>
-          <span class="stat-label" data-tr="Claude destekli motor" data-en="Claude-powered">Claude destekli motor</span>
-        </div>
-        <div class="stat-item reveal reveal-d4">
-          <span class="stat-number" data-target="24" data-suffix="/7">24/7</span>
-          <span class="stat-label" data-tr="Hava durumu takibi" data-en="Weather-aware">Hava durumu takibi</span>
-        </div>
-      </div>
-      <canvas id="wardrobeScene"></canvas>
-      <div class="wireframe-stage">
-        <img id="wardrobeStatic" src="img/wardrobe-wireframe-desktop.webp" alt="AI Furniture wireframe gardırop" loading="lazy" width="865" height="770"/>
-        <div class="wf-callout wf-tl">
-          <svg class="wf-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" aria-hidden="true">
-            <polygon points="20,3 36,12 36,28 20,37 4,28 4,12"/>
-            <path d="M20,3 L20,37 M4,12 L36,28 M4,28 L36,12 M20,3 L4,28 M20,3 L36,28 M20,37 L4,12 M20,37 L36,12" stroke-width="0.6" opacity="0.55"/>
-            <circle cx="20" cy="20" r="2" fill="currentColor" stroke="none"/>
-          </svg>
-          <span class="wf-eyebrow" data-tr="01 · ZEKA" data-en="01 · BRAIN">01 · ZEKA</span>
-          <span class="wf-label" data-tr="AI Beyin" data-en="AI Brain">AI Beyin</span>
-          <span class="wf-desc" data-tr="Claude destekli öneri motoru" data-en="Claude-powered recommendation engine">Claude destekli öneri motoru</span>
-        </div>
-        <div class="wf-callout wf-tr">
-          <svg class="wf-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
-            <circle cx="20" cy="20" r="2.5" fill="currentColor" stroke="none"/>
-            <circle cx="20" cy="20" r="7" opacity="0.85"/>
-            <circle cx="20" cy="20" r="12" opacity="0.6"/>
-            <circle cx="20" cy="20" r="17" opacity="0.35"/>
-          </svg>
-          <span class="wf-eyebrow" data-tr="02 · ALGI" data-en="02 · SENSORS">02 · ALGI</span>
-          <span class="wf-label" data-tr="IoT Sensörler" data-en="IoT Sensors">IoT Sensörler</span>
-          <span class="wf-desc" data-tr="Hava, ışık, sıcaklık takibi" data-en="Weather, light, temperature">Hava, ışık, sıcaklık takibi</span>
-        </div>
-        <div class="wf-callout wf-bl">
-          <svg class="wf-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true">
-            <rect x="9" y="4" width="22" height="32" rx="2.5"/>
-            <line x1="14" y1="33" x2="26" y2="33" stroke-width="0.6" opacity="0.5"/>
-            <circle cx="20" cy="20" r="1.6" fill="currentColor" stroke="none"/>
-            <circle cx="20" cy="20" r="5" opacity="0.7"/>
-            <circle cx="20" cy="20" r="8.5" opacity="0.4"/>
-          </svg>
-          <span class="wf-eyebrow" data-tr="03 · ARAYÜZ" data-en="03 · INTERFACE">03 · ARAYÜZ</span>
-          <span class="wf-label" data-tr="Dokunmatik Ekran" data-en="Touchscreen">Dokunmatik Ekran</span>
-          <span class="wf-desc" data-tr="Tavandan tabana 100&quot; panel" data-en="Floor-to-ceiling 100&quot; panel">Tavandan tabana 100" panel</span>
-        </div>
-        <div class="wf-callout wf-br">
-          <svg class="wf-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
-            <!-- person silhouette outline -->
-            <circle cx="20" cy="10" r="3.5"/>
-            <path d="M13,36 L13,20 Q13,16 20,16 Q27,16 27,20 L27,36"/>
-            <!-- clothing overlay arrow + ripple -->
-            <path d="M8,22 L14,22" stroke-width="0.8" opacity="0.5"/>
-            <path d="M26,22 L32,22" stroke-width="0.8" opacity="0.5"/>
-            <circle cx="20" cy="22" r="9" stroke-width="0.7" opacity="0.4" stroke-dasharray="2 2"/>
-          </svg>
-          <span class="wf-eyebrow" data-tr="04 · DENEME" data-en="04 · TRY-ON">04 · DENEME</span>
-          <span class="wf-label" data-tr="Sanal Deneme" data-en="Virtual Try-On">Sanal Deneme</span>
-          <span class="wf-desc" data-tr="Açmadan üzerinizde görün" data-en="See it on you before opening">Açmadan üzerinizde görün</span>
-        </div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -4352,107 +4191,6 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
 </script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/three@0.160.0/build/three.min.js';document.head.appendChild(s);"></script>
 <script>
-// ── WARDROBE 3D SCENE (product section) ──
-(function() {
-  var canvas = document.getElementById('wardrobeScene');
-  if (!canvas || !window.THREE) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { canvas.style.display='none'; return; }
-
-  var W = canvas.offsetWidth || 400, H = 280;
-  canvas.width = W * Math.min(devicePixelRatio, 2);
-  canvas.height = H * Math.min(devicePixelRatio, 2);
-
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-  renderer.setClearColor(0x000000, 0);
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.setSize(W, H);
-
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 100);
-  camera.position.set(0, 0.5, 5.2);
-
-  // ── WARDROBE WIREFRAME ──
-  var bodyGeo  = new THREE.BoxGeometry(2.4, 3.4, 1.0);
-  var bodyEdge = new THREE.EdgesGeometry(bodyGeo);
-  var goldMat  = new THREE.LineBasicMaterial({ color: 0xFFCC33 });
-  var wardrobeBody = new THREE.LineSegments(bodyEdge, goldMat);
-  scene.add(wardrobeBody);
-
-  // Door lines (left & right halves)
-  var doorGeo  = new THREE.PlaneGeometry(1.15, 3.3);
-  var doorEdge = new THREE.EdgesGeometry(doorGeo);
-  var dimMat   = new THREE.LineBasicMaterial({ color: 0x666644, transparent: true, opacity: 0.7 });
-  var doorL = new THREE.LineSegments(doorEdge, dimMat);
-  doorL.position.set(-0.6, 0, 0.51);
-  var doorR = new THREE.LineSegments(doorEdge, dimMat);
-  doorR.position.set(0.6, 0, 0.51);
-  scene.add(doorL); scene.add(doorR);
-
-  // Screen glow plane inside
-  var scrGeo = new THREE.PlaneGeometry(2.1, 3.1);
-  var scrMat = new THREE.MeshBasicMaterial({ color: 0x0a0804, transparent: true, opacity: 0.6 });
-  var screen = new THREE.Mesh(scrGeo, scrMat);
-  screen.position.z = -0.49;
-  var scrEdgeMat = new THREE.LineBasicMaterial({ color: 0xCA8A04, transparent: true, opacity: 0.35 });
-  var scrEdge = new THREE.LineSegments(new THREE.EdgesGeometry(scrGeo), scrEdgeMat);
-  scrEdge.position.z = -0.48;
-  scene.add(screen); scene.add(scrEdge);
-
-  // Horizontal shelf lines (3 shelves)
-  [-0.8, 0.4, 1.5].forEach(function(y) {
-    var shelfGeo  = new THREE.PlaneGeometry(2.2, 0.01);
-    var shelfEdge = new THREE.EdgesGeometry(shelfGeo);
-    var shelfLine = new THREE.LineSegments(shelfEdge, new THREE.LineBasicMaterial({ color: 0x444433, transparent: true, opacity: 0.5 }));
-    shelfLine.position.set(0, y - 1.7, -0.48);
-    scene.add(shelfLine);
-  });
-
-  // Floating particles
-  var pGeo = new THREE.BufferGeometry();
-  var pCount = 80, pPos = new Float32Array(pCount * 3);
-  for (var i = 0; i < pCount * 3; i++) pPos[i] = (Math.random() - 0.5) * 10;
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-  var particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xCA8A04, size: 0.035, transparent: true, opacity: 0.4 }));
-  scene.add(particles);
-
-  // Grid floor
-  var grid = new THREE.GridHelper(7, 14, 0x5a4419, 0x3a2c10);
-  grid.position.y = -1.7;
-  scene.add(grid);
-
-  // Mouse tracking
-  var mx = 0, my = 0;
-  document.addEventListener('mousemove', function(e) {
-    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
-    my = (e.clientY / window.innerHeight - 0.5) * 2;
-  }, { passive: true });
-
-  // Intersection observer — only animate when visible
-  var visible = false;
-  var io = new IntersectionObserver(function(e) { visible = e[0].isIntersecting; }, { threshold: 0.1 });
-  io.observe(canvas);
-
-  var t = 0;
-  function animate() {
-    requestAnimationFrame(animate);
-    if (!visible) return;
-    t += 0.006;
-    var ry = Math.sin(t * 0.4) * 0.25 + mx * 0.12;
-    var rx = my * 0.06;
-    [wardrobeBody, doorL, doorR, screen, scrEdge].forEach(function(o) {
-      o.rotation.y = ry; o.rotation.x = rx;
-    });
-    scene.children.forEach(function(o) {
-      if (o.isLineSegments && o !== wardrobeBody && o !== doorL && o !== doorR && o !== scrEdge) {
-        o.rotation.y = ry; o.rotation.x = rx;
-      }
-    });
-    particles.rotation.y += 0.0008;
-    renderer.render(scene, camera);
-  }
-  animate();
-})();
-
 // ── WAITLIST WEBGL SHADER ──
 (function() {
   var canvas = document.getElementById('waitlistBg');
@@ -4515,129 +4253,6 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
 })();
 </script>
 <script>
-(function() {
-  if (!window.THREE || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  var W = window.innerWidth, H = window.innerHeight;
-  var scene   = new THREE.Scene();
-  var camera  = new THREE.PerspectiveCamera(55, W / H, 0.1, 200);
-  camera.position.set(0, 0, 9);
-
-  var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setClearColor(0x000000, 0);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-  renderer.setSize(W, H);
-  renderer.domElement.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;';
-
-  // Canvas hero-bg ile hero-overlay arasına girer → overlay onu kısar, doğal blend
-  var heroOverlay = document.querySelector('.hero-overlay');
-  heroOverlay.parentNode.insertBefore(renderer.domElement, heroOverlay);
-
-  // ── Floating particles ──
-  var pCount = 130;
-  var pPos   = new Float32Array(pCount * 3);
-  var pSpeed = new Float32Array(pCount);
-  for (var i = 0; i < pCount; i++) {
-    pPos[i*3]   = (Math.random() - 0.5) * 26;
-    pPos[i*3+1] = (Math.random() - 0.5) * 15;
-    pPos[i*3+2] = (Math.random() - 0.5) * 6;
-    pSpeed[i]   = 0.003 + Math.random() * 0.005;
-  }
-  var pGeo = new THREE.BufferGeometry();
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-  var pMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.045, transparent: true, opacity: 0.45 });
-  scene.add(new THREE.Points(pGeo, pMat));
-
-  // ── Wireframe clothing cards ──
-  var cards = [];
-  var cardDefs = [
-    { x: -4.2, y: 1.2,  z: -1.5, ry: 0.4,  rx: 0.1,  s: 0.85 },
-    { x:  3.8, y: -0.4, z: -1.0, ry: -0.5, rx: -0.1, s: 0.65 },
-    { x:  0.5, y: 2.2,  z: -2.5, ry: 0.2,  rx: 0.2,  s: 1.0  },
-    { x: -2.0, y: -1.8, z: -0.8, ry: -0.3, rx: 0.15, s: 0.55 },
-    { x:  4.5, y: 1.8,  z: -2.0, ry: 0.6,  rx: -0.2, s: 0.70 },
-  ];
-  cardDefs.forEach(function(d) {
-    var geo  = new THREE.BoxGeometry(1.1, 1.7, 0.12);
-    var mat  = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.07 });
-    var mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(d.x, d.y, d.z);
-    mesh.rotation.set(d.rx, d.ry, 0);
-    mesh.scale.setScalar(d.s);
-    scene.add(mesh);
-    cards.push({ mesh: mesh, speed: 0.0015 + Math.random() * 0.0025, floatOffset: Math.random() * Math.PI * 2 });
-  });
-
-  // ── Scan ring ──
-  var ringGeo = new THREE.RingGeometry(0.1, 0.18, 80);
-  var ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.0, side: THREE.DoubleSide });
-  var ring    = new THREE.Mesh(ringGeo, ringMat);
-  ring.rotation.x = -Math.PI * 0.5;
-  ring.position.set(0, -2.5, 0);
-  scene.add(ring);
-  var ringPhase = 0;
-
-  // ── Horizontal grid lines ──
-  var lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.04 });
-  for (var li = 0; li < 6; li++) {
-    var lg = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(-14, -3.5 + li * 1.2, -1),
-      new THREE.Vector3( 14, -3.5 + li * 1.2, -1),
-    ]);
-    scene.add(new THREE.Line(lg, lineMat));
-  }
-
-  var t0 = Date.now();
-
-  function animate() {
-    requestAnimationFrame(animate);
-    var t = (Date.now() - t0) * 0.001;
-
-    // Particles gentle drift upward
-    var pa = pGeo.attributes.position.array;
-    for (var pi = 0; pi < pCount; pi++) {
-      pa[pi*3+1] += pSpeed[pi] * 0.4;
-      if (pa[pi*3+1] > 8) pa[pi*3+1] = -8;
-    }
-    pGeo.attributes.position.needsUpdate = true;
-
-    // Cards rotate + float
-    cards.forEach(function(c) {
-      c.mesh.rotation.y += c.speed;
-      c.mesh.position.y += Math.sin(t + c.floatOffset) * 0.0008;
-    });
-
-    // Scan ring pulse
-    ringPhase = (ringPhase + 0.007) % (Math.PI * 2);
-    var rp = (Math.sin(ringPhase) + 1) / 2;
-    ring.scale.setScalar(rp * 5 + 0.5);
-    ring.material.opacity = (1 - rp) * 0.18;
-
-    // Subtle camera sway
-    camera.position.x = Math.sin(t * 0.09) * 0.25;
-    camera.position.y = Math.cos(t * 0.07) * 0.15;
-    camera.lookAt(0, 0, 0);
-
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  window.addEventListener('resize', function() {
-    var nw = window.innerWidth, nh = window.innerHeight;
-    camera.aspect = nw / nh;
-    camera.updateProjectionMatrix();
-    renderer.setSize(nw, nh);
-  }, { passive: true });
-
-  // Scroll parallax on 3D canvas
-  window.addEventListener('scroll', function() {
-    var sy = window.scrollY;
-    if (sy < window.innerHeight) {
-      renderer.domElement.style.opacity = 1 - sy / (window.innerHeight * 0.8);
-    }
-  }, { passive: true });
-})();
-
 // ── WAITLIST ──
 // ── FAQ ACCORDION ──
 function toggleFaq(btn) {
