@@ -985,11 +985,17 @@
     #wardrobeScene {
       width: 100%; height: 240px; display: block;
       margin-top: 20px; border-radius: 2px;
-      opacity: 1;
-      filter:
-        brightness(2.4) contrast(1.35)
-        drop-shadow(0 0 8px rgba(255,200,50,0.65))
-        drop-shadow(0 0 2px rgba(255,230,140,0.9));
+      opacity: 0.9;
+    }
+    /* Desktop: live canvas is too subtle (WebGL 1px lines invisible on
+       standard monitors). Show pre-rendered mobile screenshot instead. */
+    #wardrobeStatic {
+      display: none;
+      width: 100%; height: auto; margin-top: 20px; border-radius: 2px;
+    }
+    @media (min-width: 769px) {
+      #wardrobeScene { display: none; }
+      #wardrobeStatic { display: block; }
     }
 
     /* ── WAITLIST SHADER BG ── */
@@ -1691,6 +1697,7 @@
         </div>
       </div>
       <canvas id="wardrobeScene"></canvas>
+      <img id="wardrobeStatic" src="img/wardrobe-wireframe-desktop.webp" alt="AI Furniture wireframe gardırop" loading="lazy" width="865" height="770"/>
     </div>
   </div>
 </section>

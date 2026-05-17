@@ -54,6 +54,7 @@ html = html.replace('img/bedroom.webp',         BASE + 'bedroom.webp')
 html = html.replace('img/living-room.webp',     BASE + 'living-room.webp')
 html = html.replace('img/app-screens.webp',     BASE + 'app-screens.webp')
 html = html.replace('img/wardrobe-concept.webp', BASE + 'wardrobe-concept.webp')
+html = html.replace('img/wardrobe-wireframe-desktop.webp', BASE + 'wardrobe-wireframe-desktop.webp')
 
 # PNG fallback URLs — point to WebP in prod (~97% browser support)
 # Old browsers (IE / pre-2020 Android) lose these fallback images; saves multi-MB
