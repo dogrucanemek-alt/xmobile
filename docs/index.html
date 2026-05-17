@@ -2509,47 +2509,96 @@ function _initTechScene(){
   ai.name = 'ai';
   scene.add(ai);
 
-  // 7. TRYON — tailor's dress-form mannequin (no stick figure)
+  // 7. TRYON — proper humanoid figure (head + torso + arms + legs, fashion-croquis proportions)
   function buildTryOn() {
     var g = new THREE.Group();
-    // 2D silhouette profile (hip → waist → bust → shoulder → neck)
-    var profile = [
-      new THREE.Vector2(0.05, -1.00),
-      new THREE.Vector2(0.32, -0.95),
-      new THREE.Vector2(0.34, -0.65),  // hip
-      new THREE.Vector2(0.27, -0.30),  // waist
-      new THREE.Vector2(0.38,  0.10),  // bust
-      new THREE.Vector2(0.44,  0.40),  // shoulder broad
-      new THREE.Vector2(0.10,  0.55),  // neck narrow
-      new THREE.Vector2(0.12,  0.70),  // neck top
-      new THREE.Vector2(0.0,   0.72)   // closing cap
+    var mat = new THREE.MeshBasicMaterial({
+      color: GOLD_BRIGHT, wireframe: true, transparent: true, opacity: 0.85
+    });
+
+    // Head
+    var head = new THREE.Mesh(new THREE.SphereGeometry(0.13, 14, 14), mat);
+    head.position.y = 0.95;
+    g.add(head);
+
+    // Neck
+    var neck = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.055, 0.10, 10), mat);
+    neck.position.y = 0.80;
+    g.add(neck);
+
+    // Torso — lathed silhouette (shoulder → bust → waist → hip)
+    var torsoProfile = [
+      new THREE.Vector2(0.18, -0.10),  // hip bottom
+      new THREE.Vector2(0.16,  0.05),  // hip-waist
+      new THREE.Vector2(0.13,  0.18),  // waist (narrowest)
+      new THREE.Vector2(0.19,  0.40),  // bust
+      new THREE.Vector2(0.24,  0.58),  // shoulder broad
+      new THREE.Vector2(0.06,  0.66),  // neck base
+      new THREE.Vector2(0,     0.68)
     ];
-    var form = new THREE.LatheGeometry(profile, 18);
-    // Wireframe mesh — clean outline + topology lines
-    g.add(new THREE.Mesh(form, new THREE.MeshBasicMaterial({
-      color: GOLD_BRIGHT, wireframe: true, transparent: true, opacity: 0.75
-    })));
-    // Stand base disc
-    var base = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.22, 0.26, 0.04, 24, 1, false),
-      new THREE.MeshBasicMaterial({ color: GOLD })
+    var torso = new THREE.Mesh(new THREE.LatheGeometry(torsoProfile, 14), mat);
+    g.add(torso);
+
+    // Arms — upper + lower with hand
+    function buildArm(sign) {
+      var arm = new THREE.Group();
+      var upper = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.045, 0.36, 8), mat);
+      upper.position.set(sign * 0.28, 0.42, 0);
+      upper.rotation.z = sign * -0.08;
+      arm.add(upper);
+      var lower = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.038, 0.34, 8), mat);
+      lower.position.set(sign * 0.31, 0.07, 0);
+      lower.rotation.z = sign * -0.05;
+      arm.add(lower);
+      var hand = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 10), mat);
+      hand.position.set(sign * 0.33, -0.13, 0);
+      arm.add(hand);
+      return arm;
+    }
+    g.add(buildArm(-1));
+    g.add(buildArm(1));
+
+    // Hips — flattened ellipsoid
+    var hips = new THREE.Mesh(new THREE.SphereGeometry(0.18, 14, 14), mat);
+    hips.position.y = -0.13;
+    hips.scale.set(1, 0.55, 0.9);
+    g.add(hips);
+
+    // Legs — upper + lower with foot
+    function buildLeg(sign) {
+      var leg = new THREE.Group();
+      var upper = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.075, 0.48, 10), mat);
+      upper.position.set(sign * 0.10, -0.43, 0);
+      leg.add(upper);
+      var lower = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.05, 0.45, 10), mat);
+      lower.position.set(sign * 0.10, -0.91, 0);
+      leg.add(lower);
+      var foot = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.05, 0.20), mat);
+      foot.position.set(sign * 0.10, -1.16, 0.05);
+      leg.add(foot);
+      return leg;
+    }
+    g.add(buildLeg(-1));
+    g.add(buildLeg(1));
+
+    // Base ring (floor ring under feet)
+    var stand = new THREE.Mesh(
+      new THREE.TorusGeometry(0.32, 0.012, 4, 24),
+      new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.55 })
     );
-    base.position.y = -1.05;
-    g.add(base);
-    // Stand pole
-    g.add(thickLine(
-      new THREE.Vector3(0, -1.03, 0),
-      new THREE.Vector3(0, -0.80, 0),
-      0.020, GOLD
-    ));
-    // Aura ring at waist
+    stand.rotation.x = Math.PI / 2;
+    stand.position.y = -1.22;
+    g.add(stand);
+
+    // Aura ring at hip level
     var aura = new THREE.Mesh(
       new THREE.TorusGeometry(0.55, 0.008, 4, 36),
-      new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.35 })
+      new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.30 })
     );
-    aura.rotation.x = Math.PI / 2;
-    aura.position.y = -0.15;
+    aura.rotation.x = Math.PI / 2.4;
+    aura.position.y = -0.10;
     g.add(aura);
+
     return g;
   }
   var tryon = buildTryOn();
