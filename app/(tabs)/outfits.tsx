@@ -541,7 +541,6 @@ export default function Outfits() {
 
     // Fashn AI ayakkabı/aksesuar desteklemiyor — bu parçaları zincirden çıkar.
     const denenebilir = parcalar.filter(p => kategoriSec(p) !== null);
-    const atlanan    = parcalar.filter(p => kategoriSec(p) === null);
 
     if (denenebilir.length === 0) {
       Alert.alert(
@@ -1797,69 +1796,86 @@ ${jsonFormat}`;
                   tryOn.secilenParcalar.some(p => !seciliKombin?.parcalar.includes(p))
                     ? tryOn.secilenParcalar
                     : (seciliKombin?.parcalar ?? []);
-                return kaynak;
-              })().map((p, i) => {
-                const aranan = p.toLowerCase();
-                const eslesme = kiyafetler.find(k => {
-                  const kAd = k.ad?.toLowerCase() ?? '';
-                  return kAd === aranan || aranan.includes(kAd) || kAd.includes(aranan);
-                });
-                const secili = tryOn.secilenParcalar.includes(p);
-                const fotoVar = !!eslesme?.foto;
-                const denenemez = kategoriSec(p) === null; // ayakkabı/aksesuar — Fashn desteklemiyor
+                const denenebilir = kaynak.filter(p => kategoriSec(p) !== null);
+                const tamamlayici = kaynak.filter(p => kategoriSec(p) === null);
+                const findEslesme = (p: string) => {
+                  const aranan = p.toLowerCase();
+                  return kiyafetler.find(k => {
+                    const kAd = k.ad?.toLowerCase() ?? '';
+                    return kAd === aranan || aranan.includes(kAd) || kAd.includes(aranan);
+                  });
+                };
                 return (
-                  <TouchableOpacity
-                    key={i}
-                    style={[
-                      styles.tryOnParcaBtn,
-                      { backgroundColor: renkler.kart, borderColor: secili ? '#00D4FF' : renkler.sinir },
-                      secili && { borderWidth: 1.5 },
-                      denenemez && { opacity: 0.45 },
-                    ]}
-                    onPress={() => {
-                      if (denenemez) {
-                        Alert.alert(
-                          dil === 'en' ? 'Not supported' : 'Desteklenmiyor',
-                          dil === 'en'
-                            ? 'Virtual try-on works for tops, bottoms and dresses only. Shoes and accessories are not supported yet.'
-                            : 'Sanal deneme şu an üst, alt ve elbise için çalışıyor. Ayakkabı ve aksesuar henüz desteklenmiyor.',
-                        );
-                        return;
-                      }
-                      parcaToggle(p);
-                    }}
-                    activeOpacity={0.7}
-                  >
-                    {eslesme?.foto
-                      ? <Image source={{ uri: eslesme.foto }} style={styles.tryOnParcaFoto} />
-                      : (
-                        <View style={[styles.tryOnParcaFotoYok, { backgroundColor: renkler.chip, alignItems: 'center', justifyContent: 'center' }]}>
-                          <Text style={{ fontSize: 22 }}>🪄</Text>
+                  <>
+                    {/* Denenebilir parçalar — checkbox listesi */}
+                    {denenebilir.map((p, i) => {
+                      const eslesme = findEslesme(p);
+                      const secili = tryOn.secilenParcalar.includes(p);
+                      const fotoVar = !!eslesme?.foto;
+                      return (
+                        <TouchableOpacity
+                          key={i}
+                          style={[
+                            styles.tryOnParcaBtn,
+                            { backgroundColor: renkler.kart, borderColor: secili ? '#00D4FF' : renkler.sinir },
+                            secili && { borderWidth: 1.5 },
+                          ]}
+                          onPress={() => parcaToggle(p)}
+                          activeOpacity={0.7}
+                        >
+                          {eslesme?.foto
+                            ? <Image source={{ uri: eslesme.foto }} style={styles.tryOnParcaFoto} />
+                            : (
+                              <View style={[styles.tryOnParcaFotoYok, { backgroundColor: renkler.chip, alignItems: 'center', justifyContent: 'center' }]}>
+                                <Text style={{ fontSize: 22 }}>🪄</Text>
+                              </View>
+                            )
+                          }
+                          <View style={{ flex: 1 }}>
+                            <Text style={[styles.tryOnParcaAd, { color: renkler.metin }]}>{p}</Text>
+                            {!fotoVar && (
+                              <Text style={{ color: '#00D4FF', fontSize: 10 }}>
+                                {dil === 'en' ? '🪄 AI will generate photo' : '🪄 AI fotoğraf üretecek'}
+                              </Text>
+                            )}
+                          </View>
+                          <View style={[
+                            styles.tryOnCheckbox,
+                            { borderColor: secili ? '#00D4FF' : renkler.sinir },
+                            secili && { backgroundColor: '#00D4FF' },
+                          ]}>
+                            {secili && <Text style={{ color: '#000', fontSize: 11, fontWeight: '800' }}>✓</Text>}
+                          </View>
+                        </TouchableOpacity>
+                      );
+                    })}
+                    {/* Tamamlayıcı parçalar — try-on'da gösterilmez ama kombinin parçası */}
+                    {tamamlayici.length > 0 && (
+                      <View style={{ marginTop: 12, padding: 10, borderRadius: 12, backgroundColor: renkler.chip }}>
+                        <Text style={{ color: renkler.metin2, fontSize: 11, marginBottom: 8 }}>
+                          {dil === 'en'
+                            ? '✨ Outfit also includes (shown alongside the result):'
+                            : '✨ Bu kombinde ayrıca (sonuçta yan tarafta gösterilir):'}
+                        </Text>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                          {tamamlayici.map((p, i) => {
+                            const eslesme = findEslesme(p);
+                            return (
+                              <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 8, backgroundColor: renkler.kart }}>
+                                {eslesme?.foto
+                                  ? <Image source={{ uri: eslesme.foto }} style={{ width: 28, height: 28, borderRadius: 6 }} />
+                                  : <Text style={{ fontSize: 16 }}>👔</Text>
+                                }
+                                <Text style={{ color: renkler.metin, fontSize: 12 }}>{p}</Text>
+                              </View>
+                            );
+                          })}
                         </View>
-                      )
-                    }
-                    <View style={{ flex: 1 }}>
-                      <Text style={[styles.tryOnParcaAd, { color: renkler.metin }]}>{p}</Text>
-                      {denenemez ? (
-                        <Text style={{ color: renkler.metin2, fontSize: 10 }}>
-                          {dil === 'en' ? '🚫 not supported' : '🚫 desteklenmiyor'}
-                        </Text>
-                      ) : !fotoVar && (
-                        <Text style={{ color: '#00D4FF', fontSize: 10 }}>
-                          {dil === 'en' ? '🪄 AI will generate photo' : '🪄 AI fotoğraf üretecek'}
-                        </Text>
-                      )}
-                    </View>
-                    <View style={[
-                      styles.tryOnCheckbox,
-                      { borderColor: secili ? '#00D4FF' : renkler.sinir },
-                      secili && { backgroundColor: '#00D4FF' },
-                    ]}>
-                      {secili && <Text style={{ color: '#000', fontSize: 11, fontWeight: '800' }}>✓</Text>}
-                    </View>
-                  </TouchableOpacity>
+                      </View>
+                    )}
+                  </>
                 );
-              })}
+              })()}
 
               {/* Dene butonu */}
               {tryOn.secilenParcalar.length > 0 && (
@@ -1941,6 +1957,37 @@ ${jsonFormat}`;
                       </View>
                     )}
                   </View>
+                  {/* Tamamlayıcı parçalar — kombinin parçası ama görselde gösterilmiyor */}
+                  {(() => {
+                    const tumParcalar = seciliKombin?.parcalar ?? [];
+                    const tamamlayici = tumParcalar.filter(p => kategoriSec(p) === null);
+                    if (tamamlayici.length === 0) return null;
+                    return (
+                      <View style={{ paddingHorizontal: 12, paddingTop: 10 }}>
+                        <Text style={{ color: renkler.metin2, fontSize: 11, marginBottom: 6 }}>
+                          {dil === 'en' ? '✨ Outfit also includes:' : '✨ Bu kombinde ayrıca:'}
+                        </Text>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                          {tamamlayici.map((p, i) => {
+                            const aranan = p.toLowerCase();
+                            const eslesme = kiyafetler.find(k => {
+                              const kAd = k.ad?.toLowerCase() ?? '';
+                              return kAd === aranan || aranan.includes(kAd) || kAd.includes(aranan);
+                            });
+                            return (
+                              <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 8, backgroundColor: renkler.kart, borderWidth: 1, borderColor: renkler.sinir }}>
+                                {eslesme?.foto
+                                  ? <Image source={{ uri: eslesme.foto }} style={{ width: 32, height: 32, borderRadius: 6 }} />
+                                  : <Text style={{ fontSize: 18 }}>👔</Text>
+                                }
+                                <Text style={{ color: renkler.metin, fontSize: 12 }}>{p}</Text>
+                              </View>
+                            );
+                          })}
+                        </View>
+                      </View>
+                    );
+                  })()}
                   {/* DEBUG: URL göster — sonuç beyazsa tarayıcıda kontrol et */}
                   <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
                     <Text style={{ color: renkler.metin2, fontSize: 10, marginBottom: 4 }} numberOfLines={2}>
