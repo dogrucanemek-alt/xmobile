@@ -1801,7 +1801,13 @@
     }
     .video-feature-tag:last-child { border-right: none; }
     .video-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); opacity: 0.6; }
-    @media (max-width: 768px) { .video-section { padding: 80px 24px; } .video-feature-tag { padding: 10px 12px; font-size: 9px; } }
+    @media (max-width: 768px) {
+      .video-section { padding: 80px 24px; }
+      .video-wrap { padding-top: 150%; }
+      #demoVideo { height: auto; width: 92%; max-width: 92%; }
+      .video-unmute { bottom: 80px; right: 16px; }
+      .video-feature-tag { padding: 10px 12px; font-size: 9px; }
+    }
 
     /* ── B2B SECTION ── */
     .b2b-section {
