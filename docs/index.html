@@ -1802,11 +1802,22 @@
     .video-feature-tag:last-child { border-right: none; }
     .video-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); opacity: 0.6; }
     @media (max-width: 768px) {
-      .video-section { padding: 80px 24px; }
-      .video-wrap { padding-top: 150%; }
-      #demoVideo { height: auto; width: 92%; max-width: 92%; }
-      .video-unmute { bottom: 80px; right: 16px; }
-      .video-feature-tag { padding: 10px 12px; font-size: 9px; }
+      .video-section { padding: 64px 24px; }
+      .video-wrap {
+        padding-top: 0;
+        aspect-ratio: 392 / 850;
+        max-width: 260px;
+        margin: 0 auto;
+      }
+      #demoVideo {
+        position: absolute; top: 0; left: 0;
+        width: 100%; height: 100%; max-width: none;
+        transform: none; object-fit: cover;
+        border-radius: 8px;
+      }
+      .video-unmute { bottom: 56px; right: 8px; width: 36px; height: 36px; }
+      .video-unmute svg { width: 16px; height: 16px; }
+      .video-features-bar { display: none; }
     }
 
     /* ── B2B SECTION ── */
@@ -2722,7 +2733,7 @@ function _initTechScene(){
     return g;
   }
   var tryon = buildTryOn();
-  tryon.position.set(-WW/2 - 2.1, 0.2, 1.0);
+  tryon.position.set(-WW/2 - 2.1, -1.0, 1.0);
   tryon.name = 'tryon';
   scene.add(tryon);
 
