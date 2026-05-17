@@ -1226,6 +1226,86 @@
       .tech-grid-left, .tech-grid-right { grid-template-columns: 1fr; }
     }
 
+    /* ── COMPARISON TABLE ── */
+    .compare-section {
+      background: #060606; padding: 112px 24px 128px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .compare-header { text-align: center; max-width: 720px; margin: 0 auto 56px; }
+    .compare-header .eyebrow { color: var(--gold); margin-bottom: 16px; display: inline-block; }
+    .compare-header .section-title em { font-style: italic; color: var(--gold); font-weight: 700; }
+    .compare-header .section-body { margin: 0 auto; max-width: 540px; }
+    .compare-table {
+      max-width: 920px; margin: 0 auto;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px; overflow: hidden;
+      background: rgba(255,255,255,0.015);
+    }
+    .compare-row {
+      display: grid;
+      grid-template-columns: minmax(180px, 1.6fr) 1fr 1fr 1.1fr;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background 0.25s;
+    }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-row:hover { background: rgba(201,162,39,0.025); }
+    .compare-row.compare-head { background: rgba(255,255,255,0.025); }
+    .compare-row.compare-head:hover { background: rgba(255,255,255,0.025); }
+    .compare-cell {
+      padding: 18px 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; font-weight: 300;
+      color: rgba(255,255,255,0.85);
+      border-right: 1px solid rgba(255,255,255,0.04);
+      position: relative;
+    }
+    .compare-cell:last-child { border-right: none; }
+    .compare-feature {
+      justify-content: flex-start;
+      font-weight: 500;
+      color: #fff;
+      letter-spacing: 0.01em;
+    }
+    .compare-us {
+      background: rgba(201,162,39,0.06);
+      position: relative;
+    }
+    .compare-head .compare-us {
+      background: rgba(201,162,39,0.12);
+    }
+    .compare-col-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px; font-weight: 700; letter-spacing: -0.01em;
+      color: #fff;
+      text-align: center;
+      line-height: 1.1;
+    }
+    .compare-us .compare-col-title { color: var(--gold); }
+    .compare-badge {
+      position: absolute; top: 8px; right: 10px;
+      color: var(--gold); font-size: 14px;
+    }
+    .cmp-check { color: var(--gold); font-size: 20px; font-weight: 700; }
+    .cmp-warn  { color: #b8a560; font-size: 18px; opacity: 0.65; }
+    .cmp-x     { color: rgba(255,255,255,0.22); font-size: 18px; }
+    .compare-legend {
+      display: flex; justify-content: center; gap: 28px; margin-top: 28px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; font-weight: 400;
+      color: rgba(255,255,255,0.45); letter-spacing: 0.5px;
+    }
+    .compare-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    @media (max-width: 768px) {
+      .compare-section { padding: 80px 16px 96px; }
+      .compare-row { grid-template-columns: minmax(140px, 1.4fr) 1fr 1fr 1fr; }
+      .compare-cell { padding: 12px 8px; font-size: 12px; }
+      .compare-col-title { font-size: 13px; }
+      .compare-feature { font-size: 12px; }
+      .cmp-check, .cmp-warn, .cmp-x { font-size: 16px; }
+      .compare-legend { flex-direction: column; gap: 8px; text-align: center; }
+    }
+
     /* ── WAITLIST SHADER BG ── */
     .waitlist-section { position: relative; overflow: hidden; isolation: isolate; }
     #waitlistBg {
@@ -3559,6 +3639,84 @@ _initTechScene();
         <span>Supabase</span>
       </div>
     </div>
+  </div>
+</section>
+
+
+
+<!-- COMPARISON -->
+<section class="compare-section" id="compare">
+  <div class="compare-header">
+    <p class="eyebrow reveal" data-tr="Karşılaştırma" data-en="Comparison">Karşılaştırma</p>
+    <h2 class="section-title reveal reveal-d1" data-tr="Neden&nbsp;<em>AI Furniture</em>?" data-en="Why <em>AI Furniture</em>?">Neden&nbsp;<em>AI Furniture</em>?</h2>
+    <p class="section-body reveal reveal-d2" data-tr="Bir gardırop, bir akıllı hoparlör ve düşünen bir gardırop arasındaki fark." data-en="The difference between a wardrobe, a smart speaker, and a wardrobe that thinks.">Bir gardırop, bir akıllı hoparlör ve düşünen bir gardırop arasındaki fark.</p>
+  </div>
+  <div class="compare-table reveal reveal-d3">
+    <div class="compare-row compare-head">
+      <div class="compare-cell compare-feature"></div>
+      <div class="compare-cell"><span class="compare-col-title" data-tr="Geleneksel<br>Gardırop" data-en="Traditional<br>Wardrobe">Geleneksel<br>Gardırop</span></div>
+      <div class="compare-cell"><span class="compare-col-title" data-tr="Akıllı<br>Hoparlör" data-en="Smart<br>Speaker">Akıllı<br>Hoparlör</span></div>
+      <div class="compare-cell compare-us"><span class="compare-col-title" data-tr="AI&nbsp;Furniture" data-en="AI&nbsp;Furniture">AI&nbsp;Furniture</span><span class="compare-badge">★</span></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell compare-feature" data-tr="Kıyafetlerini hatırlar" data-en="Remembers your clothes">Kıyafetlerini hatırlar</div>
+      <div class="compare-cell"><span class="cmp-x">✗</span></div>
+      <div class="compare-cell"><span class="cmp-x">✗</span></div>
+      <div class="compare-cell compare-us"><span class="cmp-check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell compare-feature" data-tr="Sabah kombin önerisi" data-en="Morning outfit suggestion">Sabah kombin önerisi</div>
+      <div class="compare-cell"><span class="cmp-x">✗</span></div>
+      <div class="compare-cell"><span class="cmp-warn">⚠</span></div>
+      <div class="compare-cell compare-us"><span class="cmp-check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell compare-feature" data-tr="Hava durumuna göre seçim" data-en="Weather-aware selection">Hava durumuna göre seçim</div>
+      <div class="compare-cell"><span class="cmp-x">✗</span></div>
+      <div class="compare-cell"><span class="cmp-warn">⚠</span></div>
+      <div class="compare-cell compare-us"><span class="cmp-check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell compare-feature" data-tr="Sanal kıyafet deneme" data-en="Virtual try-on">Sanal kıyafet deneme</div>
+      <div class="compare-cell"><span class="cmp-x">✗</span></div>
+      <div class="compare-cell"><span class="cmp-x">✗</span></div>
+      <div class="compare-cell compare-us"><span class="cmp-check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell compare-feature" data-tr="Stil tercihlerini öğrenir" data-en="Learns style preferences">Stil tercihlerini öğrenir</div>
+      <div class="compare-cell"><span class="cmp-x">✗</span></div>
+      <div class="compare-cell"><span class="cmp-warn">⚠</span></div>
+      <div class="compare-cell compare-us"><span class="cmp-check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell compare-feature" data-tr="Sesli komut" data-en="Voice control">Sesli komut</div>
+      <div class="compare-cell"><span class="cmp-x">✗</span></div>
+      <div class="compare-cell"><span class="cmp-check">✓</span></div>
+      <div class="compare-cell compare-us"><span class="cmp-check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell compare-feature" data-tr="AI stil sohbeti" data-en="AI style chat">AI stil sohbeti</div>
+      <div class="compare-cell"><span class="cmp-x">✗</span></div>
+      <div class="compare-cell"><span class="cmp-x">✗</span></div>
+      <div class="compare-cell compare-us"><span class="cmp-check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell compare-feature" data-tr="Premium mobilya tasarımı" data-en="Premium furniture design">Premium mobilya tasarımı</div>
+      <div class="compare-cell"><span class="cmp-warn">⚠</span></div>
+      <div class="compare-cell"><span class="cmp-x">✗</span></div>
+      <div class="compare-cell compare-us"><span class="cmp-check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell compare-feature" data-tr="Mobil uygulama ile sync" data-en="Mobile app sync">Mobil uygulama ile sync</div>
+      <div class="compare-cell"><span class="cmp-x">✗</span></div>
+      <div class="compare-cell"><span class="cmp-warn">⚠</span></div>
+      <div class="compare-cell compare-us"><span class="cmp-check">✓</span></div>
+    </div>
+  </div>
+  <div class="compare-legend reveal reveal-d4">
+    <span><span class="cmp-check">✓</span> <span data-tr="Tam destek" data-en="Full support">Tam destek</span></span>
+    <span><span class="cmp-warn">⚠</span> <span data-tr="Kısmi / sınırlı" data-en="Partial / limited">Kısmi / sınırlı</span></span>
+    <span><span class="cmp-x">✗</span> <span data-tr="Yok" data-en="None">Yok</span></span>
   </div>
 </section>
 
