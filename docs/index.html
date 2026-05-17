@@ -1078,11 +1078,55 @@
       padding: 0 32px;
     }
     .tech-stage-bg { display: none; }
-    .tech-diagram {
-      width: 100%; height: auto; display: block;
+    .tech-canvas-wrap {
+      position: relative; width: 100%;
+      aspect-ratio: 16 / 11; min-height: 480px;
       grid-column: 2; grid-row: 1;
-      filter: drop-shadow(0 0 60px rgba(201,162,39,0.20));
+      filter: drop-shadow(0 0 60px rgba(201,162,39,0.18));
+    }
+    .tech-canvas-wrap canvas {
+      display: block; width: 100%; height: 100%;
+      cursor: grab; touch-action: none;
       border-radius: 4px;
+    }
+    .tech-canvas-wrap canvas:active { cursor: grabbing; }
+    .tech-connectors {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .tech-connectors line {
+      stroke: rgba(201,162,39,0.42);
+      stroke-width: 1;
+      stroke-dasharray: 3 3;
+      opacity: 0;
+      transition: opacity 0.4s ease, stroke 0.25s;
+    }
+    .tech-connectors line.active {
+      stroke: rgba(255,213,74,0.85);
+      stroke-width: 1.4;
+      stroke-dasharray: none;
+    }
+    .tech-stage.is-ready .tech-connectors line { opacity: 1; }
+    .tech-hint {
+      position: absolute; left: 50%; bottom: -34px;
+      transform: translateX(-50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: rgba(255,255,255,0.32);
+      pointer-events: none; white-space: nowrap;
+      opacity: 0; transition: opacity 0.4s ease;
+    }
+    .tech-stage.is-ready .tech-hint { opacity: 1; }
+    .tech-diagram-mobile {
+      display: none;
+      grid-column: 2; grid-row: 1;
+      width: 100%; height: auto;
+      border-radius: 4px;
+    }
+    @media (max-width: 1100px) {
+      .tech-canvas-wrap { display: none; }
+      .tech-diagram-mobile { display: block; grid-column: 1; }
     }
     .tech-grid {
       display: flex; flex-direction: column;
@@ -1957,10 +2001,15 @@
 
   <div class="tech-stage reveal reveal-d3">
     <div class="tech-stage-bg" aria-hidden="true"></div>
-    <img class="tech-diagram" src="img/wardrobe-exploded-diagram.webp" alt="AI Furniture teknik şema — exploded view" loading="lazy" width="2000" height="1125"/>
+    <div class="tech-canvas-wrap">
+      <canvas id="techCanvas" aria-label="Etkileşimli 3D dolap teknik şeması — sürükleyerek döndürün"></canvas>
+      <svg class="tech-connectors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg>
+      <div class="tech-hint" aria-hidden="true" data-tr="Sürükleyerek döndür · İki parmakla yakınlaş" data-en="Drag to rotate · Pinch to zoom">Sürükleyerek döndür · İki parmakla yakınlaş</div>
+    </div>
+    <img class="tech-diagram-mobile" src="img/wardrobe-exploded-diagram.webp" alt="AI Furniture teknik şema" loading="lazy" width="2000" height="1125"/>
 
     <div class="tech-grid tech-grid-left">
-      <div class="tech-card">
+      <div class="tech-card" data-target="cv">
         <svg class="tech-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true">
           <circle cx="16" cy="16" r="6"/><circle cx="16" cy="16" r="2.5" fill="currentColor" stroke="none"/>
           <rect x="6" y="9" width="20" height="14" rx="1.5"/>
@@ -1969,7 +2018,7 @@
         <span class="tech-label" data-tr="Computer Vision Tarama" data-en="Computer Vision Scan">Computer Vision Tarama</span>
         <span class="tech-desc" data-tr="4 geniş açılı kamera, gardırobunuzu otomatik katalogluyor" data-en="4 wide-angle cameras auto-catalog your wardrobe">4 geniş açılı kamera, gardırobunuzu otomatik katalogluyor</span>
       </div>
-      <div class="tech-card">
+      <div class="tech-card" data-target="ir">
         <svg class="tech-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
           <rect x="5" y="13" width="22" height="6" rx="1"/>
           <circle cx="10" cy="16" r="1.3" fill="currentColor" stroke="none"/>
@@ -1980,7 +2029,7 @@
         <span class="tech-label" data-tr="IR Sensör Dizisi" data-en="IR Sensor Array">IR Sensör Dizisi</span>
         <span class="tech-desc" data-tr="Kıyafetlerin konumunu hassas tespit eder" data-en="Precise garment position detection">Kıyafetlerin konumunu hassas tespit eder</span>
       </div>
-      <div class="tech-card">
+      <div class="tech-card" data-target="rfid">
         <svg class="tech-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true">
           <rect x="8" y="6" width="16" height="20" rx="2"/>
           <path d="M14,12 L20,12 M14,16 L20,16 M14,20 L18,20" stroke-width="0.9"/>
@@ -1990,7 +2039,7 @@
         <span class="tech-label" data-tr="RFID Okuyucu" data-en="RFID Reader">RFID Okuyucu</span>
         <span class="tech-desc" data-tr="Akıllı etiketlerle kıyafet meta-veri okuma" data-en="Smart-tag metadata for every garment">Akıllı etiketlerle kıyafet meta-veri okuma</span>
       </div>
-      <div class="tech-card">
+      <div class="tech-card" data-target="temp">
         <svg class="tech-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
           <path d="M16,4 L16,28 M10,8 L22,8 M8,14 L24,14 M10,20 L22,20"/>
           <circle cx="16" cy="14" r="2" fill="currentColor" stroke="none"/>
@@ -1999,7 +2048,7 @@
         <span class="tech-label" data-tr="Sıcaklık &amp; Nem" data-en="Temperature &amp; Humidity">Sıcaklık &amp; Nem</span>
         <span class="tech-desc" data-tr="Gardırop içi optimum koşul takibi" data-en="Optimal interior climate monitoring">Gardırop içi optimum koşul takibi</span>
       </div>
-      <div class="tech-card">
+      <div class="tech-card" data-target="motion">
         <svg class="tech-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
           <circle cx="16" cy="16" r="3" fill="currentColor" stroke="none"/>
           <path d="M16,16 L8,8 M16,16 L24,8 M16,16 L8,24 M16,16 L24,24" stroke-width="0.9" opacity="0.7"/>
@@ -2012,7 +2061,7 @@
     </div>
 
     <div class="tech-grid tech-grid-right">
-      <div class="tech-card">
+      <div class="tech-card" data-target="ai">
         <svg class="tech-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" aria-hidden="true">
           <polygon points="16,3 28,10 28,22 16,29 4,22 4,10"/>
           <path d="M16,3 L16,29 M4,10 L28,22 M4,22 L28,10" stroke-width="0.7" opacity="0.6"/>
@@ -2022,7 +2071,7 @@
         <span class="tech-label" data-tr="Claude AI Beyin" data-en="Claude AI Brain">Claude AI Beyin</span>
         <span class="tech-desc" data-tr="Anthropic Claude motoru, kişisel stil önerileri üretir" data-en="Anthropic Claude engine for personalized style">Anthropic Claude motoru, kişisel stil önerileri üretir</span>
       </div>
-      <div class="tech-card">
+      <div class="tech-card" data-target="screen">
         <svg class="tech-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true">
           <rect x="9" y="3" width="14" height="26" rx="2"/>
           <line x1="13" y1="26" x2="19" y2="26" stroke-width="0.7" opacity="0.6"/>
@@ -2034,7 +2083,7 @@
         <span class="tech-label" data-tr='100" Dokunmatik Ekran' data-en='100" Touchscreen'>100" Dokunmatik Ekran</span>
         <span class="tech-desc" data-tr="Android OS, mobil uygulama ile gerçek zamanlı sync" data-en="Android OS, real-time sync with mobile app">Android OS, mobil uygulama ile gerçek zamanlı sync</span>
       </div>
-      <div class="tech-card">
+      <div class="tech-card" data-target="tryon">
         <svg class="tech-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
           <circle cx="16" cy="9" r="3"/>
           <path d="M10,28 L10,17 Q10,14 16,14 Q22,14 22,17 L22,28"/>
@@ -2044,7 +2093,7 @@
         <span class="tech-label" data-tr="Sanal Deneme" data-en="Virtual Try-On">Sanal Deneme</span>
         <span class="tech-desc" data-tr="Açmadan üzerinizde gerçekçi görüntü, Generative AI" data-en="See it on you before opening — generative AI">Açmadan üzerinizde gerçekçi görüntü, Generative AI</span>
       </div>
-      <div class="tech-card">
+      <div class="tech-card" data-target="memory">
         <svg class="tech-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" aria-hidden="true">
           <path d="M5,22 Q10,12 16,12 Q22,12 27,22"/>
           <circle cx="9" cy="20" r="1.5" fill="currentColor" stroke="none"/>
@@ -2056,7 +2105,7 @@
         <span class="tech-label" data-tr="Stil Hafızası" data-en="Style Memory">Stil Hafızası</span>
         <span class="tech-desc" data-tr="Tercihlerinizi öğrenir, zamanla daha kişisel önerir" data-en="Learns your preferences, adapts over time">Tercihlerinizi öğrenir, zamanla daha kişisel önerir</span>
       </div>
-      <div class="tech-card">
+      <div class="tech-card" data-target="chat">
         <svg class="tech-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true">
           <path d="M6,8 Q6,4 10,4 L20,4 Q24,4 24,8 L24,18 Q24,22 20,22 L13,22 L8,27 L8,22 Q6,22 6,18 Z"/>
           <circle cx="12" cy="13" r="1" fill="currentColor" stroke="none"/>
@@ -2070,6 +2119,566 @@
     </div>
   </div>
 </section>
+
+<script>
+// ── Minimal orbit controls (inline, no dependency) — wait for THREE ──
+function _initMiniOrbit(){
+  if (!window.THREE) { setTimeout(_initMiniOrbit, 50); return; }
+  function MiniOrbit(camera, dom) {
+    var sph = new THREE.Spherical();
+    sph.setFromVector3(new THREE.Vector3().subVectors(camera.position, new THREE.Vector3(0,0,0)));
+    var self = this;
+    self.target = new THREE.Vector3(0, 0, 0);
+    self.minDistance = 1; self.maxDistance = 100;
+    self.minPolarAngle = 0.05; self.maxPolarAngle = Math.PI - 0.05;
+    self.dampingFactor = 0.08;
+    self.enabled = true;
+    self.autoRotate = false;
+    self.autoRotateSpeed = 0.5;
+    self._tTheta = sph.theta;
+    self._tPhi = sph.phi;
+    self._tRadius = sph.radius;
+    self._cTheta = sph.theta;
+    self._cPhi = sph.phi;
+    self._cRadius = sph.radius;
+    self._isPointerDown = false;
+    self._pinchStartDist = 0;
+    self._pinchStartRadius = 0;
+    self._listeners = {};
+    self.addEventListener = function(evt, fn) {
+      (self._listeners[evt] = self._listeners[evt] || []).push(fn);
+    };
+    function fire(evt) { (self._listeners[evt] || []).forEach(function(f) { f({type: evt}); }); }
+
+    var lastX = 0, lastY = 0;
+    function onPointerDown(e) {
+      if (!self.enabled) return;
+      if (e.touches && e.touches.length === 2) {
+        var dx = e.touches[0].clientX - e.touches[1].clientX;
+        var dy = e.touches[0].clientY - e.touches[1].clientY;
+        self._pinchStartDist = Math.sqrt(dx*dx + dy*dy);
+        self._pinchStartRadius = self._tRadius;
+      } else {
+        var p = e.touches ? e.touches[0] : e;
+        lastX = p.clientX; lastY = p.clientY;
+        self._isPointerDown = true;
+        fire('start');
+      }
+    }
+    function onPointerMove(e) {
+      if (!self.enabled) return;
+      if (e.touches && e.touches.length === 2) {
+        var dx = e.touches[0].clientX - e.touches[1].clientX;
+        var dy = e.touches[0].clientY - e.touches[1].clientY;
+        var d = Math.sqrt(dx*dx + dy*dy);
+        if (self._pinchStartDist > 0) {
+          self._tRadius = Math.max(self.minDistance, Math.min(self.maxDistance,
+            self._pinchStartRadius * self._pinchStartDist / d));
+        }
+        e.preventDefault();
+        return;
+      }
+      if (!self._isPointerDown) return;
+      var p = e.touches ? e.touches[0] : e;
+      var dx2 = p.clientX - lastX;
+      var dy2 = p.clientY - lastY;
+      lastX = p.clientX; lastY = p.clientY;
+      var rect = dom.getBoundingClientRect();
+      self._tTheta -= 2 * Math.PI * dx2 / rect.width;
+      self._tPhi -= Math.PI * dy2 / rect.height;
+      self._tPhi = Math.max(self.minPolarAngle, Math.min(self.maxPolarAngle, self._tPhi));
+      if (e.touches) e.preventDefault();
+    }
+    function onPointerUp() {
+      self._isPointerDown = false;
+      self._pinchStartDist = 0;
+    }
+    function onWheel(e) {
+      if (!self.enabled) return;
+      e.preventDefault();
+      var delta = e.deltaY > 0 ? 1.08 : 0.92;
+      self._tRadius = Math.max(self.minDistance, Math.min(self.maxDistance, self._tRadius * delta));
+    }
+
+    dom.addEventListener('mousedown', onPointerDown);
+    dom.addEventListener('touchstart', onPointerDown, { passive: true });
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('touchmove', onPointerMove, { passive: false });
+    window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('touchend', onPointerUp);
+    dom.addEventListener('wheel', onWheel, { passive: false });
+
+    self.update = function() {
+      if (self.autoRotate && !self._isPointerDown) {
+        self._tTheta -= self.autoRotateSpeed * 0.005;
+      }
+      // damping
+      self._cTheta += (self._tTheta - self._cTheta) * self.dampingFactor;
+      self._cPhi += (self._tPhi - self._cPhi) * self.dampingFactor;
+      self._cRadius += (self._tRadius - self._cRadius) * self.dampingFactor;
+      var s = new THREE.Spherical(self._cRadius, self._cPhi, self._cTheta);
+      var v = new THREE.Vector3().setFromSpherical(s).add(self.target);
+      camera.position.copy(v);
+      camera.lookAt(self.target);
+    };
+  }
+  window.MiniOrbit = MiniOrbit;
+}
+_initMiniOrbit();
+</script>
+<script>
+// ── TECH SECTION: live 3D scene + connector overlay ──
+function _initTechScene(){
+  var canvas = document.getElementById('techCanvas');
+  if (!canvas) return;
+  if (!window.THREE || !window.MiniOrbit) { setTimeout(_initTechScene, 80); return; }
+  if (window.innerWidth < 1100) return;
+  (function() {
+
+  var wrap = canvas.parentElement;
+  var svg = wrap.querySelector('.tech-connectors');
+  var stage = wrap.closest('.tech-stage');
+  var cards = document.querySelectorAll('.tech-section .tech-card[data-target]');
+
+  var GOLD = 0xc9a227, GOLD_BRIGHT = 0xffd54a, GOLD_DIM = 0x6a5018, GOLD_PALE = 0xfff0a0;
+
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x050505, 1);
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
+  camera.position.set(3.2, 2.0, 11);
+
+  var controls = new MiniOrbit(camera, canvas);
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 7;
+  controls.maxDistance = 16;
+  controls.minPolarAngle = Math.PI * 0.18;
+  controls.maxPolarAngle = Math.PI * 0.62;
+  controls.target.set(0, 0.3, 0);
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  controls.autoRotate = !reduced;
+  controls.autoRotateSpeed = 0.35;
+
+  // ── helpers ──
+  function thickLine(p1, p2, radius, color, opacity) {
+    var r = radius || 0.015;
+    var dist = p1.distanceTo(p2);
+    if (dist < 0.001) return new THREE.Group();
+    var geo = new THREE.CylinderGeometry(r, r, dist, 8, 1, false);
+    var mat = new THREE.MeshBasicMaterial({
+      color: color || GOLD,
+      transparent: opacity !== undefined && opacity < 1,
+      opacity: opacity !== undefined ? opacity : 1
+    });
+    var mesh = new THREE.Mesh(geo, mat);
+    var mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
+    mesh.position.copy(mid);
+    var dir = new THREE.Vector3().subVectors(p2, p1).normalize();
+    var q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), dir);
+    mesh.quaternion.copy(q);
+    return mesh;
+  }
+  function thickBoxEdges(w, h, d, r, color) {
+    var x = w/2, y = h/2, z = d/2;
+    var c = [
+      new THREE.Vector3(-x,-y,-z), new THREE.Vector3( x,-y,-z),
+      new THREE.Vector3( x,-y, z), new THREE.Vector3(-x,-y, z),
+      new THREE.Vector3(-x, y,-z), new THREE.Vector3( x, y,-z),
+      new THREE.Vector3( x, y, z), new THREE.Vector3(-x, y, z)
+    ];
+    var edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+    var g = new THREE.Group();
+    edges.forEach(function(e) { g.add(thickLine(c[e[0]], c[e[1]], r, color)); });
+    return g;
+  }
+  function rectOutline(w, h, r, color, opacity) {
+    var x = w/2, y = h/2;
+    var c = [new THREE.Vector3(-x,-y,0), new THREE.Vector3(x,-y,0), new THREE.Vector3(x,y,0), new THREE.Vector3(-x,y,0)];
+    var g = new THREE.Group();
+    for (var i = 0; i < 4; i++) g.add(thickLine(c[i], c[(i+1)%4], r, color, opacity));
+    return g;
+  }
+
+  // ── WARDROBE CARCASS ──
+  var WW = 3.0, WH = 4.5, WD = 1.5;
+  scene.add(thickBoxEdges(WW, WH, WD, 0.026, GOLD));
+  // door split (vertical) + interior visible
+  scene.add(thickLine(new THREE.Vector3(0, -WH/2, WD/2 + 0.002), new THREE.Vector3(0, WH/2, WD/2 + 0.002), 0.014, GOLD, 0.5));
+
+  // ── DOORS (open ~75°) ──
+  var doorW = WW/2 - 0.05, doorH = WH - 0.1;
+  function buildDoor(side, hasScreen) {
+    var grp = new THREE.Group();
+    grp.add(rectOutline(doorW, doorH, 0.016, GOLD));
+    if (hasScreen) {
+      var scrW = doorW * 0.72, scrH = doorH * 0.86;
+      grp.add(rectOutline(scrW, scrH, 0.014, GOLD_BRIGHT));
+      var panel = new THREE.Mesh(
+        new THREE.PlaneGeometry(scrW * 0.96, scrH * 0.96),
+        new THREE.MeshBasicMaterial({ color: 0xCA8A04, transparent: true, opacity: 0.30, side: THREE.DoubleSide })
+      );
+      panel.position.z = -0.005;
+      panel.name = 'screen';
+      grp.add(panel);
+      [scrH*0.35, scrH*0.15, scrH*-0.05, scrH*-0.25, scrH*-0.40].forEach(function(y, i) {
+        var lw = scrW * (0.60 + (i%2)*0.15);
+        grp.add(thickLine(new THREE.Vector3(-lw/2, y, 0.012), new THREE.Vector3(lw/2, y, 0.012), 0.012, GOLD_BRIGHT, 0.85));
+      });
+    }
+    grp.position.set(side === 'left' ? -doorW/2 : doorW/2, 0, 0);
+    var pivot = new THREE.Group();
+    pivot.add(grp);
+    pivot.position.set(side === 'left' ? -WW/2 : WW/2, 0, WD/2);
+    pivot.rotation.y = side === 'left' ? -Math.PI * 0.42 : Math.PI * 0.42;
+    return pivot;
+  }
+  scene.add(buildDoor('left', false));
+  scene.add(buildDoor('right', true));
+
+  // ── INTERIOR ──
+  [WH*0.30, 0, WH*-0.20].forEach(function(sy) {
+    scene.add(thickLine(new THREE.Vector3(-WW/2+0.05, sy, -WD/2+0.05), new THREE.Vector3(WW/2-0.05, sy, -WD/2+0.05), 0.014, GOLD_DIM, 0.85));
+    scene.add(thickLine(new THREE.Vector3(-WW/2+0.05, sy, WD/2-0.05), new THREE.Vector3(WW/2-0.05, sy, WD/2-0.05), 0.014, GOLD_DIM, 0.85));
+    [-WW/2+0.05, WW/2-0.05].forEach(function(x) {
+      scene.add(thickLine(new THREE.Vector3(x, sy, -WD/2+0.05), new THREE.Vector3(x, sy, WD/2-0.05), 0.014, GOLD_DIM, 0.85));
+    });
+  });
+  var railY = WH * 0.40;
+  scene.add(thickLine(new THREE.Vector3(-WW/2+0.12, railY, 0), new THREE.Vector3(WW/2-0.12, railY, 0), 0.018, GOLD, 0.95));
+  for (var i = 0; i < 8; i++) {
+    var t = -WW/2 + 0.25 + i * (WW - 0.5) / 7;
+    scene.add(thickLine(new THREE.Vector3(t, railY, 0), new THREE.Vector3(t, railY - 0.35, 0), 0.008, GOLD_BRIGHT, 0.7));
+    scene.add(thickLine(new THREE.Vector3(t-0.12, railY-0.4, 0), new THREE.Vector3(t+0.12, railY-0.4, 0), 0.008, GOLD_BRIGHT, 0.6));
+    scene.add(thickLine(new THREE.Vector3(t-0.12, railY-0.4, 0), new THREE.Vector3(t-0.10, railY-1.05, 0), 0.007, GOLD_BRIGHT, 0.5));
+    scene.add(thickLine(new THREE.Vector3(t+0.12, railY-0.4, 0), new THREE.Vector3(t+0.10, railY-1.05, 0), 0.007, GOLD_BRIGHT, 0.5));
+  }
+  var drawerY = -WH * 0.42;
+  var drawer = rectOutline(WW*0.85, 0.4, 0.014, GOLD);
+  drawer.position.set(0, drawerY, WD/2 - 0.02);
+  scene.add(drawer);
+
+  // ── DISTINCT FEATURE MARKERS (each with .name for connector targeting) ──
+
+  // 1. CV CAMERA (cylinder + lens disc + view cone)
+  function buildCVCamera(pos) {
+    var g = new THREE.Group();
+    var body = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.10, 0.10, 0.22, 12, 1, false),
+      new THREE.MeshBasicMaterial({ color: GOLD })
+    );
+    body.rotation.z = Math.PI / 2;
+    g.add(body);
+    var lens = new THREE.Mesh(
+      new THREE.CircleGeometry(0.075, 16),
+      new THREE.MeshBasicMaterial({ color: GOLD_PALE })
+    );
+    lens.position.x = 0.12;
+    lens.rotation.y = Math.PI / 2;
+    g.add(lens);
+    var dot = new THREE.Mesh(
+      new THREE.SphereGeometry(0.05, 12, 12),
+      new THREE.MeshBasicMaterial({ color: 0xfff5b8 })
+    );
+    g.add(dot);
+    g.position.copy(pos);
+    return g;
+  }
+  var cv1 = buildCVCamera(new THREE.Vector3(-WW/2 + 0.25, WH/2 - 0.30, 0.4));
+  cv1.name = 'cv';
+  scene.add(cv1);
+  // Second CV camera (no separate target but visible)
+  scene.add(buildCVCamera(new THREE.Vector3(WW/2 - 0.25, WH/2 - 0.30, 0.4)));
+
+  // 2. IR SENSOR ARRAY (horizontal bar + 3 dots + faint downward fan)
+  function buildIRSensor() {
+    var g = new THREE.Group();
+    var bar = thickLine(new THREE.Vector3(-0.45, 0, 0), new THREE.Vector3(0.45, 0, 0), 0.04, GOLD);
+    g.add(bar);
+    for (var i = -1; i <= 1; i++) {
+      var dot = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT }));
+      dot.position.set(i * 0.32, 0, 0);
+      g.add(dot);
+      g.add(thickLine(new THREE.Vector3(i * 0.32, 0, 0), new THREE.Vector3(i * 0.32, -0.5, 0), 0.005, GOLD_BRIGHT, 0.4));
+    }
+    return g;
+  }
+  var ir = buildIRSensor();
+  ir.position.set(0, WH/2 - 0.10, -WD/2 + 0.25);
+  ir.name = 'ir';
+  scene.add(ir);
+
+  // 3. RFID READER (flat disc + 3 concentric rings)
+  function buildRFID() {
+    var g = new THREE.Group();
+    var disc = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.18, 0.18, 0.04, 24, 1, false),
+      new THREE.MeshBasicMaterial({ color: GOLD })
+    );
+    g.add(disc);
+    for (var r = 0.10; r <= 0.30; r += 0.07) {
+      var ring = new THREE.Mesh(
+        new THREE.TorusGeometry(r, 0.008, 4, 32),
+        new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT, transparent: true, opacity: 0.55 - (r - 0.10) * 1.2 })
+      );
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = 0.04;
+      g.add(ring);
+    }
+    return g;
+  }
+  var rfid = buildRFID();
+  rfid.position.set(-WW/2 + 0.30, -WH/2 + 0.30, -WD/2 + 0.30);
+  rfid.name = 'rfid';
+  scene.add(rfid);
+
+  // 4. TEMP & HUMIDITY (upright thermometer cylinder + bulb base + dial)
+  function buildTempSensor() {
+    var g = new THREE.Group();
+    var tube = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.04, 0.35, 12, 1, false),
+      new THREE.MeshBasicMaterial({ color: GOLD })
+    );
+    g.add(tube);
+    var bulb = new THREE.Mesh(
+      new THREE.SphereGeometry(0.08, 16, 16),
+      new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT })
+    );
+    bulb.position.y = -0.20;
+    g.add(bulb);
+    // dial — small torus
+    var dial = new THREE.Mesh(
+      new THREE.TorusGeometry(0.06, 0.012, 6, 24),
+      new THREE.MeshBasicMaterial({ color: GOLD_PALE, transparent: true, opacity: 0.85 })
+    );
+    dial.position.set(0.13, 0.05, 0);
+    g.add(dial);
+    return g;
+  }
+  var temp = buildTempSensor();
+  temp.position.set(-WW/2 + 0.10, 0.0, 0);
+  temp.name = 'temp';
+  scene.add(temp);
+
+  // 5. MOTION SENSOR (downward cone + apex sphere)
+  function buildMotionSensor() {
+    var g = new THREE.Group();
+    var cone = new THREE.Mesh(
+      new THREE.ConeGeometry(0.18, 0.32, 12, 1, true),
+      new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT, transparent: true, opacity: 0.45, side: THREE.DoubleSide })
+    );
+    cone.rotation.x = Math.PI;
+    g.add(cone);
+    var apex = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 12), new THREE.MeshBasicMaterial({ color: GOLD_PALE }));
+    apex.position.y = 0.16;
+    g.add(apex);
+    // wireframe ring at base
+    var ring = new THREE.Mesh(
+      new THREE.TorusGeometry(0.18, 0.008, 4, 24),
+      new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT })
+    );
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = -0.16;
+    g.add(ring);
+    return g;
+  }
+  var motion = buildMotionSensor();
+  motion.position.set(0, WH/2 - 0.18, -WD/2 + 0.5);
+  motion.name = 'motion';
+  scene.add(motion);
+
+  // 6. AI BRAIN — icosahedron above wardrobe
+  function buildAIBrain() {
+    var g = new THREE.Group();
+    var icoGeo = new THREE.IcosahedronGeometry(0.42, 1);
+    var icoEdges = new THREE.EdgesGeometry(icoGeo);
+    var ep = icoEdges.attributes.position;
+    for (var i = 0; i < ep.count; i += 2) {
+      var a = new THREE.Vector3().fromBufferAttribute(ep, i);
+      var b = new THREE.Vector3().fromBufferAttribute(ep, i+1);
+      g.add(thickLine(a, b, 0.012, GOLD_BRIGHT, 1));
+    }
+    var core = new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 16), new THREE.MeshBasicMaterial({ color: GOLD_PALE }));
+    g.add(core);
+    return g;
+  }
+  var ai = buildAIBrain();
+  ai.position.set(0, WH/2 + 0.85, -WD/2 + 0.4);
+  ai.name = 'ai';
+  scene.add(ai);
+
+  // 7. TRYON (floating wireframe person silhouette beside wardrobe)
+  function buildTryOn() {
+    var g = new THREE.Group();
+    var head = new THREE.Mesh(
+      new THREE.SphereGeometry(0.16, 12, 12),
+      new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT, wireframe: true })
+    );
+    head.position.y = 0.70;
+    g.add(head);
+    // body trapezoid (3 lines)
+    g.add(thickLine(new THREE.Vector3(-0.20, 0.50, 0), new THREE.Vector3(0.20, 0.50, 0), 0.012, GOLD_BRIGHT));
+    g.add(thickLine(new THREE.Vector3(-0.20, 0.50, 0), new THREE.Vector3(-0.18, -0.40, 0), 0.012, GOLD_BRIGHT));
+    g.add(thickLine(new THREE.Vector3(0.20, 0.50, 0), new THREE.Vector3(0.18, -0.40, 0), 0.012, GOLD_BRIGHT));
+    g.add(thickLine(new THREE.Vector3(-0.18, -0.40, 0), new THREE.Vector3(0.18, -0.40, 0), 0.010, GOLD_BRIGHT, 0.7));
+    // legs
+    g.add(thickLine(new THREE.Vector3(-0.10, -0.40, 0), new THREE.Vector3(-0.12, -0.95, 0), 0.010, GOLD_BRIGHT, 0.7));
+    g.add(thickLine(new THREE.Vector3(0.10, -0.40, 0), new THREE.Vector3(0.12, -0.95, 0), 0.010, GOLD_BRIGHT, 0.7));
+    // arms
+    g.add(thickLine(new THREE.Vector3(-0.20, 0.45, 0), new THREE.Vector3(-0.32, 0.05, 0), 0.010, GOLD_BRIGHT, 0.7));
+    g.add(thickLine(new THREE.Vector3(0.20, 0.45, 0), new THREE.Vector3(0.32, 0.05, 0), 0.010, GOLD_BRIGHT, 0.7));
+    // ghost ring around figure
+    var aura = new THREE.Mesh(
+      new THREE.TorusGeometry(0.45, 0.008, 4, 32),
+      new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.35 })
+    );
+    aura.rotation.x = Math.PI / 2.5;
+    g.add(aura);
+    return g;
+  }
+  var tryon = buildTryOn();
+  tryon.position.set(-WW/2 - 2.1, 0.2, 1.0);
+  tryon.name = 'tryon';
+  scene.add(tryon);
+
+  // 8. STYLE MEMORY (small neural net — sphere nodes connected by lines)
+  function buildStyleMemory() {
+    var g = new THREE.Group();
+    var pts = [
+      [0, 0.3, 0], [-0.25, 0.05, 0.1], [0.25, 0.05, -0.1],
+      [-0.15, -0.25, 0], [0.15, -0.25, 0.05], [0, 0.0, 0.25]
+    ].map(function(p) { return new THREE.Vector3(p[0], p[1], p[2]); });
+    pts.forEach(function(p) {
+      var n = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), new THREE.MeshBasicMaterial({ color: GOLD_PALE }));
+      n.position.copy(p);
+      g.add(n);
+    });
+    // connect adjacent nodes
+    var conn = [[0,1],[0,2],[0,5],[1,3],[2,4],[3,4],[1,5],[2,5]];
+    conn.forEach(function(c) {
+      g.add(thickLine(pts[c[0]], pts[c[1]], 0.005, GOLD_BRIGHT, 0.55));
+    });
+    return g;
+  }
+  var memory = buildStyleMemory();
+  memory.position.set(WW/2 + 2.0, 1.2, -0.3);
+  memory.name = 'memory';
+  scene.add(memory);
+
+  // 9. AI CHAT (speech bubble — rounded rect + tail)
+  function buildChatBubble() {
+    var g = new THREE.Group();
+    // outline rectangle
+    var w = 0.7, h = 0.5;
+    g.add(rectOutline(w, h, 0.012, GOLD_BRIGHT));
+    // 3 dots inside (typing indicator)
+    [-0.15, 0, 0.15].forEach(function(x) {
+      var dot = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), new THREE.MeshBasicMaterial({ color: GOLD_PALE }));
+      dot.position.set(x, 0, 0.01);
+      g.add(dot);
+    });
+    // tail triangle (bottom-left point)
+    g.add(thickLine(new THREE.Vector3(-0.20, -h/2, 0), new THREE.Vector3(-0.32, -h/2 - 0.15, 0), 0.010, GOLD_BRIGHT));
+    g.add(thickLine(new THREE.Vector3(-0.10, -h/2, 0), new THREE.Vector3(-0.32, -h/2 - 0.15, 0), 0.010, GOLD_BRIGHT));
+    return g;
+  }
+  var chat = buildChatBubble();
+  chat.position.set(WW/2 + 1.8, -1.2, 1.2);
+  chat.name = 'chat';
+  scene.add(chat);
+
+  // ── GRID FLOOR & PARTICLES ──
+  var grid = new THREE.GridHelper(14, 28, 0x5a4419, 0x2a2010);
+  grid.position.y = -WH/2 - 0.15;
+  scene.add(grid);
+  var pGeo = new THREE.BufferGeometry();
+  var pCount = 120;
+  var pPos = new Float32Array(pCount * 3);
+  for (var i = 0; i < pCount; i++) {
+    pPos[i*3]   = (Math.random() - 0.5) * 14;
+    pPos[i*3+1] = (Math.random() - 0.3) * 9;
+    pPos[i*3+2] = (Math.random() - 0.5) * 5 - 1.5;
+  }
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+  scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({ color: GOLD_BRIGHT, size: 0.04, transparent: true, opacity: 0.55 })));
+
+  // ── RESIZE ──
+  function resize() {
+    var rect = wrap.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    renderer.setSize(rect.width, rect.height, false);
+    camera.aspect = rect.width / rect.height;
+    camera.updateProjectionMatrix();
+    svg.setAttribute('viewBox', '0 0 ' + rect.width + ' ' + rect.height);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // ── CONNECTOR LINES ──
+  var ns = 'http://www.w3.org/2000/svg';
+  var lines = [];
+  cards.forEach(function(card) {
+    var tgtName = card.dataset.target;
+    var tgt = scene.getObjectByName(tgtName);
+    if (!tgt) return;
+    var line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', '0'); line.setAttribute('y1', '0');
+    line.setAttribute('x2', '0'); line.setAttribute('y2', '0');
+    svg.appendChild(line);
+    lines.push({ line: line, card: card, target: tgt, isLeft: !!card.closest('.tech-grid-left') });
+    card.addEventListener('mouseenter', function() {
+      line.classList.add('active');
+      controls.autoRotate = false;
+    });
+    card.addEventListener('mouseleave', function() {
+      line.classList.remove('active');
+      if (!reduced) controls.autoRotate = true;
+    });
+  });
+
+  // ── VISIBILITY (only render when in viewport) ──
+  var visible = false;
+  new IntersectionObserver(function(entries) { visible = entries[0].isIntersecting; }, { threshold: 0.05 }).observe(stage);
+
+  // ── RENDER LOOP ──
+  var tmp = new THREE.Vector3();
+  function updateConnectors() {
+    var wrapRect = wrap.getBoundingClientRect();
+    lines.forEach(function(L) {
+      var cardRect = L.card.getBoundingClientRect();
+      var x1 = (L.isLeft ? cardRect.right : cardRect.left) - wrapRect.left;
+      var y1 = (cardRect.top + cardRect.bottom) / 2 - wrapRect.top;
+      L.target.getWorldPosition(tmp);
+      tmp.project(camera);
+      var x2 = (tmp.x + 1) / 2 * wrapRect.width;
+      var y2 = (1 - tmp.y) / 2 * wrapRect.height;
+      L.line.setAttribute('x1', x1);
+      L.line.setAttribute('y1', y1);
+      L.line.setAttribute('x2', x2);
+      L.line.setAttribute('y2', y2);
+    });
+  }
+  // Pause auto-rotate on user interaction
+  controls.addEventListener('start', function() { controls.autoRotate = false; });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!visible) return;
+    controls.update();
+    renderer.render(scene, camera);
+    updateConnectors();
+  }
+  // brief delay so layout settles
+  setTimeout(function() {
+    resize();
+    stage.classList.add('is-ready');
+    animate();
+  }, 200);
+  })();
+}
+_initTechScene();
+</script>
 
 <!-- APP -->
 <section class="app-section" id="app">

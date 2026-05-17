@@ -509,14 +509,17 @@ export default function Wardrobe() {
                     ) : null}
                   </View>
                   <View style={styles.kartButonlar}>
-                    <TouchableOpacity
-                      style={[styles.kartBtn, { borderColor: '#00D4FF' }]}
-                      onPress={() => router.push({ pathname: '/outfits', params: { tryOnKiyafetId: k.id } } as any)}
-                      testID={getTestID('wardrobe', 'button', `try-on-${k.id}`)}
-                      {...getButtonA11yProps(`${k.ad} Dene`, 'Bu kıyafeti kullanarak kombin oluştur')}
-                    >
-                      <Text style={[styles.kartBtnText, { color: '#00D4FF' }]}>👗 Dene</Text>
-                    </TouchableOpacity>
+                    {/* Fashn AI ayakkabı/aksesuar try-on'u desteklemiyor — sadece Üst/Alt/Dış Giyim için göster */}
+                    {(k.tur === 'Üst' || k.tur === 'Alt' || k.tur === 'Dış Giyim') && (
+                      <TouchableOpacity
+                        style={[styles.kartBtn, { borderColor: '#00D4FF' }]}
+                        onPress={() => router.push({ pathname: '/outfits', params: { tryOnKiyafetId: k.id } } as any)}
+                        testID={getTestID('wardrobe', 'button', `try-on-${k.id}`)}
+                        {...getButtonA11yProps(`${k.ad} Dene`, 'Bu kıyafeti kullanarak kombin oluştur')}
+                      >
+                        <Text style={[styles.kartBtnText, { color: '#00D4FF' }]}>👗 Dene</Text>
+                      </TouchableOpacity>
+                    )}
                     {k.foto && !hatalıFotolar[k.id] ? (
                       <TouchableOpacity
                         style={[styles.kartBtn, { borderColor: renkler.sinir }]}

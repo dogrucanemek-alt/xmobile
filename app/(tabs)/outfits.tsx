@@ -491,10 +491,17 @@ export default function Outfits() {
     }
   };
 
-  const kategoriSec = (parcaAdi: string): TryOnCategory => {
+  // Fashn AI yalnızca tops/bottoms/one-pieces destekliyor.
+  // Ayakkabı/aksesuar denenirse modelin üst gövdesi hallüsinasyona uğruyor (siyah gömlek → siyah deri ceket).
+  // Bu yüzden null dönen kategoriler try-on zincirinden atlanır.
+  const kategoriSec = (parcaAdi: string): TryOnCategory | null => {
     const a = parcaAdi.toLowerCase();
+    const ayakkabi = ['ayakkabı', 'ayakkabi', 'shoes', 'sneaker', 'bot', 'boot', 'çizme', 'cizme', 'sandalet', 'sandal', 'topuklu', 'loafer', 'mokasen', 'terlik', 'oxford', 'derby'];
+    const aksesuar = ['şapka', 'sapka', 'hat', 'cap', 'beanie', 'kravat', 'tie', 'atkı', 'atki', 'scarf', 'saat', 'watch', 'kemer', 'belt', 'çanta', 'canta', 'bag', 'gözlük', 'gozluk', 'glasses', 'kolye', 'küpe', 'kupe', 'yüzük', 'yuzuk', 'bileklik', 'eldiven', 'glove'];
     const alt      = ['pantolon', 'pant', 'şort', 'short', 'etek', 'skirt', 'tayt', 'jeans', 'kot'];
     const onepiece = ['elbise', 'dress', 'tulum', 'jumpsuit', 'overall'];
+    if (ayakkabi.some(k => a.includes(k))) return null;
+    if (aksesuar.some(k => a.includes(k))) return null;
     if (onepiece.some(k => a.includes(k))) return 'one-pieces';
     if (alt.some(k => a.includes(k)))      return 'bottoms';
     return 'tops';
@@ -531,8 +538,22 @@ export default function Outfits() {
 
     takipEt(Olaylar.TRYON_BASLADI, { parca_sayisi: parcalar.length });
 
+    // Fashn AI ayakkabı/aksesuar desteklemiyor — bu parçaları zincirden çıkar.
+    const denenebilir = parcalar.filter(p => kategoriSec(p) !== null);
+    const atlanan    = parcalar.filter(p => kategoriSec(p) === null);
+
+    if (denenebilir.length === 0) {
+      Alert.alert(
+        dil === 'en' ? 'Not supported' : 'Desteklenmiyor',
+        dil === 'en'
+          ? 'Virtual try-on supports tops, bottoms and one-pieces only. Shoes and accessories are not supported yet.'
+          : 'Sanal deneme şu an yalnızca üst, alt ve elbise için çalışıyor. Ayakkabı ve aksesuar henüz desteklenmiyor.',
+      );
+      return;
+    }
+
     // Tops önce, bottoms/one-pieces sonra
-    const sirali = [...parcalar].sort((a, b) => {
+    const sirali = [...denenebilir].sort((a, b) => {
       const ka = kategoriSec(a), kb = kategoriSec(b);
       if (ka === 'tops' && kb !== 'tops') return -1;
       if (kb === 'tops' && ka !== 'tops') return 1;
@@ -564,6 +585,7 @@ export default function Outfits() {
         const parca = islenecek[i];
         const eslesen = parcaEslesmeAra(parca);
         const kategori = kategoriSec(parca);
+        if (!kategori) continue; // defensive — filtre yukarıda yapıldı
 
         setTryOn(s => ({
           ...s,
@@ -1761,6 +1783,7 @@ ${jsonFormat}`;
                 });
                 const secili = tryOn.secilenParcalar.includes(p);
                 const fotoVar = !!eslesme?.foto;
+                const denenemez = kategoriSec(p) === null; // ayakkabı/aksesuar — Fashn desteklemiyor
                 return (
                   <TouchableOpacity
                     key={i}
@@ -1768,8 +1791,20 @@ ${jsonFormat}`;
                       styles.tryOnParcaBtn,
                       { backgroundColor: renkler.kart, borderColor: secili ? '#00D4FF' : renkler.sinir },
                       secili && { borderWidth: 1.5 },
+                      denenemez && { opacity: 0.45 },
                     ]}
-                    onPress={() => parcaToggle(p)}
+                    onPress={() => {
+                      if (denenemez) {
+                        Alert.alert(
+                          dil === 'en' ? 'Not supported' : 'Desteklenmiyor',
+                          dil === 'en'
+                            ? 'Virtual try-on works for tops, bottoms and dresses only. Shoes and accessories are not supported yet.'
+                            : 'Sanal deneme şu an üst, alt ve elbise için çalışıyor. Ayakkabı ve aksesuar henüz desteklenmiyor.',
+                        );
+                        return;
+                      }
+                      parcaToggle(p);
+                    }}
                     activeOpacity={0.7}
                   >
                     {eslesme?.foto
@@ -1782,7 +1817,11 @@ ${jsonFormat}`;
                     }
                     <View style={{ flex: 1 }}>
                       <Text style={[styles.tryOnParcaAd, { color: renkler.metin }]}>{p}</Text>
-                      {!fotoVar && (
+                      {denenemez ? (
+                        <Text style={{ color: renkler.metin2, fontSize: 10 }}>
+                          {dil === 'en' ? '🚫 not supported' : '🚫 desteklenmiyor'}
+                        </Text>
+                      ) : !fotoVar && (
                         <Text style={{ color: '#00D4FF', fontSize: 10 }}>
                           {dil === 'en' ? '🪄 AI will generate photo' : '🪄 AI fotoğraf üretecek'}
                         </Text>
