@@ -4711,6 +4711,70 @@ if (document.readyState === 'complete') {
   window.addEventListener('load', deferWaitlistFetch, { once: true });
 }
 
+// ── ANALYTICS: custom event tracking ──
+(function() {
+  if (typeof gtag !== 'function') return;
+  function track(eventName, params) {
+    try { gtag('event', eventName, params || {}); } catch (e) {}
+  }
+  // CTA clicks (any .btn / .nav-cta / .waitlist-btn)
+  document.querySelectorAll('a.btn, a.nav-cta, button.waitlist-btn, a.btn-solid').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var label = (el.textContent || '').trim().slice(0, 50);
+      var href = el.getAttribute('href') || '';
+      track('cta_click', { label: label, href: href, section: nearestSection(el) });
+    });
+  });
+  // Tech card clicks (zoom interaction)
+  document.querySelectorAll('.tech-card[data-target]').forEach(function(card) {
+    card.addEventListener('click', function() {
+      track('tech_feature_zoom', { feature: card.dataset.target });
+    });
+  });
+  // FAQ open (accordion)
+  document.querySelectorAll('.faq-item, .faq-question, .faq-q').forEach(function(item) {
+    item.addEventListener('click', function() {
+      var q = (item.querySelector('.faq-q, .faq-question') || item).textContent.trim().slice(0, 80);
+      track('faq_open', { question: q });
+    });
+  });
+  // Video play
+  var demo = document.getElementById('demoVideo');
+  if (demo) {
+    demo.addEventListener('play', function() { track('video_play', { duration: Math.round(demo.duration) }); }, { once: true });
+    demo.addEventListener('ended', function() { track('video_complete', {}); });
+  }
+  // Waitlist form submit
+  var wlForm = document.getElementById('waitlistForm');
+  if (wlForm) wlForm.addEventListener('submit', function() { track('waitlist_submit', { source: 'main_form' }); });
+  var heroForm = document.getElementById('heroForm');
+  if (heroForm) heroForm.addEventListener('submit', function() { track('waitlist_submit', { source: 'hero_inline' }); });
+  // Language toggle
+  document.querySelectorAll('.nav-lang button').forEach(function(b) {
+    b.addEventListener('click', function() { track('lang_toggle', { to: b.dataset.lang }); });
+  });
+  // Scroll depth milestones (25/50/75/100%)
+  var milestones = [25, 50, 75, 100];
+  var hit = {};
+  window.addEventListener('scroll', function() {
+    var sy = window.scrollY;
+    var total = document.body.scrollHeight - window.innerHeight;
+    if (total <= 0) return;
+    var pct = Math.min(100, Math.round((sy / total) * 100));
+    milestones.forEach(function(m) {
+      if (pct >= m && !hit[m]) {
+        hit[m] = true;
+        track('scroll_depth', { percent: m });
+      }
+    });
+  }, { passive: true });
+
+  function nearestSection(el) {
+    var s = el.closest('section');
+    return s ? (s.id || s.className.split(' ')[0]) : 'unknown';
+  }
+})();
+
 function handleHeroForm(e) {
   e.preventDefault();
   var email = document.getElementById('heroEmail').value.trim();
