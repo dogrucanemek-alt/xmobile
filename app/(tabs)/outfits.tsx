@@ -1138,7 +1138,11 @@ ${jsonFormat}`;
   return (
     <View style={[styles.container, { backgroundColor: karanlik ? '#000' : renkler.bg2 }]}>
       <StatusBar barStyle={renkler.statusBar} backgroundColor={karanlik ? 'transparent' : renkler.bg} translucent={karanlik} />
-      {karanlik && <MidnightSky durum={hava ? durumModu(hava.durum) : 'clear-night'} />}
+      {karanlik && (() => {
+        const _h = new Date().getHours();
+        const _gece = _h < 6 || _h >= 20;
+        return <MidnightSky durum={hava ? durumModu(hava.durum, _gece) : 'clear-night'} />;
+      })()}
 
       {!wardrobeAkisi && (<>
       <View style={[styles.header, { backgroundColor: 'transparent', borderBottomColor: karanlik ? 'transparent' : renkler.sinir }]}>
