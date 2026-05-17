@@ -19,10 +19,15 @@ async function fotoYukle(userId: string, id: number, localUri: string): Promise<
     const { error } = await supabase.storage
       .from(BUCKET)
       .upload(path, bytes, { contentType: 'image/jpeg', upsert: true });
-    if (error) return null;
+    if (error) {
+      // Sessiz fail kullanıcının data loss riskine sebep oluyordu — log + telemetri
+      console.warn('[wardrobeSync] Storage upload failed:', error.message, 'path:', path);
+      return null;
+    }
     const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
     return data.publicUrl;
-  } catch {
+  } catch (e) {
+    console.warn('[wardrobeSync] fotoYukle exception:', e);
     return null;
   }
 }
@@ -78,4 +83,32 @@ export async function syncTumunuYukle(userId: string, kiyafetler: Kiyafet[]): Pr
   for (const k of kiyafetler) {
     await syncKaydet(userId, k);
   }
+}
+
+/**
+ * Bucket eksikliği gibi geçmiş upload fail'leri sonrası DB'de foto_url=null kalan
+ * kıyafetleri, cihazda hâlâ lokal kopya varsa yeniden Storage'a yükle.
+ * Wardrobe ilk açılışta best-effort çağrılır — fail olursa sessizce devam.
+ */
+export async function syncBackfillFotos(userId: string, kiyafetler: Kiyafet[]): Promise<number> {
+  let basarili = 0;
+  for (const k of kiyafetler) {
+    if (!k.foto) continue;
+    // Sadece henüz Storage'a yüklenmemiş lokal path'ler için
+    if (k.foto.startsWith('http')) continue;
+    if (!k.foto.startsWith('file://') && !k.foto.startsWith('content://')) continue;
+    try {
+      const uploaded = await fotoYukle(userId, k.id, k.foto);
+      if (uploaded) {
+        await supabase.from('wardrobe_items')
+          .update({ foto_url: uploaded })
+          .eq('item_id', k.id)
+          .eq('user_id', userId);
+        basarili++;
+      }
+    } catch (e) {
+      console.warn('[wardrobeSync] backfill failed for item', k.id, e);
+    }
+  }
+  return basarili;
 }

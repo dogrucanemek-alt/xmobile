@@ -12,7 +12,7 @@ import type { Kiyafet, KombinKayit } from '../../lib/types';
 import { kiyafetTani } from '../../lib/vision';
 import { AKSESUAR_ALT_TURLERI, AKSESUAR_LABELS_EN } from '../../lib/accessories';
 import { arkaPlaniTemizle } from '../../lib/rembgService';
-import { syncYukle, syncKaydet, syncSil, syncTumunuYukle } from '../../lib/wardrobeSync';
+import { syncYukle, syncKaydet, syncSil, syncTumunuYukle, syncBackfillFotos } from '../../lib/wardrobeSync';
 import { handleError, logError } from '../../lib/errorHandler';
 import { getTestID, getButtonA11yProps, getInputA11yProps, formatCountA11y } from '../../lib/accessibility';
 
@@ -73,6 +73,9 @@ export default function Wardrobe() {
           if (uzak.length > 0) {
             setKiyafetler(uzak);
             await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(uzak));
+            // Best-effort: bucket fix sonrası foto_url=null kalan kıyafetleri yeniden yükle
+            // Lokalde dosya hâlâ duruyorsa cihaz dışından erişilebilir hale gelir
+            syncBackfillFotos(user.id, lokal).catch(() => {});
             return;
           }
           // Supabase boşsa ve lokalde veri varsa → cloud'a yükle
