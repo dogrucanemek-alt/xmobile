@@ -1172,14 +1172,20 @@
     }
     .tech-stage.is-ready .tech-hint { opacity: 1; }
     .tech-diagram-mobile {
-      display: none;
-      grid-column: 2; grid-row: 1;
-      width: 100%; height: auto;
-      border-radius: 4px;
+      display: none !important;  /* Live canvas now used at all sizes */
     }
     @media (max-width: 1100px) {
-      .tech-canvas-wrap { display: none; }
-      .tech-diagram-mobile { display: block; grid-column: 1; }
+      .tech-canvas-wrap {
+        grid-column: 1;
+        aspect-ratio: 4 / 3;
+        max-height: 55vh;
+      }
+      .tech-connectors { display: none; }  /* Cards are below, not beside */
+      .tech-back-btn { top: 12px; left: 12px; font-size: 10px; padding: 6px 12px; }
+      .tech-hint { display: none; }  /* Save space on mobile */
+    }
+    @media (max-width: 600px) {
+      .tech-canvas-wrap { aspect-ratio: 1 / 1; max-height: 50vh; }
     }
     .tech-grid {
       display: flex; flex-direction: column;
@@ -2409,8 +2415,8 @@ function _initTechScene(){
   var canvas = document.getElementById('techCanvas');
   if (!canvas) return;
   if (!window.THREE || !window.MiniOrbit) { setTimeout(_initTechScene, 80); return; }
-  if (window.innerWidth < 1100) return;
   (function() {
+  var isMobile = window.innerWidth < 1100;
 
   var wrap = canvas.parentElement;
   var svg = wrap.querySelector('.tech-connectors');
@@ -2419,8 +2425,8 @@ function _initTechScene(){
 
   var GOLD = 0xc9a227, GOLD_BRIGHT = 0xffd54a, GOLD_DIM = 0x6a5018, GOLD_PALE = 0xfff0a0;
 
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: !isMobile, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
   renderer.setClearColor(0x050505, 1);
 
   var scene = new THREE.Scene();
