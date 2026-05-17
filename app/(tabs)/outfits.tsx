@@ -30,6 +30,7 @@ import { postOlustur } from '../../lib/socialService';
 import { useAuth } from '../../lib/authContext';
 import { kullanimAl, kalanHak as kalanHakHesapla, kalanRenk, type UsageSnapshot } from '../../lib/usageService';
 import { urldenUrunCek, type ScrapedProduct } from '../../lib/urlScrapeService';
+import * as Clipboard from 'expo-clipboard';
 import { takipEt, Olaylar } from '../../lib/analytics';
 import HavaAnimasyon, { durumModu } from '../../components/HavaAnimasyon';
 import MidnightSky from '../../components/MidnightSky';
@@ -1091,7 +1092,19 @@ ${jsonFormat}`;
               {dil === 'tr' ? 'TR' : 'EN'}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setUrlModalAcik(true)} accessibilityLabel="URL'den dene" accessibilityRole="button">
+          <TouchableOpacity
+            onPress={async () => {
+              setUrlModalAcik(true);
+              try {
+                const clip = await Clipboard.getStringAsync();
+                if (clip && /^https?:\/\//i.test(clip.trim()) && !urlInput) {
+                  setUrlInput(clip.trim());
+                }
+              } catch {}
+            }}
+            accessibilityLabel="URL'den dene"
+            accessibilityRole="button"
+          >
             <Text style={{ fontSize: 18 }}>🔗</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={baslat} accessibilityLabel="Yenile" accessibilityRole="button">
