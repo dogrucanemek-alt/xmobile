@@ -2310,6 +2310,9 @@ function _initTechScene(){
 
   // ── DOORS (open ~75°) ──
   var doorW = WW/2 - 0.05, doorH = WH - 0.1;
+  var rightDoorGrp = null;  // tracked for scan line animation
+  var scanLineMesh = null;
+  var scrHeightForAnim = 0;
   function buildDoor(side, hasScreen) {
     var grp = new THREE.Group();
     grp.add(rectOutline(doorW, doorH, 0.016, GOLD));
@@ -2367,6 +2370,14 @@ function _initTechScene(){
         tabBox.position.set(tx, tbY, 0.013);
         grp.add(tabBox);
       }
+      // SCAN LINE — animated up/down sweeping across screen
+      scanLineMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(scrW * 0.92, 0.025),
+        new THREE.MeshBasicMaterial({ color: GOLD_PALE, transparent: true, opacity: 0.55 })
+      );
+      scanLineMesh.position.set(0, 0, 0.018);
+      grp.add(scanLineMesh);
+      scrHeightForAnim = scrH;
     }
     grp.position.set(side === 'left' ? -doorW/2 : doorW/2, 0, 0);
     var pivot = new THREE.Group();
@@ -2779,6 +2790,45 @@ function _initTechScene(){
   var grid = new THREE.GridHelper(14, 28, 0x5a4419, 0x2a2010);
   grid.position.y = -WH/2 - 0.15;
   scene.add(grid);
+  // Floor halo — gold ring projection under wardrobe
+  var floorHalo = new THREE.Mesh(
+    new THREE.RingGeometry(1.4, 2.5, 32),
+    new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.12, side: THREE.DoubleSide })
+  );
+  floorHalo.rotation.x = -Math.PI / 2;
+  floorHalo.position.y = -WH/2 - 0.13;
+  scene.add(floorHalo);
+  // Inner solid disc faint glow
+  var floorGlow = new THREE.Mesh(
+    new THREE.CircleGeometry(1.5, 32),
+    new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT, transparent: true, opacity: 0.06, side: THREE.DoubleSide })
+  );
+  floorGlow.rotation.x = -Math.PI / 2;
+  floorGlow.position.y = -WH/2 - 0.12;
+  scene.add(floorGlow);
+
+  // AI brain aura ring (orbits around the icosahedron)
+  var aiAura = new THREE.Mesh(
+    new THREE.TorusGeometry(0.7, 0.008, 4, 36),
+    new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.45 })
+  );
+  aiAura.rotation.x = Math.PI / 2;
+  ai.add(aiAura);
+
+  // RFID outward wave rings (3, scaling up + fading)
+  var rfidWaves = [];
+  for (var rwI = 0; rwI < 3; rwI++) {
+    var wave = new THREE.Mesh(
+      new THREE.TorusGeometry(0.12, 0.010, 4, 36),
+      new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT, transparent: true, opacity: 0.7 })
+    );
+    wave.rotation.x = Math.PI / 2;
+    wave.position.y = 0.05;
+    rfid.add(wave);
+    rfidWaves.push({ mesh: wave, phase: rwI * 0.5 });
+  }
+
+  // PARTICLES
   var pGeo = new THREE.BufferGeometry();
   var pCount = 120;
   var pPos = new Float32Array(pCount * 3);
@@ -2788,7 +2838,25 @@ function _initTechScene(){
     pPos[i*3+2] = (Math.random() - 0.5) * 5 - 1.5;
   }
   pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-  scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({ color: GOLD_BRIGHT, size: 0.04, transparent: true, opacity: 0.55 })));
+  var particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: GOLD_BRIGHT, size: 0.04, transparent: true, opacity: 0.55 }));
+  scene.add(particles);
+
+  // Collect refs for animation
+  var memoryNodes = [];
+  memory.traverse(function(c) {
+    if (c.isMesh && c.geometry && c.geometry.type === 'SphereGeometry' && c.geometry.parameters.radius === 0.07) {
+      memoryNodes.push(c);
+      c.material = c.material.clone();  // unique material so opacity is per-node
+      c.material.transparent = true;
+      c.material.opacity = 0.7;
+    }
+  });
+  var chatDots = [];
+  chat.traverse(function(c) {
+    if (c.isMesh && c.geometry && c.geometry.type === 'SphereGeometry' && c.geometry.parameters.radius === 0.025) {
+      chatDots.push(c);
+    }
+  });
 
   // ── RESIZE ──
   function resize() {
@@ -2864,10 +2932,59 @@ function _initTechScene(){
     if (!visible) return;
     controls.update();
     var t = performance.now() * 0.001;
+
+    // Existing pulse system (hardware breathing)
     pulseTargets.forEach(function(p) {
       var s = 1 + p.amp * Math.sin(t * p.freq + p.phase);
       p.mesh.scale.setScalar(s);
     });
+
+    // SLOW ROTATIONS
+    ai.rotation.y += 0.005;             // AI brain spins slowly
+    tryon.rotation.y += 0.003;          // Mannequin slow examination turn
+    memory.rotation.y = Math.sin(t * 0.3) * 0.4;  // Neural net gently sways
+    rfid.rotation.y += 0.011;           // RFID disc spins faster (scanning)
+    aiAura.rotation.x = Math.PI / 2 + Math.sin(t * 0.7) * 0.2;  // aura wobble
+
+    // RFID OUTWARD WAVES — scale up + fade, looped
+    rfidWaves.forEach(function(w) {
+      var phase = ((t * 0.6 + w.phase) % 1.6) / 1.6;  // 0..1 over 1.6s
+      var scl = 1 + phase * 3.5;
+      w.mesh.scale.set(scl, 1, scl);
+      w.mesh.material.opacity = 0.7 * (1 - phase);
+    });
+
+    // CHAT DOTS bouncing (typing indicator)
+    chatDots.forEach(function(d, i) {
+      d.position.y = -0.10 + 0.020 * Math.sin(t * 5 + i * 0.7);
+    });
+
+    // MEMORY NODES flashing sequentially
+    var memFlashIdx = Math.floor((t * 2) % memoryNodes.length);
+    memoryNodes.forEach(function(n, i) {
+      var dist = Math.abs(i - memFlashIdx);
+      var op = (i === memFlashIdx) ? 1.0 : Math.max(0.4, 0.85 - dist * 0.15);
+      n.material.opacity = op;
+      var s = (i === memFlashIdx) ? 1.4 : 1;
+      n.scale.setScalar(s);
+    });
+
+    // PARTICLES drift upward + wrap around
+    var posAttr = particles.geometry.attributes.position;
+    for (var pi = 0; pi < posAttr.count; pi++) {
+      var py = posAttr.getY(pi) + 0.004;
+      if (py > 5) py = -3;
+      posAttr.setY(pi, py);
+    }
+    posAttr.needsUpdate = true;
+
+    // TOUCHSCREEN SCAN LINE — sweep up/down on the right door
+    if (scanLineMesh) {
+      var swept = (Math.sin(t * 0.8) + 1) / 2;  // 0..1
+      scanLineMesh.position.y = (swept - 0.5) * scrHeightForAnim * 0.95;
+      scanLineMesh.material.opacity = 0.55 * (0.5 + 0.5 * Math.sin(t * 1.2));
+    }
+
     renderer.render(scene, camera);
     updateConnectors();
   }
