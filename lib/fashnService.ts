@@ -128,11 +128,11 @@ export async function tryOnBaslat(
   return data.id as string;
 }
 
-export async function kiyafetGorseliUret(garmentName: string): Promise<string> {
+export async function kiyafetGorseliUret(garmentName: string, userId?: string): Promise<string> {
   const res = await fetch(`${API_URL}/api/dalle/generate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ garmentName }),
+    body: JSON.stringify({ garmentName, user_id: userId }),
     signal: timeoutSignal(30000),
   });
   const data = await safeJson(res);

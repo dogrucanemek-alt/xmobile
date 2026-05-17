@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import {
   Text, View, StyleSheet, StatusBar, TouchableOpacity,
   ScrollView, ActivityIndicator, Alert, Image,
-  PanResponder, Animated, Modal, Platform, Linking,
+  PanResponder, Animated, Modal, Platform, Linking, TextInput,
 } from 'react-native';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -28,6 +28,8 @@ import { tryOnBaslat, tryOnBekle, kiyafetGorseliUret, type TryOnCategory } from 
 import { getCached as tryOnCacheGet, setCached as tryOnCacheSet } from '../../lib/tryOnCache';
 import { postOlustur } from '../../lib/socialService';
 import { useAuth } from '../../lib/authContext';
+import { kullanimAl, kalanHak as kalanHakHesapla, kalanRenk, type UsageSnapshot } from '../../lib/usageService';
+import { urldenUrunCek, type ScrapedProduct } from '../../lib/urlScrapeService';
 import { takipEt, Olaylar } from '../../lib/analytics';
 import HavaAnimasyon, { durumModu } from '../../components/HavaAnimasyon';
 import MidnightSky from '../../components/MidnightSky';
@@ -334,6 +336,12 @@ export default function Outfits() {
   const [profil, setProfil]           = useState<Profil | null>(null);
   const [kiyafetler, setKiyafetler]   = useState<Kiyafet[]>([]);
   const [sehirAdi, setSehirAdi]       = useState('...');
+  const [kullanim, setKullanim]       = useState<UsageSnapshot | null>(null);
+  const [urlModalAcik, setUrlModalAcik] = useState(false);
+  const [urlInput, setUrlInput] = useState('');
+  const [urlOnizleme, setUrlOnizleme] = useState<ScrapedProduct | null>(null);
+  const [urlYukleniyor, setUrlYukleniyor] = useState(false);
+  const [urlHata, setUrlHata] = useState<string | null>(null);
 
   const [viewer3D, setViewer3D]         = useState<{ visible: boolean; glbUrl: string; baslik: string }>({
     visible: false, glbUrl: '', baslik: '',
@@ -565,7 +573,7 @@ export default function Outfits() {
         let garmentUri = eslesen?.foto ?? null;
         if (!garmentUri) {
           setTryOn(s => ({ ...s, adimMetni: `🪄 AI görsel üretiyor: ${parca}` }));
-          garmentUri = await kiyafetGorseliUret(parca);
+          garmentUri = await kiyafetGorseliUret(parca, user?.id);
         }
 
         // Cache hit ise Fashn'a hiç gitme — anında kullan
@@ -587,6 +595,7 @@ export default function Outfits() {
 
       setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: aktifModel, hata: null }));
       takipEt(Olaylar.TRYON_TAMAMLANDI, { parca_sayisi: parcalar.length });
+      kullanimYenile();
     } catch (e) {
       const raw = e instanceof Error ? e.message : String(e);
       if (raw === 'USER_LIMIT_EXCEEDED') {
@@ -635,6 +644,77 @@ export default function Outfits() {
       adimMetni: '',
     });
   }, [tryOnKiyafetId, kiyafetler.length]);
+
+  // URL'den ürün çek
+  const urlOnizle = async () => {
+    if (!urlInput.trim()) return;
+    setUrlYukleniyor(true);
+    setUrlHata(null);
+    setUrlOnizleme(null);
+    try {
+      const urun = await urldenUrunCek(urlInput.trim());
+      setUrlOnizleme(urun);
+    } catch (e) {
+      setUrlHata(e instanceof Error ? e.message : 'URL okunamadı');
+    } finally {
+      setUrlYukleniyor(false);
+    }
+  };
+
+  // URL'den çıkan ürünü direkt try-on'a gönder
+  const urldenDene = () => {
+    if (!urlOnizleme) return;
+    if (!profil?.profilFoto) {
+      Alert.alert(
+        dil === 'en' ? 'Profile photo needed' : 'Profil fotoğrafı gerekli',
+        dil === 'en' ? 'Add a full-body photo to your profile first.' : 'Önce profiline tam boy fotoğraf ekle.',
+      );
+      return;
+    }
+    // Modal'ı kapat, try-on chain'ini scraped image URL ile başlat
+    const garmentUrl = urlOnizleme.image;
+    setUrlModalAcik(false);
+    setUrlOnizleme(null);
+    setUrlInput('');
+    setTryOn({
+      visible: true,
+      adim: 'yukleniyor',
+      sonucUri: null,
+      hata: null,
+      modelFoto: profil.profilFoto,
+      secilenParcalar: [urlOnizleme.title ?? 'URL Ürünü'],
+      adimMetni: dil === 'en' ? 'Starting try-on...' : 'Sanal deneme başlıyor...',
+    });
+    // Doğrudan tryOnBaslat çağrısı (zinciri bypass — tek parça, scraped URL)
+    (async () => {
+      try {
+        const baslangic = Date.now();
+        const jobId = await tryOnBaslat(profil.profilFoto!, garmentUrl, 'auto', user?.id);
+        const sonucPath = await tryOnBekle(jobId, () => {
+          const gecenSn = Math.round((Date.now() - baslangic) / 1000);
+          setTryOn(s => ({ ...s, adimMetni: `⏳ ${gecenSn}s` }));
+        });
+        setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: sonucPath, hata: null }));
+        kullanimYenile();
+      } catch (e) {
+        const raw = e instanceof Error ? e.message : String(e);
+        if (raw === 'USER_LIMIT_EXCEEDED') {
+          setTryOn(s => ({ ...s, visible: false }));
+          setUpsellGoster(true);
+          return;
+        }
+        setTryOn(s => ({ ...s, adim: 'sonuc', sonucUri: null, hata: raw }));
+      }
+    })();
+  };
+
+  // Kullanım sayaçlarını yenile
+  const kullanimYenile = React.useCallback(() => {
+    if (!user?.id) return;
+    kullanimAl(user.id).then(s => { if (s) setKullanim(s); });
+  }, [user?.id]);
+
+  useEffect(() => { kullanimYenile(); }, [kullanimYenile]);
 
   // Tab'a focus geldiğinde profili yenile (profilden döndüğünde fotoğraf güncel olsun)
   useFocusEffect(
@@ -831,6 +911,7 @@ ${jsonFormat}`;
             max_tokens: 300,
             system: 'You are a fashion style assistant. Respond with ONLY valid JSON.',
             messages: [{ role: 'user', content: prompt }],
+            user_id: user?.id,
           }),
         });
         clearTimeout(zaman);
@@ -844,6 +925,11 @@ ${jsonFormat}`;
     try {
       // Parse single response
       const parseResponse = async (res: Response): Promise<any> => {
+        if (res.status === 429) {
+          let body: any = null;
+          try { body = await res.json(); } catch {}
+          if (body?.error === 'monthly_limit_exceeded') throw new Error('USER_LIMIT_EXCEEDED');
+        }
         if (!res.ok) {
           const errText = await res.text();
           throw new Error(`API ${res.status}: ${errText.slice(0, 100)}`);
@@ -921,11 +1007,20 @@ ${jsonFormat}`;
       await kombinKullan();
       const hak2 = await kalanHakAl(isPro);
       setKalanHak(hak2.isPro ? null : hak2.kalan);
+      kullanimYenile();
 
     } catch (e) {
-      const error = handleError(e);
-      logError(error, 'outfits.kombinOner');
-      setHata(`Kombin hatası: ${error.userMessage}`);
+      const raw = e instanceof Error ? e.message : String(e);
+      if (raw === 'USER_LIMIT_EXCEEDED') {
+        setUpsellGoster(true);
+        setHata(dil === 'en'
+          ? 'Monthly free outfit suggestions used up. Upgrade to Pro for unlimited.'
+          : 'Bu ay ücretsiz kombin önerilerin doldu. Sınırsız için Pro\'ya geç.');
+      } else {
+        const error = handleError(e);
+        logError(error, 'outfits.kombinOner');
+        setHata(`Kombin hatası: ${error.userMessage}`);
+      }
     }
     setYukleniyor(false);
   };
@@ -996,6 +1091,9 @@ ${jsonFormat}`;
               {dil === 'tr' ? 'TR' : 'EN'}
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => setUrlModalAcik(true)} accessibilityLabel="URL'den dene" accessibilityRole="button">
+            <Text style={{ fontSize: 18 }}>🔗</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={baslat} accessibilityLabel="Yenile" accessibilityRole="button">
             <Text style={[styles.yenile, { color: aksanRenk }]}>↺</Text>
           </TouchableOpacity>
@@ -1007,27 +1105,31 @@ ${jsonFormat}`;
         contentContainerStyle={{ paddingBottom: 110 }}
         showsVerticalScrollIndicator={false}
       >
-      {kalanHak !== null && (
-        <TouchableOpacity
-          style={styles.freemiumBant}
-          onPress={() => router.push('/subscription' as any)}
-        >
-          <Text style={styles.freemiumBantText}>
-            {kalanHak > 0
-              ? (dil === 'en'
-                  ? `✨ ${kalanHak} free outfit${kalanHak === 1 ? '' : 's'} left this month`
-                  : `✨ Bu ay ${kalanHak} ücretsiz kombinlerin kaldı`)
-              : (dil === 'en'
-                  ? '🔒 Free limit reached — upgrade to PRO'
-                  : '🔒 Ücretsiz limit doldu — PRO\'ya geç')}
-          </Text>
-          {kalanHak === 0 && (
+      {kullanim && kullanim.tier === 'free' && (() => {
+        const tryOnLeft = kalanHakHesapla(kullanim, 'tryon');
+        const sugLeft   = kalanHakHesapla(kullanim, 'suggestion');
+        const renkT = kalanRenk(tryOnLeft, kullanim.limits.tryon);
+        const renkS = kalanRenk(sugLeft,   kullanim.limits.suggestion);
+        const dolu  = tryOnLeft === 0 && sugLeft === 0;
+        return (
+          <TouchableOpacity
+            style={[styles.freemiumBant, dolu && { borderColor: '#E74C3C', borderWidth: 1 }]}
+            onPress={() => router.push('/subscription' as any)}
+          >
+            <View style={{ flexDirection: 'row', gap: 14, flex: 1, flexWrap: 'wrap' }}>
+              <Text style={[styles.freemiumBantText, { color: renkT }]}>
+                👗 {tryOnLeft}/{kullanim.limits.tryon} {dil === 'en' ? 'try-on' : 'deneme'}
+              </Text>
+              <Text style={[styles.freemiumBantText, { color: renkS }]}>
+                ✨ {sugLeft}/{kullanim.limits.suggestion} {dil === 'en' ? 'outfits' : 'öneri'}
+              </Text>
+            </View>
             <Text style={styles.freemiumBantCta}>
-              {dil === 'en' ? 'Upgrade →' : 'Yükselt →'}
+              {dolu ? (dil === 'en' ? 'Upgrade →' : 'Yükselt →') : (dil === 'en' ? 'PRO →' : 'PRO →')}
             </Text>
-          )}
-        </TouchableOpacity>
-      )}
+          </TouchableOpacity>
+        );
+      })()}
 
       <View style={[styles.havaDurumu, { backgroundColor: camKart, borderColor: camSinir, borderWidth: karanlik ? 1 : 0, overflow: 'hidden' }]}>
         {hava && !karanlik && (
@@ -1723,6 +1825,99 @@ ${jsonFormat}`;
         limit={tier === 'basic' ? 10 : undefined}
         dil={dil}
       />
+
+      {/* ── URL'DEN TRY-ON MODAL ── */}
+      <Modal
+        visible={urlModalAcik}
+        animationType="slide"
+        presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen'}
+        onRequestClose={() => { setUrlModalAcik(false); setUrlOnizleme(null); setUrlInput(''); setUrlHata(null); }}
+      >
+        <View style={{ flex: 1, backgroundColor: renkler.bg, padding: 20 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+            <Text style={{ color: renkler.metin, fontSize: 20, fontWeight: '700' }}>
+              {dil === 'en' ? '🔗 Try from URL' : '🔗 Markadan Dene'}
+            </Text>
+            <TouchableOpacity onPress={() => { setUrlModalAcik(false); setUrlOnizleme(null); setUrlInput(''); setUrlHata(null); }}>
+              <Text style={{ color: renkler.metin2, fontSize: 22 }}>✕</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Text style={{ color: renkler.metin2, fontSize: 13, marginBottom: 10 }}>
+            {dil === 'en'
+              ? 'Paste a product link from Trendyol, ZARA, H&M, LCW etc.'
+              : 'Trendyol, ZARA, H&M, LCW vb. bir ürün linki yapıştır.'}
+          </Text>
+
+          <View style={{ flexDirection: 'row', gap: 8, marginBottom: 14 }}>
+            <TextInput
+              value={urlInput}
+              onChangeText={setUrlInput}
+              placeholder="https://www.trendyol.com/..."
+              placeholderTextColor={renkler.metin2}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="url"
+              style={{
+                flex: 1, backgroundColor: renkler.kart, color: renkler.metin,
+                borderWidth: 1, borderColor: renkler.sinir, borderRadius: 10,
+                paddingHorizontal: 12, paddingVertical: 10, fontSize: 14,
+              }}
+            />
+            <TouchableOpacity
+              onPress={urlOnizle}
+              disabled={urlYukleniyor || !urlInput.trim()}
+              style={{
+                backgroundColor: NEON, paddingHorizontal: 16, justifyContent: 'center',
+                borderRadius: 10, opacity: urlYukleniyor || !urlInput.trim() ? 0.5 : 1,
+              }}
+            >
+              {urlYukleniyor
+                ? <ActivityIndicator color="#000" />
+                : <Text style={{ color: '#000', fontWeight: '700', fontSize: 13 }}>
+                    {dil === 'en' ? 'Preview' : 'Önizle'}
+                  </Text>}
+            </TouchableOpacity>
+          </View>
+
+          {urlHata && (
+            <Text style={{ color: '#E74C3C', fontSize: 13, marginBottom: 12 }}>⚠️ {urlHata}</Text>
+          )}
+
+          {urlOnizleme && (
+            <View style={{ backgroundColor: renkler.kart, borderRadius: 14, padding: 14, gap: 10 }}>
+              <Image
+                source={{ uri: urlOnizleme.image }}
+                style={{ width: '100%', height: 320, borderRadius: 10, backgroundColor: '#0A0F1A' }}
+                resizeMode="contain"
+              />
+              {urlOnizleme.title && (
+                <Text style={{ color: renkler.metin, fontSize: 15, fontWeight: '600' }} numberOfLines={2}>
+                  {urlOnizleme.title}
+                </Text>
+              )}
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                {urlOnizleme.brand && (
+                  <Text style={{ color: renkler.metin2, fontSize: 12 }}>{urlOnizleme.brand}</Text>
+                )}
+                {urlOnizleme.price && (
+                  <Text style={{ color: NEON, fontSize: 14, fontWeight: '700' }}>
+                    {urlOnizleme.price}
+                  </Text>
+                )}
+              </View>
+              <TouchableOpacity
+                onPress={urldenDene}
+                style={{ backgroundColor: NEON, paddingVertical: 14, borderRadius: 50, alignItems: 'center', marginTop: 4 }}
+              >
+                <Text style={{ color: '#000', fontWeight: '800', fontSize: 15 }}>
+                  👗 {dil === 'en' ? 'Virtual Try-On' : 'Sanal Dene'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </Modal>
 
       {/* Share Menu Modal */}
       <Modal visible={shareMenuAcik} transparent animationType="slide" onRequestClose={() => setShareMenuAcik(false)}>
