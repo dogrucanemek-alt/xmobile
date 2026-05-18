@@ -2375,7 +2375,7 @@ function _initTechScene(){
     g.add(rectOutline(scrW, scrH, 0.020, GOLD_BRIGHT));
     var panel = new THREE.Mesh(
       new THREE.PlaneGeometry(scrW * 0.97, scrH * 0.97),
-      new THREE.MeshBasicMaterial({ color: 0xCA8A04, transparent: true, opacity: 0.18, side: THREE.DoubleSide })
+      new THREE.MeshBasicMaterial({ color: 0xCA8A04, transparent: true, opacity: 0.32, side: THREE.DoubleSide })
     );
     panel.position.z = -0.005;
     g.add(panel);
@@ -2506,7 +2506,8 @@ function _initTechScene(){
     return g;
   }
   var holoPanel = buildHoloPanel();
-  holoPanel.position.set(0, 0.2, WD/2 + 2.4);
+  holoPanel.position.set(-0.95, 0.2, WD/2 + 1.75);
+  holoPanel.rotation.y = 0.18;
   holoPanel.name = 'screen';
   scene.add(holoPanel);
 
@@ -2816,7 +2817,7 @@ function _initTechScene(){
     return g;
   }
   var tryon = buildTryOn();
-  tryon.position.set(-0.55, -1.18, WD/2 + 1.55);
+  tryon.position.set(1.05, -1.18, WD/2 + 1.75);
   tryon.scale.setScalar(0.85);
   tryon.name = 'tryon';
   scene.add(tryon);
