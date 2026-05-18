@@ -2415,20 +2415,32 @@ function _initTechScene(){
     g.add(deg);
     g.add(thickLine(new THREE.Vector3(-scrW*0.42, wY - 0.26, 0.012), new THREE.Vector3(scrW*0.42, wY - 0.26, 0.012), 0.005, GOLD_BRIGHT, 0.30));
 
-    // ─── 3. CENTER AVATAR ───
-    var aY = scrH * 0.00;
-    var miniHead = new THREE.Mesh(new THREE.CircleGeometry(0.07, 18), new THREE.MeshBasicMaterial({ color: GOLD_PALE }));
-    miniHead.position.set(0, aY + 0.46, 0.013);
-    g.add(miniHead);
-    g.add(thickLine(new THREE.Vector3(0, aY + 0.38, 0.013), new THREE.Vector3(0, aY - 0.12, 0.013), 0.020, GOLD_PALE, 0.92));
-    g.add(thickLine(new THREE.Vector3(0, aY + 0.32, 0.013), new THREE.Vector3(-0.20, aY + 0.06, 0.013), 0.014, GOLD_PALE, 0.85));
-    g.add(thickLine(new THREE.Vector3(0, aY + 0.32, 0.013), new THREE.Vector3(0.20, aY + 0.06, 0.013), 0.014, GOLD_PALE, 0.85));
-    g.add(thickLine(new THREE.Vector3(0, aY - 0.12, 0.013), new THREE.Vector3(-0.11, aY - 0.48, 0.013), 0.016, GOLD_PALE, 0.85));
-    g.add(thickLine(new THREE.Vector3(0, aY - 0.12, 0.013), new THREE.Vector3(0.11, aY - 0.48, 0.013), 0.016, GOLD_PALE, 0.85));
-    var aura2 = new THREE.Mesh(new THREE.RingGeometry(0.32, 0.34, 40), new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT, transparent: true, opacity: 0.40 }));
-    aura2.position.set(0, aY + 0.02, 0.012);
-    g.add(aura2);
-    g.add(thickLine(new THREE.Vector3(-scrW*0.42, aY - 0.58, 0.012), new THREE.Vector3(scrW*0.42, aY - 0.58, 0.012), 0.005, GOLD_BRIGHT, 0.30));
+    // ─── 3. CENTER SCAN TARGET (silhouette behind panel shows through) ───
+    var aY = scrH * 0.02;
+    [0.18, 0.28, 0.40, 0.54].forEach(function(rad, ri) {
+      var ring = new THREE.Mesh(
+        new THREE.RingGeometry(rad, rad + 0.010, 48),
+        new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT, transparent: true, opacity: 0.55 - ri * 0.10 })
+      );
+      ring.position.set(0, aY, 0.012);
+      g.add(ring);
+    });
+    // crosshair lines
+    g.add(thickLine(new THREE.Vector3(-0.12, aY, 0.013), new THREE.Vector3(-0.04, aY, 0.013), 0.007, GOLD_PALE, 0.95));
+    g.add(thickLine(new THREE.Vector3( 0.04, aY, 0.013), new THREE.Vector3( 0.12, aY, 0.013), 0.007, GOLD_PALE, 0.95));
+    g.add(thickLine(new THREE.Vector3(0, aY - 0.12, 0.013), new THREE.Vector3(0, aY - 0.04, 0.013), 0.007, GOLD_PALE, 0.95));
+    g.add(thickLine(new THREE.Vector3(0, aY + 0.04, 0.013), new THREE.Vector3(0, aY + 0.12, 0.013), 0.007, GOLD_PALE, 0.95));
+    // center dot
+    var centerDot = new THREE.Mesh(new THREE.CircleGeometry(0.018, 16), new THREE.MeshBasicMaterial({ color: GOLD_PALE }));
+    centerDot.position.set(0, aY, 0.014);
+    g.add(centerDot);
+    // corner brackets (HUD framing)
+    var br = 0.62;
+    [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(s) {
+      g.add(thickLine(new THREE.Vector3(s[0]*br, aY + s[1]*br, 0.013), new THREE.Vector3(s[0]*br, aY + s[1]*(br-0.10), 0.013), 0.008, GOLD_PALE, 0.85));
+      g.add(thickLine(new THREE.Vector3(s[0]*br, aY + s[1]*br, 0.013), new THREE.Vector3(s[0]*(br-0.10), aY + s[1]*br, 0.013), 0.008, GOLD_PALE, 0.85));
+    });
+    g.add(thickLine(new THREE.Vector3(-scrW*0.42, aY - 0.72, 0.012), new THREE.Vector3(scrW*0.42, aY - 0.72, 0.012), 0.005, GOLD_BRIGHT, 0.30));
 
     // ─── 4. RECOMMENDED OUTFIT — 4 cards row ───
     var ocY = scrH * -0.31;
@@ -2494,7 +2506,7 @@ function _initTechScene(){
     return g;
   }
   var holoPanel = buildHoloPanel();
-  holoPanel.position.set(0, 0.2, WD/2 + 1.8);
+  holoPanel.position.set(0, 0.2, WD/2 + 2.4);
   holoPanel.name = 'screen';
   scene.add(holoPanel);
 
@@ -2804,7 +2816,7 @@ function _initTechScene(){
     return g;
   }
   var tryon = buildTryOn();
-  tryon.position.set(-0.55, -1.18, WD/2 + 0.95);
+  tryon.position.set(-0.55, -1.18, WD/2 + 1.55);
   tryon.scale.setScalar(0.85);
   tryon.name = 'tryon';
   scene.add(tryon);
