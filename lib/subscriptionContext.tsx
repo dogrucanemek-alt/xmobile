@@ -68,7 +68,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     }
   }, []);
 
-  useEffect(() => { proYenile(); }, []);
+  useEffect(() => { proYenile(); }, [proYenile]);
 
   const isPro = tier === 'pro';
 

@@ -231,14 +231,12 @@ export const auditComponentA11y = (props: {
  */
 export const getButtonA11yProps = (
   label: string,
-  hint?: string,
-  testId?: string
+  hint?: string
 ) => ({
   accessible: true,
   accessibilityLabel: label,
   accessibilityHint: hint || getHintForRole('button'),
   accessibilityRole: 'button' as const,
-  testID: testId,
 });
 
 /**
@@ -247,13 +245,11 @@ export const getButtonA11yProps = (
  */
 export const getInputA11yProps = (
   label: string,
-  placeholder?: string,
-  testId?: string
+  placeholder?: string
 ) => ({
   accessible: true,
   accessibilityLabel: label,
   accessibilityHint: placeholder || `Enter ${label.toLowerCase()}`,
-  testID: testId,
 });
 
 /**
@@ -261,13 +257,11 @@ export const getInputA11yProps = (
  * Ensures images are described for screen readers
  */
 export const getImageA11yProps = (
-  description: string,
-  testId?: string
+  description: string
 ) => ({
   accessible: true,
   accessibilityLabel: description,
   accessibilityRole: 'image' as const,
-  testID: testId,
 });
 
 export default {
