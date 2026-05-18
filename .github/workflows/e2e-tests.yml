@@ -1,13 +1,12 @@
 name: E2E Tests - Detox
 
+# DISABLED — Detox `build-app` requires native ios/ + android/ folders,
+# which managed Expo does not commit. Runs were queueing for hours on
+# macos-latest and never completing. Re-enable after either: (a) EAS
+# Build migration with prebuild step, or (b) Maestro switch (no native
+# build needed). Push/PR/schedule triggers all removed.
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
-  schedule:
-    # Run nightly at 2 AM UTC
-    - cron: '0 2 * * *'
+  workflow_dispatch:
 
 jobs:
   e2e-ios:

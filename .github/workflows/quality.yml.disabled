@@ -1,10 +1,12 @@
 name: Quality - Code Analysis & Coverage
 
+# DISABLED — every run completes in 0s with no log (workflow init failure,
+# likely related to one of the 6 jobs hitting a startup-time issue —
+# coverage/bundle/dep-audit/lint/console-grep/perf). Coverage + lint can
+# already be exercised locally; the rest needs a redesign before turning
+# back on (split into smaller workflows, drop the do-everything monolith).
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
+  workflow_dispatch:
 
 jobs:
   coverage:

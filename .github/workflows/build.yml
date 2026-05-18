@@ -1,9 +1,10 @@
 name: Build - APK & Artifacts
 
+# DISABLED — this is a managed Expo project, so there is no android/ folder
+# for Gradle to operate on. Re-enable after migrating to EAS Build (eas.json
+# already has preview + production profiles). See: Polish 4 / 2026-05-18.
+# To re-enable on push: restore the `push:` block under `on:`.
 on:
-  push:
-    branches: [ main, develop ]
-    tags: [ 'v*' ]
   workflow_dispatch:
     inputs:
       build_type:

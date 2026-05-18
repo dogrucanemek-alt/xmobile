@@ -1,9 +1,10 @@
 name: CD - Deploy & Release
 
+# DISABLED — same root cause as build.yml: no android/ folder in managed
+# Expo. Tag-triggered Gradle deploys cannot work until EAS Build migration.
+# Re-enable on tag push by restoring `tags: ['v*']` under `on:`.
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 jobs:
   deploy-release:
