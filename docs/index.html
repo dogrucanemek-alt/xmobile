@@ -2287,12 +2287,12 @@ function _initTechScene(){
 
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(33, 1, 0.1, 100);
-  camera.position.set(2.5, 1.0, 9.2);
+  camera.position.set(1.5, 1.0, 12.0);
 
   var controls = new MiniOrbit(camera, canvas);
   controls.dampingFactor = 0.08;
-  controls.minDistance = 6.5;
-  controls.maxDistance = 14;
+  controls.minDistance = 8;
+  controls.maxDistance = 18;
   controls.minPolarAngle = Math.PI * 0.20;
   controls.maxPolarAngle = Math.PI * 0.62;
   controls.target.set(0, 0.4, 0);
@@ -2340,169 +2340,163 @@ function _initTechScene(){
     return g;
   }
 
-  // ── WARDROBE CARCASS ──
-  var WW = 3.0, WH = 4.5, WD = 1.5;
+  // ── WARDROBE CARCASS (4-door layout) ──
+  var WW = 4.5, WH = 4.5, WD = 1.5;
   scene.add(thickBoxEdges(WW, WH, WD, 0.026, GOLD));
-  // door split (vertical) + interior visible
-  scene.add(thickLine(new THREE.Vector3(0, -WH/2, WD/2 + 0.002), new THREE.Vector3(0, WH/2, WD/2 + 0.002), 0.014, GOLD, 0.5));
+  // door split lines on front face: at -WW/4, 0, +WW/4 (between 4 doors)
+  [-WW/4, 0, WW/4].forEach(function(sx) {
+    scene.add(thickLine(new THREE.Vector3(sx, -WH/2, WD/2 + 0.002), new THREE.Vector3(sx, WH/2, WD/2 + 0.002), 0.012, GOLD, 0.5));
+  });
 
-  // ── DOORS (open ~75°) ──
-  var doorW = WW/2 - 0.05, doorH = WH - 0.1;
-  var rightDoorGrp = null;  // tracked for scan line animation
+  // ── DOORS (4 panels: outer 2 open ~75°, inner 2 closed) ──
+  var doorW = WW/4, doorH = WH - 0.1;
   var scanLineMesh = null;
   var scrHeightForAnim = 0;
-  function buildDoor(side, hasScreen) {
+  function buildDoor(hingeX, bodyDir, openAngle) {
     var grp = new THREE.Group();
     grp.add(rectOutline(doorW, doorH, 0.016, GOLD));
-    if (hasScreen) {
-      var scrW = doorW * 0.72, scrH = doorH * 0.86;
-      grp.add(rectOutline(scrW, scrH, 0.014, GOLD_BRIGHT));
-      var panel = new THREE.Mesh(
-        new THREE.PlaneGeometry(scrW * 0.96, scrH * 0.96),
-        new THREE.MeshBasicMaterial({ color: 0xCA8A04, transparent: true, opacity: 0.30, side: THREE.DoubleSide })
-      );
-      panel.position.z = -0.005;
-      panel.name = 'screen';
-      grp.add(panel);
-
-      // ─── 1. HEADER "AI OUTFIT PLANNER 2100" ───
-      var hdrY = scrH * 0.44;
-      grp.add(thickLine(new THREE.Vector3(-scrW*0.38, hdrY, 0.012), new THREE.Vector3(scrW*0.38, hdrY, 0.012), 0.013, GOLD_PALE, 0.95));
-      grp.add(thickLine(new THREE.Vector3(-scrW*0.30, hdrY - 0.08, 0.012), new THREE.Vector3(scrW*0.30, hdrY - 0.08, 0.012), 0.006, GOLD_BRIGHT, 0.55));
-      grp.add(thickLine(new THREE.Vector3(-scrW*0.42, hdrY - 0.16, 0.012), new THREE.Vector3(scrW*0.42, hdrY - 0.16, 0.012), 0.004, GOLD_BRIGHT, 0.30));
-
-      // ─── 2. WEATHER ANALYSIS ───
-      var wY = scrH * 0.26;
-      grp.add(thickLine(new THREE.Vector3(-scrW*0.22, wY + 0.14, 0.012), new THREE.Vector3(scrW*0.22, wY + 0.14, 0.012), 0.006, GOLD_BRIGHT, 0.5));
-      // Sun icon (disc + 8 rays)
-      var sun = new THREE.Mesh(new THREE.CircleGeometry(0.07, 18), new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT, transparent: true, opacity: 0.95 }));
-      sun.position.set(-scrW*0.32, wY - 0.04, 0.013);
-      grp.add(sun);
-      for (var rr = 0; rr < 8; rr++) {
-        var ra = rr * Math.PI / 4;
-        var rxd = Math.cos(ra), ryd = Math.sin(ra);
-        grp.add(thickLine(
-          new THREE.Vector3(-scrW*0.32 + rxd*0.10, wY - 0.04 + ryd*0.10, 0.013),
-          new THREE.Vector3(-scrW*0.32 + rxd*0.14, wY - 0.04 + ryd*0.14, 0.013),
-          0.006, GOLD_BRIGHT, 0.85
-        ));
-      }
-      // City + date text rows
-      grp.add(thickLine(new THREE.Vector3(-scrW*0.16, wY + 0.02, 0.013), new THREE.Vector3(scrW*0.06, wY + 0.02, 0.013), 0.006, GOLD_PALE, 0.85));
-      grp.add(thickLine(new THREE.Vector3(-scrW*0.16, wY - 0.04, 0.013), new THREE.Vector3(scrW*0.10, wY - 0.04, 0.013), 0.004, GOLD_BRIGHT, 0.5));
-      // Big "21°" — 3 vertical bars + degree ring
-      for (var td = 0; td < 3; td++) {
-        grp.add(thickLine(
-          new THREE.Vector3(scrW*0.22 + td*0.05, wY - 0.10, 0.013),
-          new THREE.Vector3(scrW*0.22 + td*0.05, wY + 0.10, 0.013),
-          0.011, GOLD_PALE, 0.95
-        ));
-      }
-      var deg = new THREE.Mesh(new THREE.RingGeometry(0.017, 0.025, 16), new THREE.MeshBasicMaterial({ color: GOLD_PALE }));
-      deg.position.set(scrW*0.40, wY + 0.10, 0.014);
-      grp.add(deg);
-      // separator under weather
-      grp.add(thickLine(new THREE.Vector3(-scrW*0.42, wY - 0.22, 0.012), new THREE.Vector3(scrW*0.42, wY - 0.22, 0.012), 0.004, GOLD_BRIGHT, 0.30));
-
-      // ─── 3. CENTER HUMANOID AVATAR ───
-      var aY = scrH * 0.00;
-      // head
-      var miniHead = new THREE.Mesh(new THREE.CircleGeometry(0.045, 18), new THREE.MeshBasicMaterial({ color: GOLD_PALE }));
-      miniHead.position.set(0, aY + 0.32, 0.013);
-      grp.add(miniHead);
-      // torso line
-      grp.add(thickLine(new THREE.Vector3(0, aY + 0.28, 0.013), new THREE.Vector3(0, aY - 0.08, 0.013), 0.015, GOLD_PALE, 0.92));
-      // arms
-      grp.add(thickLine(new THREE.Vector3(0, aY + 0.22, 0.013), new THREE.Vector3(-0.13, aY + 0.05, 0.013), 0.010, GOLD_PALE, 0.85));
-      grp.add(thickLine(new THREE.Vector3(0, aY + 0.22, 0.013), new THREE.Vector3(0.13, aY + 0.05, 0.013), 0.010, GOLD_PALE, 0.85));
-      // legs
-      grp.add(thickLine(new THREE.Vector3(0, aY - 0.08, 0.013), new THREE.Vector3(-0.07, aY - 0.34, 0.013), 0.012, GOLD_PALE, 0.85));
-      grp.add(thickLine(new THREE.Vector3(0, aY - 0.08, 0.013), new THREE.Vector3(0.07, aY - 0.34, 0.013), 0.012, GOLD_PALE, 0.85));
-      // aura ring behind avatar
-      var aura2 = new THREE.Mesh(new THREE.RingGeometry(0.22, 0.235, 36), new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT, transparent: true, opacity: 0.40 }));
-      aura2.position.set(0, aY + 0.02, 0.012);
-      grp.add(aura2);
-      // separator under avatar
-      grp.add(thickLine(new THREE.Vector3(-scrW*0.42, aY - 0.42, 0.012), new THREE.Vector3(scrW*0.42, aY - 0.42, 0.012), 0.004, GOLD_BRIGHT, 0.30));
-
-      // ─── 4. RECOMMENDED OUTFIT — 4 cards row ───
-      var ocY = scrH * -0.30;
-      grp.add(thickLine(new THREE.Vector3(-scrW*0.28, ocY + 0.20, 0.012), new THREE.Vector3(scrW*0.28, ocY + 0.20, 0.012), 0.005, GOLD_BRIGHT, 0.50));
-      var cardW = scrW * 0.18, cardH = 0.22;
-      for (var c = 0; c < 4; c++) {
-        var cx = -scrW*0.30 + c * scrW*0.20;
-        var cardBox = rectOutline(cardW, cardH, 0.005, GOLD_BRIGHT, 0.75);
-        cardBox.position.set(cx, ocY, 0.013);
-        grp.add(cardBox);
-        var iconY = ocY + 0.04;
-        if (c === 0) {
-          // jacket: trapezoid
-          grp.add(thickLine(new THREE.Vector3(cx-0.04, iconY+0.03, 0.014), new THREE.Vector3(cx+0.04, iconY+0.03, 0.014), 0.005, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx-0.04, iconY+0.03, 0.014), new THREE.Vector3(cx-0.055, iconY-0.05, 0.014), 0.005, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx+0.04, iconY+0.03, 0.014), new THREE.Vector3(cx+0.055, iconY-0.05, 0.014), 0.005, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx-0.055, iconY-0.05, 0.014), new THREE.Vector3(cx+0.055, iconY-0.05, 0.014), 0.005, GOLD_PALE, 0.9));
-        } else if (c === 1) {
-          // shirt: rectangle with collar v
-          grp.add(thickLine(new THREE.Vector3(cx-0.05, iconY+0.03, 0.014), new THREE.Vector3(cx-0.012, iconY+0.03, 0.014), 0.005, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx+0.05, iconY+0.03, 0.014), new THREE.Vector3(cx+0.012, iconY+0.03, 0.014), 0.005, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx-0.012, iconY+0.03, 0.014), new THREE.Vector3(cx, iconY-0.005, 0.014), 0.005, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx+0.012, iconY+0.03, 0.014), new THREE.Vector3(cx, iconY-0.005, 0.014), 0.005, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx-0.05, iconY+0.03, 0.014), new THREE.Vector3(cx-0.05, iconY-0.05, 0.014), 0.005, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx+0.05, iconY+0.03, 0.014), new THREE.Vector3(cx+0.05, iconY-0.05, 0.014), 0.005, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx-0.05, iconY-0.05, 0.014), new THREE.Vector3(cx+0.05, iconY-0.05, 0.014), 0.005, GOLD_PALE, 0.9));
-        } else if (c === 2) {
-          // pants: 2 vertical bars connected at top
-          grp.add(thickLine(new THREE.Vector3(cx-0.04, iconY+0.04, 0.014), new THREE.Vector3(cx+0.04, iconY+0.04, 0.014), 0.005, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx-0.03, iconY+0.04, 0.014), new THREE.Vector3(cx-0.035, iconY-0.06, 0.014), 0.006, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx+0.03, iconY+0.04, 0.014), new THREE.Vector3(cx+0.035, iconY-0.06, 0.014), 0.006, GOLD_PALE, 0.9));
-        } else {
-          // boot
-          grp.add(thickLine(new THREE.Vector3(cx-0.025, iconY+0.04, 0.014), new THREE.Vector3(cx-0.025, iconY-0.02, 0.014), 0.006, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx-0.025, iconY-0.02, 0.014), new THREE.Vector3(cx+0.045, iconY-0.02, 0.014), 0.006, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx+0.045, iconY-0.02, 0.014), new THREE.Vector3(cx+0.045, iconY-0.05, 0.014), 0.006, GOLD_PALE, 0.9));
-          grp.add(thickLine(new THREE.Vector3(cx-0.025, iconY-0.05, 0.014), new THREE.Vector3(cx+0.045, iconY-0.05, 0.014), 0.006, GOLD_PALE, 0.9));
-        }
-        // 2 thin label lines under icon
-        grp.add(thickLine(new THREE.Vector3(cx-0.06, ocY-0.07, 0.014), new THREE.Vector3(cx+0.06, ocY-0.07, 0.014), 0.003, GOLD_BRIGHT, 0.60));
-        grp.add(thickLine(new THREE.Vector3(cx-0.04, ocY-0.09, 0.014), new THREE.Vector3(cx+0.04, ocY-0.09, 0.014), 0.003, GOLD_BRIGHT, 0.40));
-      }
-
-      // ─── 5. APPLY OUTFIT pill button at bottom ───
-      var btnY = scrH * -0.45;
-      var btnW = scrW * 0.66, btnH = 0.12;
-      var btnFill = new THREE.Mesh(
-        new THREE.PlaneGeometry(btnW, btnH),
-        new THREE.MeshBasicMaterial({ color: GOLD_PALE, transparent: true, opacity: 0.55 })
-      );
-      btnFill.position.set(0, btnY, 0.013);
-      grp.add(btnFill);
-      var btnFrame = rectOutline(btnW, btnH, 0.006, GOLD_PALE, 1);
-      btnFrame.position.set(0, btnY, 0.014);
-      grp.add(btnFrame);
-      // arrow chevron (>)
-      grp.add(thickLine(new THREE.Vector3(scrW*0.20, btnY+0.022, 0.015), new THREE.Vector3(scrW*0.26, btnY, 0.015), 0.007, GOLD, 1));
-      grp.add(thickLine(new THREE.Vector3(scrW*0.20, btnY-0.022, 0.015), new THREE.Vector3(scrW*0.26, btnY, 0.015), 0.007, GOLD, 1));
-      // text strip representing "APPLY OUTFIT"
-      grp.add(thickLine(new THREE.Vector3(-scrW*0.22, btnY, 0.015), new THREE.Vector3(scrW*0.10, btnY, 0.015), 0.008, GOLD, 1));
-
-      // SCAN LINE — animated up/down sweeping across screen
-      scanLineMesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(scrW * 0.92, 0.025),
-        new THREE.MeshBasicMaterial({ color: GOLD_PALE, transparent: true, opacity: 0.55 })
-      );
-      scanLineMesh.position.set(0, 0, 0.018);
-      grp.add(scanLineMesh);
-      scrHeightForAnim = scrH;
-    }
-    grp.position.set(side === 'left' ? -doorW/2 : doorW/2, 0, 0);
+    grp.position.set(bodyDir * doorW/2, 0, 0);
     var pivot = new THREE.Group();
     pivot.add(grp);
-    pivot.position.set(side === 'left' ? -WW/2 : WW/2, 0, WD/2);
-    pivot.rotation.y = side === 'left' ? -Math.PI * 0.42 : Math.PI * 0.42;
+    pivot.position.set(hingeX, 0, WD/2);
+    pivot.rotation.y = openAngle;
     return pivot;
   }
-  scene.add(buildDoor('left', false));
-  scene.add(buildDoor('right', true));
+  // 4 doors: outer 2 swing open, inner 2 closed
+  scene.add(buildDoor(-WW/2, 1, -Math.PI * 0.42));      // door 1 (far left, open left)
+  scene.add(buildDoor(-WW/4, 1, 0));                    // door 2 (mid-left, closed)
+  scene.add(buildDoor( WW/4, -1, 0));                   // door 3 (mid-right, closed)
+  scene.add(buildDoor( WW/2, -1, Math.PI * 0.42));      // door 4 (far right, open right)
+
+  // ── STANDALONE HOLO PANEL — floating dashboard in front of person ──
+  function buildHoloPanel() {
+    var g = new THREE.Group();
+    var scrW = 2.4, scrH = 3.4;
+    g.add(rectOutline(scrW, scrH, 0.020, GOLD_BRIGHT));
+    var panel = new THREE.Mesh(
+      new THREE.PlaneGeometry(scrW * 0.97, scrH * 0.97),
+      new THREE.MeshBasicMaterial({ color: 0xCA8A04, transparent: true, opacity: 0.18, side: THREE.DoubleSide })
+    );
+    panel.position.z = -0.005;
+    g.add(panel);
+
+    // ─── 1. HEADER "AI OUTFIT PLANNER 2100" ───
+    var hdrY = scrH * 0.44;
+    g.add(thickLine(new THREE.Vector3(-scrW*0.38, hdrY, 0.012), new THREE.Vector3(scrW*0.38, hdrY, 0.012), 0.016, GOLD_PALE, 0.95));
+    g.add(thickLine(new THREE.Vector3(-scrW*0.30, hdrY - 0.10, 0.012), new THREE.Vector3(scrW*0.30, hdrY - 0.10, 0.012), 0.008, GOLD_BRIGHT, 0.55));
+    g.add(thickLine(new THREE.Vector3(-scrW*0.42, hdrY - 0.20, 0.012), new THREE.Vector3(scrW*0.42, hdrY - 0.20, 0.012), 0.005, GOLD_BRIGHT, 0.30));
+
+    // ─── 2. WEATHER ANALYSIS ───
+    var wY = scrH * 0.24;
+    g.add(thickLine(new THREE.Vector3(-scrW*0.22, wY + 0.18, 0.012), new THREE.Vector3(scrW*0.22, wY + 0.18, 0.012), 0.007, GOLD_BRIGHT, 0.5));
+    var sun = new THREE.Mesh(new THREE.CircleGeometry(0.10, 18), new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT, transparent: true, opacity: 0.95 }));
+    sun.position.set(-scrW*0.32, wY - 0.05, 0.013);
+    g.add(sun);
+    for (var rr = 0; rr < 8; rr++) {
+      var ra = rr * Math.PI / 4;
+      var rxd = Math.cos(ra), ryd = Math.sin(ra);
+      g.add(thickLine(
+        new THREE.Vector3(-scrW*0.32 + rxd*0.14, wY - 0.05 + ryd*0.14, 0.013),
+        new THREE.Vector3(-scrW*0.32 + rxd*0.19, wY - 0.05 + ryd*0.19, 0.013),
+        0.008, GOLD_BRIGHT, 0.85
+      ));
+    }
+    g.add(thickLine(new THREE.Vector3(-scrW*0.14, wY + 0.04, 0.013), new THREE.Vector3(scrW*0.08, wY + 0.04, 0.013), 0.008, GOLD_PALE, 0.85));
+    g.add(thickLine(new THREE.Vector3(-scrW*0.14, wY - 0.04, 0.013), new THREE.Vector3(scrW*0.12, wY - 0.04, 0.013), 0.005, GOLD_BRIGHT, 0.5));
+    for (var td = 0; td < 3; td++) {
+      g.add(thickLine(
+        new THREE.Vector3(scrW*0.22 + td*0.07, wY - 0.14, 0.013),
+        new THREE.Vector3(scrW*0.22 + td*0.07, wY + 0.18, 0.013),
+        0.015, GOLD_PALE, 0.95
+      ));
+    }
+    var deg = new THREE.Mesh(new THREE.RingGeometry(0.024, 0.034, 16), new THREE.MeshBasicMaterial({ color: GOLD_PALE }));
+    deg.position.set(scrW*0.44, wY + 0.16, 0.014);
+    g.add(deg);
+    g.add(thickLine(new THREE.Vector3(-scrW*0.42, wY - 0.26, 0.012), new THREE.Vector3(scrW*0.42, wY - 0.26, 0.012), 0.005, GOLD_BRIGHT, 0.30));
+
+    // ─── 3. CENTER AVATAR ───
+    var aY = scrH * 0.00;
+    var miniHead = new THREE.Mesh(new THREE.CircleGeometry(0.07, 18), new THREE.MeshBasicMaterial({ color: GOLD_PALE }));
+    miniHead.position.set(0, aY + 0.46, 0.013);
+    g.add(miniHead);
+    g.add(thickLine(new THREE.Vector3(0, aY + 0.38, 0.013), new THREE.Vector3(0, aY - 0.12, 0.013), 0.020, GOLD_PALE, 0.92));
+    g.add(thickLine(new THREE.Vector3(0, aY + 0.32, 0.013), new THREE.Vector3(-0.20, aY + 0.06, 0.013), 0.014, GOLD_PALE, 0.85));
+    g.add(thickLine(new THREE.Vector3(0, aY + 0.32, 0.013), new THREE.Vector3(0.20, aY + 0.06, 0.013), 0.014, GOLD_PALE, 0.85));
+    g.add(thickLine(new THREE.Vector3(0, aY - 0.12, 0.013), new THREE.Vector3(-0.11, aY - 0.48, 0.013), 0.016, GOLD_PALE, 0.85));
+    g.add(thickLine(new THREE.Vector3(0, aY - 0.12, 0.013), new THREE.Vector3(0.11, aY - 0.48, 0.013), 0.016, GOLD_PALE, 0.85));
+    var aura2 = new THREE.Mesh(new THREE.RingGeometry(0.32, 0.34, 40), new THREE.MeshBasicMaterial({ color: GOLD_BRIGHT, transparent: true, opacity: 0.40 }));
+    aura2.position.set(0, aY + 0.02, 0.012);
+    g.add(aura2);
+    g.add(thickLine(new THREE.Vector3(-scrW*0.42, aY - 0.58, 0.012), new THREE.Vector3(scrW*0.42, aY - 0.58, 0.012), 0.005, GOLD_BRIGHT, 0.30));
+
+    // ─── 4. RECOMMENDED OUTFIT — 4 cards row ───
+    var ocY = scrH * -0.31;
+    g.add(thickLine(new THREE.Vector3(-scrW*0.28, ocY + 0.25, 0.012), new THREE.Vector3(scrW*0.28, ocY + 0.25, 0.012), 0.006, GOLD_BRIGHT, 0.50));
+    var cardW = scrW * 0.20, cardH = 0.30;
+    for (var c = 0; c < 4; c++) {
+      var cx = -scrW*0.32 + c * scrW*0.21;
+      var cardBox = rectOutline(cardW, cardH, 0.006, GOLD_BRIGHT, 0.75);
+      cardBox.position.set(cx, ocY, 0.013);
+      g.add(cardBox);
+      var iconY = ocY + 0.05;
+      if (c === 0) {
+        g.add(thickLine(new THREE.Vector3(cx-0.055, iconY+0.05, 0.014), new THREE.Vector3(cx+0.055, iconY+0.05, 0.014), 0.007, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx-0.055, iconY+0.05, 0.014), new THREE.Vector3(cx-0.075, iconY-0.07, 0.014), 0.007, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx+0.055, iconY+0.05, 0.014), new THREE.Vector3(cx+0.075, iconY-0.07, 0.014), 0.007, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx-0.075, iconY-0.07, 0.014), new THREE.Vector3(cx+0.075, iconY-0.07, 0.014), 0.007, GOLD_PALE, 0.9));
+      } else if (c === 1) {
+        g.add(thickLine(new THREE.Vector3(cx-0.065, iconY+0.05, 0.014), new THREE.Vector3(cx-0.015, iconY+0.05, 0.014), 0.007, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx+0.065, iconY+0.05, 0.014), new THREE.Vector3(cx+0.015, iconY+0.05, 0.014), 0.007, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx-0.015, iconY+0.05, 0.014), new THREE.Vector3(cx, iconY+0.01, 0.014), 0.007, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx+0.015, iconY+0.05, 0.014), new THREE.Vector3(cx, iconY+0.01, 0.014), 0.007, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx-0.065, iconY+0.05, 0.014), new THREE.Vector3(cx-0.065, iconY-0.07, 0.014), 0.007, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx+0.065, iconY+0.05, 0.014), new THREE.Vector3(cx+0.065, iconY-0.07, 0.014), 0.007, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx-0.065, iconY-0.07, 0.014), new THREE.Vector3(cx+0.065, iconY-0.07, 0.014), 0.007, GOLD_PALE, 0.9));
+      } else if (c === 2) {
+        g.add(thickLine(new THREE.Vector3(cx-0.055, iconY+0.06, 0.014), new THREE.Vector3(cx+0.055, iconY+0.06, 0.014), 0.007, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx-0.04, iconY+0.06, 0.014), new THREE.Vector3(cx-0.045, iconY-0.08, 0.014), 0.008, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx+0.04, iconY+0.06, 0.014), new THREE.Vector3(cx+0.045, iconY-0.08, 0.014), 0.008, GOLD_PALE, 0.9));
+      } else {
+        g.add(thickLine(new THREE.Vector3(cx-0.035, iconY+0.06, 0.014), new THREE.Vector3(cx-0.035, iconY-0.02, 0.014), 0.008, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx-0.035, iconY-0.02, 0.014), new THREE.Vector3(cx+0.06, iconY-0.02, 0.014), 0.008, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx+0.06, iconY-0.02, 0.014), new THREE.Vector3(cx+0.06, iconY-0.07, 0.014), 0.008, GOLD_PALE, 0.9));
+        g.add(thickLine(new THREE.Vector3(cx-0.035, iconY-0.07, 0.014), new THREE.Vector3(cx+0.06, iconY-0.07, 0.014), 0.008, GOLD_PALE, 0.9));
+      }
+      g.add(thickLine(new THREE.Vector3(cx-0.08, ocY-0.09, 0.014), new THREE.Vector3(cx+0.08, ocY-0.09, 0.014), 0.004, GOLD_BRIGHT, 0.60));
+      g.add(thickLine(new THREE.Vector3(cx-0.06, ocY-0.12, 0.014), new THREE.Vector3(cx+0.06, ocY-0.12, 0.014), 0.004, GOLD_BRIGHT, 0.40));
+    }
+
+    // ─── 5. APPLY OUTFIT pill button ───
+    var btnY = scrH * -0.46;
+    var btnW = scrW * 0.66, btnH = 0.16;
+    var btnFill = new THREE.Mesh(
+      new THREE.PlaneGeometry(btnW, btnH),
+      new THREE.MeshBasicMaterial({ color: GOLD_PALE, transparent: true, opacity: 0.55 })
+    );
+    btnFill.position.set(0, btnY, 0.013);
+    g.add(btnFill);
+    var btnFrame = rectOutline(btnW, btnH, 0.008, GOLD_PALE, 1);
+    btnFrame.position.set(0, btnY, 0.014);
+    g.add(btnFrame);
+    g.add(thickLine(new THREE.Vector3(scrW*0.22, btnY+0.030, 0.015), new THREE.Vector3(scrW*0.30, btnY, 0.015), 0.010, GOLD, 1));
+    g.add(thickLine(new THREE.Vector3(scrW*0.22, btnY-0.030, 0.015), new THREE.Vector3(scrW*0.30, btnY, 0.015), 0.010, GOLD, 1));
+    g.add(thickLine(new THREE.Vector3(-scrW*0.24, btnY, 0.015), new THREE.Vector3(scrW*0.12, btnY, 0.015), 0.011, GOLD, 1));
+
+    // SCAN LINE
+    scanLineMesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(scrW * 0.93, 0.030),
+      new THREE.MeshBasicMaterial({ color: GOLD_PALE, transparent: true, opacity: 0.55 })
+    );
+    scanLineMesh.position.set(0, 0, 0.018);
+    g.add(scanLineMesh);
+    scrHeightForAnim = scrH;
+    return g;
+  }
+  var holoPanel = buildHoloPanel();
+  holoPanel.position.set(0, 0.2, WD/2 + 1.8);
+  holoPanel.name = 'screen';
+  scene.add(holoPanel);
 
   // ── INTERIOR ──
   [WH*0.30, 0, WH*-0.20].forEach(function(sy) {
@@ -2998,8 +2992,8 @@ function _initTechScene(){
     temp:  new THREE.Vector3(-3.0, 0.5, 2.8),
     motion:new THREE.Vector3( 0.5, 0.8, 3.6),
     ai:    new THREE.Vector3( 2.5, 0.4, 3.0),
-    screen:new THREE.Vector3( 2.8, 0.0, 2.8),
-    tryon: new THREE.Vector3( 1.8, 0.4, 2.5),
+    screen:new THREE.Vector3( 0.0, 0.0, 3.8),
+    tryon: new THREE.Vector3( 0.5, 0.4, 3.0),
     memory:new THREE.Vector3(-2.0, 0.4, 2.8),
     chat:  new THREE.Vector3(-1.8, 0.5, 2.2)
   };
