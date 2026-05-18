@@ -4290,12 +4290,19 @@ document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { cO
 
 // ── HERO 3D SCENE ──
 </script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/three@0.160.0/build/three.min.js';document.head.appendChild(s);"></script>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+</script>
+<script type="module">
+  import * as THREE from 'three';
+  window.THREE = THREE;
+</script>
 <script>
 // ── WAITLIST WEBGL SHADER ──
-(function() {
+(function initWaitlistShader() {
+  if (!window.THREE) { setTimeout(initWaitlistShader, 80); return; }
   var canvas = document.getElementById('waitlistBg');
-  if (!canvas || !window.THREE) return;
+  if (!canvas) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   var rect = canvas.parentElement.getBoundingClientRect();
