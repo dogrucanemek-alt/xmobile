@@ -2362,11 +2362,11 @@ function _initTechScene(){
     pivot.rotation.y = openAngle;
     return pivot;
   }
-  // 4 doors: outer 2 swing open, inner 2 closed
-  scene.add(buildDoor(-WW/2, 1, -Math.PI * 0.42));      // door 1 (far left, open left)
-  scene.add(buildDoor(-WW/4, 1, 0));                    // door 2 (mid-left, closed)
-  scene.add(buildDoor( WW/4, -1, 0));                   // door 3 (mid-right, closed)
-  scene.add(buildDoor( WW/2, -1, Math.PI * 0.42));      // door 4 (far right, open right)
+  // 4 doors: all closed (flush across the front face)
+  scene.add(buildDoor(-WW/2, 1, 0));                    // door 1 (far left)
+  scene.add(buildDoor(-WW/4, 1, 0));                    // door 2 (mid-left)
+  scene.add(buildDoor( WW/4, -1, 0));                   // door 3 (mid-right)
+  scene.add(buildDoor( WW/2, -1, 0));                   // door 4 (far right)
 
   // ── STANDALONE HOLO PANEL — floating dashboard in front of person ──
   function buildHoloPanel() {
@@ -2816,7 +2816,7 @@ function _initTechScene(){
     return g;
   }
   var tryon = buildTryOn();
-  tryon.position.set(0, -0.955, WD/2 + 0.85);
+  tryon.position.set(0, -0.955, WD/2 + 1.80);
   tryon.scale.setScalar(1.0);
   tryon.name = 'tryon';
   scene.add(tryon);
