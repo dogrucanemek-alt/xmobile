@@ -18,6 +18,8 @@ app = modal.App("xmobile-tryon")
 # Container image: Python 3.12 + tüm bağımlılıklar + repo kodu
 image = (
     modal.Image.debian_slim(python_version="3.12")
+    # MediaPipe + opencv-contrib (transitif) için libGL + libglib şart
+    .apt_install("libgl1", "libglib2.0-0")
     .pip_install(
         "mediapipe==0.10.21",
         "opencv-python-headless>=4.10.0",
