@@ -2287,7 +2287,7 @@ function _initTechScene(){
 
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(33, 1, 0.1, 100);
-  camera.position.set(1.5, 1.0, 12.0);
+  camera.position.set(0, 1.0, 11.0);
 
   var controls = new MiniOrbit(camera, canvas);
   controls.dampingFactor = 0.08;
@@ -2340,8 +2340,8 @@ function _initTechScene(){
     return g;
   }
 
-  // ── WARDROBE CARCASS (4-door layout) ──
-  var WW = 4.5, WH = 4.5, WD = 1.5;
+  // ── WARDROBE CARCASS (4-door layout, shrunk 10% from baseline) ──
+  var WW = 4.05, WH = 4.05, WD = 1.35;
   scene.add(thickBoxEdges(WW, WH, WD, 0.026, GOLD));
   // door split lines on front face: at -WW/4, 0, +WW/4 (between 4 doors)
   [-WW/4, 0, WW/4].forEach(function(sx) {
@@ -2506,8 +2506,7 @@ function _initTechScene(){
     return g;
   }
   var holoPanel = buildHoloPanel();
-  holoPanel.position.set(-0.95, 0.2, WD/2 + 1.75);
-  holoPanel.rotation.y = 0.18;
+  holoPanel.position.set(0, 0.2, WD/2 + 0.06);
   holoPanel.name = 'screen';
   scene.add(holoPanel);
 
@@ -2817,8 +2816,8 @@ function _initTechScene(){
     return g;
   }
   var tryon = buildTryOn();
-  tryon.position.set(1.05, -1.18, WD/2 + 1.75);
-  tryon.scale.setScalar(0.85);
+  tryon.position.set(1.55, -1.22, WD/2 + 0.95);
+  tryon.scale.setScalar(0.78);
   tryon.name = 'tryon';
   scene.add(tryon);
 
