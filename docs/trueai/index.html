@@ -24,9 +24,9 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet" /></noscript>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,600;1,700&display=swap" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,600;1,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,600;1,700&display=swap" rel="stylesheet" /></noscript>
 
   <link rel="preload" as="image" href="assets/screenshots/home.webp" />
   <link rel="preload" as="image" href="assets/screenshots/outfits.webp" />
@@ -298,6 +298,11 @@
     .ref-share-row { display:flex;gap:8px;margin-top:10px; }
     .ref-share-btn { flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--r-md);font-size:12px;font-weight:600;color:var(--text-secondary);text-decoration:none;cursor:pointer;transition:background 0.2s,color 0.2s; }
     .ref-share-btn:hover { background:rgba(255,255,255,0.08);color:var(--text-primary); }
+    .cd-cell { min-width:92px;padding:18px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(201,169,110,0.18);border-radius:var(--r-md);text-align:center;transition:border-color 0.3s,transform 0.3s; }
+    .cd-cell:hover { border-color:rgba(201,169,110,0.42);transform:translateY(-2px); }
+    .cd-num { font-family:var(--font);font-size:36px;font-weight:700;color:var(--accent);letter-spacing:-0.02em;line-height:1;font-variant-numeric:tabular-nums; }
+    .cd-lbl { font-size:10px;color:var(--text-muted);margin-top:8px;letter-spacing:0.16em;text-transform:uppercase; }
+    @media(max-width:520px){ .cd-cell { min-width:68px;padding:14px 10px; } .cd-num { font-size:28px; } }
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 900px) {
@@ -631,8 +636,24 @@
           <p style="font-size:12px;color:var(--text-muted);">
             Kredi kartı gerekmez &nbsp;·&nbsp; İlk 500 kişi Pro ücretsiz
           </p>
+          <p style="font-size:13px;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:8px;margin-top:4px;">
+            <span style="width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block;animation:pulse 2s infinite;"></span>
+            <span id="hero-count">347</span>+ kişi az önce listeye katıldı
+          </p>
         </div>
-        <div class="hero-stats" style="display:flex;gap:36px;margin-top:52px;padding-top:28px;border-top:1px solid rgba(255,255,255,0.05);flex-wrap:wrap;">
+        <div class="hero-trust" style="margin-top:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;">
+          <span style="opacity:0.7;">Test edildi:</span>
+          <span style="font-weight:700;color:var(--text-secondary);">ZARA</span>
+          <span style="opacity:0.4;">·</span>
+          <span style="font-weight:700;color:var(--text-secondary);">H&amp;M</span>
+          <span style="opacity:0.4;">·</span>
+          <span style="font-weight:700;color:var(--text-secondary);">MANGO</span>
+          <span style="opacity:0.4;">·</span>
+          <span style="font-weight:700;color:var(--text-secondary);">LC WAIKIKI</span>
+          <span style="opacity:0.4;">·</span>
+          <span style="font-weight:700;color:var(--text-secondary);">KOTON</span>
+        </div>
+        <div class="hero-stats" style="display:flex;gap:36px;margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.05);flex-wrap:wrap;">
           <div>
             <div class="stat-num" data-count="15" data-suffix=" dk" style="font-size:40px;font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1;">0 dk</div>
             <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;letter-spacing:0.02em;">sabah tasarrufu</div>
@@ -1682,10 +1703,17 @@
     <h2 style="font-size:clamp(36px,4.5vw,56px);font-weight:700;letter-spacing:-0.03em;margin-bottom:16px;">
       İlk kullananlardan ol.
     </h2>
-    <p style="font-size:16px;color:var(--text-secondary);margin-bottom:44px;line-height:1.75;">
+    <p style="font-size:16px;color:var(--text-secondary);margin-bottom:32px;line-height:1.75;">
       Beta açıldığında sana haber verelim.<br />
       İlk 500 kişi Pro planı 3 ay ücretsiz kullanır.
     </p>
+    <div id="countdown" data-target="2026-06-30T23:59:59+03:00" style="display:flex;justify-content:center;gap:14px;margin:0 auto 36px;flex-wrap:wrap;max-width:520px;">
+      <div class="cd-cell"><div class="cd-num" id="cd-days">--</div><div class="cd-lbl">Gün</div></div>
+      <div class="cd-cell"><div class="cd-num" id="cd-hours">--</div><div class="cd-lbl">Saat</div></div>
+      <div class="cd-cell"><div class="cd-num" id="cd-mins">--</div><div class="cd-lbl">Dakika</div></div>
+      <div class="cd-cell"><div class="cd-num" id="cd-secs">--</div><div class="cd-lbl">Saniye</div></div>
+    </div>
+    <p id="cd-launchline" style="font-size:12px;color:var(--text-muted);margin:-20px auto 36px;letter-spacing:0.08em;text-transform:uppercase;">Beta Lansman · 30 Haziran 2026</p>
     <form id="waitlist-form" onsubmit="submitWaitlist(event)" style="max-width:480px;margin:0 auto 14px;">
       <div style="display:flex;gap:10px;margin-bottom:14px;" class="waitlist-row">
         <input id="email-input" type="email" placeholder="email@ornek.com" required autocomplete="email"
@@ -1877,13 +1905,46 @@ function submitWaitlist(e) {
 }
 
 function incrementCounter() {
-  ['waitlist-count','bottom-count'].forEach(function(id) {
+  ['waitlist-count','bottom-count','hero-count'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.textContent = (parseInt(el.textContent.replace(/\D/g,'')) || 347) + 1;
   });
 }
 (function tick() {
   setTimeout(function() { incrementCounter(); tick(); }, Math.floor(Math.random() * 22000) + 8000);
+})();
+
+// Countdown to launch
+(function() {
+  var root = document.getElementById('countdown');
+  if (!root) return;
+  var target = new Date(root.dataset.target).getTime();
+  var els = {
+    d: document.getElementById('cd-days'),
+    h: document.getElementById('cd-hours'),
+    m: document.getElementById('cd-mins'),
+    s: document.getElementById('cd-secs')
+  };
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+  function update() {
+    var diff = target - Date.now();
+    if (diff <= 0) {
+      root.style.display = 'none';
+      var line = document.getElementById('cd-launchline');
+      if (line) { line.textContent = '🎉 Beta lansmanı başladı'; line.style.color = 'var(--accent)'; line.style.marginTop = '0'; }
+      return;
+    }
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    els.d.textContent = d;
+    els.h.textContent = pad(h);
+    els.m.textContent = pad(m);
+    els.s.textContent = pad(s);
+    setTimeout(update, 1000);
+  }
+  update();
 })();
 
 var obs = new IntersectionObserver(function(entries) {
